@@ -19,6 +19,7 @@ void operator delete[](void* ptr);
 
 #ifndef NEW_OVERLOAD_IMPLEMENTATION_
 #define RK_NEW new( __FILE__, __LINE__ )
+//#define new new(__FILE__, __LINE__)
 // 预定义宏: 
 // __FILE__(两个下划线): 代表当前源代码文件名的字符串文字(我们用这个宏获得存在内存泄漏文件的文件名)
 // __LINE__(两个下划线): 代表当前源代码文件中的行号的整数常量(我们用这个宏获得存在内存泄漏文件内存泄漏的行号)

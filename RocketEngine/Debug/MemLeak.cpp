@@ -23,7 +23,7 @@ typedef struct MemoryList {
 } MemoryList;
 
 // 创建一个头结点, 它的前后指针均初始化为指向自己(插入、删除双向链表中结点 和 _LeakDetector( )函数中遍历双向链表时, 这样初始化的作用就体现出来了)。使用静态变量使其只在本文件内有效
-// 我们只使用这个头节点的 _prev 和 _next 成员
+// 我们只使用这个头节点的 prev 和 next 成员
 static MemoryList memory_list_head = { &memory_list_head, &memory_list_head, 0, false, nullptr, 0 };
 
 // 保存未释放的内存大小
@@ -41,8 +41,8 @@ static void* AllocateMemory(size_t size, bool array, char* file, size_t line) {
 	MemoryList* new_elem = (MemoryList*)malloc(new_size);
 
 	// 更新MemoryList结构成员的值
-	new_elem->prev = &memory_list_head;
 	new_elem->next = memory_list_head.next;
+	new_elem->prev = &memory_list_head;
 	new_elem->size = size;						// 注意, 此处为size而不是newSize. 因为我们管理记录的是 new申请的内存, 验证它是否未释放, 存在内存泄漏问题. 申请 newSize的内存(为 MemoryList结点多申请出的内存), 只是为了实现手动管理内存所必须, 这个内存我们一定会释放, 不需关注. 所以保存 时用size而不是newSize
 	new_elem->is_array = array;
 
@@ -51,12 +51,12 @@ static void* AllocateMemory(size_t size, bool array, char* file, size_t line) {
 		new_elem->file = (char*)malloc(strlen(file) + 1);
 		strcpy(new_elem->file, file);
 	}
-	else
+	else {
 		new_elem->file = nullptr;
-
+	}
 	// 保存行号
 	new_elem->line = line;
-
+	
 	// 更新双向链表结构
 	memory_list_head.next->prev = new_elem;
 	memory_list_head.next = new_elem;
@@ -83,7 +83,7 @@ static void  DeleteMemory(void* ptr, bool array) {
 
 	// 更新链表结构
     cur_elem->next->prev = cur_elem->prev;
-    cur_elem->prev->next = cur_elem->prev;
+    cur_elem->prev->next = cur_elem->next;
 
 	// 更新memory_allocated值
 	memory_allocated -= cur_elem->size;
