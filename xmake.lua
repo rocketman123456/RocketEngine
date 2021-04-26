@@ -10,6 +10,8 @@ set_languages("c99", "c++17")
 --add_cxflags("-stdnolib", "-fno-strict-aliasing")
 --add_ldflags("-L/usr/local/lib", "-lpthread", {force = true})
 
+add_includedirs("RocketEngine")
+
 -- 如果当前编译模式是debug
 if is_mode("debug") then
     -- 添加DEBUG编译宏
