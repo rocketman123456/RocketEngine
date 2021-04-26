@@ -1,11 +1,11 @@
 // https://github.com/YunFei-S/Memory-leak-detector/blob/main/LeakDetector.cpp
-// With Smart Pointer Error When a Pointer Destroy
-#define NEW_OVERLOAD_IMPLEMENTATION_
+// With Smart Pointer Error
+//#define NEW_OVERLOAD_IMPLEMENTATION_
 //#define _CRT_SECURE_NO_WARNINGS
 #include "Debug/MemLeak.h"
 
-#include <cstring>
 #include <iostream>
+#include <cstring>
 
 #ifdef RK_DEBUG
 // 初始化 LeakDetector类中定义的静态变量
@@ -30,8 +30,8 @@ static MemoryList memory_list_head = { &memory_list_head, &memory_list_head, 0, 
 static size_t memory_allocated = 0;
 
 // 对双向链表采用头插法分配内存
-void* AllocateMemory(size_t size, bool array, char* file, size_t line) {
-    //printf("Alllocate Memory\n");
+static void* AllocateMemory(size_t size, bool array, char* file, size_t line) {
+    printf("Alllocate Memory\n");
 	// 我们需要为我们管理内存分配的 MemoryList结点 也申请内存
 	// 计算新的大小
 	size_t new_size = size + sizeof(MemoryList);
@@ -72,8 +72,8 @@ void* AllocateMemory(size_t size, bool array, char* file, size_t line) {
 
 // 对双向链表采用头删法手动管理释放内存
 // 注意: delete/delete[]时 我们并不知道它操作的是双向链表中的哪一个结点
-void  DeleteMemory(void* ptr, bool array) {
-    //printf("Delete Memory\n");
+static void  DeleteMemory(void* ptr, bool array) {
+    printf("Delete Memory\n");
 	// 注意, 堆的空间自底向上增长. 所以此处为减
 	MemoryList* cur_elem = (MemoryList*)((char*)ptr - sizeof(MemoryList));
 
@@ -99,7 +99,7 @@ void  DeleteMemory(void* ptr, bool array) {
 // 我们定义的最后一个静态对象析构时调用此函数, 判断是否有内存泄漏, 若有, 则打印出内存泄漏信息
 void LeakDetector::LeakDetection() {
 	if (0 == memory_allocated) {
-		std::cout << "恭喜, 您的代码不存在内存泄漏!" << std::endl;
+		std::cout << "代码不存在内存泄漏!" << std::endl;
 		return;
 	}
 
@@ -140,6 +140,14 @@ void* operator new(size_t size, char* file, size_t line) {
 
 void* operator new[](size_t size, char* file, size_t line) {
 	return AllocateMemory(size, true, file, line);
+}
+
+void* operator new(size_t size) {
+	return AllocateMemory(size, false, nullptr, 0);
+}
+
+void* operator new[](size_t size) {
+	return AllocateMemory(size, true, nullptr, 0);
 }
 
 // 重载delete/delete[]运算符

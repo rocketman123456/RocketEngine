@@ -1,11 +1,14 @@
 // https://github.com/YunFei-S/Memory-leak-detector/blob/main/LeakDetector.h
-// With Smart Pointer Error When a Pointer Destroy
+// With Smart Pointer Error
 #pragma once
 
 #ifdef RK_DEBUG
 #include <cstdio>
+#include <new>
 
 // 重载版本: operator new/new[]( ), operator delete/delete[]( ) 的声明
+void* operator new(size_t size);
+void* operator new[](size_t size);
 void* operator new(size_t size, char* file, size_t line);
 void* operator new[](size_t size, char* file, size_t line);
 // 注意到, 上面我们重载的函数中, 第一个参数和第三个参数的类型是size_t
@@ -15,7 +18,7 @@ void operator delete(void* ptr);
 void operator delete[](void* ptr);
 
 #ifndef NEW_OVERLOAD_IMPLEMENTATION_
-#define new new( __FILE__, __LINE__ )
+#define RK_NEW new( __FILE__, __LINE__ )
 // 预定义宏: 
 // __FILE__(两个下划线): 代表当前源代码文件名的字符串文字(我们用这个宏获得存在内存泄漏文件的文件名)
 // __LINE__(两个下划线): 代表当前源代码文件中的行号的整数常量(我们用这个宏获得存在内存泄漏文件内存泄漏的行号)
@@ -36,4 +39,6 @@ private:
 
 // 静态对象
 static LeakDetector exitCounter;
+#else
+#define RK_NEW new
 #endif

@@ -51,9 +51,8 @@ if is_mode("release", "profile") then
 end
 
 includes("RocketEngine")
+includes("UnitTest")
 
---
--- How to configure project?
 --
 --   $ xmake f -p [macosx|linux|iphoneos ..] -a [x86_64|i386|arm64 ..] -m [debug|release]
 --

@@ -1,0 +1,11 @@
+[
+{
+  "directory": "/Users/developer/Program/RocketEngine",
+  "arguments": ["/usr/bin/xcrun -sdk macosx clang", "-c", "-Qunused-arguments", "-arch", "x86_64", "-mmacosx-version-min=11.2", "-isysroot", "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.1.sdk", "-g", "-O0", "-std=c++17", "-IRocketEngine", "-DRK_DEBUG", "-o", "build/.objs/RocketEngine/macosx/x86_64/debug/RocketEngine/main.cpp.o", "RocketEngine/main.cpp"],
+  "file": "RocketEngine/main.cpp"
+},
+{
+  "directory": "/Users/developer/Program/RocketEngine",
+  "arguments": ["/usr/bin/xcrun -sdk macosx clang", "-c", "-Qunused-arguments", "-arch", "x86_64", "-mmacosx-version-min=11.2", "-isysroot", "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.1.sdk", "-g", "-O0", "-std=c++17", "-IRocketEngine", "-DRK_DEBUG", "-o", "build/.objs/RocketEngine/macosx/x86_64/debug/RocketEngine/Debug/MemLeak.cpp.o", "RocketEngine/Debug/MemLeak.cpp"],
+  "file": "RocketEngine/Debug/MemLeak.cpp"
+}]
