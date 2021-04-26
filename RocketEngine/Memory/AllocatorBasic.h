@@ -9,18 +9,18 @@
 
 namespace Rocket {
     template <typename T>
-    class allocator {
+    class default_allocator {
     public:
         using value_type = T;
         using propagate_on_container_move_assignment = std::true_type;
         using is_always_equal = std::true_type;
 
-        allocator() noexcept = default;
-        allocator(const allocator&) noexcept = default;
-        ~allocator() = default;
+        default_allocator() noexcept = default;
+        default_allocator(const default_allocator&) noexcept = default;
+        ~default_allocator() = default;
 
         template <class U>
-        allocator(const allocator<U>&) noexcept {}
+        default_allocator(const default_allocator<U>&) noexcept {}
 
         [[nodiscard]] T* allocate(std::size_t n)
         {
@@ -52,13 +52,13 @@ namespace Rocket {
     };
 
     template <class T, class U>
-    bool operator==(const allocator<T>&, const allocator<U>&) noexcept
+    bool operator==(const default_allocator<T>&, const default_allocator<U>&) noexcept
     {
         return true;
     }
 
     template <class T, class U>
-    bool operator!=(const allocator<T>&, const allocator<U>&) noexcept
+    bool operator!=(const default_allocator<T>&, const default_allocator<U>&) noexcept
     {
         return false;
     }
