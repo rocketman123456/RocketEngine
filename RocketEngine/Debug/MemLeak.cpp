@@ -8,45 +8,45 @@
 #include <cstring>
 
 #ifdef RK_DEBUG
-// åˆå§‹åŒ– LeakDetectorç±»ä¸­å®šä¹‰çš„é™æ€å˜é‡
+// ³õÊ¼»¯ LeakDetectorÀàÖĞ¶¨ÒåµÄ¾²Ì¬±äÁ¿
 size_t LeakDetector::call_count_ = 0;
 
-// æˆ‘ä»¬ä½¿ç”¨å¸¦å¤´èŠ‚ç‚¹çš„åŒå‘é“¾è¡¨æ¥æ‰‹åŠ¨ç®¡ç†å†…å­˜ç”³è¯·ä¸é‡Šæ”¾, å¤´èŠ‚ç‚¹çš„_prevæŒ‡å‘æœ€åä¸€ä¸ªç»“ç‚¹, _nextæŒ‡å‘ç¬¬ä¸€ä¸ªç»“ç‚¹
-// åŒå‘é“¾è¡¨ç»“æ„
+// ÎÒÃÇÊ¹ÓÃ´øÍ·½ÚµãµÄË«ÏòÁ´±íÀ´ÊÖ¶¯¹ÜÀíÄÚ´æÉêÇëÓëÊÍ·Å, Í·½ÚµãµÄ_prevÖ¸Ïò×îºóÒ»¸ö½áµã, _nextÖ¸ÏòµÚÒ»¸ö½áµã
+// Ë«ÏòÁ´±í½á¹¹
 typedef struct MemoryList {
 	struct MemoryList* prev = nullptr;
 	struct MemoryList* next = nullptr;
-	size_t size;				// operator new( )ç”³è¯·çš„å†…å­˜å¤§å°
-	bool   is_array;			// æ˜¯å¦ä¸ºç”³è¯·æ•°ç»„(å³ä½¿ç”¨operator new[]( ) è€Œä¸æ˜¯ operator new( ))
-	char*  file;				// å¦‚æœæœ‰, å­˜å‚¨å­˜åœ¨å†…å­˜æ³„æ¼æ–‡ä»¶çš„æ–‡ä»¶ä¿¡æ¯
-	size_t line;				// å­˜å‚¨å­˜åœ¨å†…å­˜æ³„æ¼ä½ç½®çš„è¡Œå·
+	size_t size;				// operator new( )ÉêÇëµÄÄÚ´æ´óĞ¡
+	bool   is_array;			// ÊÇ·ñÎªÉêÇëÊı×é(¼´Ê¹ÓÃoperator new[]( ) ¶ø²»ÊÇ operator new( ))
+	char*  file;				// Èç¹ûÓĞ, ´æ´¢´æÔÚÄÚ´æĞ¹Â©ÎÄ¼şµÄÎÄ¼şĞÅÏ¢
+	size_t line;				// ´æ´¢´æÔÚÄÚ´æĞ¹Â©Î»ÖÃµÄĞĞºÅ
 } MemoryList;
 
-// åˆ›å»ºä¸€ä¸ªå¤´ç»“ç‚¹, å®ƒçš„å‰åæŒ‡é’ˆå‡åˆå§‹åŒ–ä¸ºæŒ‡å‘è‡ªå·±(æ’å…¥ã€åˆ é™¤åŒå‘é“¾è¡¨ä¸­ç»“ç‚¹ å’Œ _LeakDetector( )å‡½æ•°ä¸­éå†åŒå‘é“¾è¡¨æ—¶, è¿™æ ·åˆå§‹åŒ–çš„ä½œç”¨å°±ä½“ç°å‡ºæ¥äº†)ã€‚ä½¿ç”¨é™æ€å˜é‡ä½¿å…¶åªåœ¨æœ¬æ–‡ä»¶å†…æœ‰æ•ˆ
-// æˆ‘ä»¬åªä½¿ç”¨è¿™ä¸ªå¤´èŠ‚ç‚¹çš„ prev å’Œ next æˆå‘˜
+// ´´½¨Ò»¸öÍ·½áµã, ËüµÄÇ°ºóÖ¸Õë¾ù³õÊ¼»¯ÎªÖ¸Ïò×Ô¼º(²åÈë¡¢É¾³ıË«ÏòÁ´±íÖĞ½áµã ºÍ _LeakDetector( )º¯ÊıÖĞ±éÀúË«ÏòÁ´±íÊ±, ÕâÑù³õÊ¼»¯µÄ×÷ÓÃ¾ÍÌåÏÖ³öÀ´ÁË)¡£Ê¹ÓÃ¾²Ì¬±äÁ¿Ê¹ÆäÖ»ÔÚ±¾ÎÄ¼şÄÚÓĞĞ§
+// ÎÒÃÇÖ»Ê¹ÓÃÕâ¸öÍ·½ÚµãµÄ prev ºÍ next ³ÉÔ±
 static MemoryList memory_list_head = { &memory_list_head, &memory_list_head, 0, false, nullptr, 0 };
 
-// ä¿å­˜æœªé‡Šæ”¾çš„å†…å­˜å¤§å°
+// ±£´æÎ´ÊÍ·ÅµÄÄÚ´æ´óĞ¡
 static size_t memory_allocated = 0;
 
-// å¯¹åŒå‘é“¾è¡¨é‡‡ç”¨å¤´æ’æ³•åˆ†é…å†…å­˜
+// ¶ÔË«ÏòÁ´±í²ÉÓÃÍ·²å·¨·ÖÅäÄÚ´æ
 static void* AllocateMemory(size_t size, bool array, char* file, size_t line) {
     printf("Alllocate Memory\n");
-	// æˆ‘ä»¬éœ€è¦ä¸ºæˆ‘ä»¬ç®¡ç†å†…å­˜åˆ†é…çš„ MemoryListç»“ç‚¹ ä¹Ÿç”³è¯·å†…å­˜
-	// è®¡ç®—æ–°çš„å¤§å°
+	// ÎÒÃÇĞèÒªÎªÎÒÃÇ¹ÜÀíÄÚ´æ·ÖÅäµÄ MemoryList½áµã Ò²ÉêÇëÄÚ´æ
+	// ¼ÆËãĞÂµÄ´óĞ¡
 	size_t new_size = size + sizeof(MemoryList);
 
-	// æŠŠæ¥æ”¶åˆ°çš„åœ°å€å¼ºè½¬ä¸º MemoryList*, ä»¥ä¾¿æˆ‘ä»¬åç»­æ“ä½œ
-	// ç”±äºé‡è½½äº†new, æ‰€ä»¥æˆ‘ä»¬ä½¿ç”¨ malloc æ¥ç”³è¯·å†…å­˜
+	// °Ñ½ÓÊÕµ½µÄµØÖ·Ç¿×ªÎª MemoryList*, ÒÔ±ãÎÒÃÇºóĞø²Ù×÷
+	// ÓÉÓÚÖØÔØÁËnew, ËùÒÔÎÒÃÇÊ¹ÓÃ malloc À´ÉêÇëÄÚ´æ
 	MemoryList* new_elem = (MemoryList*)malloc(new_size);
 
-	// æ›´æ–°MemoryListç»“æ„æˆå‘˜çš„å€¼
+	// ¸üĞÂMemoryList½á¹¹³ÉÔ±µÄÖµ
 	new_elem->next = memory_list_head.next;
 	new_elem->prev = &memory_list_head;
-	new_elem->size = size;						// æ³¨æ„, æ­¤å¤„ä¸ºsizeè€Œä¸æ˜¯newSize. å› ä¸ºæˆ‘ä»¬ç®¡ç†è®°å½•çš„æ˜¯ newç”³è¯·çš„å†…å­˜, éªŒè¯å®ƒæ˜¯å¦æœªé‡Šæ”¾, å­˜åœ¨å†…å­˜æ³„æ¼é—®é¢˜. ç”³è¯· newSizeçš„å†…å­˜(ä¸º MemoryListç»“ç‚¹å¤šç”³è¯·å‡ºçš„å†…å­˜), åªæ˜¯ä¸ºäº†å®ç°æ‰‹åŠ¨ç®¡ç†å†…å­˜æ‰€å¿…é¡», è¿™ä¸ªå†…å­˜æˆ‘ä»¬ä¸€å®šä¼šé‡Šæ”¾, ä¸éœ€å…³æ³¨. æ‰€ä»¥ä¿å­˜ æ—¶ç”¨sizeè€Œä¸æ˜¯newSize
+	new_elem->size = size;						// ×¢Òâ, ´Ë´¦Îªsize¶ø²»ÊÇnewSize. ÒòÎªÎÒÃÇ¹ÜÀí¼ÇÂ¼µÄÊÇ newÉêÇëµÄÄÚ´æ, ÑéÖ¤ËüÊÇ·ñÎ´ÊÍ·Å, ´æÔÚÄÚ´æĞ¹Â©ÎÊÌâ. ÉêÇë newSizeµÄÄÚ´æ(Îª MemoryList½áµã¶àÉêÇë³öµÄÄÚ´æ), Ö»ÊÇÎªÁËÊµÏÖÊÖ¶¯¹ÜÀíÄÚ´æËù±ØĞë, Õâ¸öÄÚ´æÎÒÃÇÒ»¶¨»áÊÍ·Å, ²»Ğè¹Ø×¢. ËùÒÔ±£´æ Ê±ÓÃsize¶ø²»ÊÇnewSize
 	new_elem->is_array = array;
 
-	// å¦‚æœæœ‰æ–‡ä»¶ä¿¡æ¯, åˆ™ä¿å­˜ä¸‹æ¥
+	// Èç¹ûÓĞÎÄ¼şĞÅÏ¢, Ôò±£´æÏÂÀ´
 	if (nullptr != file) {
 		new_elem->file = (char*)malloc(strlen(file) + 1);
 		strcpy(new_elem->file, file);
@@ -54,74 +54,74 @@ static void* AllocateMemory(size_t size, bool array, char* file, size_t line) {
 	else {
 		new_elem->file = nullptr;
 	}
-	// ä¿å­˜è¡Œå·
+	// ±£´æĞĞºÅ
 	new_elem->line = line;
 	
-	// æ›´æ–°åŒå‘é“¾è¡¨ç»“æ„
+	// ¸üĞÂË«ÏòÁ´±í½á¹¹
 	memory_list_head.next->prev = new_elem;
 	memory_list_head.next = new_elem;
 
-	// æ›´æ–°æœªé‡Šæ”¾çš„å†…å­˜æ•°
-	// æˆ‘ä»¬ç®¡ç†çš„åªæ˜¯ newç”³è¯·çš„å†…å­˜. ä¸ºmemory_list_headç»“ç‚¹å¤šç”³è¯·çš„å†…å­˜,å’Œä¸ºä¿å­˜æ–‡ä»¶ä¿¡æ¯å¤šç”³è¯·å†…å­˜æ— å…³, è¿™äº›å†…å­˜æˆ‘ä»¬ä¸€å®šä¼šé‡Šæ”¾, æ‰€ä»¥è¿™é‡Œåªè®°å½•size
+	// ¸üĞÂÎ´ÊÍ·ÅµÄÄÚ´æÊı
+	// ÎÒÃÇ¹ÜÀíµÄÖ»ÊÇ newÉêÇëµÄÄÚ´æ. Îªmemory_list_head½áµã¶àÉêÇëµÄÄÚ´æ,ºÍÎª±£´æÎÄ¼şĞÅÏ¢¶àÉêÇëÄÚ´æÎŞ¹Ø, ÕâĞ©ÄÚ´æÎÒÃÇÒ»¶¨»áÊÍ·Å, ËùÒÔÕâÀïÖ»¼ÇÂ¼size
 	memory_allocated += size;
 
-	// è¿”å›new ç”³è¯·çš„å†…å­˜åœ°å€
-	// å°†new_elemå¼ºè½¬ä¸ºchar* ç±»å‹(ä¿è¯æŒ‡é’ˆ+1æ—¶æ¯æ¬¡åŠ çš„å­—èŠ‚æ•°ä¸º1) + memory_list_headæ‰€å ç”¨å­—èŠ‚æ•°( æ€»å…±ç”³è¯·çš„newSizeå­—èŠ‚æ•° å‡å»memory_list_headç»“ç‚¹å ç”¨çš„å­—èŠ‚æ•°, å³ä¸ºnewç”³è¯·çš„å­—èŠ‚æ•° )
+	// ·µ»Ønew ÉêÇëµÄÄÚ´æµØÖ·
+	// ½«new_elemÇ¿×ªÎªchar* ÀàĞÍ(±£Ö¤Ö¸Õë+1Ê±Ã¿´Î¼ÓµÄ×Ö½ÚÊıÎª1) + memory_list_headËùÕ¼ÓÃ×Ö½ÚÊı( ×Ü¹²ÉêÇëµÄnewSize×Ö½ÚÊı ¼õÈ¥memory_list_head½áµãÕ¼ÓÃµÄ×Ö½ÚÊı, ¼´ÎªnewÉêÇëµÄ×Ö½ÚÊı )
 	return (char*)new_elem + sizeof(memory_list_head);
 }
 
-// å¯¹åŒå‘é“¾è¡¨é‡‡ç”¨å¤´åˆ æ³•æ‰‹åŠ¨ç®¡ç†é‡Šæ”¾å†…å­˜
-// æ³¨æ„: delete/delete[]æ—¶ æˆ‘ä»¬å¹¶ä¸çŸ¥é“å®ƒæ“ä½œçš„æ˜¯åŒå‘é“¾è¡¨ä¸­çš„å“ªä¸€ä¸ªç»“ç‚¹
+// ¶ÔË«ÏòÁ´±í²ÉÓÃÍ·É¾·¨ÊÖ¶¯¹ÜÀíÊÍ·ÅÄÚ´æ
+// ×¢Òâ: delete/delete[]Ê± ÎÒÃÇ²¢²»ÖªµÀËü²Ù×÷µÄÊÇË«ÏòÁ´±íÖĞµÄÄÄÒ»¸ö½áµã
 static void  DeleteMemory(void* ptr, bool array) {
     printf("Delete Memory\n");
-	// æ³¨æ„, å †çš„ç©ºé—´è‡ªåº•å‘ä¸Šå¢é•¿. æ‰€ä»¥æ­¤å¤„ä¸ºå‡
+	// ×¢Òâ, ¶ÑµÄ¿Õ¼ä×Ôµ×ÏòÉÏÔö³¤. ËùÒÔ´Ë´¦Îª¼õ
 	MemoryList* cur_elem = (MemoryList*)((char*)ptr - sizeof(MemoryList));
 
-	// å¦‚æœ new/new[] å’Œ delete/delete[] ä¸åŒ¹é…ä½¿ç”¨. ç›´æ¥è¿”å›
+	// Èç¹û new/new[] ºÍ delete/delete[] ²»Æ¥ÅäÊ¹ÓÃ. Ö±½Ó·µ»Ø
 	if (cur_elem->is_array != array)
 		return;
 
-	// æ›´æ–°é“¾è¡¨ç»“æ„
+	// ¸üĞÂÁ´±í½á¹¹
     cur_elem->next->prev = cur_elem->prev;
     cur_elem->prev->next = cur_elem->next;
 
-	// æ›´æ–°memory_allocatedå€¼
+	// ¸üĞÂmemory_allocatedÖµ
 	memory_allocated -= cur_elem->size;
 
-	// å¦‚æœcur_elem->_fileä¸ä¸ºNULL, é‡Šæ”¾ä¿å­˜æ–‡ä»¶ä¿¡æ¯æ—¶ç”³è¯·çš„å†…å­˜
+	// Èç¹ûcur_elem->_file²»ÎªNULL, ÊÍ·Å±£´æÎÄ¼şĞÅÏ¢Ê±ÉêÇëµÄÄÚ´æ
 	if (NULL != cur_elem->file)
 		free(cur_elem->file);
 
-	// é‡Šæ”¾å†…å­˜
+	// ÊÍ·ÅÄÚ´æ
 	free(cur_elem);
 }
 
-// æˆ‘ä»¬å®šä¹‰çš„æœ€åä¸€ä¸ªé™æ€å¯¹è±¡ææ„æ—¶è°ƒç”¨æ­¤å‡½æ•°, åˆ¤æ–­æ˜¯å¦æœ‰å†…å­˜æ³„æ¼, è‹¥æœ‰, åˆ™æ‰“å°å‡ºå†…å­˜æ³„æ¼ä¿¡æ¯
+// ÎÒÃÇ¶¨ÒåµÄ×îºóÒ»¸ö¾²Ì¬¶ÔÏóÎö¹¹Ê±µ÷ÓÃ´Ëº¯Êı, ÅĞ¶ÏÊÇ·ñÓĞÄÚ´æĞ¹Â©, ÈôÓĞ, Ôò´òÓ¡³öÄÚ´æĞ¹Â©ĞÅÏ¢
 void LeakDetector::LeakDetection() {
 	if (0 == memory_allocated) {
-		std::cout << "ä»£ç ä¸å­˜åœ¨å†…å­˜æ³„æ¼!" << std::endl;
+		std::cout << "´úÂë²»´æÔÚÄÚ´æĞ¹Â©!" << std::endl;
 		return;
 	}
 
-	// å­˜åœ¨å†…å­˜æ³„æ¼
-	// è®°å½•å†…å­˜æ³„æ¼æ¬¡æ•°
+	// ´æÔÚÄÚ´æĞ¹Â©
+	// ¼ÇÂ¼ÄÚ´æĞ¹Â©´ÎÊı
 	size_t count = 0;
 
-	// è‹¥ä¸å­˜åœ¨å†…å­˜æ³„æ¼, åˆ™åŒå‘é“¾è¡¨ä¸­åº”è¯¥åªå‰©ä¸‹ä¸€ä¸ªå¤´èŠ‚ç‚¹
-	// è‹¥å­˜åœ¨å†…å­˜æ³„æ¼, åˆ™åŒå‘é“¾è¡¨ä¸­é™¤å¤´èŠ‚ç‚¹ä¹‹å¤–çš„ç»“ç‚¹éƒ½å·²æ³„éœ²ï¼Œä¸ªæ•°å³å†…å­˜æ³„æ¼æ¬¡æ•°
+	// Èô²»´æÔÚÄÚ´æĞ¹Â©, ÔòË«ÏòÁ´±íÖĞÓ¦¸ÃÖ»Ê£ÏÂÒ»¸öÍ·½Úµã
+	// Èô´æÔÚÄÚ´æĞ¹Â©, ÔòË«ÏòÁ´±íÖĞ³ıÍ·½ÚµãÖ®ÍâµÄ½áµã¶¼ÒÑĞ¹Â¶£¬¸öÊı¼´ÄÚ´æĞ¹Â©´ÎÊı
 	MemoryList* ptr = memory_list_head.next;
 	while ((NULL != ptr) && (&memory_list_head != ptr)) {
 		if (true == ptr->is_array)
-			std::cout << "new[] ç©ºé—´æœªé‡Šæ”¾, ";
+			std::cout << "new[] ¿Õ¼äÎ´ÊÍ·Å, ";
 		else
-			std::cout << "new ç©ºé—´æœªé‡Šæ”¾, ";
+			std::cout << "new ¿Õ¼äÎ´ÊÍ·Å, ";
 
-		std::cout << "æŒ‡é’ˆ: " << ptr << " å¤§å°: " << ptr->size;
+		std::cout << "Ö¸Õë: " << ptr << " ´óĞ¡: " << ptr->size;
 
 		if (NULL != ptr->file)
-			std::cout << " ä½äº " << ptr->file << " ç¬¬ " << ptr->line << " è¡Œ";
+			std::cout << " Î»ÓÚ " << ptr->file << " µÚ " << ptr->line << " ĞĞ";
 		else
-			std::cout << " (æ— æ–‡ä»¶ä¿¡æ¯)";
+			std::cout << " (ÎŞÎÄ¼şĞÅÏ¢)";
 
 		std::cout << std::endl;
 
@@ -129,11 +129,11 @@ void LeakDetector::LeakDetection() {
 		++count;
 	}
 
-	std::cout << "å­˜åœ¨" << count << "å¤„å†…å­˜æ³„éœ², å…±åŒ…æ‹¬ " << memory_allocated << " byte." << std::endl;
+	std::cout << "´æÔÚ" << count << "´¦ÄÚ´æĞ¹Â¶, ¹²°üÀ¨ " << memory_allocated << " byte." << std::endl;
 	return;
 }
 
-// é‡è½½new/new[]è¿ç®—ç¬¦
+// ÖØÔØnew/new[]ÔËËã·û
 void* operator new(size_t size, char* file, size_t line) {
 	return AllocateMemory(size, false, file, line);
 }
@@ -150,7 +150,7 @@ void* operator new[](size_t size) {
 	return AllocateMemory(size, true, nullptr, 0);
 }
 
-// é‡è½½delete/delete[]è¿ç®—ç¬¦
+// ÖØÔØdelete/delete[]ÔËËã·û
 void operator delete(void* ptr) {
 	DeleteMemory(ptr, false);
 }
