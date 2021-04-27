@@ -11,8 +11,17 @@ set_languages("c99", "c++17")
 --add_ldflags("-L/usr/local/lib", "-lpthread", {force = true})
 
 set_project("Rocket")
-
 add_includedirs("RocketEngine")
+
+if is_plat("linux") then
+    add_defines("RK_LINUX")
+end
+if is_plat("macosx") then
+    add_defines("RK_MACOS")
+end
+if is_plat("windows") then
+    add_defines("RK_WINDOWS")
+end
 
 -- 如果当前编译模式是debug
 if is_mode("debug") then
@@ -51,6 +60,20 @@ if is_mode("release", "profile") then
     -- 添加扩展指令集
     add_vectorexts("sse2", "sse3", "ssse3", "mmx")
 end
+
+task("hello")
+    -- 设置运行脚本
+    on_run(function ()
+        print("hello xmake!")
+    end)
+
+target("test")
+    after_build(function (target)
+        -- 导入task模块
+        import("core.project.task")
+        -- 运行hello任务
+        task.run("hello")
+    end)
 
 includes("RocketEngine", "UnitTest")
 
