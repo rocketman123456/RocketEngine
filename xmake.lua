@@ -12,11 +12,29 @@ set_languages("c99", "c++17")
 --add_cxflags("-stdnolib", "-fno-strict-aliasing")
 --add_ldflags("-L/usr/local/lib", "-lpthread", {force = true})
 
+option("render_api")
+    set_showmenu(true)
+    set_description("The Render API config option")
+option_end()
+
 add_requires(
-    "vcpkg::glfw3", 
-    "vcpkg::glad", 
-    "vcpkg::volk"
+    "vcpkg::taskflow",
+    "vcpkg::entt"
 )
+
+if is_config("render_api", "opengl") then
+    add_requires(
+        "vcpkg::glfw3", 
+        "vcpkg::glad"
+    )
+end
+if is_config("render_api", "vulkan") then
+    add_requires(
+        "vcpkg::glfw3", 
+        "vcpkg::vulkan",
+        "vcpkg::volk"
+    )
+end
 
 add_includedirs("RocketEngine")
 

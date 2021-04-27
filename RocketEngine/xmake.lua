@@ -11,3 +11,6 @@ target("RocketEngine")
     if is_plat("linux", "macosx") then
         add_links("pthread", "m", "dl", {public = true})
     end
+    if is_plat("macosx") then
+        add_frameworks("Cocoa", "IOKit", "CoreVideo")
+    end
