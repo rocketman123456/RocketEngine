@@ -5,10 +5,18 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "(lldb) RocketEngine",
+            "name": "(lldb) memory_leak_test",
             "type": "lldb",
             "request": "launch",
-            "program": "${workspaceFolder}/build/macosx/x86_64/debug/RocketEngine",
+            "program": "${workspaceFolder}/build/macosx/x86_64/debug/memory_leak_test",
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "name": "(lldb) glfw_test",
+            "type": "lldb",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/macosx/x86_64/debug/glfw_test",
             "args": [],
             "cwd": "${workspaceFolder}"
         }

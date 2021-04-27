@@ -12,7 +12,11 @@ set_languages("c99", "c++17")
 --add_cxflags("-stdnolib", "-fno-strict-aliasing")
 --add_ldflags("-L/usr/local/lib", "-lpthread", {force = true})
 
-add_requires("vcpkg::glfw3", "vcpkg::glad")
+add_requires(
+    "vcpkg::glfw3", 
+    "vcpkg::glad", 
+    "vcpkg::volk"
+)
 
 add_includedirs("RocketEngine")
 
