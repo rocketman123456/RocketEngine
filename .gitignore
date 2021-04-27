@@ -41,3 +41,4 @@ build/
 # Ignore 3rdParty build
 External/
 Target/
+ThirdParty/build/

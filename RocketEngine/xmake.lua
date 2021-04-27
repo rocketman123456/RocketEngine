@@ -9,5 +9,5 @@ target("RocketEngine")
     --set_kind("binary")
     add_files("Debug/*.cpp")
     if is_plat("linux", "macosx") then
-        add_links("pthread", "m", "dl")
+        add_links("pthread", "m", "dl", {public = true})
     end

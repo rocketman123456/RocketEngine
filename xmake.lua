@@ -1,5 +1,7 @@
 -- Rocket Engine Config File
 
+set_project("Rocket")
+
 add_rules("mode.debug", "mode.release")
 set_languages("c99", "c++17")
 --set_warnings("all", "error")
@@ -10,17 +12,25 @@ set_languages("c99", "c++17")
 --add_cxflags("-stdnolib", "-fno-strict-aliasing")
 --add_ldflags("-L/usr/local/lib", "-lpthread", {force = true})
 
-set_project("Rocket")
+add_requires("vcpkg::glfw3", "vcpkg::glad")
+
 add_includedirs("RocketEngine")
+add_includedirs("ThirdParty/glad/include")
 
 if is_plat("linux") then
     add_defines("RK_LINUX")
+    --add_includedirs("External/Linux/include")
+    --add_linkdirs("External/Linux/lib")
 end
 if is_plat("macosx") then
     add_defines("RK_MACOS")
+    --add_includedirs("External/Darwin/include")
+    --add_linkdirs("External/Darwin/lib")
 end
 if is_plat("windows") then
     add_defines("RK_WINDOWS")
+    --add_includedirs("External/Windows/include")
+    --add_linkdirs("External/Windows/lib")
 end
 
 -- 如果当前编译模式是debug
