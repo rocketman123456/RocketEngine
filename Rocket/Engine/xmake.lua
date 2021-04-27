@@ -1,6 +1,4 @@
--- 如果当前编译模式是debug
 if is_mode("debug") then
-    -- 添加DEBUG编译宏
     --add_defines("__NEW_OVERLOAD_IMPLEMENTATION__")
 end
 

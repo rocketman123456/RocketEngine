@@ -47,7 +47,9 @@ if is_config("profile", "on") then
     add_defines("RK_PROFILE")
 end
 
-add_includedirs("RocketEngine")
+add_includedirs(
+    "Rocket/Engine"
+)
 
 if is_plat("linux") then
     add_defines("RK_LINUX")
@@ -120,7 +122,7 @@ target("test")
         task.run("hello")
     end)
 
-includes("RocketEngine", "UnitTest")
+includes("Rocket", "UnitTest")
 
 --
 --   $ xmake f -p [macosx|linux|iphoneos ..] -a [x86_64|i386|arm64 ..] -m [debug|release]
