@@ -17,7 +17,7 @@ void* operator new[](size_t size, char* file, size_t line);
 void operator delete(void* ptr);
 void operator delete[](void* ptr);
 
-#ifndef NEW_OVERLOAD_IMPLEMENTATION_
+#ifndef __NEW_OVERLOAD_IMPLEMENTATION__
 #define RK_NEW new( __FILE__, __LINE__ )
 //#define new new(__FILE__, __LINE__)
 // 预定义宏: 

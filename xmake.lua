@@ -4,7 +4,7 @@ set_project("Rocket")
 
 add_rules("mode.debug", "mode.release")
 set_languages("c99", "c++17")
---set_warnings("all", "error")
+set_warnings("all", "error")
 --add_includedirs("/usr/include", "/usr/local/include")
 --add_linkdirs("/usr/local/lib", "/usr/lib")
 --add_links("tbox")
@@ -12,15 +12,17 @@ set_languages("c99", "c++17")
 --add_cxflags("-stdnolib", "-fno-strict-aliasing")
 --add_ldflags("-L/usr/local/lib", "-lpthread", {force = true})
 
+add_requires(
+    "vcpkg::spdlog",
+    "vcpkg::fmt",
+    "vcpkg::taskflow",
+    "vcpkg::entt"
+)
+
 option("render_api")
     set_showmenu(true)
     set_description("The Render API config option")
 option_end()
-
-add_requires(
-    "vcpkg::taskflow",
-    "vcpkg::entt"
-)
 
 if is_config("render_api", "opengl") then
     add_requires(
@@ -34,6 +36,15 @@ if is_config("render_api", "vulkan") then
         "vcpkg::vulkan",
         "vcpkg::volk"
     )
+end
+
+option("profile")
+    set_showmenu(true)
+    set_description("The Profile config option")
+option_end()
+
+if is_config("profile", "on") then
+    add_defines("RK_PROFILE")
 end
 
 add_includedirs("RocketEngine")

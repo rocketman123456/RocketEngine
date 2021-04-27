@@ -112,8 +112,8 @@ inline auto allocate_unique(A& alloc, Args&&... args) {
 }
 
 // no need to use custom allocate_shared
-template <class T, class A, class ...Args>
-inline auto allocate_shared(A& alloc, Args&&... args) {
-	//using TAlloc = typename std::allocator_traits<A>::template rebind_alloc<T>;
-    return std::shared_ptr<T>(allocator_new<T>(alloc, std::forward<Args>(args)...), std::default_delete<T>(), alloc);
-}
+//template <class T, class A, class ...Args>
+//inline auto allocate_shared(A& alloc, Args&&... args) {
+//	//using TAlloc = typename std::allocator_traits<A>::template rebind_alloc<T>;
+//    return std::shared_ptr<T>(allocator_new<T>(alloc, std::forward<Args>(args)...), std::default_delete<T>(), alloc);
+//}
