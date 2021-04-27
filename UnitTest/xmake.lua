@@ -12,3 +12,6 @@ target("glfw_test")
     if is_plat("macosx") then
         add_frameworks("Cocoa", "IOKit", "CoreVideo")
     end
+    if is_plat("windows") then
+        add_links("user32", "gdi32", "opengl32", "shell32", "kernel32", {public = true})
+    end

@@ -13,6 +13,7 @@ set_warnings("all", "error")
 --add_ldflags("-L/usr/local/lib", "-lpthread", {force = true})
 
 add_requires(
+    "vcpkg::glfw3",
     "vcpkg::spdlog",
     "vcpkg::fmt",
     "vcpkg::taskflow",
@@ -26,13 +27,11 @@ option_end()
 
 if is_config("render_api", "opengl") then
     add_requires(
-        "vcpkg::glfw3", 
         "vcpkg::glad"
     )
 end
 if is_config("render_api", "vulkan") then
     add_requires(
-        "vcpkg::glfw3", 
         "vcpkg::vulkan",
         "vcpkg::volk"
     )
