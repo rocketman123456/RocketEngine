@@ -3,7 +3,7 @@
 set_project("Rocket")
 
 add_rules("mode.debug", "mode.release")
-set_languages("c99", "c++17")
+set_languages("c99", "c++20")
 set_warnings("all", "error")
 --add_includedirs("/usr/include", "/usr/local/include")
 --add_linkdirs("/usr/local/lib", "/usr/lib")
@@ -29,8 +29,7 @@ if is_config("render_api", "opengl") then
     add_requires(
         "vcpkg::glad"
     )
-end
-if is_config("render_api", "vulkan") then
+elseif is_config("render_api", "vulkan") then
     add_requires(
         "vcpkg::vulkan",
         "vcpkg::volk"
@@ -52,11 +51,9 @@ add_includedirs(
 
 if is_plat("linux") then
     add_defines("RK_LINUX")
-end
-if is_plat("macosx") then
+elseif is_plat("macosx") then
     add_defines("RK_MACOS")
-end
-if is_plat("windows") then
+elseif is_plat("windows") then
     add_defines("RK_WINDOWS")
 end
 
@@ -68,10 +65,8 @@ if is_mode("debug") then
     set_symbols("debug")
     -- 禁用优化
     set_optimize("none")
-end
-
 -- 如果是release或者profile模式
-if is_mode("release", "profile") then
+elseif is_mode("release", "profile") then
     -- 如果是release模式
     if is_mode("release") then
         -- 添加DEBUG编译宏
@@ -97,6 +92,7 @@ if is_mode("release", "profile") then
     -- 添加扩展指令集
     add_vectorexts("sse2", "sse3", "ssse3", "mmx")
 end
+
 
 task("hello")
     -- 设置运行脚本

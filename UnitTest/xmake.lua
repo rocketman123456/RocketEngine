@@ -6,12 +6,12 @@ target("memory_leak_test")
 target("glfw_test")
     set_kind("binary")
     add_files("glfw_test.cpp")
+    add_packages("vcpkg::glfw3")
+    -- Add Render Dependent Libs
     if is_config("render_api", "opengl") then
-        add_packages("vcpkg::glfw3", "vcpkg::glad")
+        add_packages("vcpkg::glad")
+    elseif is_config("render_api", "vulkan") then
+        add_requires("vcpkg::vulkan", "vcpkg::volk")
     end
-    if is_plat("macosx") then
-        add_frameworks("Cocoa", "IOKit", "CoreVideo")
-    end
-    if is_plat("windows") then
-        add_links("user32", "gdi32", "opengl32", "shell32", "kernel32", {public = true})
-    end
+    add_deps("RocketEngine", {inherit = true})
+
