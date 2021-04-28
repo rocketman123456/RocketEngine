@@ -3,6 +3,7 @@
 #pragma once
 
 #ifdef RK_DEBUG
+#include <stdio.h>
 // 重载版本: operator new/new[]( ), operator delete/delete[]( ) 的声明
 void* operator new(size_t size);
 void* operator new[](size_t size);

@@ -13,5 +13,8 @@ target("glfw_test")
     elseif is_config("render_api", "vulkan") then
         add_requires("vcpkg::vulkan", "vcpkg::volk")
     end
+    if is_plat("linux") then
+        add_links("GL", "X11")
+    end
     add_deps("RocketEngine", {inherit = true})
 
