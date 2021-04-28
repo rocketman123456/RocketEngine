@@ -4,7 +4,10 @@ end
 
 target("RocketEngine")
     set_kind("static")
-    add_files("Debug/*.cpp")
+    add_files(
+        "Core/*.cpp",
+        "Debug/*.cpp"
+    )
     add_packages("vcpkg::spdlog", "vcpkg::fmt", {public = true})
     -- Add Platform Dependent Libs
     if is_plat("linux", "macosx") then

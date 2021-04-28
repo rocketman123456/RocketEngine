@@ -1,7 +1,16 @@
 target("memory_leak_test")
     set_kind("binary")
     add_files("memory_leak_test.cpp")
-    add_deps("RocketEngine", {inherit = true})
+    add_files("../Rocket/Engine/Debug/MemLeak.cpp")
+    -- Add Platform Dependent Libs
+    if is_plat("linux", "macosx") then
+        add_links("pthread", "m", "dl", {public = true})
+        if is_plat("macosx") then
+            add_frameworks("Cocoa", "IOKit", "CoreVideo", {public = true})
+        end
+    elseif is_plat("windows") then
+        add_links("user32", "gdi32", "shell32", "kernel32", {public = true})
+    end
 
 target("glfw_test")
     set_kind("binary")
@@ -13,5 +22,13 @@ target("glfw_test")
     elseif is_config("render_api", "vulkan") then
         add_requires("vcpkg::vulkan", "vcpkg::volk")
     end
-    add_deps("RocketEngine", {inherit = true})
+    -- Add Platform Dependent Libs
+    if is_plat("linux", "macosx") then
+        add_links("pthread", "m", "dl", {public = true})
+        if is_plat("macosx") then
+            add_frameworks("Cocoa", "IOKit", "CoreVideo", {public = true})
+        end
+    elseif is_plat("windows") then
+        add_links("user32", "gdi32", "shell32", "kernel32", {public = true})
+    end
 
