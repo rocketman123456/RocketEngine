@@ -7,6 +7,7 @@
 #include <cstddef>
 #include <type_traits>
 
+#if defined(RK_MACOS)
 namespace std {
     template<class T>
     constexpr T* to_address(T* p) noexcept {
@@ -23,6 +24,7 @@ namespace std {
         }
     }
 }
+#endif
 
 namespace Rocket {
     template <typename T>

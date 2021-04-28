@@ -31,4 +31,9 @@ target("glfw_test")
     elseif is_plat("windows") then
         add_links("user32", "gdi32", "shell32", "kernel32", {public = true})
     end
+    if is_plat("linux") then
+        add_links("GL", "X11")
+    end
+    add_deps("RocketEngine", {inherit = true})
+
 

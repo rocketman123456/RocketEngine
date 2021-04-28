@@ -1,13 +1,19 @@
-// https://github.com/YunFei-S/Memory-leak-detector/blob/main/LeakDetector.cpp
+﻿// https://github.com/YunFei-S/Memory-leak-detector/blob/main/LeakDetector.cpp
 // With Smart Pointer Error
 //#define NEW_OVERLOAD_IMPLEMENTATION_
-//#define _CRT_SECURE_NO_WARNINGS
 #include "Debug/MemLeak.h"
 
+#if defined(RK_WINDOWS)
+#define _CRT_SECURE_NO_WARNINGS
+#endif
+
+#include <new>
+#include <cstdio>
 #include <iostream>
 #include <cstring>
 
 #ifdef RK_DEBUG
+
 // 初始化 LeakDetector类中定义的静态变量
 size_t LeakDetector::call_count_ = 0;
 

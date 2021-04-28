@@ -1,11 +1,9 @@
-// https://github.com/YunFei-S/Memory-leak-detector/blob/main/LeakDetector.h
+﻿// https://github.com/YunFei-S/Memory-leak-detector/blob/main/LeakDetector.h
 // With Smart Pointer Error
 #pragma once
 
 #ifdef RK_DEBUG
-#include <cstdio>
-#include <new>
-
+#include <stdio.h>
 // 重载版本: operator new/new[]( ), operator delete/delete[]( ) 的声明
 void* operator new(size_t size);
 void* operator new[](size_t size);
