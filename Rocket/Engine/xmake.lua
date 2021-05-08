@@ -6,7 +6,8 @@ target("RocketEngine")
     set_kind("static")
     add_files(
         "Core/*.cpp",
-        "Debug/*.cpp"
+        "Debug/*.cpp",
+        "Module/*cpp"
     )
     add_packages("vcpkg::spdlog", "vcpkg::fmt", {public = true})
     -- Add Platform Dependent Libs

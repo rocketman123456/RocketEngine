@@ -12,6 +12,49 @@ target("memory_leak_test")
         add_links("user32", "gdi32", "shell32", "kernel32", {public = true})
     end
 
+target("taskflow_test_01")
+    set_kind("binary")
+    add_files("taskflow_test_01.cpp")
+    -- Add Platform Dependent Libs
+    if is_plat("linux", "macosx") then
+        add_links("pthread", "m", "dl", {public = true})
+        if is_plat("macosx") then
+            add_frameworks("Cocoa", "IOKit", "CoreVideo", {public = true})
+        end
+    elseif is_plat("windows") then
+        add_links("user32", "gdi32", "shell32", "kernel32", {public = true})
+    end
+    add_packages("vcpkg::taskflow")
+
+target("engine_test")
+    set_kind("binary")
+    add_files("engine_test.cpp")
+    -- Add Platform Dependent Libs
+    if is_plat("linux", "macosx") then
+        add_links("pthread", "m", "dl", {public = true})
+        if is_plat("macosx") then
+            add_frameworks("Cocoa", "IOKit", "CoreVideo", {public = true})
+        end
+    elseif is_plat("windows") then
+        add_links("user32", "gdi32", "shell32", "kernel32", {public = true})
+    end
+    add_packages("vcpkg::taskflow")
+    add_deps("RocketEngine")
+
+target("hook_test")
+    set_kind("binary")
+    add_files("hook_test.cpp")
+    -- Add Platform Dependent Libs
+    if is_plat("linux", "macosx") then
+        add_links("pthread", "m", "dl", {public = true})
+        if is_plat("macosx") then
+            add_frameworks("Cocoa", "IOKit", "CoreVideo", {public = true})
+        end
+    elseif is_plat("windows") then
+        add_links("user32", "gdi32", "shell32", "kernel32", {public = true})
+    end
+    --add_deps("subhook")
+
 target("glfw_test")
     set_kind("binary")
     add_files("glfw_test.cpp")

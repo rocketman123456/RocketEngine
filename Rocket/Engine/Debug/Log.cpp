@@ -5,6 +5,7 @@
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/sinks/basic_file_sink.h>
 
+#ifdef RK_DEBUG
 namespace Rocket {
     std::shared_ptr<spdlog::logger> Log::s_empty_logger_;
     std::shared_ptr<spdlog::logger> Log::s_core_logger_;
@@ -55,3 +56,4 @@ namespace Rocket {
         }
     }
 } // namespace Rocket
+#endif

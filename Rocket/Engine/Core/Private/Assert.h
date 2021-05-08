@@ -1,6 +1,8 @@
 #pragma once
 
 #if defined(RK_ENABLE_ASSERTS)
+#include <filesystem>
+
 // Alteratively we could use the same "default" message for both "WITH_MSG" and "NO_MSG" and
 // provide support for custom formatting by concatenating the formatting string instead of having the format inside the default message
 #define RK_INTERNAL_ASSERT_IMPL(type, check, msg, ...) \

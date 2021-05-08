@@ -17,7 +17,8 @@ add_requires(
     "vcpkg::spdlog",
     "vcpkg::fmt",
     "vcpkg::taskflow",
-    "vcpkg::entt"
+    "vcpkg::entt",
+    "vcpkg::mimalloc"
 )
 
 option("render_api")
@@ -46,7 +47,8 @@ if is_config("profile", "on") then
 end
 
 add_includedirs(
-    "Rocket/Engine"
+    "Rocket/Engine",
+    "Thirdparty/subhook"
 )
 
 if is_plat("linux") then
@@ -117,7 +119,7 @@ target("test")
         task.run("hello")
     end)
 
-includes("Rocket", "UnitTest")
+includes("Rocket", "Thirdparty","UnitTest")
 
 --
 --   $ xmake f -p [macosx|linux|iphoneos ..] -a [x86_64|i386|arm64 ..] -m [debug|release]

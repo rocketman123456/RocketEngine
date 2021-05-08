@@ -12,10 +12,10 @@
 #include <array>
 
 namespace Rocket {
-	//template <typename Base, typename T>
-	//static bool InstanceOf (const T *) {
-	//	return std::is_base_of<Base, T>::value;
-	//}
+	template <typename Base, typename T>
+	static bool InstanceOf (const T *) {
+		return std::is_base_of<Base, T>::value;
+	}
 
 	template <typename T>
     //using Scope = std::unique_ptr<T, std::function<void(T*)>>;
@@ -60,6 +60,4 @@ namespace Rocket {
 	using Set = std::set<T>;
 	template <typename T>
 	using USet = std::unordered_set<T>;
-
-	using String = std::string;
 } // namespace Rocket
