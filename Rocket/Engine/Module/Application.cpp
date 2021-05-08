@@ -2,16 +2,31 @@
 
 namespace Rocket {
     int Application::Initialize() {
-        RK_TRACE("Application::Initialize");
+        PreInitializeModule();
+        auto result = InitializeModule();
+        if(result != 0) {
+            RK_CORE_ERROR("Initialize Module Failed");
+            return result;
+        }
+        PostInitializeModule();
+
+        PreInitialize();
+        PostInitialize();
+
+        RK_TRACE("Application::Initialized");
         return 0;
     }
 
     void Application::Finalize() {
-        RK_TRACE("Application::Finalize");
+        FinalizeModule();
+
+        // Free Game Resources
+
+        RK_TRACE("Application::Finalized");
     }
 
     void Application::Tick(TimeStep ts) {
-        
+        RK_TRACE("Application::Tick {}", ts);
     }
 
     void Application::PreInitializeModule() {

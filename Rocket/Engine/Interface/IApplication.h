@@ -6,7 +6,7 @@ namespace Rocket {
     class IApplication : inheritance IRuntimeModule {
     public:
         virtual ~IApplication() = default;
-        
+
         // Runtime Module Initialize Steps (Just For Application Module)
         virtual void PreInitializeModule() = 0; // Add Required Modules, Hook Functions, etc.
         virtual void PostInitializeModule() = 0; // Add Callback Function, etc.
@@ -23,7 +23,15 @@ namespace Rocket {
                     return result;
                 }
             }
+            RK_TRACE("Application::InitializeModule");
             return 0;
+        }
+
+        void FinalizeModule() {
+            for(auto module : modules_) {
+                module->Finalize();
+            }
+            RK_TRACE("Application::FinalizeModule");
         }
 
     protected:

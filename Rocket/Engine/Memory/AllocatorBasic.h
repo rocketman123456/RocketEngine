@@ -92,11 +92,7 @@ auto allocator_new(A& alloc, Args&&... args) {
 	auto p = TTraits::allocate(a, 1);
 
 	try {
-#if defined(RK_MACOS)
-		TTraits::construct(a, std::__to_address(p), std::forward<Args>(args)...);
-#else
         TTraits::construct(a, std::to_address(p), std::forward<Args>(args)...);
-#endif
 		return p;
 	} catch(...) {
 		TTraits::deallocate(a, p, 1);
@@ -108,11 +104,7 @@ template <class A, class P>
 void allocator_delete(A& alloc, P p) {
 	using Elem = typename std::pointer_traits<P>::element_type;
 	using Traits = typename std::allocator_traits<A>::template rebind_traits<Elem>;
-#if defined(RK_MACOS)
-	Traits::destroy(alloc, std::__to_address(p));
-#else
     Traits::destroy(alloc, std::to_address(p));
-#endif
 	Traits::deallocate(alloc, p, 1);
 }
 

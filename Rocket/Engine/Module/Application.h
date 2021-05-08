@@ -7,8 +7,8 @@ namespace Rocket {
     public:
         virtual ~Application() = default;
 
-        virtual int Initialize();
-        virtual void Finalize();
+        virtual int Initialize() final;
+        virtual void Finalize() final;
 
         virtual void Tick(TimeStep ts);
 

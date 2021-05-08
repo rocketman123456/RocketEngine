@@ -1,8 +1,6 @@
 #include "Core/EntryPoint.h"
 #include "Module/Application.h"
 
-using namespace Rocket;
-
 extern Rocket::Application* g_Application;
 
 extern void AllocateModule();
@@ -19,13 +17,18 @@ int main(int argc, char **argv) {
     // Allocate Modules
     AllocateModule();
 
+    // Initialize Application
     int result = g_Application->Initialize();
     if(result != 0) {
         RK_ERROR("Application Initialize Failed");
     }
 
+    // Application Tick
+
+    // Finalize Application
     g_Application->Finalize();
 
+    // Deallocate Modules
     DeallocateModule();
 
     return 0;
