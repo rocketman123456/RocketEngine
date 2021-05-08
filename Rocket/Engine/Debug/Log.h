@@ -2,7 +2,6 @@
 #include <memory>
 #include <spdlog/spdlog.h>
 
-#ifdef RK_DEBUG
 namespace Rocket
 {
     enum class LogLevel {
@@ -35,7 +34,6 @@ namespace Rocket
         static std::shared_ptr<spdlog::logger> s_graphics_logger_;
     };
 } // namespace Rocket
-#endif
 
 #ifdef RK_DEBUG
 #define RK_CORE_CRITICAL(...)   ::Rocket::Log::GetCoreLogger()->critical(__VA_ARGS__)

@@ -38,7 +38,7 @@ static size_t memory_allocated = 0;
 
 // 对双向链表采用头插法分配内存
 static void* AllocateMemory(size_t size, bool array, char const* file, size_t line) {
-	RK_CORE_TRACE("Alllocate Memory");
+	//RK_CORE_TRACE("Alllocate Memory");
 	//printf("Alllocate Memory\n");
 	// 我们需要为我们管理内存分配的 MemoryList结点 也申请内存
 	// 计算新的大小
@@ -81,7 +81,7 @@ static void* AllocateMemory(size_t size, bool array, char const* file, size_t li
 // 对双向链表采用头删法手动管理释放内存
 // 注意: delete/delete[]时 我们并不知道它操作的是双向链表中的哪一个结点
 static void  DeleteMemory(void* ptr, bool array) {
-	RK_CORE_TRACE("Delete Memory");
+	//RK_CORE_TRACE("Delete Memory");
     //printf("Delete Memory\n");
 	// 注意, 堆的空间自底向上增长. 所以此处为减
 	MemoryList* cur_elem = (MemoryList*)((char*)ptr - sizeof(MemoryList));

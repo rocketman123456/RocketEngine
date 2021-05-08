@@ -12,8 +12,11 @@ int main(int argc, char **argv) {
     // Init Log
     Rocket::Log::Init();
     
+    // Initialize Memory Manager
+
     // Get Command Line Parameters
 
+    // Allocate Modules
     AllocateModule();
 
     int result = g_Application->Initialize();
@@ -23,7 +26,6 @@ int main(int argc, char **argv) {
 
     g_Application->Finalize();
 
-    delete g_Application;
     DeallocateModule();
 
     return 0;

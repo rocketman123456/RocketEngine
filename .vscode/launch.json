@@ -20,5 +20,13 @@
             "args": [],
             "cwd": "${workspaceFolder}"
         }
+        {
+            "name": "(lldb) engine_test",
+            "type": "lldb",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/macosx/x86_64/debug/engine_test",
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        }
     ]
 }

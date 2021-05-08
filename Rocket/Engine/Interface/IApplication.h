@@ -5,6 +5,8 @@
 namespace Rocket {
     class IApplication : inheritance IRuntimeModule {
     public:
+        virtual ~IApplication() = default;
+        
         // Runtime Module Initialize Steps (Just For Application Module)
         virtual void PreInitializeModule() = 0; // Add Required Modules, Hook Functions, etc.
         virtual void PostInitializeModule() = 0; // Add Callback Function, etc.

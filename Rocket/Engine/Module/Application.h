@@ -2,18 +2,20 @@
 #include "Interface/IApplication.h"
 
 namespace Rocket {
-    class Application : implements IApplication { // For Test
-        RUNTIME_MODULE_TYPE(Application);
+    class Application : inheritance IApplication { // For Test
+        //RUNTIME_MODULE_TYPE(Application);
     public:
-        virtual int Initialize() final;
-        virtual void Finalize() final;
+        virtual ~Application() = default;
 
-        virtual void Tick(TimeStep ts) final;
+        virtual int Initialize();
+        virtual void Finalize();
 
-        virtual void PreInitializeModule() final;
-        virtual void PostInitializeModule() final;
+        virtual void Tick(TimeStep ts);
 
-        virtual void PreInitialize() final;
-        virtual void PostInitialize() final;
+        virtual void PreInitializeModule();
+        virtual void PostInitializeModule();
+
+        virtual void PreInitialize();
+        virtual void PostInitialize();
     };
 }
