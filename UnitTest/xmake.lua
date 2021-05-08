@@ -1,17 +1,3 @@
-target("memory_leak_test")
-    set_kind("binary")
-    add_files("memory_leak_test.cpp")
-    add_files("../Rocket/Engine/Debug/MemLeak.cpp")
-    -- Add Platform Dependent Libs
-    if is_plat("linux", "macosx") then
-        add_links("pthread", "m", "dl", {public = true})
-        if is_plat("macosx") then
-            add_frameworks("Cocoa", "IOKit", "CoreVideo", {public = true})
-        end
-    elseif is_plat("windows") then
-        add_links("user32", "gdi32", "shell32", "kernel32", {public = true})
-    end
-
 target("taskflow_test_01")
     set_kind("binary")
     add_files("taskflow_test_01.cpp")

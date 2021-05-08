@@ -7,21 +7,20 @@
 // 重载版本: operator new/new[]( ), operator delete/delete[]( ) 的声明
 void* operator new(size_t size);
 void* operator new[](size_t size);
-void* operator new(size_t size, char* file, size_t line);
-void* operator new[](size_t size, char* file, size_t line);
+void* operator new(size_t size, char const* file, size_t line);
+void* operator new[](size_t size, char const* file, size_t line);
 // 注意到, 上面我们重载的函数中, 第一个参数和第三个参数的类型是size_t
 // 其中第一个参数size为 sizeof的返回值, 所以为size_t类型
 // 第三个参数的含义为 行号, 是我们重载 operator new/new[]( )后自己加的参数, 此处也可以用unsigned int. 但最好用 size_t. 原因是size_t的可移植性好. 理由见上面链接
 void operator delete(void* ptr) noexcept;
 void operator delete[](void* ptr) noexcept;
 
-#ifndef __NEW_OVERLOAD_IMPLEMENTATION__
-#define RK_NEW new( __FILE__, __LINE__ )
 //#define new new(__FILE__, __LINE__)
 // 预定义宏: 
 // __FILE__(两个下划线): 代表当前源代码文件名的字符串文字(我们用这个宏获得存在内存泄漏文件的文件名)
 // __LINE__(两个下划线): 代表当前源代码文件中的行号的整数常量(我们用这个宏获得存在内存泄漏文件内存泄漏的行号)
-#endif
+#define RK_NEW new( __FILE__, __LINE__ )
+#define RK_DELETE delete
 
 class LeakDetector {
 public:
@@ -40,4 +39,5 @@ private:
 static LeakDetector exitCounter;
 #else
 #define RK_NEW new
+#define RK_DELETE delete
 #endif

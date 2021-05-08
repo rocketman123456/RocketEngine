@@ -1,14 +1,12 @@
-if is_mode("debug") then
-    --add_defines("__NEW_OVERLOAD_IMPLEMENTATION__")
-end
-
 target("RocketEngine")
     set_kind("static")
+    -- Add Files
     add_files(
         "Core/*.cpp",
         "Debug/*.cpp",
         "Module/*cpp"
     )
+    -- Add Packages
     add_packages("vcpkg::spdlog", "vcpkg::fmt", {public = true})
     -- Add Platform Dependent Libs
     if is_plat("linux", "macosx") then

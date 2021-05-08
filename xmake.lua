@@ -12,14 +12,22 @@ set_warnings("all", "error")
 --add_cxflags("-stdnolib", "-fno-strict-aliasing")
 --add_ldflags("-L/usr/local/lib", "-lpthread", {force = true})
 
+--add_requires("fmt", {system = false, configs = {}})
+--add_requires("spdlog", {system = false, configs = {fmt_external = true}})
+
 add_requires(
-    "vcpkg::glfw3",
     "vcpkg::spdlog",
     "vcpkg::fmt",
     "vcpkg::taskflow",
     "vcpkg::entt",
     "vcpkg::mimalloc"
 )
+
+if is_plat("linux", "macosx", "windows") then
+    add_requires(
+        "vcpkg::glfw3"
+    )
+end
 
 option("render_api")
     set_showmenu(true)

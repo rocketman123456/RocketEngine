@@ -1,6 +1,5 @@
 #pragma once
 #include <memory>
-
 #include <spdlog/spdlog.h>
 
 #ifdef RK_DEBUG
