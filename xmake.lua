@@ -1,20 +1,25 @@
 -- Rocket Engine Config File
 
+--
+-- Set Project Basic
+--
 set_project("Rocket")
-
 add_rules("mode.debug", "mode.release")
 set_languages("c99", "c++20")
 set_warnings("all", "error")
---add_includedirs("/usr/include", "/usr/local/include")
+
 --add_linkdirs("/usr/local/lib", "/usr/lib")
 --add_links("tbox")
 --add_syslinks("z", "pthread")
 --add_cxflags("-stdnolib", "-fno-strict-aliasing")
 --add_ldflags("-L/usr/local/lib", "-lpthread", {force = true})
 
+
+--
+-- Add Required Modules
+--
 --add_requires("fmt", {system = false, configs = {}})
 --add_requires("spdlog", {system = false, configs = {fmt_external = true}})
-
 add_requires(
     "vcpkg::spdlog",
     "vcpkg::fmt",
@@ -22,51 +27,73 @@ add_requires(
     "vcpkg::entt",
     "vcpkg::mimalloc"
 )
-
 if is_plat("linux", "macosx", "windows") then
     add_requires(
         "vcpkg::glfw3"
     )
 end
 
+--
+-- Set Render Options
+--
 option("render_api")
     set_showmenu(true)
     set_description("The Render API config option")
 option_end()
-
 if is_config("render_api", "opengl") then
+    add_defines("RK_OPENGL")
     add_requires(
         "vcpkg::glad"
     )
 elseif is_config("render_api", "vulkan") then
+    add_defines("RK_VULKAN")
     add_requires(
-        "vcpkg::vulkan",
         "vcpkg::volk"
+    )
+elseif is_config("render_api", "metal") then
+    add_defines("RK_METAL")
+    add_requires(
+        ""
     )
 end
 
+--
+-- Set Profile Options
+--
 option("profile")
     set_showmenu(true)
     set_description("The Profile config option")
 option_end()
-
 if is_config("profile", "on") then
     add_defines("RK_PROFILE")
 end
 
+--
+-- Set Include Dirs
+--
 add_includedirs(
     "Rocket/Engine",
+    "Rocket/Platform",
     "Thirdparty/subhook"
 )
 
-if is_plat("linux") then
-    add_defines("RK_LINUX")
-elseif is_plat("macosx") then
-    add_defines("RK_MACOS")
-elseif is_plat("windows") then
-    add_defines("RK_WINDOWS")
+--
+-- Set Platform Defines
+--
+if is_plat("linux", "macosx", "windows") then
+    add_defines("RK_DESKTOP", "GLFW_INCLUDE_NONE")
+    if is_plat("linux") then
+        add_defines("RK_LINUX")
+    elseif is_plat("macosx") then
+        add_defines("RK_MACOS")
+    elseif is_plat("windows") then
+        add_defines("RK_WINDOWS")
+    end
 end
 
+--
+-- Set Compile Defines
+--
 -- 如果当前编译模式是debug
 if is_mode("debug") then
     -- 添加DEBUG编译宏
@@ -103,13 +130,18 @@ elseif is_mode("release", "profile") then
     add_vectorexts("sse2", "sse3", "ssse3", "mmx")
 end
 
+--
+-- Add Sub Module
+--
+includes(
+    "Rocket", 
+    "Thirdparty", 
+    "UnitTest"
+)
 
-task("hello")
-    -- 设置运行脚本
-    on_run(function ()
-        print("hello xmake!")
-    end)
-
+--
+-- Add Test
+--
 target("test")
     on_load(function (target)
         print("on load test")
@@ -117,17 +149,16 @@ target("test")
     on_build(function (target)
         print("on build test")
     end)
+    -- 设置运行脚本
+    on_run(function ()
+        print("on run test")
+    end)
     on_link(function (target)
         print("on link test")
     end)
     after_build(function (target)
-        -- 导入task模块
-        import("core.project.task")
-        -- 运行hello任务
-        task.run("hello")
+        print("after build test")
     end)
-
-includes("Rocket", "Thirdparty","UnitTest")
 
 --
 --   $ xmake f -p [macosx|linux|iphoneos ..] -a [x86_64|i386|arm64 ..] -m [debug|release]

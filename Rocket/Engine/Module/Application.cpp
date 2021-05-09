@@ -18,15 +18,17 @@ namespace Rocket {
     }
 
     void Application::Finalize() {
-        FinalizeModule();
-
         // Free Game Resources
 
+        FinalizeModule();
         RK_TRACE("Application::Finalized");
     }
 
     void Application::Tick(TimeStep ts) {
         RK_TRACE("Application::Tick {}", ts);
+        for(auto module : modules_) {
+            module->Tick(ts);
+        }
     }
 
     void Application::PreInitializeModule() {

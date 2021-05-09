@@ -15,7 +15,7 @@ namespace Rocket {
         virtual void PreInitialize() = 0; // Prepare Application (Parse Command Line, etc)
         virtual void PostInitialize() = 0; // Prepare Application (Load Assets, etc)
 
-        [[nodiscard]] virtual int InitializeModule() {
+        [[nodiscard]] virtual int32_t InitializeModule() {
             for(auto module : modules_) {
                 auto result = module->Initialize();
                 if(result != 0) {
@@ -33,6 +33,8 @@ namespace Rocket {
             }
             RK_TRACE("Application::FinalizeModule");
         }
+
+        inline void AddModule(IRuntimeModule* module) { modules_.push_back(module); }
 
     protected:
         Vector<IRuntimeModule*> modules_;

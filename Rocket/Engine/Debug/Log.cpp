@@ -6,7 +6,6 @@
 #include <spdlog/sinks/basic_file_sink.h>
 
 namespace Rocket {
-    std::shared_ptr<spdlog::logger> Log::s_empty_logger_;
     std::shared_ptr<spdlog::logger> Log::s_core_logger_;
     std::shared_ptr<spdlog::logger> Log::s_client_logger_;
     std::shared_ptr<spdlog::logger> Log::s_event_logger_;
@@ -15,7 +14,6 @@ namespace Rocket {
     void Log::Init(LogLevel level) {
         spdlog::set_pattern("%^[%T] %n: %v%$");
 
-        s_empty_logger_ = spdlog::stdout_color_mt("Empty");
         s_core_logger_ = spdlog::stdout_color_mt("Rocket");
         s_client_logger_ = spdlog::stdout_color_mt("App");
         s_event_logger_ = spdlog::stdout_color_mt("Event");

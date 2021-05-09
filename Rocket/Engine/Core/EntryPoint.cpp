@@ -1,7 +1,7 @@
 #include "Core/EntryPoint.h"
 #include "Module/Application.h"
 
-extern Rocket::Application* g_Application;
+extern Rocket::IApplication* g_Application;
 
 extern void AllocateModule();
 extern void DeallocateModule();
@@ -24,6 +24,9 @@ int main(int argc, char **argv) {
     }
 
     // Application Tick
+    for(int i = 0; i < 10; ++i) {
+        g_Application->Tick(1);
+    }
 
     // Finalize Application
     g_Application->Finalize();

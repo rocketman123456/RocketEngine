@@ -1,43 +1,43 @@
 target("taskflow_test_01")
     set_kind("binary")
     add_files("taskflow_test_01.cpp")
+    add_packages("vcpkg::taskflow")
     -- Add Platform Dependent Libs
     if is_plat("linux", "macosx") then
-        add_links("pthread", "m", "dl", {public = true})
+        add_links("pthread", "m", "dl")
         if is_plat("macosx") then
-            add_frameworks("Cocoa", "IOKit", "CoreVideo", {public = true})
+            add_frameworks("Cocoa", "IOKit", "CoreVideo")
         end
     elseif is_plat("windows") then
-        add_links("user32", "gdi32", "shell32", "kernel32", {public = true})
+        add_links("user32", "gdi32", "shell32", "kernel32")
     end
-    add_packages("vcpkg::taskflow")
 
 target("engine_test")
     set_kind("binary")
     add_files("engine_test.cpp")
+    add_packages("vcpkg::taskflow")
+    add_deps("RocketEngine", "RocketPlatform")
     -- Add Platform Dependent Libs
     if is_plat("linux", "macosx") then
-        add_links("pthread", "m", "dl", {public = true})
+        add_links("pthread", "m", "dl")
         if is_plat("macosx") then
-            add_frameworks("Cocoa", "IOKit", "CoreVideo", {public = true})
+            add_frameworks("Cocoa", "IOKit", "CoreVideo")
         end
     elseif is_plat("windows") then
-        add_links("user32", "gdi32", "shell32", "kernel32", {public = true})
+        add_links("user32", "gdi32", "shell32", "kernel32")
     end
-    add_packages("vcpkg::taskflow")
-    add_deps("RocketEngine")
 
 target("hook_test")
     set_kind("binary")
     add_files("hook_test.cpp")
     -- Add Platform Dependent Libs
     if is_plat("linux", "macosx") then
-        add_links("pthread", "m", "dl", {public = true})
+        add_links("pthread", "m", "dl")
         if is_plat("macosx") then
-            add_frameworks("Cocoa", "IOKit", "CoreVideo", {public = true})
+            add_frameworks("Cocoa", "IOKit", "CoreVideo")
         end
     elseif is_plat("windows") then
-        add_links("user32", "gdi32", "shell32", "kernel32", {public = true})
+        add_links("user32", "gdi32", "shell32", "kernel32")
     end
     --add_deps("subhook")
 
@@ -49,17 +49,14 @@ target("glfw_test")
     if is_config("render_api", "opengl") then
         add_packages("vcpkg::glad")
     elseif is_config("render_api", "vulkan") then
-        add_requires("vcpkg::vulkan", "vcpkg::volk")
+        add_packages("vcpkg::volk")
     end
     -- Add Platform Dependent Libs
-    if is_plat("macosx") then
-        add_frameworks("Cocoa", "IOKit", "CoreVideo", {public = true})
-        add_links("pthread", "m", "dl", {public = true})
-    elseif is_plat("linux") then
-        add_links("GL", "X11", "pthread", "m", "dl", {public = true})
+    if is_plat("linux", "macosx") then
+        add_links("pthread", "m", "dl")
+        if is_plat("macosx") then
+            add_frameworks("Cocoa", "IOKit", "CoreVideo")
+        end
     elseif is_plat("windows") then
-        add_links("user32", "gdi32", "shell32", "kernel32", {public = true})
+        add_links("user32", "gdi32", "shell32", "kernel32")
     end
-    add_deps("RocketEngine", {inherit = true})
-
-

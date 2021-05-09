@@ -7,7 +7,7 @@ namespace Rocket {
     public:
         virtual ~Application() = default;
 
-        virtual int Initialize() final;
+        virtual int32_t Initialize() final;
         virtual void Finalize() final;
 
         virtual void Tick(TimeStep ts);
@@ -18,4 +18,6 @@ namespace Rocket {
         virtual void PreInitialize();
         virtual void PostInitialize();
     };
+
+    extern IApplication* g_Application;
 }

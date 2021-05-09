@@ -1,0 +1,8 @@
+target("RocketRender")
+    --set_kind("static")
+    --on_build(function (target)
+    --    print("on build RocketRender")
+    --end)
+    --after_build(function (target)
+    --    print("after build RocketRender")
+    --end)

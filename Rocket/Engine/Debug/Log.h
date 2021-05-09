@@ -19,15 +19,12 @@ namespace Rocket
 
         static void Init(LogLevel level = LogLevel::TRACE);
 
-        inline static void SetChannel(const std::string& channel) { s_empty_logger_ = s_empty_logger_->clone(channel); }
-        inline static std::shared_ptr<spdlog::logger>& GetEmptyLogger() { return s_empty_logger_; }
         inline static std::shared_ptr<spdlog::logger>& GetCoreLogger() { return s_core_logger_; }
         inline static std::shared_ptr<spdlog::logger>& GetClientLogger() { return s_client_logger_; }
         inline static std::shared_ptr<spdlog::logger>& GetEventLogger() { return s_event_logger_; }
         inline static std::shared_ptr<spdlog::logger>& GetGraphicsLogger() { return s_graphics_logger_; }
 
     private:
-        static std::shared_ptr<spdlog::logger> s_empty_logger_;
         static std::shared_ptr<spdlog::logger> s_core_logger_;
         static std::shared_ptr<spdlog::logger> s_client_logger_;
         static std::shared_ptr<spdlog::logger> s_event_logger_;
@@ -36,6 +33,7 @@ namespace Rocket
 } // namespace Rocket
 
 #ifdef RK_DEBUG
+
 #define RK_CORE_CRITICAL(...)   ::Rocket::Log::GetCoreLogger()->critical(__VA_ARGS__)
 #define RK_CORE_ERROR(...)      ::Rocket::Log::GetCoreLogger()->error(__VA_ARGS__)
 #define RK_CORE_WARN(...)       ::Rocket::Log::GetCoreLogger()->warn(__VA_ARGS__)
@@ -60,12 +58,8 @@ namespace Rocket
 #define RK_INFO(...)        ::Rocket::Log::GetClientLogger()->info(__VA_ARGS__)
 #define RK_TRACE(...)       ::Rocket::Log::GetClientLogger()->trace(__VA_ARGS__)
 
-#define RK_CRITICAL_CHANNEL(channel, ...)   ::Rocket::Log::SetChannel(channel); ::Rocket::Log::GetEmptyLogger()->critical(__VA_ARGS__);
-#define RK_ERROR_CHANNEL(channel, ...)      ::Rocket::Log::SetChannel(channel); ::Rocket::Log::GetEmptyLogger()->error(__VA_ARGS__);
-#define RK_WARN_CHANNEL(channel, ...)       ::Rocket::Log::SetChannel(channel); ::Rocket::Log::GetEmptyLogger()->warn(__VA_ARGS__);
-#define RK_INFO_CHANNEL(channel, ...)       ::Rocket::Log::SetChannel(channel); ::Rocket::Log::GetEmptyLogger()->info(__VA_ARGS__);
-#define RK_TRACE_CHANNEL(channel, ...)      ::Rocket::Log::SetChannel(channel); ::Rocket::Log::GetEmptyLogger()->trace(__VA_ARGS__);
 #else
+
 #define RK_CORE_CRITICAL(...)
 #define RK_CORE_ERROR(...)
 #define RK_CORE_WARN(...)
@@ -90,10 +84,4 @@ namespace Rocket
 #define RK_INFO(...)
 #define RK_TRACE(...)
 
-// These Macro is Uncomplete
-#define RK_CRITICAL_CHANNEL(channel, ...)
-#define RK_ERROR_CHANNEL(channel, ...)
-#define RK_WARN_CHANNEL(channel, ...)
-#define RK_INFO_CHANNEL(channel, ...)
-#define RK_TRACE_CHANNEL(channel, ...)
 #endif

@@ -14,7 +14,6 @@
 #include <cstring>
 
 #ifdef RK_DEBUG
-
 // 初始化 LeakDetector类中定义的静态变量
 size_t LeakDetector::call_count_ = 0;
 

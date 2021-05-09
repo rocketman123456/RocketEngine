@@ -1,6 +1,6 @@
 #pragma once
 #include "Core/Core.h"
-#include "Utils/Timestep.h"
+#include "Utils/TimeStep.h"
 
 namespace Rocket {
     Interface IRuntimeModule {
@@ -8,7 +8,7 @@ namespace Rocket {
         IRuntimeModule() {}
         virtual ~IRuntimeModule() = default;
 
-        [[nodiscard]] virtual int Initialize() = 0;
+        [[nodiscard]] virtual int32_t Initialize() = 0;
         virtual void Finalize() = 0;
 
         virtual void Tick(TimeStep ts) = 0;
