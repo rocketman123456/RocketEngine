@@ -23,7 +23,7 @@ int main(int argc, char **argv) {
         RK_ERROR("Application Initialize Failed");
     }
 
-    // Application Tick
+    // Application Tick [ For Test ]
     for(int i = 0; i < 10; ++i) {
         g_Application->Tick(1);
     }
