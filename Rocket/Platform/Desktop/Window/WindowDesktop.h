@@ -20,6 +20,7 @@ namespace Rocket {
             void Finalize();
             void Tick(TimeStep ts);
 
+            [[nodiscard]] bool GetWindowsShouldClouse() { return glfwWindowShouldClose(window_); }
             [[nodiscard]] inline void* GetWindowHandle() { return window_; }
         private:
             GLFWwindow* window_ = nullptr;

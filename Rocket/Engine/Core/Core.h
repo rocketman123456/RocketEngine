@@ -6,3 +6,4 @@
 
 #include "Debug/MemLeak.h"
 #include "Debug/Log.h"
+#include "Debug/Instrumentor.h"

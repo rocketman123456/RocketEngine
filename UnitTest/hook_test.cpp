@@ -31,7 +31,7 @@ void free(void* ptr) {
 #elif defined(RK_WINDOWS)
 #include <malloc.h>
 
-
+// TODO: add windows hook function
 #endif
 
 int main() {
