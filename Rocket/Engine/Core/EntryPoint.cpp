@@ -6,7 +6,7 @@ extern Rocket::IApplication* g_Application;
 extern void AllocateModule();
 extern void DeallocateModule();
 
-int main(int argc, char **argv) {
+int main(int argc, char* argv[]) {
     // Init Log
     Rocket::Log::Init();
     
