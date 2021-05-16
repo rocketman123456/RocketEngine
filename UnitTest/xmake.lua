@@ -25,6 +25,7 @@ target("engine_test")
         end
     elseif is_plat("windows") then
         add_links("user32", "gdi32", "shell32", "kernel32")
+        add_ldflags("/subsystem:console")
     end
 
 target("hook_test")
