@@ -4,6 +4,9 @@
 #if defined(RK_OPENGL)
 #include <glad/glad.h>
 #elif defined(RK_VULKAN)
+#include <volk.h>
+#include <vulkan/vulkan.hpp>
+#elif defined(RK_SOFT_RENDER)
 
 #elif defined(RK_METAL)
 
