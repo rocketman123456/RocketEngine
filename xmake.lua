@@ -6,7 +6,7 @@
 set_project("Rocket")
 add_rules("mode.debug", "mode.release")
 set_languages("c99", "c++20")
-set_warnings("all", "error")
+--set_warnings("all", "error")
 
 --add_linkdirs("/usr/local/lib", "/usr/lib")
 --add_links("tbox")
@@ -87,7 +87,7 @@ if is_plat("linux", "macosx", "windows") then
     elseif is_plat("macosx") then
         add_defines("RK_MACOS")
     elseif is_plat("windows") then
-        add_defines("RK_WINDOWS")
+        add_defines("RK_WINDOWS", "_CRT_SECURE_NO_WARNINGS")
     end
 end
 

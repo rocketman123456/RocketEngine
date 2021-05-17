@@ -8,6 +8,7 @@ extern void DeallocateModule();
 
 int main(int argc, char **argv) {
     RK_PROFILE_BEGIN_SESSION("Initialize", "Initialize.json");
+
     // Init Log
     {
         RK_PROFILE_SCOPE("Rocket::Log::Init()");
