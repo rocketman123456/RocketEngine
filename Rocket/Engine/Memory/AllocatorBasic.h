@@ -122,7 +122,6 @@ struct allocation_deleter {
 };
 
 // allocate_unique and allocate_shared fix Smart Pointer Bug in operator new and delete
-
 template <class T, class A, class ...Args>
 inline auto allocate_unique(A& alloc, Args&&... args) {
 	using TAlloc = typename std::allocator_traits<A>::template rebind_alloc<T>;

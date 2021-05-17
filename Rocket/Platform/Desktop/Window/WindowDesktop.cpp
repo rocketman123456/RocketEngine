@@ -3,7 +3,11 @@
 namespace Rocket {
     namespace Window {
         int32_t WindowDesktop::Initialize() {
-            glfwInit();
+            if(!glfwInit()) {
+                RK_CORE_ERROR("Failed to init GLFW");
+                glfwTerminate();
+                return 1;
+            }
 #if defined(RK_OPENGL)
             glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
             glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);

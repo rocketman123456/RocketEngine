@@ -21,7 +21,7 @@ namespace Rocket {
 #define RUNTIME_MODULE_TYPE(type) \
     virtual const char* GetName() const override { return #type; }
 
-    inline std::ostream &operator << (std::ostream& os, const IRuntimeModule& r) {
+    inline std::ostream& operator << (std::ostream& os, const IRuntimeModule& r) {
 		return os << r.ToString();
 	}
 }
