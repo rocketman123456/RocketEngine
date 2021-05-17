@@ -7,4 +7,9 @@ target("RocketEngine")
         "Module/*.cpp"
     )
     -- Add Packages
-    add_packages("vcpkg::spdlog", "vcpkg::fmt", {public = true})
+    add_packages(
+        "vcpkg::mimalloc", 
+        "vcpkg::spdlog", 
+        "vcpkg::fmt", 
+        {public = true}
+    )

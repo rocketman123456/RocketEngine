@@ -25,7 +25,8 @@ add_requires(
     "vcpkg::fmt",
     "vcpkg::taskflow",
     "vcpkg::entt",
-    "vcpkg::mimalloc"
+    "vcpkg::mimalloc",
+    "vcpkg::eigen3"
 )
 if is_plat("linux", "macosx", "windows") then
     add_requires(
@@ -45,13 +46,18 @@ if is_config("render_api", "opengl") then
     add_requires(
         "vcpkg::glad"
     )
+    printf("OpenGL Render API")
+elseif is_config("render_api", "opengl_es") then
+    add_defines("RK_OPENGL_ES")
 elseif is_config("render_api", "vulkan") then
     add_defines("RK_VULKAN")
     add_requires(
         "vcpkg::volk"
     )
-elseif is_config("render_api", "vulkan") then 
+    printf("Vulkan Render API")
+elseif is_config("render_api", "soft_render") then 
     add_defines("RK_SOFT_RENDER")
+    printf("Soft Render API")
 elseif is_config("render_api", "metal") then
     add_defines("RK_METAL")
     add_requires(
@@ -76,6 +82,7 @@ end
 add_includedirs(
     "Rocket/Engine",
     "Rocket/Platform",
+    "Rocket/Render",
     "Thirdparty/subhook"
 )
 

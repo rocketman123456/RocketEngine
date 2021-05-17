@@ -3,7 +3,10 @@ target("RocketPlatform")
     if is_plat("linux", "macosx", "windows") then
         -- Add Packages
         add_packages(
-            "vcpkg::glfw3"
+            "vcpkg::glfw3",
+            "vcpkg::spdlog", 
+            "vcpkg::fmt", 
+            {public = true}
         )
         -- Add Files
         add_files(

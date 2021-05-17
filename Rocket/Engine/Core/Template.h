@@ -11,6 +11,8 @@
 #include <queue>
 #include <array>
 
+#include "Memory/AllocatorBasic.h"
+
 namespace Rocket {
 	template <typename Base, typename T>
 	static bool InstanceOf (const T *) {
@@ -29,12 +31,14 @@ namespace Rocket {
 
     template <typename T, typename... Arguments>
     constexpr Ref<T> CreateRef(Arguments ... args) {
+		Ref<T> ptr = allocate_shared<T>(args...);
         Ref<T> ptr = Ref<T>(new T(args...));
         return std::move(ptr);
     }
 
     template <typename T, typename... Arguments>
 	constexpr Scope<T> CreateScope(Arguments ... args) {
+		//allocate_unique<T, >()
         Scope<T> ptr = Scope<T>(new T(args...));
         return std::move(ptr);
 	}

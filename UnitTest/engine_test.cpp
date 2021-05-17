@@ -1,6 +1,7 @@
 #include "Core/Core.h"
 #include "Module/Application.h"
 #include "Module/WindowManager.h"
+#include "Module/RenderManager.h"
 
 namespace Rocket {
     class TestApplication : implements Application {

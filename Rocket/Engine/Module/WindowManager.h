@@ -11,7 +11,6 @@ namespace Rocket {
     class WindowManager : implements IRuntimeModule {
         RUNTIME_MODULE_TYPE(WindowManager)
     public:
-        WindowManager() : window_handle_(nullptr) {}
         virtual ~WindowManager() = default;
 
         virtual int32_t Initialize() final;
@@ -19,7 +18,7 @@ namespace Rocket {
         virtual void Tick(TimeStep ts) final;
 
     private:
-        [[maybe_unused]] WindowHandle window_handle_;
+        [[maybe_unused]] WindowHandle window_handle_ = nullptr;
 #if defined(RK_DESKTOP)
         [[maybe_unused]] Window::WindowDesktop window_;
 #endif
