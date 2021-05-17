@@ -4,6 +4,9 @@
 #if defined(RK_OPENGL)
 #include <glad/glad.h>
 #elif defined(RK_VULKAN)
+#include <volk.h>
+#include <vulkan/vulkan.hpp>
+#elif defined(RK_SOFT_RENDER)
 
 #elif defined(RK_METAL)
 
@@ -20,6 +23,7 @@ namespace Rocket {
             void Finalize();
             void Tick(TimeStep ts);
 
+            [[nodiscard]] bool GetWindowsShouldClouse() { return glfwWindowShouldClose(window_); }
             [[nodiscard]] inline void* GetWindowHandle() { return window_; }
         private:
             GLFWwindow* window_ = nullptr;

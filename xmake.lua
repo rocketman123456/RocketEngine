@@ -50,6 +50,8 @@ elseif is_config("render_api", "vulkan") then
     add_requires(
         "vcpkg::volk"
     )
+elseif is_config("render_api", "vulkan") then 
+    add_defines("RK_SOFT_RENDER")
 elseif is_config("render_api", "metal") then
     add_defines("RK_METAL")
     add_requires(

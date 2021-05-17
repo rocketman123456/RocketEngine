@@ -19,10 +19,11 @@ namespace Rocket {
         virtual void Tick(TimeStep ts) final;
 
     private:
-        WindowHandle window_handle_;
+        [[maybe_unused]] WindowHandle window_handle_;
 #if defined(RK_DESKTOP)
-        Window::WindowDesktop window_;
+        [[maybe_unused]] Window::WindowDesktop window_;
 #endif
+// TODO: add more platform
     };
 
     extern IRuntimeModule* g_WindowManager;

@@ -10,9 +10,7 @@ namespace Rocket {
 
         [[nodiscard]] virtual int32_t Initialize() = 0;
         virtual void Finalize() = 0;
-
         virtual void Tick(TimeStep ts) = 0;
-
         // For Debug
         [[nodiscard]] virtual String ToString() const { return GetName(); }
     protected:
