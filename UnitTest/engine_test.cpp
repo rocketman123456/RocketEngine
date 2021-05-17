@@ -19,7 +19,7 @@ void AllocateModule() {
     // Allocate Modules
     g_WindowManager = RK_NEW Rocket::WindowManager;
     // Insert Modules
-    g_Application->AddModule(g_WindowManager);
+    //g_Application->AddModule(g_WindowManager);
 }
 
 void DeallocateModule() {
