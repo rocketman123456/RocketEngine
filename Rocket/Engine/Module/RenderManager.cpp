@@ -1,0 +1,15 @@
+#include "Module/RenderManager.h"
+
+namespace Rocket {
+    int32_t RenderManager::Initialize() {
+        return 0;
+    }
+
+    void RenderManager::Finalize() {
+        
+    }
+
+    void RenderManager::Tick(TimeStep ts) {
+        
+    }
+}

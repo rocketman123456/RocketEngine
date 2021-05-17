@@ -2,8 +2,7 @@
 #include <memory>
 #include <spdlog/spdlog.h>
 
-namespace Rocket
-{
+namespace Rocket {
     enum class LogLevel {
         TRACE = 0,
         INFO,

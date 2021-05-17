@@ -28,6 +28,7 @@ namespace Rocket {
         }
 
         void WindowDesktop::Finalize() {
+            glfwSetWindowShouldClose(window_, true);
             glfwDestroyWindow(window_);
             glfwTerminate();
         }
