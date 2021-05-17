@@ -15,7 +15,7 @@ target("taskflow_test_01")
 target("engine_test")
     set_kind("binary")
     add_files("engine_test.cpp")
-    add_packages("vcpkg::taskflow")
+    add_packages("vcpkg::taskflow", "vcpkg::mimalloc")
     add_deps("RocketEngine", "RocketPlatform")
     -- Add Platform Dependent Libs
     if is_plat("linux", "macosx") then
@@ -27,6 +27,20 @@ target("engine_test")
         add_links("user32", "gdi32", "shell32", "kernel32")
         add_ldflags("/subsystem:console")
     end
+
+--target("memory_leak_test")
+--    set_kind("binary")
+--    add_files("memory_leak_test.cpp")
+--    add_packages("vcpkg::mimalloc")
+--    -- Add Platform Dependent Libs
+--    if is_plat("linux", "macosx") then
+--        add_links("pthread", "m", "dl")
+--        if is_plat("macosx") then
+--            add_frameworks("Cocoa", "IOKit", "CoreVideo")
+--        end
+--    elseif is_plat("windows") then
+--        add_links("user32", "gdi32", "shell32", "kernel32")
+--    end
 
 target("hook_test")
     set_kind("binary")

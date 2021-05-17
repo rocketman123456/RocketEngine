@@ -12,6 +12,7 @@
 #include <cstdio>
 #include <iostream>
 #include <cstring>
+#include <mimalloc.h>
 
 #ifdef RK_DEBUG
 // 初始化 LeakDetector类中定义的静态变量
@@ -44,7 +45,8 @@ static void* AllocateMemory(size_t size, bool array, char const* file, size_t li
 
 	// 把接收到的地址强转为 MemoryList*, 以便我们后续操作
 	// 由于重载了new, 所以我们使用 malloc 来申请内存
-	MemoryList* new_elem = (MemoryList*)malloc(new_size);
+	MemoryList* new_elem = (MemoryList*)mi_new(new_size);
+	//MemoryList* new_elem = (MemoryList*)malloc(new_size);
 
 	// 更新MemoryList结构成员的值
 	new_elem->next = memory_list_head.next;
@@ -54,7 +56,8 @@ static void* AllocateMemory(size_t size, bool array, char const* file, size_t li
 
 	// 如果有文件信息, 则保存下来
 	if (nullptr != file) {
-		new_elem->file = (char*)malloc(strlen(file) + 1);
+		new_elem->file = (char*)mi_new(strlen(file) + 1);
+		//new_elem->file = (char*)malloc(strlen(file) + 1);
 		strcpy(new_elem->file, file);
 	}
 	else {
@@ -99,11 +102,14 @@ static void DeleteMemory(void* ptr, bool array) {
 	memory_allocated -= cur_elem->size;
 
 	// 如果cur_elem->_file不为NULL, 释放保存文件信息时申请的内存
-	if (NULL != cur_elem->file)
-		free(cur_elem->file);
+	if (NULL != cur_elem->file) {
+		mi_free(cur_elem->file);
+		//free(cur_elem->file);
+	}
 
 	// 释放内存
-	free(cur_elem);
+	mi_free(cur_elem);
+	//free(cur_elem);
 
 	ptr = nullptr;
 }
@@ -154,12 +160,24 @@ void* operator new[](size_t size, char const* file, size_t line) {
 	return AllocateMemory(size, true, file, line);
 }
 
-void* operator new(size_t size) {
+void* operator new(size_t size) noexcept(false) {
 	return AllocateMemory(size, false, nullptr, 0);
 }
 
-void* operator new[](size_t size) {
+void* operator new[](size_t size) noexcept(false) {
 	return AllocateMemory(size, true, nullptr, 0);
+}
+
+void* operator new  (std::size_t size, const std::nothrow_t& tag) noexcept { 
+	(void)(tag);
+	return AllocateMemory(size, false, nullptr, 0);
+	//return mi_new_nothrow(n); 
+}
+
+void* operator new[](std::size_t size, const std::nothrow_t& tag) noexcept { 
+	(void)(tag);
+	return AllocateMemory(size, true, nullptr, 0);
+	//return mi_new_nothrow(n); 
 }
 
 // 重载delete/delete[]运算符

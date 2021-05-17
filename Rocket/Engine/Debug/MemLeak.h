@@ -4,9 +4,13 @@
 
 #ifdef RK_DEBUG
 #include <stdio.h>
+#include <new>
 // 重载版本: operator new/new[]( ), operator delete/delete[]( ) 的声明
-void* operator new(size_t size);
-void* operator new[](size_t size);
+void* operator new(size_t size) noexcept(false);
+void* operator new[](size_t size) noexcept(false);
+void* operator new  (std::size_t n, const std::nothrow_t& tag) noexcept;
+void* operator new[](std::size_t n, const std::nothrow_t& tag) noexcept;
+// Add File Info
 void* operator new(size_t size, char const* file, size_t line);
 void* operator new[](size_t size, char const* file, size_t line);
 // 注意到, 上面我们重载的函数中, 第一个参数和第三个参数的类型是size_t
