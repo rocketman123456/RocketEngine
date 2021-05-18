@@ -24,7 +24,7 @@ target("engine_test")
             add_frameworks("Cocoa", "IOKit", "CoreVideo")
         end
     elseif is_plat("windows") then
-        add_links("user32", "gdi32", "shell32", "kernel32")
+        add_links("user32", "gdi32", "shell32", "kernel32", "advapi32")
         add_ldflags("/subsystem:console")
     end
 

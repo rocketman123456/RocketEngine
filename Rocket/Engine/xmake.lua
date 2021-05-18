@@ -4,7 +4,8 @@ target("RocketEngine")
     add_files(
         "Core/*.cpp",
         "Debug/*.cpp",
-        "Module/*.cpp"
+        "Module/*.cpp",
+        "Geometry/*.cpp"
     )
     -- Add Packages
     add_packages(
