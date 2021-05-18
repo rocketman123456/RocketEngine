@@ -14,12 +14,9 @@ set_languages("c99", "c++20")
 --add_cxflags("-stdnolib", "-fno-strict-aliasing")
 --add_ldflags("-L/usr/local/lib", "-lpthread", {force = true})
 
-
 --
 -- Add Required Modules
 --
---add_requires("fmt", {system = false, configs = {}})
---add_requires("spdlog", {system = false, configs = {fmt_external = true}})
 add_requires(
     "vcpkg::spdlog",
     "vcpkg::fmt",
@@ -52,7 +49,8 @@ elseif is_config("render_api", "opengl_es") then
 elseif is_config("render_api", "vulkan") then
     add_defines("RK_VULKAN")
     add_requires(
-        "vcpkg::volk"
+        "vcpkg::volk",
+        "vcpkg::vulkan-headers"
     )
     printf("Vulkan Render API")
 elseif is_config("render_api", "soft_render") then 
@@ -82,8 +80,7 @@ end
 add_includedirs(
     "Rocket/Engine",
     "Rocket/Platform",
-    "Rocket/Render",
-    "Thirdparty/subhook"
+    "Rocket/Render"
 )
 
 --

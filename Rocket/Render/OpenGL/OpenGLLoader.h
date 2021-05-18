@@ -2,7 +2,7 @@
 #include "Interface/IRenderLoader.h"
 
 namespace Rocket {
-    class OpenGLLoader {
+    class OpenGLLoader : implements IRenderLoader {
     public:
         virtual ~OpenGLLoader() = default;
 

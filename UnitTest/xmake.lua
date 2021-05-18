@@ -15,8 +15,8 @@ target("taskflow_test_01")
 target("engine_test")
     set_kind("binary")
     add_files("engine_test.cpp")
-    add_packages("vcpkg::taskflow")
-    add_deps("RocketEngine", "RocketPlatform")
+    --add_packages("vcpkg::taskflow")
+    add_deps("RocketEngine", "RocketPlatform", "RocketRender")
     -- Add Platform Dependent Libs
     if is_plat("linux", "macosx") then
         add_links("pthread", "m", "dl")

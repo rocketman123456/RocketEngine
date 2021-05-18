@@ -1,5 +1,4 @@
 #pragma once
-//#define NEW_OVERLOAD_IMPLEMENTATION_
 #include "Debug/MemLeak.h"
 
 #include <new>

@@ -5,12 +5,13 @@ target("RocketEngine")
         "Core/*.cpp",
         "Debug/*.cpp",
         "Module/*.cpp",
-        "Geometry/*.cpp"
+        "Geometry/*.cpp",
+        "Reflection/*.cpp"
     )
     -- Add Packages
     add_packages(
-        "vcpkg::mimalloc", 
-        "vcpkg::spdlog", 
-        "vcpkg::fmt", 
+        "vcpkg::mimalloc",
+        "vcpkg::spdlog",
+        "vcpkg::fmt",
         {public = true}
     )

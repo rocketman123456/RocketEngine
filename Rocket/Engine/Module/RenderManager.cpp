@@ -6,11 +6,11 @@ namespace Rocket {
             return 1;
         }
 
-        auto result = render_loader_->LoadDriver();
+        auto result = render_loader_->LoadDevice();
         if(result) {
             return result;
         }
-        result = render_loader_->LoadDevice();
+        result = render_loader_->LoadDriver();
         if(result) {
             return result;
         }
@@ -24,8 +24,8 @@ namespace Rocket {
 
     void RenderManager::Finalize() {
         render_loader_->UnloadEngine();
-        render_loader_->UnloadDevice();
         render_loader_->UnloadDriver();
+        render_loader_->UnloadDevice();
     }
 
     void RenderManager::Tick(TimeStep ts) {

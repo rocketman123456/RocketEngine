@@ -2,7 +2,7 @@
 #include "Interface/IRenderLoader.h"
 
 namespace Rocket {
-    class SoftRenderLoader {
+    class SoftRenderLoader : implements IRenderLoader {
     public:
         virtual ~SoftRenderLoader() = default;
 

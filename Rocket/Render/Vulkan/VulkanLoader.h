@@ -2,7 +2,7 @@
 #include "Interface/IRenderLoader.h"
 
 namespace Rocket {
-    class VulkanLoader {
+    class VulkanLoader : implements IRenderLoader {
     public:
         virtual ~VulkanLoader() = default;
 

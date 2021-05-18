@@ -6,5 +6,6 @@ target("RocketRender")
         "vcpkg::spdlog", 
         "vcpkg::fmt", 
         "vcpkg::volk",
+        "vcpkg::vulkan-headers",
         {public = true}
     )

@@ -1,12 +1,18 @@
 #include "OpenGL/OpenGLLoader.h"
 
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+
 namespace Rocket {
     int32_t OpenGLLoader::LoadDriver() {
+        if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+            RK_GRAPHICS_ERROR("Failed to initialize GLAD");
+            return 1;
+        }
         return 0;
     }
 
     void OpenGLLoader::UnloadDriver() {
-        
     }
 
     int32_t OpenGLLoader::LoadDevice() {
@@ -14,7 +20,6 @@ namespace Rocket {
     }
 
     void OpenGLLoader::UnloadDevice() {
-        
     }
 
     int32_t OpenGLLoader::LoadEngine() {
@@ -22,6 +27,5 @@ namespace Rocket {
     }
 
     void OpenGLLoader::UnloadEngine() {
-        
     }
 }
