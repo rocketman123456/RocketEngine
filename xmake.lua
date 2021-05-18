@@ -143,8 +143,7 @@ end
 -- Add Sub Module
 --
 includes(
-    "Rocket", 
-    "Thirdparty", 
+    "Rocket",  
     "UnitTest"
 )
 

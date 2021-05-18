@@ -37,6 +37,7 @@ int main(int argc, char **argv) {
         int result = g_Application->Initialize();
         if(result != 0) {
             RK_ERROR("Application Initialize Failed");
+            return 1;
         }
     }
     RK_PROFILE_END_SESSION();
