@@ -1,5 +1,4 @@
 #include "Core/EntryPoint.h"
-#include "Module/Application.h"
 
 extern Rocket::IApplication* g_Application;
 
@@ -44,7 +43,7 @@ int main(int argc, char **argv) {
 
     RK_PROFILE_BEGIN_SESSION("Tick", "Tick.json");
     // Application Tick [ For Test ]
-    for(int i = 0; i < 10; ++i) {
+    for(int i = 0; ; ++i) {
         RK_PROFILE_SCOPE("Application::Tick()");
         g_Application->Tick(1);
     }

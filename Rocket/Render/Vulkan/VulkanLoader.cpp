@@ -1,12 +1,16 @@
 #include "Vulkan/VulkanLoader.h"
 
+#include <volk.h>
+
 namespace Rocket {
     int32_t VulkanLoader::LoadDriver() {
+        if(volkInitialize() != VK_SUCCESS) {
+            return 1;
+        }
         return 0;
     }
 
     void VulkanLoader::UnloadDriver() {
-        
     }
 
     int32_t VulkanLoader::LoadDevice() {
@@ -14,7 +18,6 @@ namespace Rocket {
     }
 
     void VulkanLoader::UnloadDevice() {
-        
     }
 
     int32_t VulkanLoader::LoadEngine() {
@@ -22,6 +25,5 @@ namespace Rocket {
     }
 
     void VulkanLoader::UnloadEngine() {
-        
     }
 }

@@ -25,7 +25,7 @@ namespace Rocket {
     }
 
     void Application::Tick(TimeStep ts) {
-        RK_TRACE("Application::Tick {}", ts);
+        //RK_TRACE("Application::Tick {}", ts);
         for(auto module : modules_) {
             module->Tick(ts);
         }
