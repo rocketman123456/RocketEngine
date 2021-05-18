@@ -12,7 +12,7 @@ namespace Rocket {
         [[noreturn]] virtual void PostInitializeModule() = 0; // Add Callback Function, etc.
 
         // Application Initialize Steps
-        virtual void PreInitialize() = 0; // Prepare Application (Parse Command Line, etc)
+        virtual void PreInitialize() = 0; // Prepare Application (Load Basic Parameters, etc)
         virtual void PostInitialize() = 0; // Prepare Application (Load Assets, etc)
 
         [[nodiscard]] virtual int32_t InitializeModule() {

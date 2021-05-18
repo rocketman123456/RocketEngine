@@ -4,5 +4,6 @@ target("RocketRender")
     add_packages(
         "vcpkg::spdlog", 
         "vcpkg::fmt", 
+        "vcpkg::volk",
         {public = true}
     )

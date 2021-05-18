@@ -31,7 +31,7 @@ namespace Rocket {
 
     template <typename T, typename... Arguments>
     constexpr Ref<T> CreateRef(Arguments ... args) {
-		Ref<T> ptr = allocate_shared<T>(args...);
+		//Ref<T> ptr = allocate_shared<T>(args...);
         Ref<T> ptr = Ref<T>(new T(args...));
         return std::move(ptr);
     }
