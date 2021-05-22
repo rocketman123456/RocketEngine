@@ -9,6 +9,8 @@
     #include "Vulkan/VulkanLoader.h"
 #elif defined(RK_SOFT_RENDER)
     #include "SoftRender/SoftRenderLoader.h"
+#elif defined(RK_METAL)
+
 #endif
 
 namespace Rocket {
@@ -25,6 +27,8 @@ static Rocket::default_allocator<Rocket::OpenGLLoader> g_render_loader_allocator
 static Rocket::default_allocator<Rocket::VulkanLoader> g_render_loader_allocator;
 #elif defined(RK_SOFT_RENDER)
 static Rocket::default_allocator<Rocket::SoftRenderLoader> g_render_loader_allocator;
+#elif defined(RK_METAL)
+
 #endif
 
 Rocket::IApplication* g_Application;
@@ -44,6 +48,8 @@ void AllocateModule() {
     static_cast<Rocket::RenderManager*>(g_RenderManager)->AddRenderLoader(std::allocate_shared<Rocket::VulkanLoader>(g_render_loader_allocator));
 #elif defined(RK_SOFT_RENDER)
     static_cast<Rocket::RenderManager*>(g_RenderManager)->AddRenderLoader(std::allocate_shared<Rocket::SoftRenderLoader>(g_render_loader_allocator));
+#elif defined(RK_METAL)
+
 #endif
     // Insert Modules
     g_Application->AddModule(g_WindowManager);

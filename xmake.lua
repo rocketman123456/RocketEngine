@@ -80,7 +80,7 @@ end
 add_includedirs(
     "Rocket/Engine",
     "Rocket/Platform",
-    "Rocket/Render"
+    "Rocket/RHI"
 )
 
 --
