@@ -44,7 +44,7 @@ namespace Rocket {
 	}
 
     template <typename T>
-    using Vector = std::vector<T>;
+    using Vec = std::vector<T>;
 
 	template <typename T1, typename T2>
 	using Map = std::map<T1, T2>;

@@ -1,9 +1,13 @@
 #include "Core/EntryPoint.h"
 
-extern Rocket::IApplication* g_Application;
+namespace Rocket {
+    extern IApplication* g_Application;
+}
 
 extern void AllocateModule();
 extern void DeallocateModule();
+
+using namespace Rocket;
 
 int main(int argc, char **argv) {
     RK_PROFILE_BEGIN_SESSION("Initialize", "Initialize.json");

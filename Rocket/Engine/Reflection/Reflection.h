@@ -70,7 +70,7 @@ namespace Rocket {
                 TypeDescriptor* type;
             };
 
-            Rocket::Vector<Member> members;
+            Rocket::Vec<Member> members;
 
             TypeDescriptor_Struct(void (*init)(TypeDescriptor_Struct*)) 
                 : TypeDescriptor{nullptr, 0} { init(this); }
@@ -155,7 +155,7 @@ namespace Rocket {
 
         // Partially specialize TypeResolver<> for std::vectors:
         template <typename T>
-        class TypeResolver<Rocket::Vector<T>> {
+        class TypeResolver<Rocket::Vec<T>> {
         public:
             static TypeDescriptor* Get() {
                 static TypeDescriptor_StdVector typeDesc{(T*) nullptr};

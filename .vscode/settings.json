@@ -95,6 +95,7 @@
         "scoped_allocator": "cpp",
         "shared_mutex": "cpp",
         "cfenv": "cpp",
-        "valarray": "cpp"
+        "valarray": "cpp",
+        "numbers": "cpp"
     }
 }

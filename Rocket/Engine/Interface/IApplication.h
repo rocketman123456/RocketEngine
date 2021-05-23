@@ -37,6 +37,6 @@ namespace Rocket {
         inline void AddModule(IRuntimeModule* module) { modules_.push_back(module); }
 
     protected:
-        Vector<IRuntimeModule*> modules_;
+        Vec<IRuntimeModule*> modules_;
     };
 }
