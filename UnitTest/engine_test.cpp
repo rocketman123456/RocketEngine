@@ -20,6 +20,11 @@ namespace Rocket {
     public:
         virtual ~TestApplication() = default;
     };
+
+    IApplication* g_Application;
+    IRuntimeModule* g_WindowManager;
+    IRuntimeModule* g_RenderManager;
+    IRuntimeModule* g_EventManager;
 }
 
 #if defined(RK_OPENGL)
@@ -29,15 +34,8 @@ static Rocket::default_allocator<Rocket::VulkanLoader> g_render_loader_allocator
 #elif defined(RK_SOFT_RENDER)
 static Rocket::default_allocator<Rocket::SoftRenderLoader> g_render_loader_allocator;
 #elif defined(RK_METAL)
-
+// TODO: add metal loader
 #endif
-
-namespace Rocket {
-    IApplication* g_Application;
-    IRuntimeModule* g_WindowManager;
-    IRuntimeModule* g_RenderManager;
-    IRuntimeModule* g_EventManager;
-}
 
 using namespace Rocket;
 
