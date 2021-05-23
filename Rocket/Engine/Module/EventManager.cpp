@@ -5,9 +5,11 @@
 #include <GLFW/glfw3.h>
 #endif
 
+static Rocket::default_allocator<Rocket::Event> g_event_allocator;
+
 namespace Rocket {
     EventManager* EventManager::instance_ = nullptr;
-    ElapseTimer* Rocket::g_EventTimer;
+    ElapseTimer* g_EventTimer = nullptr;
 
     int32_t EventManager::Initialize() {
         g_EventTimer = new ElapseTimer();
@@ -17,10 +19,14 @@ namespace Rocket {
 #if defined(RK_DESKTOP)
         window_handle_ = static_cast<GLFWwindow*>(static_cast<WindowManager*>(g_WindowManager)->GetNativeWindow());
         window_data_.title = "Rocket";//Application::Get().GetName();
-            
+#endif
+
+        SetupListener();
+
+#if defined(RK_DESKTOP)
         glfwSetWindowUserPointer(window_handle_, &window_data_);
 #endif
-        SetupListener();
+
         SetupCallback();
 
         timer_.Start();
@@ -33,12 +39,12 @@ namespace Rocket {
         // Set GLFW callbacks
         glfwSetWindowSizeCallback(window_handle_, [](GLFWwindow *window, int width, int height) {
             RK_EVENT_TRACE("glfwSetWindowSizeCallback");
-            WindowData &data = *(WindowData *)glfwGetWindowUserPointer(window);
+            [[maybe_unused]] WindowData &data = *(WindowData *)glfwGetWindowUserPointer(window);
         });
 
         glfwSetWindowContentScaleCallback(window_handle_, [](GLFWwindow *window, float xscale, float yscale) {
             RK_EVENT_TRACE("glfwSetWindowContentScaleCallback");
-            WindowData &data = *(WindowData *)glfwGetWindowUserPointer(window);
+            [[maybe_unused]] WindowData &data = *(WindowData *)glfwGetWindowUserPointer(window);
         });
 
         glfwSetWindowRefreshCallback(window_handle_, [](GLFWwindow *window) {
@@ -48,8 +54,8 @@ namespace Rocket {
             EventVarVec var;
             var.resize(1);
             var[0].type = Variant::TYPE_STRING_ID;
-            var[0].asStringId = "window_refresh"_hash;//GlobalHashTable::HashString("Event"_hash, "window_refresh");
-            EventPtr event = CreateRef<Event>(var);
+            var[0].asStringId = "window_refresh"_hash;
+            EventPtr event = std::allocate_shared<Rocket::Event>(g_event_allocator, var, "window_refresh");
 
             data.event_callback(event);
         });
@@ -61,14 +67,14 @@ namespace Rocket {
             EventVarVec var;
             var.resize(4);
             var[0].type = Variant::TYPE_STRING_ID;
-            var[0].asStringId = "window_resize"_hash;//GlobalHashTable::HashString("Event"_hash, "window_resize");
+            var[0].asStringId = "window_resize"_hash;
             var[1].type = Variant::TYPE_INT32;
             var[1].asInt32 = width;
             var[2].type = Variant::TYPE_INT32;
             var[2].asInt32 = height;
             var[3].type = Variant::TYPE_INT32;
             var[3].asInt32 = 0;
-            EventPtr event = CreateRef<Event>(var);
+            EventPtr event = std::allocate_shared<Rocket::Event>(g_event_allocator, var, "window_resize");
 
             data.event_callback(event);
         });
@@ -80,8 +86,8 @@ namespace Rocket {
             EventVarVec var;
             var.resize(1);
             var[0].type = Variant::TYPE_STRING_ID;
-            var[0].asStringId = "window_close"_hash;//GlobalHashTable::HashString("Event"_hash, "window_close");
-            EventPtr event = CreateRef<Event>(var);
+            var[0].asStringId = "window_close"_hash;
+            EventPtr event = std::allocate_shared<Rocket::Event>(g_event_allocator, var, "window_close");
 
             data.event_callback(event);
         });
@@ -101,19 +107,19 @@ namespace Rocket {
             switch (action)
             {
                 case GLFW_PRESS: {
-                    var[0].asStringId = "key_press"_hash;//GlobalHashTable::HashString("Event"_hash, "key_press");
+                    var[0].asStringId = "key_press"_hash;
                     var[2].asInt32 = 0;
                 } break;
                 case GLFW_RELEASE: {
-                    var[0].asStringId = "key_release"_hash;//GlobalHashTable::HashString("Event"_hash, "key_release");
+                    var[0].asStringId = "key_release"_hash;
                     var[2].asInt32 = 0;
                 } break;
                 case GLFW_REPEAT: {
-                    var[0].asStringId = "key_repeat"_hash;//GlobalHashTable::HashString("Event"_hash, "key_repeat");
+                    var[0].asStringId = "key_repeat"_hash;
                     var[2].asInt32 = 1;
                 } break;
             }
-            EventPtr event = CreateRef<Event>(var);
+            EventPtr event = std::allocate_shared<Rocket::Event>(g_event_allocator, var);
             data.event_callback(event);
         });
 
@@ -124,10 +130,10 @@ namespace Rocket {
             EventVarVec var;
             var.resize(2);
             var[0].type = Variant::TYPE_STRING_ID;
-            var[0].asStringId = "key_char_code"_hash;//GlobalHashTable::HashString("Event"_hash, "key_char_code");
+            var[0].asStringId = "key_char_code"_hash;
             var[1].type = Variant::TYPE_INT32;
             var[1].asInt32 = keycode;
-            EventPtr event = CreateRef<Event>(var);
+            EventPtr event = std::allocate_shared<Rocket::Event>(g_event_allocator, var, "key_char_code");
 
             data.event_callback(event);
         });
@@ -145,15 +151,16 @@ namespace Rocket {
             switch (action)
             {
                 case GLFW_PRESS: {
-                    var[0].asStringId = "mouse_button_press"_hash;//GlobalHashTable::HashString("Event"_hash, "mouse_button_press");
+                    var[0].asStringId = "mouse_button_press"_hash;
+                    EventPtr event = std::allocate_shared<Rocket::Event>(g_event_allocator, var, "mouse_button_press");
+                    data.event_callback(event);
                 } break;
                 case GLFW_RELEASE: {
-                    var[0].asStringId = "mouse_button_release"_hash;//GlobalHashTable::HashString("Event"_hash, "mouse_button_release");
+                    var[0].asStringId = "mouse_button_release"_hash;
+                    EventPtr event = std::allocate_shared<Rocket::Event>(g_event_allocator, var, "mouse_button_release");
+                    data.event_callback(event);
                 } break;
             }
-            EventPtr event = CreateRef<Event>(var);
-            
-            data.event_callback(event);
         });
 
         glfwSetScrollCallback(window_handle_, [](GLFWwindow *window, double xOffset, double yOffset) {
@@ -163,12 +170,12 @@ namespace Rocket {
             EventVarVec var;
             var.resize(3);
             var[0].type = Variant::TYPE_STRING_ID;
-            var[0].asStringId = "mouse_scroll"_hash;//GlobalHashTable::HashString("Event"_hash, "mouse_scroll");
+            var[0].asStringId = "mouse_scroll"_hash;
             var[1].type = Variant::TYPE_DOUBLE;
             var[1].asDouble = xOffset;
             var[2].type = Variant::TYPE_DOUBLE;
             var[2].asDouble = yOffset;
-            EventPtr event = CreateRef<Event>(var);
+            EventPtr event = std::allocate_shared<Rocket::Event>(g_event_allocator, var, "mouse_scroll");
             
             data.event_callback(event);
         });
@@ -180,12 +187,12 @@ namespace Rocket {
             EventVarVec var;
             var.resize(3);
             var[0].type = Variant::TYPE_STRING_ID;
-            var[0].asStringId = "mouse_move"_hash;//GlobalHashTable::HashString("Event"_hash, "mouse_move");
+            var[0].asStringId = "mouse_move"_hash;
             var[1].type = Variant::TYPE_DOUBLE;
             var[1].asDouble = xPos;
             var[2].type = Variant::TYPE_DOUBLE;
             var[2].asDouble = yPos;
-            EventPtr event = CreateRef<Event>(var);
+            EventPtr event = std::allocate_shared<Rocket::Event>(g_event_allocator, var, "mouse_move");
 
             data.event_callback(event);
         });

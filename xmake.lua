@@ -6,7 +6,7 @@
 set_project("Rocket")
 add_rules("mode.debug", "mode.release")
 set_languages("c99", "c++20")
---set_warnings("all", "error")
+set_warnings("all", "error")
 
 --add_linkdirs("/usr/local/lib", "/usr/lib")
 --add_links("tbox")
@@ -22,7 +22,8 @@ add_requires(
     "vcpkg::fmt",
     "vcpkg::taskflow",
     "vcpkg::entt",
-    "vcpkg::mimalloc",
+    --"vcpkg::mimalloc",
+    --"vcpkg::snmalloc",
     "vcpkg::eigen3"
 )
 if is_plat("linux", "macosx", "windows") then
@@ -43,7 +44,7 @@ if is_config("render_api", "opengl") then
     add_requires(
         "vcpkg::glad"
     )
-    printf("OpenGL Render API")
+    printf("OpenGL Render API\n")
 elseif is_config("render_api", "opengl_es") then
     add_defines("RK_OPENGL_ES")
 elseif is_config("render_api", "vulkan") then
@@ -52,10 +53,10 @@ elseif is_config("render_api", "vulkan") then
         "vcpkg::volk",
         "vcpkg::vulkan-headers"
     )
-    printf("Vulkan Render API")
+    printf("Vulkan Render API\n")
 elseif is_config("render_api", "soft_render") then 
     add_defines("RK_SOFT_RENDER")
-    printf("Soft Render API")
+    printf("Soft Render API\n")
 elseif is_config("render_api", "metal") then
     add_defines("RK_METAL")
     add_requires(
@@ -143,27 +144,6 @@ includes(
     "Rocket",  
     "UnitTest"
 )
-
---
--- Add Test
---
-target("test")
-    on_load(function (target)
-        print("on load test")
-    end)
-    on_build(function (target)
-        print("on build test")
-    end)
-    -- 设置运行脚本
-    on_run(function ()
-        print("on run test")
-    end)
-    on_link(function (target)
-        print("on link test")
-    end)
-    after_build(function (target)
-        print("after build test")
-    end)
 
 --
 --   $ xmake f -p [macosx|linux|iphoneos ..] -a [x86_64|i386|arm64 ..] -m [debug|release]

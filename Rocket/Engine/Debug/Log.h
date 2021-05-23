@@ -13,8 +13,8 @@ namespace Rocket {
 
     class Log {
     public:
-        Log() {}
-        ~Log() {}
+        Log() = default;
+        ~Log() = default;
 
         static void Init(LogLevel level = LogLevel::TRACE);
 

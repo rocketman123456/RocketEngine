@@ -1,20 +1,22 @@
 ﻿// https://github.com/YunFei-S/Memory-leak-detector/blob/main/LeakDetector.cpp
-// With Smart Pointer Error
-//#define NEW_OVERLOAD_IMPLEMENTATION_
 #include "Debug/MemLeak.h"
-#include "Debug/Log.h"
 
 #if defined(RK_WINDOWS)
 #define _CRT_SECURE_NO_WARNINGS
 #endif
 
-#include <new>
 #include <cstdio>
 #include <iostream>
 #include <cstring>
-#include <mimalloc.h>
 
-#ifdef RK_DEBUG
+// use malloc or mi_malloc
+#define MALLOC_VERSION 1
+
+#if MALLOC_VERSION == 2
+#include <mimalloc.h>
+#endif
+
+#ifdef RK_MEM_CHECK
 // 初始化 LeakDetector类中定义的静态变量
 size_t LeakDetector::call_count_ = 0;
 
@@ -45,8 +47,11 @@ static void* AllocateMemory(size_t size, bool array, char const* file, size_t li
 
 	// 把接收到的地址强转为 MemoryList*, 以便我们后续操作
 	// 由于重载了new, 所以我们使用 malloc 来申请内存
-	//MemoryList* new_elem = (MemoryList*)mi_new(new_size);
+#if MALLOC_VERSION == 1
 	MemoryList* new_elem = (MemoryList*)malloc(new_size);
+#elif MALLOC_VERSION == 2
+	MemoryList* new_elem = (MemoryList*)mi_new(new_size);
+#endif
 
 	// 更新MemoryList结构成员的值
 	new_elem->next = memory_list_head.next;
@@ -56,8 +61,11 @@ static void* AllocateMemory(size_t size, bool array, char const* file, size_t li
 
 	// 如果有文件信息, 则保存下来
 	if (nullptr != file) {
+#if MALLOC_VERSION == 1
+		new_elem->file = (char*)malloc(strlen(file) + 1);
+#elif MALLOC_VERSION == 2
 		new_elem->file = (char*)mi_new(strlen(file) + 1);
-		//new_elem->file = (char*)malloc(strlen(file) + 1);
+#endif
 		strcpy(new_elem->file, file);
 	}
 	else {
@@ -103,13 +111,19 @@ static void DeleteMemory(void* ptr, bool array) {
 
 	// 如果cur_elem->_file不为NULL, 释放保存文件信息时申请的内存
 	if (nullptr != cur_elem->file) {
-		//mi_free(cur_elem->file);
+#if MALLOC_VERSION == 1
 		free(cur_elem->file);
+#elif MALLOC_VERSION == 2
+		mi_free(cur_elem->file);
+#endif
 	}
 
 	// 释放内存
-	//mi_free(cur_elem);
+#if MALLOC_VERSION == 1
 	free(cur_elem);
+#elif MALLOC_VERSION == 2
+	mi_free(cur_elem);
+#endif
 
 	ptr = nullptr;
 }
@@ -136,10 +150,12 @@ void LeakDetector::LeakDetection() {
 
 		std::cout << "Pointer Address: " << ptr << " Size: " << ptr->size;
 
-		if (nullptr != ptr->file)
+		if (nullptr != ptr->file) {
 			std::cout << " At " << ptr->file << " : " << ptr->line << " lines";
-		else
-			std::cout << " (No File Info)";
+		}
+		else {
+			//std::cout << " (No File Info)";
+		}
 
 		std::cout << std::endl;
 
@@ -151,7 +167,6 @@ void LeakDetector::LeakDetection() {
 	return;
 }
 
-// 重载new/new[]运算符
 void* operator new(size_t size, char const* file, size_t line) {
 	return AllocateMemory(size, false, file, line);
 }

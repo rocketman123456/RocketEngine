@@ -19,7 +19,10 @@ namespace Rocket {
 
 	class Event {
 	public:
-		Event(const EventVarVec& var, const String& name = "Event") : variable_(var), name_(name) { 
+		Event(const EventVarVec& var) : variable_(var), name_("event") { 
+            time_stamp_ = g_EventTimer->GetExactTime(); 
+        }
+		Event(const EventVarVec& var, const String& name) : variable_(var), name_(name) { 
             time_stamp_ = g_EventTimer->GetExactTime(); 
         }
 		virtual ~Event() = default;

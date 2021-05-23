@@ -25,18 +25,13 @@ namespace Rocket {
     public:
         virtual ~TestApplication() = default;
 
-        bool OnEvent(EventPtr& event) {
-            app_running_ = false;
-            return true;
-        }
-
         void PostInitializeModule() final {
             RK_TRACE("TestApplication::PostInitializeModule");
             //REGISTER_DELEGATE_CLASS(TestApplication, TestApplication::OnEvent, this, window_close);
             //static_cast<EventManager*>(g_EventManager)->AddListener();
             bool ret = false;
             EventListenerDelegate delegate;
-            delegate.Bind<TestApplication, &TestApplication::OnEvent>(static_cast<TestApplication*>(g_Application));
+            delegate.Bind<IApplication, &IApplication::OnCloseEvent>(g_Application);
             ret = static_cast<EventManager*>(g_EventManager)->AddListener(delegate, "window_close"_hash);
         }
     };

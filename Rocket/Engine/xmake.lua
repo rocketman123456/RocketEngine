@@ -10,7 +10,6 @@ target("RocketEngine")
     )
     -- Add Packages
     add_packages(
-        "vcpkg::mimalloc",
         "vcpkg::spdlog",
         "vcpkg::fmt",
         {public = true}
