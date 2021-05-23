@@ -15,16 +15,31 @@
 #endif
 
 namespace Rocket {
-    class TestApplication : implements Application {
-        RUNTIME_MODULE_TYPE(Application);
-    public:
-        virtual ~TestApplication() = default;
-    };
-
     IApplication* g_Application;
     IRuntimeModule* g_WindowManager;
     IRuntimeModule* g_RenderManager;
     IRuntimeModule* g_EventManager;
+
+    class TestApplication : implements Application {
+        RUNTIME_MODULE_TYPE(Application);
+    public:
+        virtual ~TestApplication() = default;
+
+        bool OnEvent(EventPtr& event) {
+            app_running_ = false;
+            return true;
+        }
+
+        void PostInitializeModule() final {
+            RK_TRACE("TestApplication::PostInitializeModule");
+            //REGISTER_DELEGATE_CLASS(TestApplication, TestApplication::OnEvent, this, window_close);
+            //static_cast<EventManager*>(g_EventManager)->AddListener();
+            bool ret = false;
+            EventListenerDelegate delegate;
+            delegate.Bind<TestApplication, &TestApplication::OnEvent>(static_cast<TestApplication*>(g_Application));
+            ret = static_cast<EventManager*>(g_EventManager)->AddListener(delegate, "window_close"_hash);
+        }
+    };
 }
 
 #if defined(RK_OPENGL)
@@ -41,11 +56,11 @@ using namespace Rocket;
 
 void AllocateModule() {
     // Allocate Application
-    g_Application = RK_NEW Rocket::TestApplication;
+    g_Application = new Rocket::TestApplication;
     // Allocate Modules
-    g_WindowManager = RK_NEW Rocket::WindowManager;
-    g_EventManager = RK_NEW Rocket::EventManager;
-    g_RenderManager = RK_NEW Rocket::RenderManager;
+    g_WindowManager = new Rocket::WindowManager;
+    g_EventManager = new Rocket::EventManager;
+    g_RenderManager = new Rocket::RenderManager;
     // Insert Graphics Drivers
 #if defined(RK_OPENGL)
     static_cast<Rocket::RenderManager*>(g_RenderManager)->AddRenderLoader(std::allocate_shared<Rocket::OpenGLLoader>(g_render_loader_allocator));
@@ -64,9 +79,9 @@ void AllocateModule() {
 
 void DeallocateModule() {
     // Deallocate Modules
-    RK_DELETE g_RenderManager;
-    RK_DELETE g_EventManager;
-    RK_DELETE g_WindowManager;
+    delete g_RenderManager;
+    delete g_EventManager;
+    delete g_WindowManager;
     // Deallocate Application
-    RK_DELETE g_Application;
+    delete g_Application;
 }

@@ -22,13 +22,13 @@ namespace Rocket {
     bool ret = false;\
     EventListenerDelegate delegate; \
     delegate.Bind<c,&f>(x); \
-    ret = g_EventManager->AddListener(delegate, ""#name""_hash); \
+    ret = static_cast<EventManager*>(g_EventManager)->AddListener(delegate, ""#name""_hash); \
     RK_CORE_ASSERT(ret, "Register Delegate "#f" To "#name" Failed");}
 #define REGISTER_DELEGATE_FN(f,name) {\
     bool ret = false;\
     EventListenerDelegate delegate; \
     delegate.Bind<&f>(); \
-    ret = g_EventManager->AddListener(delegate, ""#name""_hash); \
+    ret = static_cast<EventManager*>(g_EventManager)->AddListener(delegate, ""#name""_hash); \
     RK_CORE_ASSERT(ret, "Register Delegate "#f" To "#name" Failed");}
 
     class EventManager : implements IRuntimeModule {

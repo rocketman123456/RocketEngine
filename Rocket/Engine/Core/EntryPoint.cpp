@@ -47,7 +47,7 @@ int main(int argc, char **argv) {
 
     RK_PROFILE_BEGIN_SESSION("Tick", "Tick.json");
     // Application Tick [ For Test ]
-    for(int i = 0; ; ++i) {
+    while(g_Application->GetAppRuning()) {
         RK_PROFILE_SCOPE("Application::Tick()");
         g_Application->Tick(1);
     }

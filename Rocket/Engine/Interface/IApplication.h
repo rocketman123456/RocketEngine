@@ -35,8 +35,10 @@ namespace Rocket {
         }
 
         inline void AddModule(IRuntimeModule* module) { modules_.push_back(module); }
+        inline bool GetAppRuning() { return app_running_; }
 
     protected:
         Vec<IRuntimeModule*> modules_;
+        bool app_running_ = true;
     };
 }

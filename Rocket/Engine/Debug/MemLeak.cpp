@@ -45,8 +45,8 @@ static void* AllocateMemory(size_t size, bool array, char const* file, size_t li
 
 	// 把接收到的地址强转为 MemoryList*, 以便我们后续操作
 	// 由于重载了new, 所以我们使用 malloc 来申请内存
-	MemoryList* new_elem = (MemoryList*)mi_new(new_size);
-	//MemoryList* new_elem = (MemoryList*)malloc(new_size);
+	//MemoryList* new_elem = (MemoryList*)mi_new(new_size);
+	MemoryList* new_elem = (MemoryList*)malloc(new_size);
 
 	// 更新MemoryList结构成员的值
 	new_elem->next = memory_list_head.next;
@@ -102,14 +102,14 @@ static void DeleteMemory(void* ptr, bool array) {
 	memory_allocated -= cur_elem->size;
 
 	// 如果cur_elem->_file不为NULL, 释放保存文件信息时申请的内存
-	if (NULL != cur_elem->file) {
-		mi_free(cur_elem->file);
-		//free(cur_elem->file);
+	if (nullptr != cur_elem->file) {
+		//mi_free(cur_elem->file);
+		free(cur_elem->file);
 	}
 
 	// 释放内存
-	mi_free(cur_elem);
-	//free(cur_elem);
+	//mi_free(cur_elem);
+	free(cur_elem);
 
 	ptr = nullptr;
 }
@@ -128,7 +128,7 @@ void LeakDetector::LeakDetection() {
 	// 若不存在内存泄漏, 则双向链表中应该只剩下一个头节点
 	// 若存在内存泄漏, 则双向链表中除头节点之外的结点都已泄露，个数即内存泄漏次数
 	MemoryList* ptr = memory_list_head.next;
-	while ((NULL != ptr) && (&memory_list_head != ptr)) {
+	while ((nullptr != ptr) && (&memory_list_head != ptr)) {
 		if (true == ptr->is_array)
 			std::cout << "new[] Function Not Release, ";
 		else
@@ -136,7 +136,7 @@ void LeakDetector::LeakDetection() {
 
 		std::cout << "Pointer Address: " << ptr << " Size: " << ptr->size;
 
-		if (NULL != ptr->file)
+		if (nullptr != ptr->file)
 			std::cout << " At " << ptr->file << " : " << ptr->line << " lines";
 		else
 			std::cout << " (No File Info)";
