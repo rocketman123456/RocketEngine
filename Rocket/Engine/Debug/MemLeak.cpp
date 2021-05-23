@@ -1,9 +1,9 @@
 ﻿// https://github.com/YunFei-S/Memory-leak-detector/blob/main/LeakDetector.cpp
 #include "Debug/MemLeak.h"
 
-#if defined(RK_WINDOWS)
-#define _CRT_SECURE_NO_WARNINGS
-#endif
+//#if defined(RK_WINDOWS)
+//#define _CRT_SECURE_NO_WARNINGS
+//#endif
 
 #include <cstdio>
 #include <iostream>
