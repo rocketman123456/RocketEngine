@@ -24,7 +24,8 @@ add_requires(
     "vcpkg::entt",
     --"vcpkg::mimalloc",
     --"vcpkg::snmalloc",
-    "vcpkg::eigen3"
+    "vcpkg::eigen3",
+    "vcpkg::yaml-cpp"
 )
 if is_plat("linux", "macosx", "windows") then
     add_requires(

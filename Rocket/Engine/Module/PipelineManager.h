@@ -3,10 +3,10 @@
 #include "Core/Template.h"
 
 namespace Rocket {
-    class GraphicsManager : implements IRuntimeModule {
-        RUNTIME_MODULE_TYPE(GraphicsManager);
+    class PipelineManager : implements IRuntimeModule {
+        RUNTIME_MODULE_TYPE(PipelineManager);
     public:
-        virtual ~GraphicsManager() = default;
+        virtual ~PipelineManager() = default;
 
         virtual int32_t Initialize() final;
         virtual void Finalize() final;

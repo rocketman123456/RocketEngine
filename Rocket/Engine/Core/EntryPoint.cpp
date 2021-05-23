@@ -2,6 +2,7 @@
 
 namespace Rocket {
     extern IApplication* g_Application;
+    CommandParser* g_CommandParser;
 }
 
 extern void AllocateModule();
@@ -26,6 +27,8 @@ int main(int argc, char **argv) {
     // Get Command Line Parameters
     {
         RK_PROFILE_SCOPE("Get Command Line Parameters");
+        g_CommandParser = new CommandParser(argc, argv);
+        g_CommandParser->Parse();
     }
 
     // Allocate Modules
@@ -59,10 +62,12 @@ int main(int argc, char **argv) {
         RK_PROFILE_SCOPE("Application::Finalize()");
         g_Application->Finalize();
     }
+
     // Deallocate Modules
     {
         RK_PROFILE_SCOPE("DeallocateModule()");
         DeallocateModule();
+        delete g_CommandParser;
     }
     RK_PROFILE_END_SESSION();
 
