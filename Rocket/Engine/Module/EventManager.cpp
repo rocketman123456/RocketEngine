@@ -11,6 +11,13 @@ namespace Rocket {
     EventManager* EventManager::instance_ = nullptr;
     ElapseTimer* g_EventTimer = nullptr;
 
+    EventManager::EventManager(bool global) : global_(global) {
+        if(global_) {
+            RK_CORE_ASSERT(!instance_, "Global EventManager already exists!");
+            instance_ = this;
+        }
+    }
+
     int32_t EventManager::Initialize() {
         g_EventTimer = new ElapseTimer();
         g_EventTimer->Start();

@@ -17,4 +17,6 @@ namespace Rocket {
     private:
         Ref<IRenderLoader> render_loader_ = nullptr;
     };
+
+    extern IRuntimeModule* g_RenderManager;
 }

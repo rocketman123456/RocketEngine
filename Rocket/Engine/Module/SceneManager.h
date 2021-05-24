@@ -11,4 +11,6 @@ namespace Rocket {
         virtual void Finalize() final;
         virtual void Tick(TimeStep ts) final;
     };
+
+    extern IRuntimeModule* g_SceneManager;
 }

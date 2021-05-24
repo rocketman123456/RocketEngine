@@ -32,15 +32,9 @@ namespace Rocket {
     RK_CORE_ASSERT(ret, "Register Delegate "#f" To "#name" Failed");}
 
     class EventManager : implements IRuntimeModule {
-    public:
         RUNTIME_MODULE_TYPE(EventManager);
-
-        EventManager(bool global = true) : global_(global) {
-            if(global_) {
-                RK_CORE_ASSERT(!instance_, "Global EventManager already exists!");
-                instance_ = this;
-            }
-        }
+    public:
+        EventManager(bool global = true);
         virtual ~EventManager() = default;
 
         virtual int32_t Initialize() final;
