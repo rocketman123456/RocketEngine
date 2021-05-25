@@ -22,8 +22,9 @@ add_requires(
     "vcpkg::fmt",
     "vcpkg::taskflow",
     "vcpkg::entt",
-    --"vcpkg::mimalloc",
-    --"vcpkg::snmalloc",
+    "vcpkg::mimalloc",
+    "vcpkg::minizip-ng",
+    "vcpkg::openal-soft",
     "vcpkg::eigen3",
     "vcpkg::yaml-cpp"
 )

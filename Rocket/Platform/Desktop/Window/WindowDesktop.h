@@ -23,6 +23,10 @@ namespace Rocket {
             void Finalize();
             void Tick(TimeStep ts);
 
+#if defined(RK_OPENGL)
+            void SwapBuffer() { glfwSwapBuffers(window_); }
+#endif
+
             [[nodiscard]] bool GetWindowsShouldClouse() { return glfwWindowShouldClose(window_); }
             [[nodiscard]] inline void* GetWindowHandle() { return window_; }
         private:

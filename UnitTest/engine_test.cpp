@@ -85,9 +85,15 @@ void AllocateModule() {
 
 #endif
     // Insert Modules
+    g_Application->AddModule(g_MemoryManager);
     g_Application->AddModule(g_WindowManager);
     g_Application->AddModule(g_EventManager);
     g_Application->AddModule(g_RenderManager);
+    g_Application->AddModule(g_GraphicsManager);
+    g_Application->AddModule(g_PipelineManager);
+    g_Application->AddModule(g_PhysicsManager);
+    g_Application->AddModule(g_SceneManager);
+    g_Application->AddModule(g_LogicManager);
 }
 
 void DeallocateModule() {

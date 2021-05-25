@@ -24,4 +24,10 @@ namespace Rocket {
         window_.Tick(ts);
 #endif
     }
+
+    void WindowManager::SwapBuffer() {
+#if defined(RK_DESKTOP) && defined(RK_OPENGL)
+        window_.SwapBuffer();
+#endif
+    }
 }

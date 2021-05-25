@@ -25,14 +25,16 @@ namespace Rocket {
                     RK_CORE_ERROR("{} Module Initialize Failed. Error Code {}", module->ToString(), result);
                     return result;
                 }
+                RK_CORE_TRACE("Initialize Module {}", module->ToString());
             }
             RK_TRACE("Application::InitializeModule");
             return 0;
         }
 
         void FinalizeModule() {
-            for(auto module : modules_) {
-                module->Finalize();
+            for(auto it = modules_.rbegin(); it != modules_.rend(); ++it) {
+                (*it)->Finalize();
+                RK_CORE_TRACE("Finalize Module {}", (*it)->ToString());
             }
             RK_TRACE("Application::FinalizeModule");
         }

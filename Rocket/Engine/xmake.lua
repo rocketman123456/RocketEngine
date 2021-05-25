@@ -7,12 +7,14 @@ target("RocketEngine")
         "Module/*.cpp",
         "Parser/*.cpp",
         "Reflection/*.cpp",
-        "Resource/*.cpp"
+        "Resource/*.cpp",
+        "Utils/*.cpp"
     )
     -- Add Packages
     add_packages(
         "vcpkg::spdlog",
         "vcpkg::fmt",
         "vcpkg::yaml-cpp",
+        "vcpkg::openal-soft",
         {public = true}
     )

@@ -3,6 +3,7 @@
 namespace Rocket {
     extern IApplication* g_Application;
     CommandParser* g_CommandParser;
+    ConfigParser* g_ConfigParser;
 }
 
 extern void AllocateModule();
@@ -29,6 +30,12 @@ int main(int argc, char **argv) {
         RK_PROFILE_SCOPE("Get Command Line Parameters");
         g_CommandParser = new CommandParser(argc, argv);
         g_CommandParser->Parse();
+
+        g_ConfigParser = new ConfigParser();
+        auto result = g_ConfigParser->Initialize();
+        if(result) {
+            RK_CORE_ERROR("Load Config File Error");
+        }
     }
 
     // Allocate Modules

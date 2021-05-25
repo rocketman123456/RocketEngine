@@ -1,5 +1,5 @@
-// From https://preshing.com/20180116/a-primitive-reflection-system-in-cpp-part-1/
-// And https://preshing.com/20180124/a-flexible-reflection-system-in-cpp-part-2/
+// From https://preshing.com/20180116/a-primitive-Reflection-system-in-cpp-part-1/
+// And https://preshing.com/20180124/a-flexible-Reflection-system-in-cpp-part-2/
 #pragma once
 #include "Core/Core.h"
 #include "Core/Template.h"
@@ -89,20 +89,20 @@ namespace Rocket {
         };
 
     #define REFLECT() \
-        friend struct reflect::DefaultResolver; \
-        static reflect::TypeDescriptor_Struct Reflection; \
-        static void InitReflection(reflect::TypeDescriptor_Struct*);
+        friend struct Rocket::Reflect::DefaultResolver; \
+        static Rocket::Reflect::TypeDescriptor_Struct Reflection; \
+        static void InitReflection(Rocket::Reflect::TypeDescriptor_Struct*);
 
     #define REFLECT_STRUCT_BEGIN(type) \
-        reflect::TypeDescriptor_Struct type::Reflection{type::initReflection}; \
-        void type::InitReflection(reflect::TypeDescriptor_Struct* typeDesc) { \
+        Rocket::Reflect::TypeDescriptor_Struct type::Reflection{type::InitReflection}; \
+        void type::InitReflection(Rocket::Reflect::TypeDescriptor_Struct* typeDesc) { \
             using T = type; \
             typeDesc->name = #type; \
             typeDesc->size = sizeof(T); \
             typeDesc->members = {
 
     #define REFLECT_STRUCT_MEMBER(name) \
-                {#name, offsetof(T, name), reflect::TypeResolver<decltype(T::name)>::Get()},
+                {#name, offsetof(T, name), Rocket::Reflect::TypeResolver<decltype(T::name)>::Get()},
 
     #define REFLECT_STRUCT_END() \
             }; \

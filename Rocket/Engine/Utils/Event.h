@@ -4,6 +4,7 @@
 #include "Utils/Timer.h"
 #include "Utils/Variant.h"
 #include "Utils/HashFunction.h"
+//#include "Reflection/Reflection.h"
 
 #include <utility>
 #include <optional>
@@ -42,6 +43,8 @@ namespace Rocket {
 		double time_stamp_ = 0.0f;
 		Vec<Variant> variable_;     // TODO: use memory manager in std::vector
         String name_;
+
+		//REFLECT()
 	};
 
 	using EventPtr = Ref<Event>;
