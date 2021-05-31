@@ -2,8 +2,7 @@ target("RocketPlatform")
     set_kind("static")
     if is_plat("linux", "macosx", "windows") then
         -- Add Packages
-        add_packages(
-            "vcpkg::mimalloc", 
+        add_packages( 
             "vcpkg::glfw3",
             "vcpkg::spdlog", 
             "vcpkg::fmt", 
