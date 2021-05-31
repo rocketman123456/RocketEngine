@@ -30,7 +30,8 @@ add_requires(
 )
 if is_plat("linux", "macosx", "windows") then
     add_requires(
-        "vcpkg::glfw3"
+        "vcpkg::glfw3",
+        "vcpkg::sdl2"
     )
 end
 
@@ -49,6 +50,7 @@ if is_config("render_api", "opengl") then
     printf("OpenGL Render API\n")
 elseif is_config("render_api", "opengl_es") then
     add_defines("RK_OPENGL_ES")
+    printf("OpenGL ES Render API\n")
 elseif is_config("render_api", "vulkan") then
     add_defines("RK_VULKAN")
     add_requires(

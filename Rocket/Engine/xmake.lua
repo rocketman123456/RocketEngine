@@ -1,5 +1,13 @@
 target("RocketEngine")
     set_kind("static")
+    -- Add Packages
+    add_packages(
+        "vcpkg::spdlog",
+        "vcpkg::fmt",
+        "vcpkg::yaml-cpp",
+        "vcpkg::openal-soft",
+        {public = true}
+    )
     -- Add Files
     add_files(
         "Core/*.cpp",
@@ -10,11 +18,4 @@ target("RocketEngine")
         "Resource/*.cpp",
         "Utils/*.cpp"
     )
-    -- Add Packages
-    add_packages(
-        "vcpkg::spdlog",
-        "vcpkg::fmt",
-        "vcpkg::yaml-cpp",
-        "vcpkg::openal-soft",
-        {public = true}
-    )
+    
