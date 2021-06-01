@@ -6,5 +6,6 @@ target("RocketRender")
         "vcpkg::fmt", 
         "vcpkg::volk",
         "vcpkg::vulkan-headers",
+        "vcpkg::vulkan-memory-allocator",
         {public = true}
     )

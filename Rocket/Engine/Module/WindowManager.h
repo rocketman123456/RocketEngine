@@ -17,7 +17,7 @@ namespace Rocket {
         virtual void Finalize() final;
         virtual void Tick(TimeStep ts) final;
 
-        void SwapBuffer();
+        void SwapBuffer() {}
 
 #if defined(RK_DESKTOP)
         [[nodiscard]] void* GetNativeWindow() { return window_.GetWindowHandle(); }

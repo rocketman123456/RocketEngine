@@ -2,10 +2,11 @@
 #include "Module/WindowManager.h"
 
 #if defined(RK_DESKTOP)
-#include <GLFW/glfw3.h>
+//#include <GLFW/glfw3.h>
+#include <SDL2/SDL.h>
 #endif
 
-static Rocket::default_allocator<Rocket::Event> g_event_allocator;
+[[maybe_unused]] static Rocket::default_allocator<Rocket::Event> g_event_allocator;
 
 namespace Rocket {
     EventManager* EventManager::instance_ = nullptr;
@@ -24,14 +25,13 @@ namespace Rocket {
 
         active_event_queue_ = 0;
 #if defined(RK_DESKTOP)
-        window_handle_ = static_cast<GLFWwindow*>(static_cast<WindowManager*>(g_WindowManager)->GetNativeWindow());
-        window_data_.title = "Rocket";//Application::Get().GetName();
+        window_data_.title = "Rocket";
 #endif
 
         SetupListener();
 
 #if defined(RK_DESKTOP)
-        glfwSetWindowUserPointer(window_handle_, &window_data_);
+        //glfwSetWindowUserPointer(window_handle_, &window_data_);
 #endif
 
         SetupCallback();
@@ -42,168 +42,7 @@ namespace Rocket {
     }
 
     void EventManager::SetupCallback() {
-#if defined(RK_DESKTOP)
-        // Set GLFW callbacks
-        glfwSetWindowSizeCallback(window_handle_, [](GLFWwindow *window, int width, int height) {
-            RK_EVENT_TRACE("glfwSetWindowSizeCallback");
-            [[maybe_unused]] WindowData &data = *(WindowData *)glfwGetWindowUserPointer(window);
-        });
 
-        glfwSetWindowContentScaleCallback(window_handle_, [](GLFWwindow *window, float xscale, float yscale) {
-            RK_EVENT_TRACE("glfwSetWindowContentScaleCallback");
-            [[maybe_unused]] WindowData &data = *(WindowData *)glfwGetWindowUserPointer(window);
-        });
-
-        glfwSetWindowRefreshCallback(window_handle_, [](GLFWwindow *window) {
-            RK_EVENT_TRACE("glfwSetWindowRefreshCallback");
-            WindowData &data = *(WindowData *)glfwGetWindowUserPointer(window);
-
-            EventVarVec var;
-            var.resize(1);
-            var[0].type = Variant::TYPE_STRING_ID;
-            var[0].asStringId = "window_refresh"_hash;
-            EventPtr event = std::allocate_shared<Rocket::Event>(g_event_allocator, var, "window_refresh");
-
-            data.event_callback(event);
-        });
-
-        glfwSetFramebufferSizeCallback(window_handle_, [](GLFWwindow *window, int width, int height) {
-            RK_EVENT_TRACE("glfwSetFramebufferSizeCallback");
-            WindowData &data = *(WindowData *)glfwGetWindowUserPointer(window);
-
-            EventVarVec var;
-            var.resize(4);
-            var[0].type = Variant::TYPE_STRING_ID;
-            var[0].asStringId = "window_resize"_hash;
-            var[1].type = Variant::TYPE_INT32;
-            var[1].asInt32 = width;
-            var[2].type = Variant::TYPE_INT32;
-            var[2].asInt32 = height;
-            var[3].type = Variant::TYPE_INT32;
-            var[3].asInt32 = 0;
-            EventPtr event = std::allocate_shared<Rocket::Event>(g_event_allocator, var, "window_resize");
-
-            data.event_callback(event);
-        });
-
-        glfwSetWindowCloseCallback(window_handle_, [](GLFWwindow *window) {
-            RK_EVENT_TRACE("glfwSetWindowCloseCallback");
-            WindowData &data = *(WindowData *)glfwGetWindowUserPointer(window);
-
-            EventVarVec var;
-            var.resize(1);
-            var[0].type = Variant::TYPE_STRING_ID;
-            var[0].asStringId = "window_close"_hash;
-            EventPtr event = std::allocate_shared<Rocket::Event>(g_event_allocator, var, "window_close");
-
-            data.event_callback(event);
-        });
-
-        glfwSetKeyCallback(window_handle_, [](GLFWwindow *window, int key, int scancode, int action, int mods) {
-            //RK_EVENT_TRACE("glfwSetKeyCallback");
-            WindowData &data = *(WindowData *)glfwGetWindowUserPointer(window);
-
-            EventVarVec var;
-            var.resize(3);
-            var[0].type = Variant::TYPE_STRING_ID;
-            var[0].asStringId = 0;
-            var[1].type = Variant::TYPE_INT32;
-            var[1].asInt32 = scancode;
-            var[2].type = Variant::TYPE_INT32;
-            var[2].asInt32 = 0;
-            switch (action)
-            {
-                case GLFW_PRESS: {
-                    var[0].asStringId = "key_press"_hash;
-                    var[2].asInt32 = 0;
-                } break;
-                case GLFW_RELEASE: {
-                    var[0].asStringId = "key_release"_hash;
-                    var[2].asInt32 = 0;
-                } break;
-                case GLFW_REPEAT: {
-                    var[0].asStringId = "key_repeat"_hash;
-                    var[2].asInt32 = 1;
-                } break;
-            }
-            EventPtr event = std::allocate_shared<Rocket::Event>(g_event_allocator, var);
-            data.event_callback(event);
-        });
-
-        glfwSetCharCallback(window_handle_, [](GLFWwindow *window, uint32_t keycode) {
-            //RK_EVENT_TRACE("glfwSetCharCallback");
-            WindowData &data = *(WindowData *)glfwGetWindowUserPointer(window);
-
-            EventVarVec var;
-            var.resize(2);
-            var[0].type = Variant::TYPE_STRING_ID;
-            var[0].asStringId = "key_char_code"_hash;
-            var[1].type = Variant::TYPE_INT32;
-            var[1].asInt32 = keycode;
-            EventPtr event = std::allocate_shared<Rocket::Event>(g_event_allocator, var, "key_char_code");
-
-            data.event_callback(event);
-        });
-
-        glfwSetMouseButtonCallback(window_handle_, [](GLFWwindow *window, int button, int action, int mods) {
-            //RK_EVENT_TRACE("glfwSetMouseButtonCallback");
-            WindowData &data = *(WindowData *)glfwGetWindowUserPointer(window);
-
-            EventVarVec var;
-            var.resize(2);
-            var[0].type = Variant::TYPE_STRING_ID;
-            var[0].asStringId = 0;
-            var[1].type = Variant::TYPE_INT32;
-            var[1].asInt32 = button;
-            switch (action)
-            {
-                case GLFW_PRESS: {
-                    var[0].asStringId = "mouse_button_press"_hash;
-                    EventPtr event = std::allocate_shared<Rocket::Event>(g_event_allocator, var, "mouse_button_press");
-                    data.event_callback(event);
-                } break;
-                case GLFW_RELEASE: {
-                    var[0].asStringId = "mouse_button_release"_hash;
-                    EventPtr event = std::allocate_shared<Rocket::Event>(g_event_allocator, var, "mouse_button_release");
-                    data.event_callback(event);
-                } break;
-            }
-        });
-
-        glfwSetScrollCallback(window_handle_, [](GLFWwindow *window, double xOffset, double yOffset) {
-            //RK_EVENT_TRACE("glfwSetScrollCallback");
-            WindowData &data = *(WindowData *)glfwGetWindowUserPointer(window);
-
-            EventVarVec var;
-            var.resize(3);
-            var[0].type = Variant::TYPE_STRING_ID;
-            var[0].asStringId = "mouse_scroll"_hash;
-            var[1].type = Variant::TYPE_DOUBLE;
-            var[1].asDouble = xOffset;
-            var[2].type = Variant::TYPE_DOUBLE;
-            var[2].asDouble = yOffset;
-            EventPtr event = std::allocate_shared<Rocket::Event>(g_event_allocator, var, "mouse_scroll");
-            
-            data.event_callback(event);
-        });
-
-        glfwSetCursorPosCallback(window_handle_, [](GLFWwindow *window, double xPos, double yPos) {
-            //RK_EVENT_TRACE("glfwSetCursorPosCallback");
-            WindowData &data = *(WindowData *)glfwGetWindowUserPointer(window);
-
-            EventVarVec var;
-            var.resize(3);
-            var[0].type = Variant::TYPE_STRING_ID;
-            var[0].asStringId = "mouse_move"_hash;
-            var[1].type = Variant::TYPE_DOUBLE;
-            var[1].asDouble = xPos;
-            var[2].type = Variant::TYPE_DOUBLE;
-            var[2].asDouble = yPos;
-            EventPtr event = std::allocate_shared<Rocket::Event>(g_event_allocator, var, "mouse_move");
-
-            data.event_callback(event);
-        });
-#endif
     }
 
     void EventManager::SetupListener() {

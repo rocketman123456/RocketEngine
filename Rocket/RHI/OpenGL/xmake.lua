@@ -2,7 +2,7 @@ target("RocketRender")
     add_packages(
         "vcpkg::spdlog", 
         "vcpkg::fmt", 
-        "vcpkg::glad",
+        --"vcpkg::glad",
         {public = true}
     )
     set_kind("static")

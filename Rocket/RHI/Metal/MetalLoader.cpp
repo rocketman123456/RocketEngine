@@ -1,6 +1,5 @@
 #include "Metal/MetalLoader.h"
 
-#include <GLFW/glfw3.h>
 
 namespace Rocket {
     int32_t MetalLoader::LoadDriver() {

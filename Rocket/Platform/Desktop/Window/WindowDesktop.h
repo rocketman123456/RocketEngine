@@ -1,8 +1,9 @@
 #pragma once
 //#define GLFW_INCLUDE_NONE
-#include <GLFW/glfw3.h>
+#include <SDL2/SDL.h>
+//#include <GLFW/glfw3.h>
 #if defined(RK_OPENGL)
-#include <glad/glad.h>
+//#include <glad/glad.h>
 #elif defined(RK_VULKAN)
 //#include <volk.h>
 //#include <vulkan/vulkan.hpp>
@@ -23,14 +24,10 @@ namespace Rocket {
             void Finalize();
             void Tick(TimeStep ts);
 
-#if defined(RK_OPENGL)
-            void SwapBuffer() { glfwSwapBuffers(window_); }
-#endif
-
-            [[nodiscard]] bool GetWindowsShouldClouse() { return glfwWindowShouldClose(window_); }
             [[nodiscard]] inline void* GetWindowHandle() { return window_; }
         private:
-            GLFWwindow* window_ = nullptr;
+            SDL_Window* window_ = nullptr;
+            //GLFWwindow* window_ = nullptr;
             int32_t width_ = 1280;
             int32_t height_ = 720;
         };

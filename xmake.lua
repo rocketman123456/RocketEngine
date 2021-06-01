@@ -8,12 +8,6 @@ add_rules("mode.debug", "mode.release")
 set_languages("c99", "c++20")
 set_warnings("all", "error")
 
---add_linkdirs("/usr/local/lib", "/usr/lib")
---add_links("tbox")
---add_syslinks("z", "pthread")
---add_cxflags("-stdnolib", "-fno-strict-aliasing")
---add_ldflags("-L/usr/local/lib", "-lpthread", {force = true})
-
 --
 -- Add Required Modules
 --
@@ -42,30 +36,29 @@ option("render_api")
     set_showmenu(true)
     set_description("The Render API config option")
 option_end()
+
 if is_config("render_api", "opengl") then
     add_defines("RK_OPENGL")
-    add_requires(
-        "vcpkg::glad"
-    )
     printf("OpenGL Render API\n")
 elseif is_config("render_api", "opengl_es") then
     add_defines("RK_OPENGL_ES")
     printf("OpenGL ES Render API\n")
 elseif is_config("render_api", "vulkan") then
     add_defines("RK_VULKAN")
-    add_requires(
-        "vcpkg::volk",
-        "vcpkg::vulkan-headers"
-    )
+    add_requires("vcpkg::volk", "vcpkg::vulkan-headers", "vcpkg::vulkan-memory-allocator")
     printf("Vulkan Render API\n")
 elseif is_config("render_api", "soft_render") then 
     add_defines("RK_SOFT_RENDER")
     printf("Soft Render API\n")
 elseif is_config("render_api", "metal") then
     add_defines("RK_METAL")
-    add_requires(
-        ""
-    )
+    printf("Metal Render API\n")
+elseif is_config("render_api", "dx12") then
+    add_defines("RK_DX12")
+    printf("DirectX 12 Render API\n")
+elseif is_config("render_api", "dx11") then
+    add_defines("RK_DX11")
+    printf("DirectX 11 Render API\n")
 end
 
 --
@@ -77,6 +70,17 @@ option("profile")
 option_end()
 if is_config("profile", "on") then
     add_defines("RK_PROFILE")
+end
+
+--
+-- Set mem_check Options
+--
+option("mem_check")
+    set_showmenu(true)
+    set_description("The mem_check config option")
+option_end()
+if is_config("mem_check", "on") then
+    add_defines("RK_MEM_CHECK")
 end
 
 --

@@ -12,20 +12,21 @@
 --        add_links("user32", "gdi32", "shell32", "kernel32")
 --    end
 
-target("engine_test")
-    set_kind("binary")
-    add_deps("RocketEngine", "RocketPlatform", "RocketRender")
-    -- Add Platform Dependent Libs
-    if is_plat("linux", "macosx") then
-        add_links("pthread", "m", "dl")
-        if is_plat("macosx") then
-            add_frameworks("Cocoa", "IOKit", "CoreVideo")
-        end
-    elseif is_plat("windows") then
-        add_links("user32", "gdi32", "shell32", "kernel32", "advapi32")
-        add_ldflags("/subsystem:console")
-    end
-    add_files("engine_test.cpp")
+--target("engine_test")
+--    set_kind("binary")
+--    add_deps("RocketEngine", "RocketPlatform", "RocketRender")
+--    -- Add Platform Dependent Libs
+--    if is_plat("linux", "macosx") then
+--        add_links("pthread", "m", "dl")
+--        if is_plat("macosx") then
+--            add_links("iconv")
+--            add_frameworks("Cocoa", "IOKit", "CoreVideo", "CoreAudio", "CoreFoundation", "CoreAudioKit", "ForceFeedback", "Metal", "AudioToolbox", "Carbon")
+--        end
+--    elseif is_plat("windows") then
+--        add_links("user32", "gdi32", "shell32", "kernel32", "advapi32")
+--        add_ldflags("/subsystem:console")
+--    end
+--    add_files("engine_test.cpp")
 
 --target("memory_leak_test")
 --    set_kind("binary")

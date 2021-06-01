@@ -5,7 +5,7 @@ target("RocketEngine")
         "vcpkg::spdlog",
         "vcpkg::fmt",
         "vcpkg::yaml-cpp",
-        "vcpkg::openal-soft",
+        --"vcpkg::openal-soft",
         {public = true}
     )
     -- Add Files

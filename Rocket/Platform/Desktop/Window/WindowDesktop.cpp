@@ -3,42 +3,37 @@
 namespace Rocket {
     namespace Window {
         int32_t WindowDesktop::Initialize() {
-            if(!glfwInit()) {
-                RK_CORE_ERROR("Failed to init GLFW");
-                glfwTerminate();
-                return 1;
-            }
-#if defined(RK_OPENGL)
-            glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-            glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-            glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-#if defined(RK_MACOS)
-            glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+            SDL_Init(SDL_INIT_EVERYTHING);
+            window_ = SDL_CreateWindow(
+                "Rocket Engine",
+                SDL_WINDOWPOS_CENTERED,
+                SDL_WINDOWPOS_CENTERED,
+                width_,
+                height_,
+#if defined(RK_VULKAN)
+                SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN
+#elif defined(RK_OPENGL)
+                SDL_WINDOW_VULKAN | SDL_WINDOW_SHOWN
+#elif defined(RK_METAL)
+                SDL_WINDOW_METAL | SDL_WINDOW_SHOWN
 #endif
-#elif defined(RK_VULKAN) || defined(RK_METAL)
-            glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-#endif
-            window_ = glfwCreateWindow(width_, height_, "Rocket Engine", NULL, NULL);
-            if (window_ == nullptr) {
-                RK_CORE_ERROR("Failed to create GLFW window");
-                glfwTerminate();
-                return 1;
-            }
-
-#if defined(RK_OPENGL)
-            glfwMakeContextCurrent(window_);
-#endif
+            );
             return 0;
         }
 
         void WindowDesktop::Finalize() {
-            glfwSetWindowShouldClose(window_, true);
-            glfwDestroyWindow(window_);
-            glfwTerminate();
+            SDL_DestroyWindow(window_);
+            window_ = nullptr;
+            SDL_Quit();
         }
 
         void WindowDesktop::Tick(TimeStep ts) {
-            glfwPollEvents();
+            SDL_Event event;
+            while(SDL_PollEvent(&event)) {
+                if(event.type == SDL_QUIT) {
+                    RK_CORE_INFO("App Should Quit");
+                }
+            }
         }
     }
 }
