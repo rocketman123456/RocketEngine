@@ -6,7 +6,7 @@
 --    if is_plat("linux", "macosx") then
 --        add_links("pthread", "m", "dl")
 --        if is_plat("macosx") then
-            add_frameworks("Cocoa", "IOKit", "CoreVideo")
+--            add_frameworks("Cocoa", "IOKit", "CoreVideo")
 --        end
 --    elseif is_plat("windows") then
 --        add_links("user32", "gdi32", "shell32", "kernel32")
@@ -61,19 +61,22 @@ target("sdl_vulkan_test")
 --    end
 --    add_files("engine_test.cpp")
 
---target("memory_leak_test")
---    set_kind("binary")
---    add_files("memory_leak_test.cpp")
---    add_packages("vcpkg::mimalloc")
---    -- Add Platform Dependent Libs
---    if is_plat("linux", "macosx") then
---        add_links("pthread", "m", "dl")
---        if is_plat("macosx") then
---            add_frameworks("Cocoa", "IOKit", "CoreVideo")
---        end
---    elseif is_plat("windows") then
---        add_links("user32", "gdi32", "shell32", "kernel32")
---    end
+target("memory_leak_test")
+    set_kind("binary")
+    add_cxflags("-fsanitize=address", "-ftrapv")
+    add_mxflags("-fsanitize=address", "-ftrapv")
+    add_ldflags("-fsanitize=address")
+    add_files("memory_leak_test.cpp")
+    --add_packages("vcpkg::mimalloc")
+    -- Add Platform Dependent Libs
+    if is_plat("linux", "macosx") then
+        add_links("pthread", "m", "dl")
+        if is_plat("macosx") then
+            add_frameworks("Cocoa", "IOKit", "CoreVideo")
+        end
+    elseif is_plat("windows") then
+        add_links("user32", "gdi32", "shell32", "kernel32")
+    end
 
 --target("hook_test")
 --    set_kind("binary")

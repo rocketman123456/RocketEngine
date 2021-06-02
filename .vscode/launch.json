@@ -8,7 +8,7 @@
             "name": "(lldb) memory_leak_test",
             "type": "lldb",
             "request": "launch",
-            "program": "${workspaceFolder}/build/macosx/x86_64/debug/memory_leak_test",
+            "program": "${workspaceFolder}/build/macosx/x86_64/check/memory_leak_test",
             "args": [],
             "cwd": "${workspaceFolder}"
         },

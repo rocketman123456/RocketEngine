@@ -4,7 +4,15 @@
 -- Set Project Basic
 --
 set_project("Rocket")
-add_rules("mode.debug", "mode.release")
+add_rules(
+    "mode.debug", 
+    "mode.check", 
+    "mode.profile",
+    "mode.valgrind",
+    "mode.release", 
+    "mode.minsizerel", 
+    "mode.releasedbg"
+)
 set_languages("c99", "c++20")
 set_warnings("all", "error")
 
@@ -94,6 +102,15 @@ add_includedirs(
 )
 
 --
+-- Add ISPC Build Rule
+--
+--rule("ispc")
+--    set_extensions(".ispc")
+--    on_build_file(function (target, sourcefile, opt)
+--        printf("Build ISPC\n")
+--    end)
+
+--
 -- Set Platform Defines
 --
 if is_plat("linux", "macosx", "windows") then
@@ -111,46 +128,24 @@ end
 -- Set Compile Defines
 --
 -- 如果当前编译模式是debug
-if is_mode("debug") then
+if is_mode("debug", "valgrind", "check") then
     -- 添加DEBUG编译宏
     add_defines("RK_DEBUG")
-    -- 启用调试符号
-    set_symbols("debug")
-    -- 禁用优化
-    set_optimize("none")
--- 如果是release或者profile模式
-elseif is_mode("release", "profile") then
-    -- 如果是release模式
-    if is_mode("release") then
-        -- 添加DEBUG编译宏
-        add_defines("RK_RELEASE")
-        -- 隐藏符号
-        set_symbols("hidden")
-        -- strip所有符号
-        set_strip("all")
-        -- 忽略帧指针
-        add_cxflags("-fomit-frame-pointer")
-        add_mxflags("-fomit-frame-pointer")
-        -- 优化
-        set_optimize("fastest")
-    -- 如果是profile模式
-    else
-        -- 添加DEBUG编译宏
-        add_defines("RK_PROFILE")
-        -- 启用调试符号
-        set_symbols("debug")
-        -- 优化
-        set_optimize("fastest")
-    end
-    -- 添加扩展指令集
-    add_vectorexts("sse2", "sse3", "ssse3", "mmx")
+-- 如果是release模式
+elseif is_mode("release", "minsizerel", "releasedbg") then
+    -- 添加RELEASE编译宏
+    add_defines("RK_RELEASE")
+-- 如果是profile模式
+elseif is_mode("profile") then
+    -- 添加DEBUG编译宏
+    add_defines("RK_PROFILE")
 end
 
 --
 -- Add Sub Module
 --
 includes(
-    "Rocket", 
+    --"Rocket", 
     "External",
     "UnitTest"
 )
