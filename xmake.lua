@@ -45,7 +45,7 @@ elseif is_config("render_api", "opengl_es") then
     printf("OpenGL ES Render API\n")
 elseif is_config("render_api", "vulkan") then
     add_defines("RK_VULKAN")
-    add_requires("vcpkg::volk", "vcpkg::vulkan-headers", "vcpkg::vulkan-memory-allocator")
+    add_requires("vulkan", "vcpkg::volk", "vcpkg::vulkan-headers", "vcpkg::vulkan-memory-allocator")
     printf("Vulkan Render API\n")
 elseif is_config("render_api", "soft_render") then 
     add_defines("RK_SOFT_RENDER")

@@ -8,13 +8,12 @@ int main() {
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
 
-    SDL_Window* window = SDL_CreateWindow
-        (
-        "SDL Context",
+    SDL_Window* window = SDL_CreateWindow(
+        "Rocket",
         SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
         800, 600,
         SDL_WINDOW_OPENGL
-        );
+    );
     
     SDL_GLContext gl_context = SDL_GL_CreateContext(window);
 
