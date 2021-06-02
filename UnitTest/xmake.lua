@@ -12,6 +12,23 @@
 --        add_links("user32", "gdi32", "shell32", "kernel32")
 --    end
 
+target("sdl_test")
+    set_kind("binary")
+    add_deps("glad")
+    add_packages("vcpkg::sdl2")
+    -- Add Platform Dependent Libs
+    if is_plat("linux", "macosx") then
+        add_links("pthread", "m", "dl")
+        if is_plat("macosx") then
+            add_links("iconv")
+            add_frameworks("Cocoa", "IOKit", "CoreVideo", "CoreAudio", "CoreFoundation", "CoreAudioKit", "ForceFeedback", "Metal", "AudioToolbox", "Carbon")
+        end
+    elseif is_plat("windows") then
+        add_links("user32", "gdi32", "shell32", "kernel32", "advapi32")
+        add_ldflags("/subsystem:console")
+    end
+    add_files("sdl_test.cpp")
+
 --target("engine_test")
 --    set_kind("binary")
 --    add_deps("RocketEngine", "RocketPlatform", "RocketRender")

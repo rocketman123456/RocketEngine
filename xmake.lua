@@ -89,7 +89,8 @@ end
 add_includedirs(
     "Rocket/Engine",
     "Rocket/Platform",
-    "Rocket/RHI"
+    "Rocket/RHI",
+    "External/glad/include"
 )
 
 --
@@ -149,7 +150,8 @@ end
 -- Add Sub Module
 --
 includes(
-    "Rocket",  
+    "Rocket", 
+    "External",
     "UnitTest"
 )
 
