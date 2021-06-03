@@ -24,8 +24,8 @@ add_requires(
     "vcpkg::fmt",
     "vcpkg::taskflow",
     "vcpkg::entt",
-    "vcpkg::mimalloc",
-    "vcpkg::minizip-ng",
+    --"vcpkg::mimalloc",
+    --"vcpkg::minizip-ng",
     "vcpkg::openal-soft",
     "vcpkg::eigen3",
     "vcpkg::yaml-cpp"
@@ -53,7 +53,15 @@ elseif is_config("render_api", "opengl_es") then
     printf("OpenGL ES Render API\n")
 elseif is_config("render_api", "vulkan") then
     add_defines("RK_VULKAN")
-    add_requires("vulkan", "vcpkg::volk", "vcpkg::vulkan-headers", "vcpkg::vulkan-memory-allocator")
+    --if is_plat("linux") then
+    --    add_requires("vulkan")
+    --elseif is_plat("macosx") then
+    --    add_requires("vulkan")
+    --elseif is_plat("windows") then
+    --    add_requires("vulkan")
+    --end
+    add_requires("vcpkg::volk", "vcpkg::vulkan-headers")
+    --add_requires("vcpkg::vulkan-memory-allocator")
     printf("Vulkan Render API\n")
 elseif is_config("render_api", "soft_render") then 
     add_defines("RK_SOFT_RENDER")
