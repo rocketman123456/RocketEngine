@@ -1,6 +1,6 @@
 #include "OpenGL/OpenGLLoader.h"
 
-//#include <glad/glad.h>
+#include <glad/glad.h>
 
 namespace Rocket {
     int32_t OpenGLLoader::LoadDriver() {
@@ -11,20 +11,16 @@ namespace Rocket {
         return 0;
     }
 
-    void OpenGLLoader::UnloadDriver() {
-    }
-
-    int32_t OpenGLLoader::LoadDevice() {
-        return 0;
-    }
-
-    void OpenGLLoader::UnloadDevice() {
-    }
-
-    int32_t OpenGLLoader::LoadEngine() {
-        return 0;
-    }
-
-    void OpenGLLoader::UnloadEngine() {
-    }
+    //void OpenGLLoader::UnloadDriver() {
+    //}
+    //int32_t OpenGLLoader::LoadDevice() {
+    //    return 0;
+    //}
+    //void OpenGLLoader::UnloadDevice() {
+    //}
+    //int32_t OpenGLLoader::LoadEngine() {
+    //    return 0;
+    //}
+    //void OpenGLLoader::UnloadEngine() {
+    //}
 }

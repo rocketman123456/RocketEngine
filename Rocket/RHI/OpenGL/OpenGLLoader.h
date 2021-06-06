@@ -8,9 +8,9 @@ namespace Rocket {
 
         virtual int32_t LoadDriver() final;
         virtual void UnloadDriver() final;
-        virtual int32_t LoadDevice() final;
-        virtual void UnloadDevice() final;
-        virtual int32_t LoadEngine() final;
-        virtual void UnloadEngine() final;
+        //virtual int32_t LoadDevice() final;
+        //virtual void UnloadDevice() final;
+        //virtual int32_t LoadEngine() final;
+        //virtual void UnloadEngine() final;
     };
 }

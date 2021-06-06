@@ -8,9 +8,9 @@ namespace Rocket {
 
         [[nodiscard]] virtual int32_t LoadDriver() = 0;
         virtual void UnloadDriver() = 0;
-        [[nodiscard]] virtual int32_t LoadDevice() = 0;
-        virtual void UnloadDevice() = 0;
-        [[nodiscard]] virtual int32_t LoadEngine() = 0;
-        virtual void UnloadEngine() = 0;
+        //[[nodiscard]] virtual int32_t LoadDevice() { return 0; }
+        //virtual void UnloadDevice() {}
+        //[[nodiscard]] virtual int32_t LoadEngine() { return 0; }
+        //virtual void UnloadEngine() {}
     };
 }
