@@ -25,11 +25,11 @@ add_requires(
     "vcpkg::taskflow",
     "vcpkg::entt",
     "vcpkg::mimalloc",
-    "vcpkg::minizip-ng",
     "vcpkg::zlib",
     "vcpkg::zstd",
     "vcpkg::bzip2",
     "vcpkg::liblzma",
+    "vcpkg::minizip-ng",
     "vcpkg::openal-soft",
     "vcpkg::eigen3",
     "vcpkg::yaml-cpp"
@@ -79,6 +79,9 @@ elseif is_config("render_api", "dx12") then
 elseif is_config("render_api", "dx11") then
     add_defines("RK_DX11")
     printf("DirectX 11 Render API\n")
+else
+    add_defines("RK_OPENGL")
+    printf("Use Deault OpenGL Render API\n")
 end
 
 --
