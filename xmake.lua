@@ -4,6 +4,7 @@
 -- Set Project Basic
 --
 set_project("Rocket")
+set_version("0.0.1")
 add_rules(
     "mode.debug", 
     "mode.check", 
@@ -19,6 +20,7 @@ set_warnings("all", "error")
 --
 -- Add Required Modules
 --
+add_requireconfs("*", {configs = {shared = false}})
 add_requires(
     "vcpkg::spdlog",
     "vcpkg::fmt",
@@ -57,14 +59,17 @@ elseif is_config("render_api", "opengl_es") then
     printf("OpenGL ES Render API\n")
 elseif is_config("render_api", "vulkan") then
     add_defines("RK_VULKAN")
-    --if is_plat("linux") then
-    --    add_requires("vulkan")
-    --elseif is_plat("macosx") then
-    --    add_requires("vulkan")
-    --elseif is_plat("windows") then
-    --    add_requires("vulkan")
-    --end
-    add_requires("vcpkg::volk", "vcpkg::vulkan-headers")
+    if is_plat("windows") then
+        add_includedirs("$(env VULKAN_SDK)/Include")
+        add_linkdirs("$(env VULKAN_SDK)/Bin")
+    elseif is_plat("macosx") then
+        add_includedirs("$(env VULKAN_SDK)/Include")
+        add_linkdirs("$(env VULKAN_SDK)/Bin")
+    elseif is_plat("linux") then
+        add_includedirs("$(env VULKAN_SDK)/Include")
+        add_linkdirs("$(env VULKAN_SDK)/Bin")
+    end
+    add_requires("vcpkg::volk")
     --add_requires("vcpkg::vulkan-memory-allocator")
     printf("Vulkan Render API\n")
 elseif is_config("render_api", "soft_render") then 
