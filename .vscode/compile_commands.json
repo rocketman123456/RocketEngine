@@ -1,21 +1,111 @@
 [
 {
-  "directory": "/Users/developer/Program/RocketEngine",
-  "arguments": ["/usr/bin/xcrun -sdk macosx clang", "-c", "-Qunused-arguments", "-arch", "x86_64", "-mmacosx-version-min=11.3", "-isysroot", "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.3.sdk", "-Wall", "-Werror", "-std=c++2a", "-IRocket/Engine", "-IRocket/Platform", "-IRocket/RHI", "-IExternal/glad/include", "-DRK_VULKAN", "-DRK_PROFILE", "-DRK_DESKTOP", "-DGLFW_INCLUDE_NONE", "-DRK_MACOS", "-DRK_DEBUG", "-framework", "Cocoa", "-framework", "IOKit", "-framework", "CoreVideo", "-framework", "CoreAudio", "-framework", "CoreFoundation", "-framework", "CoreAudioKit", "-framework", "ForceFeedback", "-framework", "Metal", "-framework", "AudioToolbox", "-framework", "Carbon", "-I", "/Users/developer/Program/vcpkg/installed/x64-osx/include", "-o", "build/.objs/sdl_test/macosx/x86_64/check/UnitTest/sdl_test.cpp.o", "UnitTest/sdl_test.cpp"],
-  "file": "UnitTest/sdl_test.cpp"
+  "directory": "E:\\Program\\CppCode\\RocketEngine",
+  "arguments": ["C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\MSVC\\14.29.30037\\bin\\HostX64\\x64\\cl.exe", "/c", "/EHsc", "/nologo", "/W3", "/WX", "/std:c++latest", "/IC:\\VulkanSDK\\1.2.176.1\\Include", "/IRocket\\Engine", "/IRocket\\Platform", "/IRocket\\RHI", "/IExternal\\glad\\include", "/DRK_VULKAN", "/DRK_DESKTOP", "/DGLFW_INCLUDE_NONE", "/DRK_WINDOWS", "/D_CRT_SECURE_NO_WARNINGS", "/DRK_DEBUG", "/IE:\\Program\\vcpkg\\installed\\x64-windows-static\\include", "/Fobuild\\.objs\\RocketRender\\windows\\x64\\debug\\Rocket\\RHI\\Vulkan\\VulkanLoader.cpp.obj", "Rocket\\RHI\\Vulkan\\VulkanLoader.cpp"],
+  "file": "Rocket\\RHI\\Vulkan\\VulkanLoader.cpp"
 },
 {
-  "directory": "/Users/developer/Program/RocketEngine",
-  "arguments": ["/usr/bin/xcrun -sdk macosx clang", "-c", "-Qunused-arguments", "-arch", "x86_64", "-mmacosx-version-min=11.3", "-isysroot", "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.3.sdk", "-Wall", "-Werror", "-std=c++2a", "-IRocket/Engine", "-IRocket/Platform", "-IRocket/RHI", "-IExternal/glad/include", "-DRK_VULKAN", "-DRK_PROFILE", "-DRK_DESKTOP", "-DGLFW_INCLUDE_NONE", "-DRK_MACOS", "-DRK_DEBUG", "-framework", "Cocoa", "-framework", "IOKit", "-framework", "CoreVideo", "-framework", "CoreAudio", "-framework", "CoreFoundation", "-framework", "CoreAudioKit", "-framework", "ForceFeedback", "-framework", "Metal", "-framework", "AudioToolbox", "-framework", "Carbon", "-I", "/Users/developer/Program/vcpkg/installed/x64-osx/include", "-o", "build/.objs/sdl_vulkan_test/macosx/x86_64/check/UnitTest/sdl_vulkan_test.cpp.o", "UnitTest/sdl_vulkan_test.cpp"],
-  "file": "UnitTest/sdl_vulkan_test.cpp"
+  "directory": "E:\\Program\\CppCode\\RocketEngine",
+  "arguments": ["C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\MSVC\\14.29.30037\\bin\\HostX64\\x64\\cl.exe", "/c", "/EHsc", "/nologo", "/W3", "/WX", "/std:c++latest", "/IC:\\VulkanSDK\\1.2.176.1\\Include", "/IRocket\\Engine", "/IRocket\\Platform", "/IRocket\\RHI", "/IExternal\\glad\\include", "/DRK_VULKAN", "/DRK_DESKTOP", "/DGLFW_INCLUDE_NONE", "/DRK_WINDOWS", "/D_CRT_SECURE_NO_WARNINGS", "/DRK_DEBUG", "/IE:\\Program\\vcpkg\\installed\\x64-windows-static\\include", "/Fobuild\\.objs\\sdl_test\\windows\\x64\\debug\\UnitTest\\sdl_test.cpp.obj", "UnitTest\\sdl_test.cpp"],
+  "file": "UnitTest\\sdl_test.cpp"
 },
 {
-  "directory": "/Users/developer/Program/RocketEngine",
-  "arguments": ["/usr/bin/xcrun -sdk macosx clang", "-c", "-Qunused-arguments", "-arch", "x86_64", "-mmacosx-version-min=11.3", "-isysroot", "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.3.sdk", "-Wall", "-Werror", "-std=c++2a", "-IRocket/Engine", "-IRocket/Platform", "-IRocket/RHI", "-IExternal/glad/include", "-DRK_VULKAN", "-DRK_PROFILE", "-DRK_DESKTOP", "-DGLFW_INCLUDE_NONE", "-DRK_MACOS", "-DRK_DEBUG", "-framework", "Cocoa", "-framework", "IOKit", "-framework", "CoreVideo", "-fsanitize=address", "-ftrapv", "-o", "build/.objs/memory_leak_test/macosx/x86_64/check/UnitTest/memory_leak_test.cpp.o", "UnitTest/memory_leak_test.cpp"],
-  "file": "UnitTest/memory_leak_test.cpp"
+  "directory": "E:\\Program\\CppCode\\RocketEngine",
+  "arguments": ["C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\MSVC\\14.29.30037\\bin\\HostX64\\x64\\cl.exe", "/c", "/EHsc", "/nologo", "/W3", "/WX", "/std:c++latest", "/IC:\\VulkanSDK\\1.2.176.1\\Include", "/IRocket\\Engine", "/IRocket\\Platform", "/IRocket\\RHI", "/IExternal\\glad\\include", "/DRK_VULKAN", "/DRK_DESKTOP", "/DGLFW_INCLUDE_NONE", "/DRK_WINDOWS", "/D_CRT_SECURE_NO_WARNINGS", "/DRK_DEBUG", "/IE:\\Program\\vcpkg\\installed\\x64-windows-static\\include", "/Fobuild\\.objs\\RocketEngine\\windows\\x64\\debug\\Rocket\\Engine\\Core\\EntryPoint.cpp.obj", "Rocket\\Engine\\Core\\EntryPoint.cpp"],
+  "file": "Rocket\\Engine\\Core\\EntryPoint.cpp"
 },
 {
-  "directory": "/Users/developer/Program/RocketEngine",
-  "arguments": ["/usr/bin/xcrun -sdk macosx clang", "-c", "-Qunused-arguments", "-arch", "x86_64", "-mmacosx-version-min=11.3", "-isysroot", "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.3.sdk", "-Wall", "-Werror", "-std=c99", "-IRocket/Engine", "-IRocket/Platform", "-IRocket/RHI", "-IExternal/glad/include", "-DRK_VULKAN", "-DRK_PROFILE", "-DRK_DESKTOP", "-DGLFW_INCLUDE_NONE", "-DRK_MACOS", "-DRK_DEBUG", "-o", "build/.objs/glad/macosx/x86_64/check/External/glad/src/glad.c.o", "External/glad/src/glad.c"],
-  "file": "External/glad/src/glad.c"
+  "directory": "E:\\Program\\CppCode\\RocketEngine",
+  "arguments": ["C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\MSVC\\14.29.30037\\bin\\HostX64\\x64\\cl.exe", "/c", "/EHsc", "/nologo", "/W3", "/WX", "/std:c++latest", "/IC:\\VulkanSDK\\1.2.176.1\\Include", "/IRocket\\Engine", "/IRocket\\Platform", "/IRocket\\RHI", "/IExternal\\glad\\include", "/DRK_VULKAN", "/DRK_DESKTOP", "/DGLFW_INCLUDE_NONE", "/DRK_WINDOWS", "/D_CRT_SECURE_NO_WARNINGS", "/DRK_DEBUG", "/IE:\\Program\\vcpkg\\installed\\x64-windows-static\\include", "/Fobuild\\.objs\\RocketEngine\\windows\\x64\\debug\\Rocket\\Engine\\Debug\\Log.cpp.obj", "Rocket\\Engine\\Debug\\Log.cpp"],
+  "file": "Rocket\\Engine\\Debug\\Log.cpp"
+},
+{
+  "directory": "E:\\Program\\CppCode\\RocketEngine",
+  "arguments": ["C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\MSVC\\14.29.30037\\bin\\HostX64\\x64\\cl.exe", "/c", "/EHsc", "/nologo", "/W3", "/WX", "/std:c++latest", "/IC:\\VulkanSDK\\1.2.176.1\\Include", "/IRocket\\Engine", "/IRocket\\Platform", "/IRocket\\RHI", "/IExternal\\glad\\include", "/DRK_VULKAN", "/DRK_DESKTOP", "/DGLFW_INCLUDE_NONE", "/DRK_WINDOWS", "/D_CRT_SECURE_NO_WARNINGS", "/DRK_DEBUG", "/IE:\\Program\\vcpkg\\installed\\x64-windows-static\\include", "/Fobuild\\.objs\\RocketEngine\\windows\\x64\\debug\\Rocket\\Engine\\Debug\\MemLeak.cpp.obj", "Rocket\\Engine\\Debug\\MemLeak.cpp"],
+  "file": "Rocket\\Engine\\Debug\\MemLeak.cpp"
+},
+{
+  "directory": "E:\\Program\\CppCode\\RocketEngine",
+  "arguments": ["C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\MSVC\\14.29.30037\\bin\\HostX64\\x64\\cl.exe", "/c", "/EHsc", "/nologo", "/W3", "/WX", "/std:c++latest", "/IC:\\VulkanSDK\\1.2.176.1\\Include", "/IRocket\\Engine", "/IRocket\\Platform", "/IRocket\\RHI", "/IExternal\\glad\\include", "/DRK_VULKAN", "/DRK_DESKTOP", "/DGLFW_INCLUDE_NONE", "/DRK_WINDOWS", "/D_CRT_SECURE_NO_WARNINGS", "/DRK_DEBUG", "/IE:\\Program\\vcpkg\\installed\\x64-windows-static\\include", "/Fobuild\\.objs\\RocketEngine\\windows\\x64\\debug\\Rocket\\Engine\\Module\\Application.cpp.obj", "Rocket\\Engine\\Module\\Application.cpp"],
+  "file": "Rocket\\Engine\\Module\\Application.cpp"
+},
+{
+  "directory": "E:\\Program\\CppCode\\RocketEngine",
+  "arguments": ["C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\MSVC\\14.29.30037\\bin\\HostX64\\x64\\cl.exe", "/c", "/EHsc", "/nologo", "/W3", "/WX", "/std:c++latest", "/IC:\\VulkanSDK\\1.2.176.1\\Include", "/IRocket\\Engine", "/IRocket\\Platform", "/IRocket\\RHI", "/IExternal\\glad\\include", "/DRK_VULKAN", "/DRK_DESKTOP", "/DGLFW_INCLUDE_NONE", "/DRK_WINDOWS", "/D_CRT_SECURE_NO_WARNINGS", "/DRK_DEBUG", "/IE:\\Program\\vcpkg\\installed\\x64-windows-static\\include", "/Fobuild\\.objs\\RocketEngine\\windows\\x64\\debug\\Rocket\\Engine\\Module\\EventManager.cpp.obj", "Rocket\\Engine\\Module\\EventManager.cpp"],
+  "file": "Rocket\\Engine\\Module\\EventManager.cpp"
+},
+{
+  "directory": "E:\\Program\\CppCode\\RocketEngine",
+  "arguments": ["C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\MSVC\\14.29.30037\\bin\\HostX64\\x64\\cl.exe", "/c", "/EHsc", "/nologo", "/W3", "/WX", "/std:c++latest", "/IC:\\VulkanSDK\\1.2.176.1\\Include", "/IRocket\\Engine", "/IRocket\\Platform", "/IRocket\\RHI", "/IExternal\\glad\\include", "/DRK_VULKAN", "/DRK_DESKTOP", "/DGLFW_INCLUDE_NONE", "/DRK_WINDOWS", "/D_CRT_SECURE_NO_WARNINGS", "/DRK_DEBUG", "/IE:\\Program\\vcpkg\\installed\\x64-windows-static\\include", "/Fobuild\\.objs\\RocketEngine\\windows\\x64\\debug\\Rocket\\Engine\\Module\\GraphicsManager.cpp.obj", "Rocket\\Engine\\Module\\GraphicsManager.cpp"],
+  "file": "Rocket\\Engine\\Module\\GraphicsManager.cpp"
+},
+{
+  "directory": "E:\\Program\\CppCode\\RocketEngine",
+  "arguments": ["C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\MSVC\\14.29.30037\\bin\\HostX64\\x64\\cl.exe", "/c", "/EHsc", "/nologo", "/W3", "/WX", "/std:c++latest", "/IC:\\VulkanSDK\\1.2.176.1\\Include", "/IRocket\\Engine", "/IRocket\\Platform", "/IRocket\\RHI", "/IExternal\\glad\\include", "/DRK_VULKAN", "/DRK_DESKTOP", "/DGLFW_INCLUDE_NONE", "/DRK_WINDOWS", "/D_CRT_SECURE_NO_WARNINGS", "/DRK_DEBUG", "/IE:\\Program\\vcpkg\\installed\\x64-windows-static\\include", "/Fobuild\\.objs\\RocketEngine\\windows\\x64\\debug\\Rocket\\Engine\\Module\\LogicManager.cpp.obj", "Rocket\\Engine\\Module\\LogicManager.cpp"],
+  "file": "Rocket\\Engine\\Module\\LogicManager.cpp"
+},
+{
+  "directory": "E:\\Program\\CppCode\\RocketEngine",
+  "arguments": ["C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\MSVC\\14.29.30037\\bin\\HostX64\\x64\\cl.exe", "/c", "/EHsc", "/nologo", "/W3", "/WX", "/std:c++latest", "/IC:\\VulkanSDK\\1.2.176.1\\Include", "/IRocket\\Engine", "/IRocket\\Platform", "/IRocket\\RHI", "/IExternal\\glad\\include", "/DRK_VULKAN", "/DRK_DESKTOP", "/DGLFW_INCLUDE_NONE", "/DRK_WINDOWS", "/D_CRT_SECURE_NO_WARNINGS", "/DRK_DEBUG", "/IE:\\Program\\vcpkg\\installed\\x64-windows-static\\include", "/Fobuild\\.objs\\RocketEngine\\windows\\x64\\debug\\Rocket\\Engine\\Module\\MemoryManager.cpp.obj", "Rocket\\Engine\\Module\\MemoryManager.cpp"],
+  "file": "Rocket\\Engine\\Module\\MemoryManager.cpp"
+},
+{
+  "directory": "E:\\Program\\CppCode\\RocketEngine",
+  "arguments": ["C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\MSVC\\14.29.30037\\bin\\HostX64\\x64\\cl.exe", "/c", "/EHsc", "/nologo", "/W3", "/WX", "/std:c++latest", "/IC:\\VulkanSDK\\1.2.176.1\\Include", "/IRocket\\Engine", "/IRocket\\Platform", "/IRocket\\RHI", "/IExternal\\glad\\include", "/DRK_VULKAN", "/DRK_DESKTOP", "/DGLFW_INCLUDE_NONE", "/DRK_WINDOWS", "/D_CRT_SECURE_NO_WARNINGS", "/DRK_DEBUG", "/IE:\\Program\\vcpkg\\installed\\x64-windows-static\\include", "/Fobuild\\.objs\\RocketEngine\\windows\\x64\\debug\\Rocket\\Engine\\Module\\PhysicsManager.cpp.obj", "Rocket\\Engine\\Module\\PhysicsManager.cpp"],
+  "file": "Rocket\\Engine\\Module\\PhysicsManager.cpp"
+},
+{
+  "directory": "E:\\Program\\CppCode\\RocketEngine",
+  "arguments": ["C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\MSVC\\14.29.30037\\bin\\HostX64\\x64\\cl.exe", "/c", "/EHsc", "/nologo", "/W3", "/WX", "/std:c++latest", "/IC:\\VulkanSDK\\1.2.176.1\\Include", "/IRocket\\Engine", "/IRocket\\Platform", "/IRocket\\RHI", "/IExternal\\glad\\include", "/DRK_VULKAN", "/DRK_DESKTOP", "/DGLFW_INCLUDE_NONE", "/DRK_WINDOWS", "/D_CRT_SECURE_NO_WARNINGS", "/DRK_DEBUG", "/IE:\\Program\\vcpkg\\installed\\x64-windows-static\\include", "/Fobuild\\.objs\\RocketEngine\\windows\\x64\\debug\\Rocket\\Engine\\Module\\PipelineManager.cpp.obj", "Rocket\\Engine\\Module\\PipelineManager.cpp"],
+  "file": "Rocket\\Engine\\Module\\PipelineManager.cpp"
+},
+{
+  "directory": "E:\\Program\\CppCode\\RocketEngine",
+  "arguments": ["C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\MSVC\\14.29.30037\\bin\\HostX64\\x64\\cl.exe", "/c", "/EHsc", "/nologo", "/W3", "/WX", "/std:c++latest", "/IC:\\VulkanSDK\\1.2.176.1\\Include", "/IRocket\\Engine", "/IRocket\\Platform", "/IRocket\\RHI", "/IExternal\\glad\\include", "/DRK_VULKAN", "/DRK_DESKTOP", "/DGLFW_INCLUDE_NONE", "/DRK_WINDOWS", "/D_CRT_SECURE_NO_WARNINGS", "/DRK_DEBUG", "/IE:\\Program\\vcpkg\\installed\\x64-windows-static\\include", "/Fobuild\\.objs\\RocketEngine\\windows\\x64\\debug\\Rocket\\Engine\\Module\\RenderManager.cpp.obj", "Rocket\\Engine\\Module\\RenderManager.cpp"],
+  "file": "Rocket\\Engine\\Module\\RenderManager.cpp"
+},
+{
+  "directory": "E:\\Program\\CppCode\\RocketEngine",
+  "arguments": ["C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\MSVC\\14.29.30037\\bin\\HostX64\\x64\\cl.exe", "/c", "/EHsc", "/nologo", "/W3", "/WX", "/std:c++latest", "/IC:\\VulkanSDK\\1.2.176.1\\Include", "/IRocket\\Engine", "/IRocket\\Platform", "/IRocket\\RHI", "/IExternal\\glad\\include", "/DRK_VULKAN", "/DRK_DESKTOP", "/DGLFW_INCLUDE_NONE", "/DRK_WINDOWS", "/D_CRT_SECURE_NO_WARNINGS", "/DRK_DEBUG", "/IE:\\Program\\vcpkg\\installed\\x64-windows-static\\include", "/Fobuild\\.objs\\RocketEngine\\windows\\x64\\debug\\Rocket\\Engine\\Module\\SceneManager.cpp.obj", "Rocket\\Engine\\Module\\SceneManager.cpp"],
+  "file": "Rocket\\Engine\\Module\\SceneManager.cpp"
+},
+{
+  "directory": "E:\\Program\\CppCode\\RocketEngine",
+  "arguments": ["C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\MSVC\\14.29.30037\\bin\\HostX64\\x64\\cl.exe", "/c", "/EHsc", "/nologo", "/W3", "/WX", "/std:c++latest", "/IC:\\VulkanSDK\\1.2.176.1\\Include", "/IRocket\\Engine", "/IRocket\\Platform", "/IRocket\\RHI", "/IExternal\\glad\\include", "/DRK_VULKAN", "/DRK_DESKTOP", "/DGLFW_INCLUDE_NONE", "/DRK_WINDOWS", "/D_CRT_SECURE_NO_WARNINGS", "/DRK_DEBUG", "/IE:\\Program\\vcpkg\\installed\\x64-windows-static\\include", "/Fobuild\\.objs\\RocketEngine\\windows\\x64\\debug\\Rocket\\Engine\\Module\\WindowManager.cpp.obj", "Rocket\\Engine\\Module\\WindowManager.cpp"],
+  "file": "Rocket\\Engine\\Module\\WindowManager.cpp"
+},
+{
+  "directory": "E:\\Program\\CppCode\\RocketEngine",
+  "arguments": ["C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\MSVC\\14.29.30037\\bin\\HostX64\\x64\\cl.exe", "/c", "/EHsc", "/nologo", "/W3", "/WX", "/std:c++latest", "/IC:\\VulkanSDK\\1.2.176.1\\Include", "/IRocket\\Engine", "/IRocket\\Platform", "/IRocket\\RHI", "/IExternal\\glad\\include", "/DRK_VULKAN", "/DRK_DESKTOP", "/DGLFW_INCLUDE_NONE", "/DRK_WINDOWS", "/D_CRT_SECURE_NO_WARNINGS", "/DRK_DEBUG", "/IE:\\Program\\vcpkg\\installed\\x64-windows-static\\include", "/Fobuild\\.objs\\RocketEngine\\windows\\x64\\debug\\Rocket\\Engine\\Parser\\CommandParser.cpp.obj", "Rocket\\Engine\\Parser\\CommandParser.cpp"],
+  "file": "Rocket\\Engine\\Parser\\CommandParser.cpp"
+},
+{
+  "directory": "E:\\Program\\CppCode\\RocketEngine",
+  "arguments": ["C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\MSVC\\14.29.30037\\bin\\HostX64\\x64\\cl.exe", "/c", "/EHsc", "/nologo", "/W3", "/WX", "/std:c++latest", "/IC:\\VulkanSDK\\1.2.176.1\\Include", "/IRocket\\Engine", "/IRocket\\Platform", "/IRocket\\RHI", "/IExternal\\glad\\include", "/DRK_VULKAN", "/DRK_DESKTOP", "/DGLFW_INCLUDE_NONE", "/DRK_WINDOWS", "/D_CRT_SECURE_NO_WARNINGS", "/DRK_DEBUG", "/IE:\\Program\\vcpkg\\installed\\x64-windows-static\\include", "/Fobuild\\.objs\\RocketEngine\\windows\\x64\\debug\\Rocket\\Engine\\Parser\\ConfigParser.cpp.obj", "Rocket\\Engine\\Parser\\ConfigParser.cpp"],
+  "file": "Rocket\\Engine\\Parser\\ConfigParser.cpp"
+},
+{
+  "directory": "E:\\Program\\CppCode\\RocketEngine",
+  "arguments": ["C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\MSVC\\14.29.30037\\bin\\HostX64\\x64\\cl.exe", "/c", "/EHsc", "/nologo", "/W3", "/WX", "/std:c++latest", "/IC:\\VulkanSDK\\1.2.176.1\\Include", "/IRocket\\Engine", "/IRocket\\Platform", "/IRocket\\RHI", "/IExternal\\glad\\include", "/DRK_VULKAN", "/DRK_DESKTOP", "/DGLFW_INCLUDE_NONE", "/DRK_WINDOWS", "/D_CRT_SECURE_NO_WARNINGS", "/DRK_DEBUG", "/IE:\\Program\\vcpkg\\installed\\x64-windows-static\\include", "/Fobuild\\.objs\\RocketEngine\\windows\\x64\\debug\\Rocket\\Engine\\Reflection\\Reflection.cpp.obj", "Rocket\\Engine\\Reflection\\Reflection.cpp"],
+  "file": "Rocket\\Engine\\Reflection\\Reflection.cpp"
+},
+{
+  "directory": "E:\\Program\\CppCode\\RocketEngine",
+  "arguments": ["C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\MSVC\\14.29.30037\\bin\\HostX64\\x64\\cl.exe", "/c", "/EHsc", "/nologo", "/W3", "/WX", "/std:c++latest", "/IC:\\VulkanSDK\\1.2.176.1\\Include", "/IRocket\\Engine", "/IRocket\\Platform", "/IRocket\\RHI", "/IExternal\\glad\\include", "/DRK_VULKAN", "/DRK_DESKTOP", "/DGLFW_INCLUDE_NONE", "/DRK_WINDOWS", "/D_CRT_SECURE_NO_WARNINGS", "/DRK_DEBUG", "/IE:\\Program\\vcpkg\\installed\\x64-windows-static\\include", "/Fobuild\\.objs\\RocketEngine\\windows\\x64\\debug\\Rocket\\Engine\\Resource\\ResourceLoader.cpp.obj", "Rocket\\Engine\\Resource\\ResourceLoader.cpp"],
+  "file": "Rocket\\Engine\\Resource\\ResourceLoader.cpp"
+},
+{
+  "directory": "E:\\Program\\CppCode\\RocketEngine",
+  "arguments": ["C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\MSVC\\14.29.30037\\bin\\HostX64\\x64\\cl.exe", "/c", "/EHsc", "/nologo", "/W3", "/WX", "/std:c++latest", "/IC:\\VulkanSDK\\1.2.176.1\\Include", "/IRocket\\Engine", "/IRocket\\Platform", "/IRocket\\RHI", "/IExternal\\glad\\include", "/DRK_VULKAN", "/DRK_DESKTOP", "/DGLFW_INCLUDE_NONE", "/DRK_WINDOWS", "/D_CRT_SECURE_NO_WARNINGS", "/DRK_DEBUG", "/IE:\\Program\\vcpkg\\installed\\x64-windows-static\\include", "/Fobuild\\.objs\\RocketEngine\\windows\\x64\\debug\\Rocket\\Engine\\Utils\\Function.cpp.obj", "Rocket\\Engine\\Utils\\Function.cpp"],
+  "file": "Rocket\\Engine\\Utils\\Function.cpp"
+},
+{
+  "directory": "E:\\Program\\CppCode\\RocketEngine",
+  "arguments": ["C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\MSVC\\14.29.30037\\bin\\HostX64\\x64\\cl.exe", "/c", "/nologo", "/W3", "/WX", "/TP", "/IC:\\VulkanSDK\\1.2.176.1\\Include", "/IRocket\\Engine", "/IRocket\\Platform", "/IRocket\\RHI", "/IExternal\\glad\\include", "/DRK_VULKAN", "/DRK_DESKTOP", "/DGLFW_INCLUDE_NONE", "/DRK_WINDOWS", "/D_CRT_SECURE_NO_WARNINGS", "/DRK_DEBUG", "/Fobuild\\.objs\\glad\\windows\\x64\\debug\\External\\glad\\src\\glad.c.obj", "External\\glad\\src\\glad.c"],
+  "file": "External\\glad\\src\\glad.c"
+},
+{
+  "directory": "E:\\Program\\CppCode\\RocketEngine",
+  "arguments": ["C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\MSVC\\14.29.30037\\bin\\HostX64\\x64\\cl.exe", "/c", "/EHsc", "/nologo", "/W3", "/WX", "/std:c++latest", "/IC:\\VulkanSDK\\1.2.176.1\\Include", "/IRocket\\Engine", "/IRocket\\Platform", "/IRocket\\RHI", "/IExternal\\glad\\include", "/DRK_VULKAN", "/DRK_DESKTOP", "/DGLFW_INCLUDE_NONE", "/DRK_WINDOWS", "/D_CRT_SECURE_NO_WARNINGS", "/DRK_DEBUG", "/IE:\\Program\\vcpkg\\installed\\x64-windows-static\\include", "/Fobuild\\.objs\\RocketPlatform\\windows\\x64\\debug\\Rocket\\Platform\\Desktop\\Window\\WindowDesktop.cpp.obj", "Rocket\\Platform\\Desktop\\Window\\WindowDesktop.cpp"],
+  "file": "Rocket\\Platform\\Desktop\\Window\\WindowDesktop.cpp"
 }]

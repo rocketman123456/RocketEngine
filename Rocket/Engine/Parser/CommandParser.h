@@ -1,8 +1,10 @@
 #pragma once
 #include "Core/Core.h"
-#include "Core/Template.h"
 
 #include <utility>
+#include <string>
+#include <vector>
+#include <unordered_map>
 
 namespace Rocket {
     class CommandParser {
@@ -11,14 +13,14 @@ namespace Rocket {
         ~CommandParser() = default;
 
         void Parse();
-        String GetCommandData(const String& cmd) const;
-        std::pair<String, String> GetCommand(int index) const;
+        std::string GetCommandData(const std::string& cmd) const;
+        std::pair<std::string, std::string> GetCommand(int index) const;
 
     private:
-        Vec<String> origin_data_;
-        Map<String, String> cmd_data_map_;
-        Vec<String> command_;
-        Vec<String> data_;
+        std::vector<std::string> origin_data_;
+        std::unordered_map<std::string, std::string> cmd_data_map_;
+        std::vector<std::string> command_;
+        std::vector<std::string> data_;
     };
 
     extern CommandParser* g_CommandParser;

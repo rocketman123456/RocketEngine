@@ -1,6 +1,5 @@
 #pragma once
 #include "Core/Core.h"
-#include "Core/Template.h"
 #include "Utils/Timer.h"
 #include "Utils/Variant.h"
 #include "Utils/HashFunction.h"
@@ -10,26 +9,29 @@
 #include <optional>
 #include <functional>
 #include <sstream>
+#include <vector>
+#include <memory>
 
 namespace Rocket {
-	using EventVarVec = Vec<Variant>;
-	using EventVarPtr = Ref<Variant>;
+	using EventVarVec = std::vector<Variant>;
+	// TODO: Replace with unique_ptr
+	using EventVarPtr = std::shared_ptr<Variant>;
 	using EventType = uint64_t;
 
 	extern ElapseTimer* g_EventTimer;
 
 	class Event {
 	public:
-		Event(const EventVarVec& var) : variable_(var), name_("event") { 
+		explicit Event(const EventVarVec& var) : variable_(var), name_("event") { 
             time_stamp_ = g_EventTimer->GetExactTime(); 
         }
-		Event(const EventVarVec& var, const String& name) : variable_(var), name_(name) { 
+		explicit Event(const EventVarVec& var, const std::string& name) : variable_(var), name_(name) { 
             time_stamp_ = g_EventTimer->GetExactTime(); 
         }
 		virtual ~Event() = default;
 
 		[[nodiscard]] virtual EventType GetEventType() const { return variable_[0].asStringId; }
-		[[nodiscard]] virtual const String& ToString() const { return name_; }
+		[[nodiscard]] virtual const std::string& ToString() const { return name_; }
 
 		[[nodiscard]] int32_t GetInt32(uint32_t index) { RK_CORE_ASSERT(index < variable_.size(), "event index error"); return variable_[index].asInt32; }
 		[[nodiscard]] uint32_t GetUInt32(uint32_t index) { RK_CORE_ASSERT(index < variable_.size(), "event index error"); return variable_[index].asUInt32; }
@@ -41,13 +43,14 @@ namespace Rocket {
 
 		bool handled_ = false;
 		double time_stamp_ = 0.0f;
-		Vec<Variant> variable_;     // TODO: use memory manager in std::vector
-        String name_;
+		std::vector<Variant> variable_;     // TODO: use memory manager in std::vector
+        std::string name_;
 
 		//REFLECT()
 	};
 
-	using EventPtr = Ref<Event>;
+	// TODO: Replace with unique_ptr
+	using EventPtr = std::shared_ptr<Event>;
 
 	inline std::ostream& operator << (std::ostream& os, const Event &e) {
 		os << e.ToString();

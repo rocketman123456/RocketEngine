@@ -29,7 +29,7 @@ namespace Rocket {
         }
     }
 
-    String CommandParser::GetCommandData(const String& cmd) const {
+    std::string CommandParser::GetCommandData(const std::string& cmd) const {
         auto it = cmd_data_map_.find(cmd);
         if(it == cmd_data_map_.end()) {
             return "";
@@ -39,7 +39,7 @@ namespace Rocket {
         }
     }
 
-    std::pair<String, String> CommandParser::GetCommand(int index) const {
+    std::pair<std::string, std::string> CommandParser::GetCommand(int index) const {
         RK_CORE_ASSERT(index < command_.size(), "Invalid Command Index");
         RK_CORE_ASSERT(index < data_.size(), "Invalid Command Index");
         return {command_[index], data_[index]};

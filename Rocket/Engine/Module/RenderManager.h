@@ -1,7 +1,8 @@
 #pragma once
 #include "Interface/IRuntimeModule.h"
 #include "Interface/IRenderLoader.h"
-#include "Core/Template.h"
+
+#include <memory>
 
 namespace Rocket {
     class RenderManager : implements IRuntimeModule {
@@ -13,9 +14,9 @@ namespace Rocket {
         virtual void Finalize() final;
         virtual void Tick(TimeStep ts) final;
 
-        void AddRenderLoader(const Ref<IRenderLoader>& loader) { render_loader_ = loader; }
+        void AddRenderLoader(std::unique_ptr<IRenderLoader> loader) { render_loader_ = std::move(loader); }
     private:
-        Ref<IRenderLoader> render_loader_ = nullptr;
+        std::unique_ptr<IRenderLoader> render_loader_ = nullptr;
     };
 
     extern IRuntimeModule* g_RenderManager;

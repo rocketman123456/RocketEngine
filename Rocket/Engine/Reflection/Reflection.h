@@ -2,9 +2,9 @@
 // And https://preshing.com/20180124/a-flexible-Reflection-system-in-cpp-part-2/
 #pragma once
 #include "Core/Core.h"
-#include "Core/Template.h"
 
 #include <cstddef>
+#include <vector>
 
 namespace Rocket {
     namespace Reflect {
@@ -17,7 +17,7 @@ namespace Rocket {
 
             TypeDescriptor(const char* name, size_t size) : name{name}, size{size} {}
             virtual ~TypeDescriptor() {}
-            virtual String GetFullName() const { return name; }
+            virtual std::string GetFullName() const { return name; }
             virtual void Dump(const void* obj, int indentLevel = 0) const = 0;
         };
 
@@ -70,7 +70,7 @@ namespace Rocket {
                 TypeDescriptor* type;
             };
 
-            Rocket::Vec<Member> members;
+            std::vector<Member> members;
 
             TypeDescriptor_Struct(void (*init)(TypeDescriptor_Struct*)) 
                 : TypeDescriptor{nullptr, 0} { init(this); }
@@ -155,7 +155,7 @@ namespace Rocket {
 
         // Partially specialize TypeResolver<> for std::vectors:
         template <typename T>
-        class TypeResolver<Rocket::Vec<T>> {
+        class TypeResolver<std::vector<T>> {
         public:
             static TypeDescriptor* Get() {
                 static TypeDescriptor_StdVector typeDesc{(T*) nullptr};

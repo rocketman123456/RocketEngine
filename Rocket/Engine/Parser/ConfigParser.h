@@ -1,9 +1,10 @@
 #pragma once
 #include "Core/Core.h"
-#include "Core/Template.h"
 
 #include <yaml-cpp/yaml.h>
 #include <filesystem>
+#include <unordered_map>
+#include <string>
 
 namespace Rocket {
     class ConfigParser {
@@ -14,16 +15,16 @@ namespace Rocket {
         [[nodiscard]] int32_t Initialize();
 
         template<typename T>
-        T GetConfigInfo(const String& category, const String& name) {
+        T GetConfigInfo(const std::string& category, const std::string& name) {
             return config_map_[category][name].as<T>();
         }
 
-        String GetRootPath() {
+        std::string GetRootPath() {
             return root_dir_;
         }
 
-        String ToString() const {
-			String output;
+        std::string ToString() const {
+			std::string output;
             output = "Config Path : " + root_dir_;
 			return output;
 		}
@@ -31,8 +32,8 @@ namespace Rocket {
         void FindRootDir();
     private:
         std::filesystem::path root_path_;
-        String root_dir_;
-        UMap<String, YAML::Node> config_map_;
+        std::string root_dir_;
+        std::unordered_map<std::string, YAML::Node> config_map_;
     };
 
     extern ConfigParser* g_ConfigParser;

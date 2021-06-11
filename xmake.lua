@@ -165,7 +165,7 @@ end
 -- Add Sub Module
 --
 includes(
-    --"Rocket", 
+    "Rocket", 
     "External",
     "UnitTest"
 )

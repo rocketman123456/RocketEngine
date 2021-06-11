@@ -1,9 +1,9 @@
 #pragma once
 #include "Interface/IRuntimeModule.h"
-#include "Core/Template.h"
 #include "Memory/Handle.h"
 
 #include <utility>
+#include <map>
 
 namespace Rocket {
     class MemoryManager : implements IRuntimeModule {
@@ -15,7 +15,7 @@ namespace Rocket {
         virtual void Finalize() final;
         virtual void Tick(TimeStep ts) final;
     private:
-        Map<uint32_t, Map<uint32_t, void*>> pointer_map_;
+        std::map<uint32_t, std::map<uint32_t, void*>> pointer_map_;
     };
 
     extern IRuntimeModule* g_MemoryManager;

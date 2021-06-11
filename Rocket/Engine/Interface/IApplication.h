@@ -1,9 +1,9 @@
 #pragma once
 #include "Interface/IRuntimeModule.h"
 #include "Utils/Event.h"
-#include "Core/Template.h"
 
 #include <atomic>
+#include <vector>
 
 namespace Rocket {
     class IApplication : inheritance IRuntimeModule {
@@ -44,7 +44,7 @@ namespace Rocket {
         inline bool OnCloseEvent(EventPtr& event) { app_running_ = false; return true; }
 
     protected:
-        Vec<IRuntimeModule*> modules_;
+        std::vector<IRuntimeModule*> modules_;
         std::atomic_bool app_running_ = true;
     };
 }

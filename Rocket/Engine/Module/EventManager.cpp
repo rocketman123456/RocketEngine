@@ -1,12 +1,13 @@
 #include "Module/EventManager.h"
 #include "Module/WindowManager.h"
+//#include "Memory/AllocatorBasic.h"
 
 #if defined(RK_DESKTOP)
 //#include <GLFW/glfw3.h>
 #include <SDL2/SDL.h>
 #endif
 
-[[maybe_unused]] static Rocket::default_allocator<Rocket::Event> g_event_allocator;
+//[[maybe_unused]] static Rocket::default_allocator<Rocket::Event> g_event_allocator;
 
 namespace Rocket {
     EventManager* EventManager::instance_ = nullptr;

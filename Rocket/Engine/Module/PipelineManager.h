@@ -1,6 +1,5 @@
 #pragma once
 #include "Interface/IRuntimeModule.h"
-#include "Core/Template.h"
 
 namespace Rocket {
     class PipelineManager : implements IRuntimeModule {

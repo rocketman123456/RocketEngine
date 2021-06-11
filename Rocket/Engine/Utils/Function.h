@@ -1,7 +1,9 @@
 #pragma once
 #include "Core/Core.h"
-#include "Core/Template.h"
+
+#include <vector>
+#include <string>
 
 namespace Rocket {
-    Vec<String> Split(const String& str, const String& pattern);
+    std::vector<std::string> Split(const std::string& str, const std::string& pattern);
 }

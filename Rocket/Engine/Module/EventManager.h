@@ -2,7 +2,10 @@
 #include "Interface/IRuntimeModule.h"
 #include "Utils/Delegate.h"
 #include "Utils/Event.h"
-#include "Core/Template.h"
+
+#include <map>
+#include <list>
+
 
 #if defined(RK_DESKTOP)
 struct GLFWwindow;
@@ -13,9 +16,9 @@ namespace Rocket {
     using EventCallbackFn = std::function<void(EventPtr &)>;
     using EventListenerFnptr = bool(*)(EventPtr&);
     using EventListenerDelegate = Delegate<bool(EventPtr&)>;
-    using EventListenerList = List<EventListenerDelegate>;
-    using EventListenerMap = Map<EventType, EventListenerList>;
-    using EventQueue = List<EventPtr>;
+    using EventListenerList = std::list<EventListenerDelegate>;
+    using EventListenerMap = std::map<EventType, EventListenerList>;
+    using EventQueue = std::list<EventPtr>;
     //using EventThreadQueue = ThreadSafeQueue<EventPtr>;
 
 #define REGISTER_DELEGATE_CLASS(c,f,x,name) {\
