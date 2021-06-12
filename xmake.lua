@@ -15,7 +15,7 @@ add_rules(
     "mode.releasedbg"
 )
 set_languages("c99", "c++20")
-set_warnings("all", "error")
+--set_warnings("all", "error")
 
 --
 -- Add Required Modules
@@ -31,6 +31,8 @@ add_requires(
     "vcpkg::zstd",
     "vcpkg::bzip2",
     "vcpkg::liblzma",
+    "vcpkg::lz4",
+    "vcpkg::xxhash",
     "vcpkg::minizip-ng",
     "vcpkg::openal-soft",
     "vcpkg::eigen3",
@@ -119,6 +121,7 @@ add_includedirs(
     "Rocket/Platform",
     "Rocket/RHI",
     "External/glad/include"
+    --"UnitTest"
 )
 
 --
@@ -169,7 +172,3 @@ includes(
     "External",
     "UnitTest"
 )
-
---
---   $ xmake f -p [macosx|linux|iphoneos ..] -a [x86_64|i386|arm64 ..] -m [debug|release]
---

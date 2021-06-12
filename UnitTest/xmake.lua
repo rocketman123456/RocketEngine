@@ -1,16 +1,18 @@
---target("taskflow_test_01")
---    set_kind("binary")
---    add_files("taskflow_test_01.cpp")
---    add_packages("vcpkg::taskflow")
---    -- Add Platform Dependent Libs
---    if is_plat("linux", "macosx") then
---        add_links("pthread", "m", "dl")
---        if is_plat("macosx") then
---            add_frameworks("Cocoa", "IOKit", "CoreVideo")
---        end
---    elseif is_plat("windows") then
---        add_links("user32", "gdi32", "shell32", "kernel32")
---    end
+add_includedirs(".")
+
+target("taskflow_test_01")
+    set_kind("binary")
+    add_files("taskflow_test_01.cpp")
+    add_packages("vcpkg::taskflow")
+    -- Add Platform Dependent Libs
+    if is_plat("linux", "macosx") then
+        add_links("pthread", "m", "dl")
+        if is_plat("macosx") then
+            add_frameworks("Cocoa", "IOKit", "CoreVideo")
+        end
+    elseif is_plat("windows") then
+        add_links("user32", "gdi32", "shell32", "kernel32")
+    end
 
 target("sdl_test")
     set_kind("binary")
@@ -111,3 +113,5 @@ target("sdl_test")
 --    elseif is_plat("windows") then
 --        add_links("user32", "gdi32", "shell32", "kernel32")
 --    end
+
+includes("CPP")
