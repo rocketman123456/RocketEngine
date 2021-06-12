@@ -54,16 +54,16 @@ namespace Rocket {
         delete g_EventTimer;
     }
 
-    void EventManager::OnEvent(EventPtr& event) {
+    void EventManager::OnEvent(EventPtr&& event) {
         bool ret = false;
         //RK_EVENT_TRACE("Callback Event {0}", *event);
         auto event_type = event->GetEventType();
         auto id_1 = "window_close"_hash;//GlobalHashTable::HashString("Event"_hash, "window_close");
         auto id_2 = "window_resize"_hash;//GlobalHashTable::HashString("Event"_hash, "window_resize");
         if(event_type == id_1 || event_type == id_2)
-            ret = QueueEvent(event);
+            ret = QueueEvent(std::move(event));
         else
-            ret = TriggerEvent(event);
+            ret = TriggerEvent(std::move(event));
         //RK_EVENT_TRACE("On Event Callback Result : {}", ret);
     }
 
@@ -105,7 +105,7 @@ namespace Rocket {
         // Process the queue
         while (!event_queue_[queueToProcess].empty()) {
             // pop the front of the queue
-            EventPtr pEvent = event_queue_[queueToProcess].front();
+            EventPtr pEvent = std::move(event_queue_[queueToProcess].front());
             event_queue_[queueToProcess].pop_front();
             //RK_EVENT_TRACE("\tProcessing Event {0}", pEvent->GetName());
 
@@ -121,7 +121,7 @@ namespace Rocket {
                 for (auto it = eventListeners.begin(); it != eventListeners.end(); ++it) {
                     EventListenerDelegate listener = (*it);
                     //RK_EVENT_TRACE("\tSending event {0} to delegate", pEvent->GetName());
-                    bool processed = listener(pEvent);
+                    bool processed = listener(std::move(pEvent));
                     if (processed)
                         break;
                 }
@@ -140,9 +140,9 @@ namespace Rocket {
         bool queueFlushed = (event_queue_[queueToProcess].empty());
         if (!queueFlushed) {
             while (!event_queue_[queueToProcess].empty()) {
-                EventPtr pEvent = event_queue_[queueToProcess].back();
+                EventPtr pEvent = std::move(event_queue_[queueToProcess].back());
                 event_queue_[queueToProcess].pop_back();
-                event_queue_[active_event_queue_].push_back(pEvent);
+                event_queue_[active_event_queue_].push_back(std::move(pEvent));
             }
         }
             
@@ -180,7 +180,7 @@ namespace Rocket {
         return success;
     }
 
-    bool EventManager::TriggerEvent(EventPtr& event) const {
+    bool EventManager::TriggerEvent(EventPtr&& event) const {
         //RK_EVENT_TRACE("Trigger Event : {}", event->GetName());
         bool processed = false;
         auto findIt = event_listener_.find(event->GetEventType());
@@ -189,7 +189,7 @@ namespace Rocket {
             for (auto it = eventListenerList.begin(); it != eventListenerList.end(); ++it) {
                 auto listener = (*it);
                 //RK_EVENT_TRACE("Trigger Event {0} to delegate.", event->GetName());
-                processed = listener(event);  // call the delegate
+                processed = listener(std::move(event));  // call the delegate
                 if (processed)
                     break;
             }
@@ -197,7 +197,7 @@ namespace Rocket {
         return processed;
     }
 
-    bool EventManager::QueueEvent(const EventPtr& event) {
+    bool EventManager::QueueEvent(EventPtr&& event) {
         RK_CORE_ASSERT(active_event_queue_ >= 0, "EventManager Active Queue Error");
         RK_CORE_ASSERT(active_event_queue_ < EVENTMANAGER_NUM_QUEUES, "EventManager Active Queue Error");
 
@@ -205,7 +205,7 @@ namespace Rocket {
 
         auto findIt = event_listener_.find(event->GetEventType());
         if (findIt != event_listener_.end()) {
-            event_queue_[active_event_queue_].push_back(event);
+            event_queue_[active_event_queue_].push_back(std::move(event));
             //RK_EVENT_TRACE("Successfully queued event: {0}", event->GetName());
             return true;
         }

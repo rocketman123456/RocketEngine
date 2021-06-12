@@ -15,15 +15,15 @@ namespace Rocket {
         [[nodiscard]] int32_t Initialize();
 
         template<typename T>
-        T GetConfigInfo(const std::string& category, const std::string& name) {
+        [[nodiscard]] T GetConfigInfo(const std::string& category, const std::string& name) {
             return config_map_[category][name].as<T>();
         }
 
-        std::string GetRootPath() {
+        [[nodiscard]] std::string GetRootPath() {
             return root_dir_;
         }
 
-        std::string ToString() const {
+        [[nodiscard]] std::string ToString() const {
 			std::string output;
             output = "Config Path : " + root_dir_;
 			return output;
@@ -36,10 +36,10 @@ namespace Rocket {
         std::unordered_map<std::string, YAML::Node> config_map_;
     };
 
-    extern ConfigParser* g_ConfigParser;
-
     inline std::ostream& operator << (std::ostream &os, const ConfigParser& c) {
 		os << c.ToString();
 		return os;
 	}
+
+    extern ConfigParser* g_ConfigParser;
 }

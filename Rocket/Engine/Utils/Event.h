@@ -14,18 +14,15 @@
 
 namespace Rocket {
 	using EventVarVec = std::vector<Variant>;
-	// TODO: Replace with unique_ptr
-	using EventVarPtr = std::shared_ptr<Variant>;
+	using EventVarPtr = std::unique_ptr<Variant>;
 	using EventType = uint64_t;
 
 	extern ElapseTimer* g_EventTimer;
 
 	class Event {
 	public:
-		explicit Event(const EventVarVec& var) : variable_(var), name_("event") { 
-            time_stamp_ = g_EventTimer->GetExactTime(); 
-        }
-		explicit Event(const EventVarVec& var, const std::string& name) : variable_(var), name_(name) { 
+		explicit Event(EventVarVec&& var, const std::string& name = "event") 
+			: variable_(var), name_(name) { 
             time_stamp_ = g_EventTimer->GetExactTime(); 
         }
 		virtual ~Event() = default;
@@ -49,8 +46,7 @@ namespace Rocket {
 		//REFLECT()
 	};
 
-	// TODO: Replace with unique_ptr
-	using EventPtr = std::shared_ptr<Event>;
+	using EventPtr = std::unique_ptr<Event>;
 
 	inline std::ostream& operator << (std::ostream& os, const Event &e) {
 		os << e.ToString();

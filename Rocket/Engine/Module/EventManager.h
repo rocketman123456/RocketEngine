@@ -13,9 +13,9 @@ struct GLFWwindow;
 constexpr uint16_t EVENTMANAGER_NUM_QUEUES = 2;
 
 namespace Rocket {
-    using EventCallbackFn = std::function<void(EventPtr &)>;
-    using EventListenerFnptr = bool(*)(EventPtr&);
-    using EventListenerDelegate = Delegate<bool(EventPtr&)>;
+    using EventCallbackFn = std::function<void(EventPtr&&)>;
+    using EventListenerFnptr = bool(*)(EventPtr&&);
+    using EventListenerDelegate = Delegate<bool(EventPtr&&)>;
     using EventListenerList = std::list<EventListenerDelegate>;
     using EventListenerMap = std::map<EventType, EventListenerList>;
     using EventQueue = std::list<EventPtr>;
@@ -44,13 +44,13 @@ namespace Rocket {
         virtual void Finalize() final;
         virtual void Tick(TimeStep ts) final;
 
-        void OnEvent(EventPtr& event);
+        void OnEvent(EventPtr&& event);
 
         [[maybe_unused]] bool Update(uint64_t maxMillis = 100);
         [[maybe_unused]] bool AddListener(const EventListenerDelegate& eventDelegate, const EventType& type);
         [[maybe_unused]] bool RemoveListener(const EventListenerDelegate& eventDelegate, const EventType& type);
-        [[maybe_unused]] bool TriggerEvent(EventPtr& event) const;
-        [[maybe_unused]] bool QueueEvent(const EventPtr& event);
+        [[maybe_unused]] bool TriggerEvent(EventPtr&& event) const;
+        [[maybe_unused]] bool QueueEvent(EventPtr&& event);
         [[maybe_unused]] bool ThreadSafeQueueEvent(const EventPtr& event);
         [[maybe_unused]] bool AbortEvent(const EventType& type, bool allOfType = false);
 
