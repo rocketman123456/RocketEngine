@@ -63,13 +63,13 @@ elseif is_config("render_api", "vulkan") then
     add_defines("RK_VULKAN")
     if is_plat("windows") then
         add_includedirs("$(env VULKAN_SDK)/Include")
-        add_linkdirs("$(env VULKAN_SDK)/Bin")
+        add_linkdirs("$(env VULKAN_SDK)/Lib")
     elseif is_plat("macosx") then
         add_includedirs("$(env VULKAN_SDK)/Include")
-        add_linkdirs("$(env VULKAN_SDK)/Bin")
+        add_linkdirs("$(env VULKAN_SDK)/Lib")
     elseif is_plat("linux") then
         add_includedirs("$(env VULKAN_SDK)/Include")
-        add_linkdirs("$(env VULKAN_SDK)/Bin")
+        add_linkdirs("$(env VULKAN_SDK)/Lib")
     end
     add_requires("vcpkg::volk")
     --add_requires("vcpkg::vulkan-memory-allocator")

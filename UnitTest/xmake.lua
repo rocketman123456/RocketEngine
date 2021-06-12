@@ -31,21 +31,22 @@ target("sdl_test")
     end
     add_files("sdl_test.cpp")
 
---target("sdl_vulkan_test")
---    set_kind("binary")
---    add_packages("vcpkg::sdl2", "vcpkg::volk", "vulkan")
---    -- Add Platform Dependent Libs
---    if is_plat("linux", "macosx") then
---        add_links("pthread", "m", "dl")
---        if is_plat("macosx") then
---            add_links("iconv")
---            add_frameworks("Cocoa", "IOKit", "CoreVideo", "CoreAudio", "CoreFoundation", "CoreAudioKit", "ForceFeedback", "Metal", "AudioToolbox", "Carbon")
---        end
---    elseif is_plat("windows") then
---        add_links("user32", "gdi32", "shell32", "kernel32", "advapi32")
---        add_ldflags("/subsystem:console")
---    end
---    add_files("sdl_vulkan_test.cpp")
+target("sdl_vulkan_test")
+    set_kind("binary")
+    add_packages("vcpkg::sdl2", "vcpkg::volk", "vulkan")
+    -- Add Platform Dependent Libs
+    if is_plat("linux", "macosx") then
+        add_links("pthread", "m", "dl")
+        if is_plat("macosx") then
+            add_links("iconv")
+            add_frameworks("Cocoa", "IOKit", "CoreVideo", "CoreAudio", "CoreFoundation", "CoreAudioKit", "ForceFeedback", "Metal", "AudioToolbox", "Carbon")
+        end
+    elseif is_plat("windows") then
+        add_links("user32", "gdi32", "shell32", "kernel32", "advapi32", "winmm", "ole32", "version", "setupapi", "oleaut32", "shell32", "uuid", "imm32")
+        add_ldflags("/subsystem:console")
+        add_links("vulkan-1")
+    end
+    add_files("sdl_vulkan_test.cpp")
 
 --target("engine_test")
 --    set_kind("binary")
