@@ -6,7 +6,7 @@
 #include <vector>
 
 namespace Rocket {
-    class IApplication : inheritance IRuntimeModule {
+    Interface IApplication : inheritance IRuntimeModule {
     public:
         virtual ~IApplication() = default;
 

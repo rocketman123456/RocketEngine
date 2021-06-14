@@ -17,11 +17,11 @@ namespace Rocket {
         [[nodiscard]] virtual const char* GetName() const = 0;
     };
 
-    // Every Module should Declare This
-#define RUNTIME_MODULE_TYPE(type) \
-    virtual const char* GetName() const override { return #type; }
-
     inline std::ostream& operator << (std::ostream& os, const IRuntimeModule& r) {
 		return os << r.ToString();
 	}
+
+    // Every Module should Declare This
+#define RUNTIME_MODULE_TYPE(type) \
+    virtual const char* GetName() const override { return #type; }
 }

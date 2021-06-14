@@ -12,6 +12,7 @@ target("RocketEngine")
     add_files(
         "Core/*.cpp",
         "Debug/*.cpp",
+        "FileSystem/*.cpp",
         "Module/*.cpp",
         "Parser/*.cpp",
         "Reflection/*.cpp",
