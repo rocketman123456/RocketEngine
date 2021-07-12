@@ -33,6 +33,7 @@
 
 # Xmake cache
 .xmake/
+.vscode/
 build/
 build_cmake/
 
