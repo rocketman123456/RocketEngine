@@ -1,5 +1,4 @@
 // https://vorbrodt.blog/2021/05/27/how-to-detect-memory-leaks/
-
 #pragma once
 
 #ifdef new

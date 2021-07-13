@@ -72,7 +72,7 @@ elseif is_mode("release", "minsizerel", "releasedbg") then
     add_defines("RK_RELEASE")
 -- 如果是profile模式
 elseif is_mode("profile") then
-    -- 添加DEBUG编译宏
+    -- 添加PROFILE编译宏
     add_defines("RK_PROFILE")
 end
 
