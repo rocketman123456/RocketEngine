@@ -19,7 +19,13 @@ set_languages("c99", "c++20")
 --
 -- Add Required Modules
 --
-add_requireconfs("*", {configs = {shared = false}})
+add_requires("fmt", {system = false, shared = false, debug = true, configs = {cxflags = "-fPIC"}})
+add_requires("spdlog", {system = false, shared = false, debug = true, configs = {fmt_external = true, cxflags = "-fPIC"}})
+
+if is_plat("linux", "macosx", "windows") then
+    add_requires("glfw", {system = false, shared = false, debug = true, configs = {cxflags = "-fPIC"}})
+    add_requires("libsdl", {system = false, shared = false, debug = true, configs = {cxflags = "-fPIC"}})
+end
 
 --
 -- Set Render Options
