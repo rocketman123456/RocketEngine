@@ -30,3 +30,17 @@
 *.exe
 *.out
 *.app
+
+# Xmake cache
+.xmake/
+.vscode/
+build/
+build_cmake/
+
+# MacOS Cache
+.DS_Store
+
+# Ignore 3rdParty build
+#External/
+Target/
+ThirdParty/build/
