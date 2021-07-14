@@ -21,6 +21,7 @@ set_languages("c99", "c++20")
 --
 add_requires("fmt", {system = false, shared = false, debug = true, configs = {cxflags = "-fPIC"}})
 add_requires("spdlog", {system = false, shared = false, debug = true, configs = {fmt_external = true, cxflags = "-fPIC"}})
+add_requires("glad", {system = false, shared = false, debug = true, configs = {cxflags = "-fPIC"}})
 
 if is_plat("linux", "macosx", "windows") then
     add_requires("glfw", {system = false, shared = false, debug = true, configs = {cxflags = "-fPIC"}})
