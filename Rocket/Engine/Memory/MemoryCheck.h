@@ -137,6 +137,10 @@ namespace Rocket::Memory {
 	}
 }
 
+#ifdef RK_MEMORY_CHECK
+#define ENABLE_NEW_DELETE_TRACE_DUMP
+#endif
+
 #ifdef ENABLE_NEW_DELETE_TRACE_DUMP
 // create global dump variable, when program exit, it will use ~__dump_all__() automatically and dump all info
 namespace { inline const struct __dump_all__ { ~__dump_all__() { Rocket::Memory::dump_all(); } } __dump_all_on_exit__; }

@@ -1,4 +1,5 @@
 #pragma once
+#ifdef RK_CONSOLE_LOG
 #include <memory>
 #include <unordered_map>
 #include <spdlog/spdlog.h>
@@ -10,22 +11,26 @@
     private:\
         static std::shared_ptr<spdlog::logger> s_##x##_logger_;
 #define IMPLEMENT_LOG_CHANNEL(x) std::shared_ptr<spdlog::logger> Log::s_##x##_logger_;
+#endif
 
 namespace Rocket {
     enum class LogLevel {
-        TRACE = 0, INFO, WARN, ERROR, CRITICAL,
+        TRACE = 0, INFO, WARN, ERR, CRITICAL,
     };
 
     class Log {
     public:
         static void Init(LogLevel level = LogLevel::TRACE);
 
+#ifdef RK_CONSOLE_LOG
+        // 声明Log输出频道
         DECLARE_LOG_CHANNEL(Core);
         DECLARE_LOG_CHANNEL(App);
+#endif
     };
 } // namespace Rocket
 
-#ifdef RK_DEBUG
+#ifdef RK_CONSOLE_LOG
 
 #define RK_CRITICAL(x, ...)     ::Rocket::Log::Get##x##Logger()->critical(__VA_ARGS__)
 #define RK_ERROR(x, ...)        ::Rocket::Log::Get##x##Logger()->error(__VA_ARGS__)
