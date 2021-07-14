@@ -1,7 +1,12 @@
+#include "Log/Log.h"
+
 #include <iostream>
 
 int main() {
-    std::cout << "Hello Rocket Engine" << std::endl;
+    Rocket::Log::Init();
+
+    RK_INFO(Core, "Hello Rocket Engine");
+    RK_INFO(App, "Hello Rocket App");
 
     return 0;
 }

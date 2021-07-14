@@ -1,6 +1,6 @@
-target("engine_main")
+target("engine_test")
     set_kind("binary")
-    add_files("Engine/*.cpp")
+    add_files("Engine/*.cpp", "Engine/Log/*.cpp")
     add_packages(
-        "glfw", "glad", {public = true}
+        "glfw", "glad", "spdlog", "fmt", {public = true}
     )
