@@ -67,6 +67,7 @@ namespace Rocket::Memory::detail {
 	using new_entry_set_t = std::unordered_set<new_entry_t, new_entry_hash_t, std::equal_to<new_entry_t>, malloc_allocator_t<new_entry_t>>;
 	using new_entry_list_t = std::vector<new_entry_t, malloc_allocator_t<new_entry_t>>;
 
+	// use local static object to store info
 	inline auto get_new_entry_set() {
 		static new_entry_set_t* new_entry_set = []() {
 			void* raw = std::malloc(sizeof(new_entry_set_t));
@@ -76,6 +77,7 @@ namespace Rocket::Memory::detail {
 		return new_entry_set;
 	}
 
+	// use local static object to store info
 	inline auto get_mismatch_list() {
 		static new_entry_list_t* mismatch_list = []() {
 			void* raw = std::malloc(sizeof(new_entry_list_t));
@@ -85,6 +87,7 @@ namespace Rocket::Memory::detail {
 		return mismatch_list;
 	}
 
+	// remove previous new object in info list
 	inline void operator_delete(void* ptr, bool array_delete) noexcept {
 		auto it = get_new_entry_set()->find(ptr);
 		if(it != get_new_entry_set()->end()) {
@@ -135,6 +138,7 @@ namespace Rocket::Memory {
 }
 
 #ifdef ENABLE_NEW_DELETE_TRACE_DUMP
+// create global dump variable, when program exit, it will use ~__dump_all__() automatically and dump all info
 namespace { inline const struct __dump_all__ { ~__dump_all__() { Rocket::Memory::dump_all(); } } __dump_all_on_exit__; }
 #endif
 
