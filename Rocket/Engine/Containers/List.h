@@ -20,6 +20,8 @@ namespace Rocket {
                 delete temp;
             }
             first_ = last_ = nullptr;
+            if(!list.first_)
+                return;
             // deep copy list data
             auto temp_first = list.first_;
             auto temp = new Node;
@@ -33,6 +35,7 @@ namespace Rocket {
                 temp->next = nullptr;
                 last_->next = temp;
                 last_ = temp;
+                temp_first = temp_first->next;
             }
         }
         explicit List(List&& list) {
@@ -47,7 +50,11 @@ namespace Rocket {
                 first_ = first_->next;
                 delete temp;
             }
+            first_ = last_ = nullptr;
         }
+
+        List* operator & () { return this; }
+        const List* operator & () const { return this; }
 
         // Copy
         List& operator = (const List& other) {
@@ -58,6 +65,8 @@ namespace Rocket {
                 delete temp;
             }
             first_ = last_ = nullptr;
+            if(!other.first_)
+                return *this;
             // deep copy list data
             auto temp_first = other.first_;
             auto temp = new Node;
@@ -71,7 +80,9 @@ namespace Rocket {
                 temp->next = nullptr;
                 last_->next = temp;
                 last_ = temp;
+                temp_first = temp_first->next;
             }
+            return *this;
         }
         // Move
         List& operator = (List&& other) {
@@ -79,6 +90,7 @@ namespace Rocket {
             last_ = other.last_;
             other.first_ = nullptr;
             other.first_last_ = nullptr;
+            return *this;
         }
 
         void InsertFront(const T& data) {

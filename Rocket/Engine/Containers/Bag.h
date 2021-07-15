@@ -47,6 +47,7 @@ namespace Rocket {
             for(int32_t i = 0; i < size_; ++i) {
                 this->data_[i] = other.data_[i];
             }
+            return *this;
         }
         // Move
         Bag& operator = (Bag&& other) {
@@ -57,6 +58,7 @@ namespace Rocket {
             this->size_ = other.size_;
             other.data_ = nullptr;
             other.size_ = 0;
+            return *this;
         }
 
         void Add(const T& item) {

@@ -12,6 +12,10 @@ int main() {
         list.InsertFront(std::rand());
     for(int i = 0; i < 100; ++i)
         list.InsertBack(std::rand());
+    
+    List<double> list_copy(list);
+    List<double> list_copy_2;
+    list_copy_2 = list;
 
     return 0;
 }
