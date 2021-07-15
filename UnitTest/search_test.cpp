@@ -6,7 +6,7 @@ int array[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
 int main() {
     int key = 8;
 
-    auto result = Rocket::BinarySearch<int>(array, sizeof(array)/sizeof(array[0]), key,
+    auto result = Rocket::Algorism::BinarySearch<int>(array, sizeof(array)/sizeof(array[0]), key,
         [](int k1, int k2) -> int32_t { return k1-k2; }
     );
 
