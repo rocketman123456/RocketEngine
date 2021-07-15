@@ -37,7 +37,7 @@ namespace Rocket::Memory::detail {
 
 	using string_t = const char*;
 
-	struct new_entry_t {
+	struct alignas(8) new_entry_t {
 		new_entry_t(void* p = nullptr, bool a = false, std::size_t b = 0,
 			string_t f = "N/A", int l = -1, string_t fn = "N/A")
 		: ptr{ p }, is_array{ a }, bytes{ b }, file{ f }, line{ l }, func{ fn } {}
@@ -48,7 +48,7 @@ namespace Rocket::Memory::detail {
 		string_t    func;		// 4
 		int         line;		// 4
 		bool        is_array;	// 1
-		bool		padding[3];	// 3
+		bool		padding[7];	// 7
 	};
 
 	inline std::ostream& operator << (std::ostream& os, const new_entry_t& entry) {
@@ -136,6 +136,10 @@ namespace Rocket::Memory {
 		dump_mismatch();
 	}
 }
+
+#ifdef RK_MEMORY_CHECK
+#define ENABLE_NEW_DELETE_TRACE_DUMP
+#endif
 
 #ifdef ENABLE_NEW_DELETE_TRACE_DUMP
 // create global dump variable, when program exit, it will use ~__dump_all__() automatically and dump all info

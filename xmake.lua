@@ -33,12 +33,30 @@ end
 --
 
 --
+-- Set Log Options
+--
+option("log_console")
+    set_showmenu(true)
+    set_description("The Console Log config option")
+option_end()
+if is_config("log_console", "on") then
+    add_defines("RK_CONSOLE_LOG")
+end
+
+--
 -- Set Profile Options
 --
 
 --
--- Set mem_check Options
+-- Set memory_check Options
 --
+option("memory_check")
+    set_showmenu(true)
+    set_description("The Memory Leak Check config option")
+option_end()
+if is_config("memory_check", "on") then
+    add_defines("RK_MEMORY_CHECK")
+end
 
 --
 -- Set Include Dirs
