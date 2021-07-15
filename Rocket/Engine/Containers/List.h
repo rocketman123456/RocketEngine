@@ -8,9 +8,10 @@ namespace Rocket {
             T data;
         };
     public:
-        List();
+        explicit List();
+        virtual ~List();
 
     private:
-        Node* root_ = nullptr;
+        Node* first_ = nullptr;
     };
 }
