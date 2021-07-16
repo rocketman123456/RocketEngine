@@ -1,3 +1,6 @@
+//https://vorbrodt.blog/2019/01/28/enum-to-string/
+//https://vorbrodt.blog/2019/01/29/enum-to-string-take-2/
+
 #include <iostream>
 #include <map>
 #include <cassert>

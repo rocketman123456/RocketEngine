@@ -1,3 +1,5 @@
+//https://vorbrodt.blog/2019/01/31/aos-vs-soa-performance/
+
 #include <iostream>
 #include <iomanip>
 #include <string>
