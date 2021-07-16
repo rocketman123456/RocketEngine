@@ -17,5 +17,10 @@ int main() {
     List<double> list_copy_2;
     list_copy_2 = list;
 
+    for(int i = 0; i < 199; ++i)
+        list.RemoveFront();
+    //for(int i = 0; i < 100; ++i)
+    //    list.RemoveBack();
+
     return 0;
 }

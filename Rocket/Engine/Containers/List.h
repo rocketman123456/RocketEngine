@@ -95,34 +95,68 @@ namespace Rocket {
 
         void InsertFront(const T& data) {
             auto temp = new Node;
-            temp->data = data;
-            temp->next = first_;
-            first_ = temp;
             if(!last_) {
                 last_ = temp;
             }
+            temp->data = data;
+            temp->next = first_;
+            first_ = temp;
         }
+        void RemoveFront() {
+            auto temp = first_;
+            if(first_) {
+                first_ = first_->next;
+                delete temp;
+                if(first_ == nullptr) {
+                    first_ = last_ = nullptr;
+                }
+            }
+        }
+
         void InsertBack(const T& data) {
             auto temp = new Node;
-            if(last_) {
-                last_->next = temp;
-            }
             if(!first_) {
                 first_ = temp;
+            }
+            if(last_) {
+                last_->next = temp;
             }
             temp->data = data;
             temp->next = nullptr;
             last_ = temp;
-            
-        }
-        void RemoveFront() {
-            auto temp = first_;
         }
         void RemoveBack() {
+            if(first_ == nullptr) {
+                return;
+            }
+            else if(first_ == last_ && first_ != nullptr) {
+                delete first_;
+                first_ = last_ = nullptr;
+                return;
+            }
+
             auto temp_1 = first_;
             auto temp_2 = first_->next;
+
+            while(temp_2 && temp_1) {
+                auto temp = temp_2->next;
+                if(!temp)
+                    break;
+                temp_1 = temp_2;
+                temp_2 = temp_2->next;
+            }
+
+            last_ = temp_1;
+            temp_1->next = nullptr;
+            if(temp_2) {
+                delete temp_2;
+            }
         }
 
+        bool IsEmpty() { return !first_; }
+        // should use when list is not empty
+        T Front() { return first_->data; }
+        T Last() { return last_->data; }
 
     private:
         Node* first_ = nullptr;
