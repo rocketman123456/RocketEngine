@@ -1,6 +1,7 @@
 #define ENABLE_NEW_DELETE_TRACE_DUMP
 #include "Memory/MemoryCheck.h"
 #include "Containers/List.h"
+#include "Containers/DoubleList.h"
 #include <random>
 
 using namespace Rocket;

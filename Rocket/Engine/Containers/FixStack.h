@@ -5,26 +5,25 @@
 
 // LIFO
 namespace Rocket {
-    // TODO : make it thread safe
     template<typename T>
-    class Stack {
-    public:
-        explicit Stack() {
+    class FixStack {
+        public:
+        explicit FixStack() {
             this->data_ = new T[2];
             this->size_ = 2;
         }
-        explicit Stack(int32_t size) {
+        explicit FixStack(int32_t size) {
             this->data_ = new T[size];
             this->size_ = size;
         }
-        explicit Stack(const Stack& stack) {
+        explicit FixStack(const FixStack& stack) {
             this->data_ = new T[stack.size_];
             this->size_ = stack.size_;
             for(int32_t i = 0; i < size_; ++i) {
                 this->data_[i] = stack.data_[i];
             }
         }
-        explicit Stack(Stack&& stack) {
+        explicit FixStack(FixStack&& stack) {
             this->data_ = stack.data_;
             this->size_ = stack.size_;
             stack.data_ = nullptr;
@@ -37,11 +36,11 @@ namespace Rocket {
             size_ = 0;
         }
 
-        Stack* operator & () { return this; }
-        const Stack* operator & () const { return this; }
+        FixStack* operator & () { return this; }
+        const FixStack* operator & () const { return this; }
 
         // Copy
-        Stack& operator = (const Stack& other) {
+        FixStack& operator = (const FixStack& other) {
             if(data_) {
                 delete [] data_;
             }
@@ -53,7 +52,7 @@ namespace Rocket {
             return *this;
         }
         // Move
-        Stack& operator = (Stack&& other) {
+        FixStack& operator = (FixStack&& other) {
             if(data_) {
                 delete [] data_;
             }
@@ -65,23 +64,18 @@ namespace Rocket {
         }
 
         void Push(const T& item) {
-            // Auto Resize
-            if(current_ == size_) {
-                Resize(size_ * 2);
+            if(current_ == size_) { // Insert Too much will lost data
+                return;
             }
             data_[current_] = item;
             current_++;
         }
         T Pop() {
-            if(current_ == 0) {     // Pop too much will always return first object
+            if(current_ == 0) {
                 return data_[current_];
             }
             else {
                 current_--;
-                // Auto Resize
-                if(current_ > 0 && current_ == size_ / 4) {
-                    Resize(size_ / 2);
-                }
                 return data_[current_];
             }
         }
@@ -92,7 +86,6 @@ namespace Rocket {
         int32_t CurrentSize() { return current_; }
         T* GetData() { return data_; }
 
-    private:
         void Resize(int32_t size) {
             std::cout << "Stack Resize To : " << size << std::endl;
             T* temp = new T[size];
@@ -105,6 +98,7 @@ namespace Rocket {
             size_ = size;
         }
 
+    private:
         int32_t current_ = 0;
         int32_t size_ = 0;
         T*      data_ = nullptr;

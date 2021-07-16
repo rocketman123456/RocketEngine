@@ -1,47 +1,46 @@
 #pragma once
 #include <cstdint>
 #include <iostream>
-#include <cassert>
+#include <mutex>
 
-// LIFO
 namespace Rocket {
-    // TODO : make it thread safe
     template<typename T>
-    class Stack {
+    class FixBag {
     public:
-        explicit Stack() {
+        explicit FixBag() {
             this->data_ = new T[2];
             this->size_ = 2;
         }
-        explicit Stack(int32_t size) {
+        explicit FixBag(int32_t size) {
             this->data_ = new T[size];
             this->size_ = size;
         }
-        explicit Stack(const Stack& stack) {
+        explicit FixBag(const FixBag& stack) {
             this->data_ = new T[stack.size_];
             this->size_ = stack.size_;
             for(int32_t i = 0; i < size_; ++i) {
                 this->data_[i] = stack.data_[i];
             }
         }
-        explicit Stack(Stack&& stack) {
+        explicit FixBag(FixBag&& stack) {
             this->data_ = stack.data_;
             this->size_ = stack.size_;
             stack.data_ = nullptr;
             stack.size_ = 0;
         }
-        virtual ~Stack() {
+        virtual ~FixBag() {
             if(data_) {
                 delete [] data_;
             }
             size_ = 0;
         }
 
-        Stack* operator & () { return this; }
-        const Stack* operator & () const { return this; }
+        FixBag* operator & () { return this; }
+        const FixBag* operator & () const { return this; }
 
         // Copy
-        Stack& operator = (const Stack& other) {
+        FixBag& operator = (const FixBag& other) {
+            std::lock_guard<std::mutex> lock(mutex_);
             if(data_) {
                 delete [] data_;
             }
@@ -53,7 +52,8 @@ namespace Rocket {
             return *this;
         }
         // Move
-        Stack& operator = (Stack&& other) {
+        FixBag& operator = (FixBag&& other) {
+            std::lock_guard<std::mutex> lock(mutex_);
             if(data_) {
                 delete [] data_;
             }
@@ -64,49 +64,38 @@ namespace Rocket {
             return *this;
         }
 
-        void Push(const T& item) {
-            // Auto Resize
-            if(current_ == size_) {
-                Resize(size_ * 2);
+        void Add(const T& item) {
+            std::lock_guard<std::mutex> lock(mutex_);
+            if(current_ == size_) {     // Add Too much will lost data
+                return;
             }
             data_[current_] = item;
             current_++;
         }
-        T Pop() {
-            if(current_ == 0) {     // Pop too much will always return first object
-                return data_[current_];
-            }
-            else {
-                current_--;
-                // Auto Resize
-                if(current_ > 0 && current_ == size_ / 4) {
-                    Resize(size_ / 2);
-                }
-                return data_[current_];
-            }
-        }
 
-        bool IsFull() { return current_ == size_; }
         bool IsEmpty() { return current_ == 0; }
         int32_t TotalSize() { return size_; }
         int32_t CurrentSize() { return current_; }
         T* GetData() { return data_; }
 
-    private:
         void Resize(int32_t size) {
-            std::cout << "Stack Resize To : " << size << std::endl;
+            std::lock_guard<std::mutex> lock(mutex_);
+            std::cout << "Bag Resize To : " << size << std::endl;
             T* temp = new T[size];
-            int32_t len = std::min(size, size_);
-            for(int32_t i = 0; i < len; ++i) {
+            int32_t length = std::min(size, current_);
+            for(int32_t i = 0; i < length; ++i) {
                 temp[i] = data_[i];
             }
-            delete [] data_;
+            auto temp_data = data_;
+            delete [] temp_data;
             data_ = temp;
             size_ = size;
         }
 
+    private:
         int32_t current_ = 0;
         int32_t size_ = 0;
         T*      data_ = nullptr;
+        std::mutex mutex_;
     };
 }

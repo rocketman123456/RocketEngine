@@ -2,17 +2,18 @@
 
 namespace Rocket {
     template<typename T>
-    class List {
+    class DoubleList {
         struct Node {
             Node* next = nullptr;
+            Node* previous = nullptr;
             T data;
         };
-    public:
-        explicit List() {
+        public:
+        explicit DoubleList() {
             first_ = nullptr;
             last_ = nullptr;
         }
-        explicit List(const List& list) {
+        explicit DoubleList(const DoubleList& list) {
             // delete exist data first
             while(first_) {
                 auto temp = first_;
@@ -29,23 +30,25 @@ namespace Rocket {
             first_ = last_ = temp;
             temp->data = temp_first->data;
             temp->next = nullptr;
+            temp->previous = nullptr;
             temp_first = temp_first->next;
             while(temp_first) {
                 auto temp = new Node;
                 temp->data = temp_first->data;
+                temp->previous = last_;
                 temp->next = nullptr;
                 last_->next = temp;
                 last_ = temp;
                 temp_first = temp_first->next;
             }
         }
-        explicit List(List&& list) {
+        explicit DoubleList(DoubleList&& list) {
             first_ = list.first_;
             last_ = list.last_;
             list.first_ = nullptr;
             list.first_last_ = nullptr;
         }
-        virtual ~List() {
+        virtual ~DoubleList() {
             while(first_) {
                 auto temp = first_;
                 first_ = first_->next;
@@ -54,11 +57,11 @@ namespace Rocket {
             first_ = last_ = nullptr;
         }
 
-        List* operator & () { return this; }
-        const List* operator & () const { return this; }
+        DoubleList* operator & () { return this; }
+        const DoubleList* operator & () const { return this; }
 
         // Copy
-        List& operator = (const List& other) {
+        DoubleList& operator = (const DoubleList& other) {
             // delete exist data first
             while(first_) {
                 auto temp = first_;
@@ -75,10 +78,12 @@ namespace Rocket {
             first_ = last_ = temp;
             temp->data = temp_first->data;
             temp->next = nullptr;
+            temp->previous = nullptr;
             temp_first = temp_first->next;
             while(temp_first) {
                 auto temp = new Node;
                 temp->data = temp_first->data;
+                temp->previous = last_;
                 temp->next = nullptr;
                 last_->next = temp;
                 last_ = temp;
@@ -87,7 +92,7 @@ namespace Rocket {
             return *this;
         }
         // Move
-        List& operator = (List&& other) {
+        DoubleList& operator = (DoubleList&& other) {
             first_ = other.first_;
             last_ = other.last_;
             other.first_ = nullptr;
@@ -102,6 +107,10 @@ namespace Rocket {
             }
             temp->data = data;
             temp->next = first_;
+            temp->previous = nullptr;
+            if(first_) {
+                first_->previous = temp;
+            }
             first_ = temp;
         }
         void RemoveFront() {
@@ -112,6 +121,9 @@ namespace Rocket {
                 if(first_ == nullptr) {
                     first_ = last_ = nullptr;
                 }
+                else {
+                    first_->previous = nullptr;
+                }
             }
         }
 
@@ -120,37 +132,24 @@ namespace Rocket {
             if(!first_) {
                 first_ = temp;
             }
+            temp->data = data;
+            temp->next = nullptr;
+            temp->previous = last_;
             if(last_) {
                 last_->next = temp;
             }
-            temp->data = data;
-            temp->next = nullptr;
             last_ = temp;
         }
         void RemoveBack() {
-            if(first_ == nullptr) {
-                return;
-            }
-            else if(first_ == last_) {
-                delete first_;
-                first_ = last_ = nullptr;
-                return;
-            }
-            else {
-                auto temp_1 = first_;
-                auto temp_2 = first_->next;
-
-                while(temp_2 && temp_1) {
-                    if(temp_2->next == nullptr)
-                        break;
-                    temp_1 = temp_2;
-                    temp_2 = temp_2->next;
+            if(last_) {
+                auto temp = last_;
+                last_ = last_->previous;
+                delete temp;
+                if(last_ == nullptr) {
+                    first_ = last_ = nullptr;
                 }
-
-                last_ = temp_1;
-                last_->next = nullptr;
-                if(temp_2) {
-                    delete temp_2;
+                else {
+                    last_->next = nullptr;
                 }
             }
         }
@@ -161,7 +160,7 @@ namespace Rocket {
         T Last() { return last_->data; }
 
     private:
-        Node* first_ = nullptr;
-        Node* last_ = nullptr;
+        Node* first_;
+        Node* last_;
     };
 }
