@@ -7,7 +7,6 @@ using namespace Rocket;
 
 int main() {
     List<double> list;
-
     for(int i = 0; i < 100; ++i)
         list.InsertFront(std::rand());
     for(int i = 0; i < 100; ++i)
@@ -17,10 +16,16 @@ int main() {
     List<double> list_copy_2;
     list_copy_2 = list;
 
-    for(int i = 0; i < 199; ++i)
+    for(int i = 0; i < 101; ++i)
         list.RemoveFront();
-    //for(int i = 0; i < 100; ++i)
-    //    list.RemoveBack();
+    for(int i = 0; i < 100; ++i)
+        list.RemoveBack();
+    
+    DoubleList<double> list_d;
+    for(int i = 0; i < 100; ++i)
+        list_d.InsertFront(std::rand());
+    for(int i = 0; i < 100; ++i)
+        list_d.InsertBack(std::rand());
 
     return 0;
 }
