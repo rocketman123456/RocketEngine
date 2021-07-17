@@ -1,7 +1,7 @@
 #pragma once
 #include <cstdint>
 #include <iostream>
-#include <mutex>
+//#include <mutex>
 
 namespace Rocket {
     template<typename T>
@@ -40,7 +40,7 @@ namespace Rocket {
 
         // Copy
         Bag& operator = (const Bag& other) {
-            std::lock_guard<std::mutex> lock(mutex_);
+            //std::lock_guard<std::mutex> lock(mutex_);
             if(data_) {
                 delete [] data_;
             }
@@ -53,7 +53,7 @@ namespace Rocket {
         }
         // Move
         Bag& operator = (Bag&& other) {
-            std::lock_guard<std::mutex> lock(mutex_);
+            //std::lock_guard<std::mutex> lock(mutex_);
             if(data_) {
                 delete [] data_;
             }
@@ -65,11 +65,11 @@ namespace Rocket {
         }
 
         void Add(const T& item) {
-            std::lock_guard<std::mutex> lock(mutex_);
             // Auto Resize
-            if(current_ == size_ - 1) {
+            if(current_ == size_) {
                 Resize(size_ * 2);
             }
+            //std::lock_guard<std::mutex> lock(mutex_);
             data_[current_] = item;
             current_++;
         }
@@ -81,7 +81,7 @@ namespace Rocket {
 
     private:
         void Resize(int32_t size) {
-            std::lock_guard<std::mutex> lock(mutex_);
+            //std::lock_guard<std::mutex> lock(mutex_);
             std::cout << "Bag Resize To : " << size << std::endl;
             T* temp = new T[size];
             int32_t length = std::min(size, current_);
@@ -97,6 +97,6 @@ namespace Rocket {
         int32_t current_ = 0;
         int32_t size_ = 0;
         T*      data_ = nullptr;
-        std::mutex mutex_;
+        //std::mutex mutex_;
     };
 }
