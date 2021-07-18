@@ -35,7 +35,6 @@ namespace Rocket {
 
         // Copy
         FixBag& operator = (const FixBag& other) {
-            std::lock_guard<std::mutex> lock(mutex_);
             if(data_) {
                 delete [] data_;
             }
@@ -48,7 +47,6 @@ namespace Rocket {
         }
         // Move
         FixBag& operator = (FixBag&& other) {
-            std::lock_guard<std::mutex> lock(mutex_);
             if(data_) {
                 delete [] data_;
             }
@@ -60,7 +58,6 @@ namespace Rocket {
         }
 
         void Add(const T& item) {
-            std::lock_guard<std::mutex> lock(mutex_);
             if(current_ == size_) {
                 throw std::out_of_range("Add to Full FixBag");
             }
@@ -75,10 +72,10 @@ namespace Rocket {
         inline T* GetData() { return data_; }
 
         void Resize(int32_t size) {
-            std::lock_guard<std::mutex> lock(mutex_);
-            //std::cout << "Bag Resize To : " << size << std::endl;
+            if(size < current_)
+                throw std::bad_array_new_length();
             T* temp = new T[size];
-            int32_t length = std::min(size, current_);
+            int32_t length = current_;
             for(int32_t i = 0; i < length; ++i) {
                 temp[i] = data_[i];
             }
@@ -92,6 +89,5 @@ namespace Rocket {
         int32_t current_ = 0;
         int32_t size_ = 0;
         T*      data_ = nullptr;
-        std::mutex mutex_;
     };
 }

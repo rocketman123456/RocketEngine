@@ -82,9 +82,10 @@ namespace Rocket {
         inline T* GetData() { return data_; }
 
         void Resize(int32_t size) {
-            //std::cout << "Stack Resize To : " << size << std::endl;
+            if(size < size_)
+                throw std::bad_array_new_length();
             T* temp = new T[size];
-            int32_t len = std::min(size, size_);
+            int32_t len = size_;
             for(int32_t i = 0; i < len; ++i) {
                 temp[i] = data_[i];
             }
