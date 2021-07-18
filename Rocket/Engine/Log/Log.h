@@ -10,7 +10,7 @@
         inline static spdlog::logger* Get##x##Logger() { return s_##x##_logger_.get(); } \
     private:\
         static std::shared_ptr<spdlog::logger> s_##x##_logger_;
-#define IMPLEMENT_LOG_CHANNEL(x) std::shared_ptr<spdlog::logger> Log::s_##x##_logger_;
+#define IMPLEMENT_LOG_CHANNEL(x) std::shared_ptr<spdlog::logger> Rocket::Log::s_##x##_logger_;
 #endif
 
 namespace Rocket {
@@ -21,7 +21,6 @@ namespace Rocket {
     class Log {
     public:
         static void Init(LogLevel level = LogLevel::TRACE);
-
 #ifdef RK_CONSOLE_LOG
         // 声明Log输出频道
         DECLARE_LOG_CHANNEL(Core);
