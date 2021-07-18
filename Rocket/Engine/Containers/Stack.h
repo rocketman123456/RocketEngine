@@ -1,7 +1,7 @@
 #pragma once
 #include <cstdint>
-#include <iostream>
-#include <cassert>
+//#include <iostream>
+#include <exception>
 
 // LIFO
 namespace Rocket {
@@ -75,7 +75,7 @@ namespace Rocket {
         }
         T Pop() {
             if(current_ == 0) {
-                throw "Pop Empty Stack";
+                throw std::out_of_range("Pop Empty Stack");
             }
             else {
                 current_--;
@@ -95,7 +95,7 @@ namespace Rocket {
 
     private:
         void Resize(int32_t size) {
-            std::cout << "Stack Resize To : " << size << std::endl;
+            //std::cout << "Stack Resize To : " << size << std::endl;
             T* temp = new T[size];
             int32_t len = std::min(size, size_);
             for(int32_t i = 0; i < len; ++i) {

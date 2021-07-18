@@ -1,6 +1,7 @@
 #pragma once
 #include <cstdint>
-#include <iostream>
+//#include <iostream>
+#include <exception>
 
 // LIFO
 namespace Rocket {
@@ -66,14 +67,14 @@ namespace Rocket {
 
         void Push(const T& item) {
             if(current_ == size_) {
-                throw "Push Full FixStack";
+                throw std::out_of_range("Push Full FixStack");
             }
             data_[current_] = item;
             current_++;
         }
         T Pop() {
             if(current_ == 0) {
-                throw "Pop Empty FixStack";
+                throw std::out_of_range("Pop Empty FixStack");
             }
             else {
                 current_--;
@@ -88,7 +89,7 @@ namespace Rocket {
         T* GetData() { return data_; }
 
         void Resize(int32_t size) {
-            std::cout << "Stack Resize To : " << size << std::endl;
+            //std::cout << "Stack Resize To : " << size << std::endl;
             T* temp = new T[size];
             int32_t len = std::min(size, size_);
             for(int32_t i = 0; i < len; ++i) {

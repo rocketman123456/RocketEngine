@@ -1,6 +1,6 @@
 #pragma once
 #include <cstdint>
-#include <iostream>
+//#include <iostream>
 
 namespace Rocket {
     // TODO : make it thread safe
@@ -79,7 +79,7 @@ namespace Rocket {
 
     private:
         void Resize(int32_t size) {
-            std::cout << "Bag Resize To : " << size << std::endl;
+            //std::cout << "Bag Resize To : " << size << std::endl;
             T* temp = new T[size];
             int32_t length = std::min(size, current_);
             for(int32_t i = 0; i < length; ++i) {

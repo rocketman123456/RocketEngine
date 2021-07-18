@@ -1,7 +1,7 @@
 #pragma once
 #include <cstdint>
-#include <iostream>
-#include <mutex>
+//#include <iostream>
+#include <exception>
 
 namespace Rocket {
     // TODO : make it thread safe
@@ -69,7 +69,7 @@ namespace Rocket {
         void Add(const T& item) {
             std::lock_guard<std::mutex> lock(mutex_);
             if(current_ == size_) {
-                throw "Full FixBag";
+                throw std::out_of_range("Add to Full FixBag");
             }
             data_[current_] = item;
             current_++;
@@ -82,7 +82,7 @@ namespace Rocket {
 
         void Resize(int32_t size) {
             std::lock_guard<std::mutex> lock(mutex_);
-            std::cout << "Bag Resize To : " << size << std::endl;
+            //std::cout << "Bag Resize To : " << size << std::endl;
             T* temp = new T[size];
             int32_t length = std::min(size, current_);
             for(int32_t i = 0; i < length; ++i) {

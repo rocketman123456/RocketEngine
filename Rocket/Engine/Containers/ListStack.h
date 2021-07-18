@@ -1,5 +1,5 @@
 #pragma once
-#include <cassert>
+#include <exception>
 
 namespace Rocket {
     // TODO : make it thread safe
@@ -113,7 +113,7 @@ namespace Rocket {
         }
         T Pop() {
             if(size_ == 0) {
-                throw "Pop Empty ListStack";
+                throw std::out_of_range("Pop Empty ListStack");
             }
             else {
                 T data = first_->data;

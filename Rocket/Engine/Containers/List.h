@@ -1,4 +1,5 @@
 #pragma once
+#include <exception>
 
 namespace Rocket {
     // TODO : make it thread safe
@@ -112,6 +113,9 @@ namespace Rocket {
                     first_ = last_ = nullptr;
                 }
             }
+            else {
+                throw std::out_of_range("Remove Empty List");
+            }
         }
 
         void InsertBack(const T& data) {
@@ -128,7 +132,7 @@ namespace Rocket {
         }
         void RemoveBack() {
             if(first_ == nullptr) {
-                return;
+                throw std::out_of_range("Remove Empty List");
             }
             else if(first_ == last_) {
                 delete first_;
@@ -156,8 +160,8 @@ namespace Rocket {
 
         bool IsEmpty() { return !first_; }
         // should use when list is not empty
-        T Front() { return first_->data; }
-        T Last() { return last_->data; }
+        T Front() { if(!first_) throw std::out_of_range("Get Data From Empty List"); return first_->data; }
+        T Last() { if(!last_) throw std::out_of_range("Get Data From Empty List"); return last_->data; }
 
     private:
         Node* first_ = nullptr;

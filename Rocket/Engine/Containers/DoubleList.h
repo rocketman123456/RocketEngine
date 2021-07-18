@@ -1,4 +1,5 @@
 #pragma once
+#include <exception>
 
 namespace Rocket {
     // TODO : make it thread safe
@@ -118,6 +119,9 @@ namespace Rocket {
                     first_->previous = nullptr;
                 }
             }
+            else {
+                throw std::out_of_range("Remove EmptyDouble List");
+            }
         }
 
         void InsertBack(const T& data) {
@@ -145,11 +149,14 @@ namespace Rocket {
                     last_->next = nullptr;
                 }
             }
+            else {
+                throw std::out_of_range("Remove EmptyDouble List");
+            }
         }
 
         bool IsEmpty() { return !first_; }
-        T Front() { if(!first_) throw "Empty Double List"; return first_->data; }
-        T Last() { if(!last_) throw "Empty Double List"; return last_->data; }
+        T Front() { if(!first_) std::out_of_range("Empty Double List"); return first_->data; }
+        T Last() { if(!last_) std::out_of_range("Empty Double List"); return last_->data; }
 
     private:
         Node* first_;
