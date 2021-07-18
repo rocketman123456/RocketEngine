@@ -14,8 +14,7 @@ int main() {
         list.InsertBack(std::rand());
     
     List<double> list_copy(list);
-    List<double> list_copy_2;
-    list_copy_2 = list;
+    List<double> list_copy_2 = list;
 
     for(int i = 0; i < 100; ++i)
         list.RemoveFront();

@@ -15,7 +15,7 @@ namespace Rocket {
             this->first_ = nullptr;
             this->size_ = 0;
         }
-        explicit ListStack(const ListStack& stack) {
+        ListStack(const ListStack& stack) {
             this->size_ = stack.size_;
             this->first_ = nullptr;
             if(!stack.first_)
@@ -36,7 +36,7 @@ namespace Rocket {
                 temp_first = temp_first->next;
             }
         }
-        explicit ListStack(ListStack&& stack) {
+        ListStack(ListStack&& stack) {
             this->first_ = stack.first_;
             this->size_ = stack.size_;
             stack.first_ = nullptr;

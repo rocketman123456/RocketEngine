@@ -16,7 +16,7 @@ namespace Rocket {
             first_ = nullptr;
             last_ = nullptr;
         }
-        explicit DoubleList(const DoubleList& list) {
+        DoubleList(const DoubleList& list) {
             // delete exist data first
             first_ = last_ = nullptr;
             // skip empty list
@@ -40,7 +40,7 @@ namespace Rocket {
                 temp_first = temp_first->next;
             }
         }
-        explicit DoubleList(DoubleList&& list) {
+        DoubleList(DoubleList&& list) {
             first_ = list.first_;
             last_ = list.last_;
             list.first_ = nullptr;

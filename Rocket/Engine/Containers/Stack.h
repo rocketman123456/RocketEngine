@@ -14,18 +14,14 @@ namespace Rocket {
             this->data_ = new T[2];
             this->size_ = 2;
         }
-        explicit Stack(int32_t size) {
-            this->data_ = new T[size];
-            this->size_ = size;
-        }
-        explicit Stack(const Stack& stack) {
+        Stack(const Stack& stack) {
             this->data_ = new T[stack.size_];
             this->size_ = stack.size_;
             for(int32_t i = 0; i < size_; ++i) {
                 this->data_[i] = stack.data_[i];
             }
         }
-        explicit Stack(Stack&& stack) {
+        Stack(Stack&& stack) {
             this->data_ = stack.data_;
             this->size_ = stack.size_;
             stack.data_ = nullptr;
@@ -93,7 +89,6 @@ namespace Rocket {
         int32_t CurrentSize() { return current_; }
         T* GetData() { return data_; }
 
-    private:
         void Resize(int32_t size) {
             //std::cout << "Stack Resize To : " << size << std::endl;
             T* temp = new T[size];
@@ -105,7 +100,8 @@ namespace Rocket {
             data_ = temp;
             size_ = size;
         }
-
+        
+    private:
         int32_t current_ = 0;
         int32_t size_ = 0;
         T*      data_ = nullptr;

@@ -12,22 +12,18 @@ namespace Rocket {
             this->data_ = new T[2];
             this->size_ = 2;
         }
-        explicit Bag(int32_t size) {
-            this->data_ = new T[size];
-            this->size_ = size;
-        }
-        explicit Bag(const Bag& stack) {
-            this->data_ = new T[stack.size_];
-            this->size_ = stack.size_;
+        Bag(const Bag& bag) {
+            this->data_ = new T[bag.size_];
+            this->size_ = bag.size_;
             for(int32_t i = 0; i < size_; ++i) {
-                this->data_[i] = stack.data_[i];
+                this->data_[i] = bag.data_[i];
             }
         }
-        explicit Bag(Bag&& stack) {
-            this->data_ = stack.data_;
-            this->size_ = stack.size_;
-            stack.data_ = nullptr;
-            stack.size_ = 0;
+        Bag(Bag&& bag) {
+            this->data_ = bag.data_;
+            this->size_ = bag.size_;
+            bag.data_ = nullptr;
+            bag.size_ = 0;
         }
         virtual ~Bag() {
             if(data_) {
@@ -77,7 +73,6 @@ namespace Rocket {
         int32_t CurrentSize() { return current_; }
         T* GetData() { return data_; }
 
-    private:
         void Resize(int32_t size) {
             //std::cout << "Bag Resize To : " << size << std::endl;
             T* temp = new T[size];
@@ -90,7 +85,8 @@ namespace Rocket {
             data_ = temp;
             size_ = size;
         }
-
+        
+    private:
         int32_t current_ = 0;
         int32_t size_ = 0;
         T*      data_ = nullptr;
