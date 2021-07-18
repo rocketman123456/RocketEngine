@@ -5,14 +5,15 @@ namespace Rocket {
     // TODO : make it thread safe
     // TODO : make stack implements iterator
     template<typename T>
-    class List {
+    class DoubleList {
         struct Node {
             Node* next = nullptr;
+            Node* previous = nullptr;
             T data;
         };
-    public:
-        explicit List() : first_(nullptr), last_(nullptr) {}
-        List(const List& list) {
+        public:
+        explicit DoubleList() : first_(nullptr), last_(nullptr) {}
+        DoubleList(const DoubleList& list) {
             // delete exist data first
             first_ = last_ = nullptr;
             // skip empty list
@@ -23,6 +24,7 @@ namespace Rocket {
             while(temp_first) {
                 auto temp = new Node;
                 temp->data = temp_first->data;
+                temp->previous = last_;
                 temp->next = nullptr;
                 if(nullptr == last_)
                     last_ = temp;
@@ -35,13 +37,13 @@ namespace Rocket {
                 temp_first = temp_first->next;
             }
         }
-        List(List&& list) {
+        DoubleList(DoubleList&& list) {
             first_ = list.first_;
             last_ = list.last_;
             list.first_ = nullptr;
             list.first_last_ = nullptr;
         }
-        virtual ~List() {
+        virtual ~DoubleList() {
             while(first_) {
                 auto temp = first_;
                 first_ = first_->next;
@@ -50,11 +52,11 @@ namespace Rocket {
             first_ = last_ = nullptr;
         }
 
-        List* operator & () { return this; }
-        const List* operator & () const { return this; }
+        DoubleList* operator & () { return this; }
+        const DoubleList* operator & () const { return this; }
 
         // Copy
-        List& operator = (const List& other) {
+        DoubleList& operator = (const DoubleList& other) {
             // delete exist data first
             while(first_) {
                 auto temp = first_;
@@ -70,21 +72,18 @@ namespace Rocket {
             while(temp_first) {
                 auto temp = new Node;
                 temp->data = temp_first->data;
+                temp->previous = last_;
                 temp->next = nullptr;
-                if(nullptr == last_)
-                    last_ = temp;
-                else {
-                    last_->next = temp;
-                    last_ = temp;
-                }
+                last_->next = temp;
                 if(nullptr == first_)
                     first_ = temp;
+                last_ = temp;
                 temp_first = temp_first->next;
             }
             return *this;
         }
         // Move
-        List& operator = (List&& other) {
+        DoubleList& operator = (DoubleList&& other) {
             first_ = other.first_;
             last_ = other.last_;
             other.first_ = nullptr;
@@ -99,6 +98,10 @@ namespace Rocket {
             }
             temp->data = data;
             temp->next = first_;
+            temp->previous = nullptr;
+            if(first_) {
+                first_->previous = temp;
+            }
             first_ = temp;
         }
         void RemoveFront() {
@@ -109,9 +112,12 @@ namespace Rocket {
                 if(first_ == nullptr) {
                     first_ = last_ = nullptr;
                 }
+                else {
+                    first_->previous = nullptr;
+                }
             }
             else {
-                throw std::out_of_range("Remove Empty List");
+                throw std::out_of_range("Remove EmptyDouble List");
             }
         }
 
@@ -120,47 +126,37 @@ namespace Rocket {
             if(!first_) {
                 first_ = temp;
             }
+            temp->data = data;
+            temp->next = nullptr;
+            temp->previous = last_;
             if(last_) {
                 last_->next = temp;
             }
-            temp->data = data;
-            temp->next = nullptr;
             last_ = temp;
         }
         void RemoveBack() {
-            if(first_ == nullptr) {
-                throw std::out_of_range("Remove Empty List");
-            }
-            else if(first_ == last_) {
-                delete first_;
-                first_ = last_ = nullptr;
-                return;
+            if(last_) {
+                auto temp = last_;
+                last_ = last_->previous;
+                delete temp;
+                if(last_ == nullptr) {
+                    first_ = last_ = nullptr;
+                }
+                else {
+                    last_->next = nullptr;
+                }
             }
             else {
-                auto temp_1 = first_;
-                auto temp_2 = first_->next;
-
-                while(temp_2 && temp_1) {
-                    if(temp_2->next == nullptr)
-                        break;
-                    temp_1 = temp_2;
-                    temp_2 = temp_2->next;
-                }
-
-                last_ = temp_1;
-                last_->next = nullptr;
-                if(temp_2) {
-                    delete temp_2;
-                }
+                throw std::out_of_range("Remove EmptyDouble List");
             }
         }
 
-        inline bool IsEmpty() { return !first_; }
-        inline T Front() { if(!first_) throw std::out_of_range("Get Data From Empty List"); return first_->data; }
-        inline T Last() { if(!last_) throw std::out_of_range("Get Data From Empty List"); return last_->data; }
+        inline bool IsEmpty() { return first_ == nullptr; }
+        inline T Front() { if(first_ == nullptr) std::out_of_range("Empty Double List"); return first_->data; }
+        inline T Last() { if(last_ == nullptr) std::out_of_range("Empty Double List"); return last_->data; }
 
     private:
-        Node* first_ = nullptr;
-        Node* last_ = nullptr;
+        Node* first_;
+        Node* last_;
     };
 }
