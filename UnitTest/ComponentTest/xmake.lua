@@ -1,13 +1,18 @@
 target("memory_test")
     set_kind("binary")
     add_files("memory_test.cpp")
+    add_options("memory_check")
+target_end()
 
 target("glfw_test")
     set_kind("binary")
     add_files("glfw_test.cpp")
     add_packages("glfw", "glad")
+target_end()
 
 target("log_test")
     set_kind("binary")
     add_files("log_test.cpp", "../../Rocket/Engine/Log/Log.cpp")
     add_packages("spdlog", "fmt")
+    add_options("console_log")
+target_end()

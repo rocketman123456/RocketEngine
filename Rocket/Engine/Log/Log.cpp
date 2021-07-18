@@ -27,13 +27,13 @@ namespace Rocket {
 
     IMPLEMENT_LOG_CHANNEL(Core);
     IMPLEMENT_LOG_CHANNEL(App);
-#endif
 
     void Log::Init(LogLevel level) {
-#ifdef RK_CONSOLE_LOG
         spdlog::set_pattern("%^[%T] %n: %v%$");
         INIT_LOG_CHANNEL(Core);
         INIT_LOG_CHANNEL(App);
-#endif
     }
+#else
+    void Log::Init(LogLevel level) {}
+#endif
 } // namespace Rocket
