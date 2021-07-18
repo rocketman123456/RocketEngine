@@ -9,3 +9,7 @@ target("stack_test")
 target("bag_test")
     set_kind("binary")
     add_files("bag_test.cpp")
+
+target("queue_test")
+    set_kind("binary")
+    add_files("queue_test.cpp")

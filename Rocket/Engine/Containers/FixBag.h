@@ -9,10 +9,7 @@ namespace Rocket {
     template<typename T>
     class FixBag {
     public:
-        explicit FixBag(int32_t size) {
-            this->data_ = new T[size];
-            this->size_ = size;
-        }
+        explicit FixBag(int32_t size) : data_(new T[size]), size_(size) {}
         FixBag(const FixBag& stack) {
             this->data_ = new T[stack.size_];
             this->size_ = stack.size_;
@@ -71,10 +68,11 @@ namespace Rocket {
             current_++;
         }
 
-        bool IsEmpty() { return current_ == 0; }
-        int32_t TotalSize() { return size_; }
-        int32_t CurrentSize() { return current_; }
-        T* GetData() { return data_; }
+        inline bool IsFull() { return current_ == size_; }
+        inline bool IsEmpty() { return current_ == 0; }
+        inline int32_t TotalSize() { return size_; }
+        inline int32_t CurrentSize() { return current_; }
+        inline T* GetData() { return data_; }
 
         void Resize(int32_t size) {
             std::lock_guard<std::mutex> lock(mutex_);

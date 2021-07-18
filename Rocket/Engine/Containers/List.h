@@ -11,10 +11,7 @@ namespace Rocket {
             T data;
         };
     public:
-        explicit List() {
-            first_ = nullptr;
-            last_ = nullptr;
-        }
+        explicit List() : first_(nullptr), last_(nullptr) {}
         List(const List& list) {
             // delete exist data first
             first_ = last_ = nullptr;
@@ -158,10 +155,9 @@ namespace Rocket {
             }
         }
 
-        bool IsEmpty() { return !first_; }
-        // should use when list is not empty
-        T Front() { if(!first_) throw std::out_of_range("Get Data From Empty List"); return first_->data; }
-        T Last() { if(!last_) throw std::out_of_range("Get Data From Empty List"); return last_->data; }
+        inline bool IsEmpty() { return !first_; }
+        inline T Front() { if(!first_) throw std::out_of_range("Get Data From Empty List"); return first_->data; }
+        inline T Last() { if(!last_) throw std::out_of_range("Get Data From Empty List"); return last_->data; }
 
     private:
         Node* first_ = nullptr;

@@ -12,10 +12,7 @@ namespace Rocket {
             T data;
         };
         public:
-        explicit DoubleList() {
-            first_ = nullptr;
-            last_ = nullptr;
-        }
+        explicit DoubleList() : first_(nullptr), last_(nullptr) {}
         DoubleList(const DoubleList& list) {
             // delete exist data first
             first_ = last_ = nullptr;
@@ -154,9 +151,9 @@ namespace Rocket {
             }
         }
 
-        bool IsEmpty() { return !first_; }
-        T Front() { if(!first_) std::out_of_range("Empty Double List"); return first_->data; }
-        T Last() { if(!last_) std::out_of_range("Empty Double List"); return last_->data; }
+        inline bool IsEmpty() { return first_ == nullptr; }
+        inline T Front() { if(first_ == nullptr) std::out_of_range("Empty Double List"); return first_->data; }
+        inline T Last() { if(last_ == nullptr) std::out_of_range("Empty Double List"); return last_->data; }
 
     private:
         Node* first_;

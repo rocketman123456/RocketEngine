@@ -8,10 +8,7 @@ namespace Rocket {
     template<typename T>
     class Bag {
     public:
-        explicit Bag() {
-            this->data_ = new T[2];
-            this->size_ = 2;
-        }
+        explicit Bag() : data_(new T[2]), size_(2) {}
         Bag(const Bag& bag) {
             this->data_ = new T[bag.size_];
             this->size_ = bag.size_;
@@ -68,10 +65,10 @@ namespace Rocket {
             current_++;
         }
 
-        bool IsEmpty() { return current_ == 0; }
-        int32_t TotalSize() { return size_; }
-        int32_t CurrentSize() { return current_; }
-        T* GetData() { return data_; }
+        inline bool IsEmpty() { return current_ == 0; }
+        inline int32_t TotalSize() { return size_; }
+        inline int32_t CurrentSize() { return current_; }
+        inline T* GetData() { return data_; }
 
         void Resize(int32_t size) {
             //std::cout << "Bag Resize To : " << size << std::endl;

@@ -11,10 +11,7 @@ namespace Rocket {
             T data;
         };
     public:
-        explicit ListStack() {
-            this->first_ = nullptr;
-            this->size_ = 0;
-        }
+        explicit ListStack() : first_(nullptr), size_(0) {}
         ListStack(const ListStack& stack) {
             this->size_ = stack.size_;
             this->first_ = nullptr;
@@ -125,9 +122,9 @@ namespace Rocket {
             }
         }
 
-        bool IsEmpty() { return first_ == nullptr; }
-        int32_t TotalSize() { return size_; }
-        T* GetData() { return data_; }
+        inline bool IsEmpty() { return first_ == nullptr; }
+        inline int32_t TotalSize() { return size_; }
+        inline T* GetData() { return data_; }
 
     private:
         int32_t size_ = 0;

@@ -83,11 +83,10 @@ namespace Rocket {
             }
         }
 
-        bool IsFull() { return current_ == size_; }
-        bool IsEmpty() { return current_ == 0; }
-        int32_t TotalSize() { return size_; }
-        int32_t CurrentSize() { return current_; }
-        T* GetData() { return data_; }
+        inline bool IsEmpty() { return current_ == 0; }
+        inline int32_t TotalSize() { return size_; }
+        inline int32_t CurrentSize() { return current_; }
+        inline T* GetData() { return data_; }
 
         void Resize(int32_t size) {
             //std::cout << "Stack Resize To : " << size << std::endl;
