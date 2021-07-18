@@ -1,10 +1,11 @@
 #pragma once
 #include <cstdint>
 #include <iostream>
-#include <cassert>
 
 // LIFO
 namespace Rocket {
+    // TODO : make it thread safe
+    // TODO : make stack implements iterator
     template<typename T>
     class FixStack {
         public:
@@ -64,15 +65,15 @@ namespace Rocket {
         }
 
         void Push(const T& item) {
-            if(current_ == size_) { // Insert Too much will lost data
-                return;
+            if(current_ == size_) {
+                throw "Push Full FixStack";
             }
             data_[current_] = item;
             current_++;
         }
         T Pop() {
             if(current_ == 0) {
-                return data_[current_];
+                throw "Pop Empty FixStack";
             }
             else {
                 current_--;

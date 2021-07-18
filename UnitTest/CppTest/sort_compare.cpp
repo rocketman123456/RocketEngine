@@ -49,4 +49,6 @@ int main(int argc, char** argv)
     start_time = high_resolution_clock::now();
     accumulate(begin(c2), end(c2), 0);
     cout << "Sorted vector duration " << duration_cast<microseconds>(high_resolution_clock::now() - start_time).count() / 1000.f << " ms" << endl << endl;
+
+    return 0;
 }

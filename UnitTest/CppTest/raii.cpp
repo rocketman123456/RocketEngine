@@ -49,5 +49,5 @@ int main(int argc, char** argv)
     *p1 = 0xDEADBEEF;
     p2[1] = 0x8BADF00D;
 
-    return 1;
+    return 0;
 }

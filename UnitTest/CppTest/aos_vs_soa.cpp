@@ -87,7 +87,7 @@ int main(int argc, char** argv)
     sum += averageDob(v1);
     auto end_time = high_resolution_clock::now();
     cout  << fixed << setprecision(3);
-    cout << "AoS duration " << duration_cast<microseconds>(end_time - start_time).count() / 1000.f << " ms" << endl;
+    cout << "AoS duration " << duration_cast<microseconds>(end_time - start_time).count() / 1000.f << " ms " << sum << endl;
     v1.clear();
     v1.shrink_to_fit();
 
@@ -103,7 +103,7 @@ int main(int argc, char** argv)
     sum += p.averageAge();
     sum += p.averageDob();
     end_time = high_resolution_clock::now();
-    cout << "SoA duration " << duration_cast<microseconds>(end_time - start_time).count() / 1000.f << " ms" << endl;
+    cout << "SoA duration " << duration_cast<microseconds>(end_time - start_time).count() / 1000.f << " ms " << sum << endl;
     
-    return sum;
+    return 0;
 }

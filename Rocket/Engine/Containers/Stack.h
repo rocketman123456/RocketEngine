@@ -6,6 +6,7 @@
 // LIFO
 namespace Rocket {
     // TODO : make it thread safe
+    // TODO : make stack implements iterator
     template<typename T>
     class Stack {
     public:
@@ -73,8 +74,8 @@ namespace Rocket {
             current_++;
         }
         T Pop() {
-            if(current_ == 0) {     // Pop too much will always return first object
-                return data_[current_];
+            if(current_ == 0) {
+                throw "Pop Empty Stack";
             }
             else {
                 current_--;

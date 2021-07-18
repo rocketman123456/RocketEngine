@@ -1,6 +1,8 @@
 #pragma once
 
 namespace Rocket {
+    // TODO : make it thread safe
+    // TODO : make stack implements iterator
     template<typename T>
     class DoubleList {
         struct Node {
@@ -15,30 +17,25 @@ namespace Rocket {
         }
         explicit DoubleList(const DoubleList& list) {
             // delete exist data first
-            while(first_) {
-                auto temp = first_;
-                first_ = first_->next;
-                delete temp;
-            }
             first_ = last_ = nullptr;
             // skip empty list
             if(!list.first_)
                 return;
             // deep copy list data
             auto temp_first = list.first_;
-            auto temp = new Node;
-            first_ = last_ = temp;
-            temp->data = temp_first->data;
-            temp->next = nullptr;
-            temp->previous = nullptr;
-            temp_first = temp_first->next;
             while(temp_first) {
                 auto temp = new Node;
                 temp->data = temp_first->data;
                 temp->previous = last_;
                 temp->next = nullptr;
-                last_->next = temp;
-                last_ = temp;
+                if(nullptr == last_)
+                    last_ = temp;
+                else {
+                    last_->next = temp;
+                    last_ = temp;
+                }
+                if(nullptr == first_)
+                    first_ = temp;
                 temp_first = temp_first->next;
             }
         }
@@ -74,18 +71,14 @@ namespace Rocket {
                 return *this;
             // deep copy list data
             auto temp_first = other.first_;
-            auto temp = new Node;
-            first_ = last_ = temp;
-            temp->data = temp_first->data;
-            temp->next = nullptr;
-            temp->previous = nullptr;
-            temp_first = temp_first->next;
             while(temp_first) {
                 auto temp = new Node;
                 temp->data = temp_first->data;
                 temp->previous = last_;
                 temp->next = nullptr;
                 last_->next = temp;
+                if(nullptr == first_)
+                    first_ = temp;
                 last_ = temp;
                 temp_first = temp_first->next;
             }
@@ -155,9 +148,8 @@ namespace Rocket {
         }
 
         bool IsEmpty() { return !first_; }
-        // should use when list is not empty
-        T Front() { return first_->data; }
-        T Last() { return last_->data; }
+        T Front() { if(!first_) throw "Empty Double List"; return first_->data; }
+        T Last() { if(!last_) throw "Empty Double List"; return last_->data; }
 
     private:
         Node* first_;

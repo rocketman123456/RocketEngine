@@ -4,6 +4,8 @@
 #include <mutex>
 
 namespace Rocket {
+    // TODO : make it thread safe
+    // TODO : make stack implements iterator
     template<typename T>
     class FixBag {
     public:
@@ -66,8 +68,8 @@ namespace Rocket {
 
         void Add(const T& item) {
             std::lock_guard<std::mutex> lock(mutex_);
-            if(current_ == size_) {     // Add Too much will lost data
-                return;
+            if(current_ == size_) {
+                throw "Full FixBag";
             }
             data_[current_] = item;
             current_++;

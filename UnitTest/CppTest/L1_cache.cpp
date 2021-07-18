@@ -34,5 +34,5 @@ int main(int argc, char** argv)
     auto end_time = high_resolution_clock::now();
     cout << "Duration: " << duration_cast<microseconds>(end_time - start_time).count() / 1000.f << " ms" << endl;
 
-    return 1;
+    return 0;
 }

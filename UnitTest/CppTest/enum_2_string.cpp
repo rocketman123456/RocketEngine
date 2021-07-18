@@ -57,5 +57,5 @@ int main(int argc, char** argv)
     std::cout << MyEnumToString_2(V1) << std::endl;
     std::cout << MyEnumToString_2(V2) << std::endl;
     std::cout << MyEnumToString_2(V3) << std::endl;
-    return 1;
+    return 0;
 }
