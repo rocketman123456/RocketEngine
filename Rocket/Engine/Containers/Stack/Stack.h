@@ -8,17 +8,20 @@ namespace Rocket {
     // TODO : make it thread safe
     // TODO : make stack implements iterator
     template<typename T>
-    class FixStack {
-        public:
-        explicit FixStack(int32_t size) : data_(new T[size]), size(size) {}
-        FixStack(const FixStack& stack) {
+    class Stack {
+    public:
+        explicit Stack() {
+            this->data_ = new T[2];
+            this->size_ = 2;
+        }
+        Stack(const Stack& stack) {
             this->data_ = new T[stack.size_];
             this->size_ = stack.size_;
             for(int32_t i = 0; i < size_; ++i) {
                 this->data_[i] = stack.data_[i];
             }
         }
-        FixStack(FixStack&& stack) {
+        Stack(Stack&& stack) {
             this->data_ = stack.data_;
             this->size_ = stack.size_;
             stack.data_ = nullptr;
@@ -31,11 +34,11 @@ namespace Rocket {
             size_ = 0;
         }
 
-        FixStack* operator & () { return this; }
-        const FixStack* operator & () const { return this; }
+        Stack* operator & () { return this; }
+        const Stack* operator & () const { return this; }
 
         // Copy
-        FixStack& operator = (const FixStack& other) {
+        Stack& operator = (const Stack& other) {
             if(data_) {
                 delete [] data_;
             }
@@ -47,7 +50,7 @@ namespace Rocket {
             return *this;
         }
         // Move
-        FixStack& operator = (FixStack&& other) {
+        Stack& operator = (Stack&& other) {
             if(data_) {
                 delete [] data_;
             }
@@ -59,33 +62,37 @@ namespace Rocket {
         }
 
         void Push(const T& item) {
+            // Auto Resize
             if(current_ == size_) {
-                throw std::out_of_range("Push Full FixStack");
+                Resize(size_ * 2);
             }
             data_[current_] = item;
             current_++;
         }
         T Pop() {
             if(current_ == 0) {
-                throw std::out_of_range("Pop Empty FixStack");
+                throw std::out_of_range("Pop Empty Stack");
             }
             else {
                 current_--;
+                // Auto Resize
+                if(current_ > 0 && current_ == size_ / 4) {
+                    Resize(size_ / 2);
+                }
                 return data_[current_];
             }
         }
 
-        inline bool IsFull() { return current_ == size_; }
         inline bool IsEmpty() { return current_ == 0; }
         inline int32_t TotalSize() { return size_; }
         inline int32_t CurrentSize() { return current_; }
         inline T* GetData() { return data_; }
 
         void Resize(int32_t size) {
-            if(size < size_)
+            if(size < current_)
                 throw std::bad_array_new_length();
             T* temp = new T[size];
-            int32_t len = size_;
+            int32_t len = current_;
             for(int32_t i = 0; i < len; ++i) {
                 temp[i] = data_[i];
             }
@@ -93,7 +100,7 @@ namespace Rocket {
             data_ = temp;
             size_ = size;
         }
-
+        
     private:
         int32_t current_ = 0;
         int32_t size_ = 0;
