@@ -8,7 +8,7 @@
 
 namespace Rocket {
     template<typename T>
-    class Singleton {
+    Interface Singleton {
     public:
         template<typename... Args>
         static void Create(Args&&... args) {
@@ -35,7 +35,7 @@ namespace Rocket {
     };
 
     template<typename T>
-    class AbstractSingleton {
+    Interface AbstractSingleton {
     public:
         template<typename... Args>
         static void Create(Args&&... args) {

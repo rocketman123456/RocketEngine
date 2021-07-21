@@ -1,4 +1,4 @@
-https://vorbrodt.blog/2020/07/10/singleton-pattern/
+//https://vorbrodt.blog/2020/07/10/singleton-pattern/
 
 #pragma once
 
@@ -36,10 +36,10 @@ private:
 	inline static storage_t s_instance = nullptr;
 };
 
-#define SINGLETON(T) final : public singleton<T>
+#define SINGLETON(T) final : public Singleton<T>
 #define SINGLETON_CLASS(C) class C SINGLETON(C)
 #define SINGLETON_STRUCT(S) struct S SINGLETON(S)
-#define SINGLETON_FRIEND(T) friend class singleton<T>
+#define SINGLETON_FRIEND(T) friend class Singleton<T>
 
 template<typename T>
 class AbstractSingleton
@@ -78,7 +78,7 @@ private:
 	virtual void __abstract_singleton__() = 0;
 };
 
-#define ABSTRACT_SINGLETON(T) : public abstract_singleton<T>
+#define ABSTRACT_SINGLETON(T) : public AbstractSingleton<T>
 #define ABSTRACT_SINGLETON_CLASS(C) class C ABSTRACT_SINGLETON(C)
 #define ABSTRACT_SINGLETON_STRUCT(S) struct S ABSTRACT_SINGLETON(S)
-#define ABSTRACT_SINGLETON_FRIEND(T) friend class abstract_singleton<T>
+#define ABSTRACT_SINGLETON_FRIEND(T) friend class AbstractSingleton<T>
