@@ -5,13 +5,13 @@ namespace Rocket {
     template<typename T>
     Interface Iterator {
     public:
-        virtual bool HasNext();
-        virtual T Next();
+        virtual bool HasNext() = 0;
+        virtual T Next() = 0;
     };
 
     template<typename T>
-    Interface Aggregate {
+    Interface Iterable {
     public:
-        Iterator<T> GetIterator();
+        Iterator<T> GetIterator() = 0;
     };
 }
