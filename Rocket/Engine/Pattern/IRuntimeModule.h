@@ -24,5 +24,4 @@ namespace Rocket {
 	}
 }
 
-#define RUNTIME_MODULE_TYPE(type) \
-    virtual const char* GetName() const override { return #type; }
+#define RUNTIME_MODULE_TYPE(type) virtual const char* GetName() const override { return #type; }

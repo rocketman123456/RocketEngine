@@ -4,6 +4,6 @@ namespace Rocket {
     template<typename T>
     class Heap {
     public:
-        explicit Heap();
+        explicit Heap() {}
     };
 }

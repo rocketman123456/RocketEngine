@@ -3,10 +3,27 @@
 #include <exception>
 
 namespace Rocket {
+    template<typename T> class FixBag;
+
+    template<typename T>
+    class FixBagIterator : implements Iterator<T> {
+    public:
+        explicit FixBagIterator(FixBag<T>* bag) : bag_(bag), data_(bag->data_), size_(bag->current_) {}
+        virtual ~FixBagIterator() = default;
+        virtual bool HasNext() final { return count_ < size_; }
+        virtual T Next() final { T temp = data_[count_]; count_++; return temp; }
+    private:
+        FixBag<T>* bag_ = nullptr;
+        T*      data_ = nullptr;
+        int32_t size_ = 0;
+        int32_t count_ = 0;
+    };
+
     // TODO : make it thread safe
     // TODO : make stack implements iterator
     template<typename T>
-    class FixBag {
+    class FixBag : implements Iterable<T, FixBagIterator<T>> {
+        friend class FixBagIterator<T>;
     public:
         explicit FixBag(int32_t size) : data_(new T[size]), size_(size) {}
         FixBag(const FixBag& stack) {
@@ -27,6 +44,10 @@ namespace Rocket {
                 delete [] data_;
             }
             size_ = 0;
+        }
+
+        virtual FixBagIterator<T> GetIterator() final {
+            return FixBagIterator<T>(this);
         }
 
         FixBag* operator & () { return this; }
