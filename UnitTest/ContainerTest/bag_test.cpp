@@ -6,14 +6,21 @@
 using namespace Rocket;
 
 int main() {
-    Bag<int32_t> bag;
     int count = 1000;
-
+    Bag<int32_t> bag;
     for(int i = 0; i < count; ++i) {
         bag.Add(std::rand());
     }
-
     std::cout << "Current Size: " << bag.CurrentSize() << std::endl;
+
+    auto iterator = bag.GetIterator();
+    int iter_count = 0;
+    while(iterator.HasNext()) {
+        int32_t temp = iterator.Next();
+        //std::cout << "Iterator Get: " << temp << std::endl;
+        iter_count++;
+    }
+    std::cout << "Iterator Count: " << iter_count << std::endl;
 
     return 0;
 }

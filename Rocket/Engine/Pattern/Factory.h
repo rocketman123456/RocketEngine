@@ -2,5 +2,7 @@
 #include "Core/Declare.h"
 
 namespace Rocket {
+    Interface Factory {
 
+    };
 }
