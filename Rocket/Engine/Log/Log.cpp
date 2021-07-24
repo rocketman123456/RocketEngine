@@ -5,10 +5,12 @@
 #include <spdlog/fmt/ostr.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/sinks/basic_file_sink.h>
+
+IMPLEMENT_LOG_CHANNEL(Core);
+IMPLEMENT_LOG_CHANNEL(App);
 #endif
 
 namespace Rocket {
-
 #ifdef RK_CONSOLE_LOG
     static void SetLevel(LogLevel level, spdlog::logger* logger) {
         switch(level) {
@@ -25,15 +27,12 @@ namespace Rocket {
         }
     }
 
-    IMPLEMENT_LOG_CHANNEL(Core);
-    IMPLEMENT_LOG_CHANNEL(App);
-#endif
-
     void Log::Init(LogLevel level) {
-#ifdef RK_CONSOLE_LOG
         spdlog::set_pattern("%^[%T] %n: %v%$");
         INIT_LOG_CHANNEL(Core);
         INIT_LOG_CHANNEL(App);
-#endif
     }
+#else
+    void Log::Init(LogLevel level) {}
+#endif
 } // namespace Rocket

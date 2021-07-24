@@ -1,4 +1,4 @@
-#define ENABLE_NEW_DELETE_TRACE_DUMP
+//#define ENABLE_NEW_DELETE_TRACE_DUMP
 #include "Memory/MemoryCheck.h"
 
 #include <iostream>

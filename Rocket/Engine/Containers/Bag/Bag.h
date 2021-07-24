@@ -1,14 +1,34 @@
 #pragma once
+#include "Pattern/Iterator.h"
+
 #include <cstdint>
-//#include <iostream>
+#include <exception>
 
 namespace Rocket {
+    template<typename T> class Bag;
+
+    template<typename T>
+    class BagIterator : implements Iterator<T> {
+    public:
+        explicit BagIterator(Bag<T>* bag) : bag_(bag), data_(bag->data_), size_(bag->current_) {}
+        virtual ~BagIterator() = default;
+        virtual bool HasNext() final { return count_ < size_; }
+        virtual T Next() final { T temp = data_[count_]; count_++; return temp; }
+    private:
+        Bag<T>* bag_ = nullptr;
+        T*      data_ = nullptr;
+        int32_t size_ = 0;
+        int32_t count_ = 0;
+    };
+
     // TODO : make it thread safe
     // TODO : make stack implements iterator
     template<typename T>
-    class Bag {
+    class Bag : implements Iterable<T, BagIterator<T>> {
+        friend class BagIterator<T>;
     public:
         explicit Bag() : data_(new T[2]), size_(2) {}
+        explicit Bag(int32_t size) : data_(new T[size]), size_(size) {}
         Bag(const Bag& bag) {
             this->data_ = new T[bag.size_];
             this->size_ = bag.size_;
@@ -27,6 +47,10 @@ namespace Rocket {
                 delete [] data_;
             }
             size_ = 0;
+        }
+
+        virtual BagIterator<T> GetIterator() final {
+            return BagIterator<T>(this);
         }
 
         Bag* operator & () { return this; }
@@ -65,10 +89,10 @@ namespace Rocket {
             current_++;
         }
 
-        inline bool IsEmpty() { return current_ == 0; }
-        inline int32_t TotalSize() { return size_; }
-        inline int32_t CurrentSize() { return current_; }
-        inline T* GetData() { return data_; }
+        inline bool IsEmpty() const { return current_ == 0; }
+        inline int32_t TotalSize() const { return size_; }
+        inline int32_t CurrentSize() const { return current_; }
+        inline T* GetData() const { return data_; }
 
         void Resize(int32_t size) {
             if(size < current_)

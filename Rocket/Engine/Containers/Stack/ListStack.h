@@ -40,10 +40,17 @@ namespace Rocket {
             stack.size_ = 0;
         }
         virtual ~ListStack() {
-            if(data_) {
-                delete [] data_;
+            if(first_) {
+                while(first_) {
+                    auto temp = first_;
+                    first_ = first_->next;
+                    delete temp;
+                }
+                first_ = nullptr;
             }
-            size_ = 0;
+            this->size_ = 0;
+            this->first_ = nullptr;
+            this->last_ = nullptr;
         }
 
         ListStack* operator & () { return this; }
@@ -84,7 +91,7 @@ namespace Rocket {
             return *this;
         }
         // Move
-        ListStack& operator = (Stack&& other) {
+        ListStack& operator = (ListStack&& other) {
             if(first_) {
                 while(first_) {
                     auto temp = first_;
@@ -114,7 +121,7 @@ namespace Rocket {
             }
             else {
                 T data = first_->data;
-                temp = first_;
+                auto temp = first_;
                 first_ = first_->next;
                 delete temp;
                 size_--;
@@ -124,10 +131,10 @@ namespace Rocket {
 
         inline bool IsEmpty() { return first_ == nullptr; }
         inline int32_t TotalSize() { return size_; }
-        inline T* GetData() { return data_; }
 
     private:
         int32_t size_ = 0;
         Node*   first_ = nullptr;
+        Node*   last_ = nullptr;
     };
 }

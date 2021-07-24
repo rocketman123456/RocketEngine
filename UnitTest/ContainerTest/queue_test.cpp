@@ -1,6 +1,6 @@
 #define ENABLE_NEW_DELETE_TRACE_DUMP
 #include "Memory/MemoryCheck.h"
-#include "Containers/Queue.h"
+#include "Containers/Queue/Queue.h"
 #include <random>
 
 using namespace Rocket;
