@@ -85,11 +85,11 @@ namespace Rocket {
             current_++;
         }
 
-        inline bool IsFull() { return current_ == size_; }
-        inline bool IsEmpty() { return current_ == 0; }
-        inline int32_t TotalSize() { return size_; }
-        inline int32_t CurrentSize() { return current_; }
-        inline T* GetData() { return data_; }
+        inline bool IsFull() const { return current_ == size_; }
+        inline bool IsEmpty() const { return current_ == 0; }
+        inline int32_t TotalSize() const { return size_; }
+        inline int32_t CurrentSize() const { return current_; }
+        inline T* GetData() const { return data_; }
 
         void Resize(int32_t size) {
             if(size < current_)

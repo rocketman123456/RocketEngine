@@ -2,6 +2,7 @@
 #include "Memory/MemoryCheck.h"
 #include "Containers/Bag/Bag.h"
 #include "Containers/Bag/FixBag.h"
+#include "Containers/Bag/ListBag.h"
 #include <random>
 
 using namespace Rocket;
@@ -37,8 +38,18 @@ int main() {
         std::cout << "FixBag Current Size: " << bag_f.CurrentSize() << std::endl;
         std::cout << "FixBag Iterator Count: " << iter_count << std::endl;
     }
-
-    
-
+    {
+        ListBag<double> bag_l;
+        for(int i = 0; i < 1000; ++i) {
+            bag_l.Add(std::rand());
+        }
+        auto iterator_f = bag_l.GetIterator();
+        int iter_count = 0;
+        while(iterator_f.HasNext()) {
+            int32_t temp = iterator_f.Next();
+            iter_count++;
+        }
+        std::cout << "ListBag Current Size: " << bag_l.CurrentSize() << std::endl;
+    }
     return 0;
 }

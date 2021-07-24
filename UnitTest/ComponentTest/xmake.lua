@@ -17,6 +17,13 @@ target("log_test")
     add_options("console_log")
 target_end()
 
+target("memory_pool_test")
+    set_kind("binary")
+    add_files("memory_pool_test.cpp")
+    add_options("console_log")
+    add_options("memory_check")
+target_end()
+
 target("engine_test")
     set_kind("binary")
     add_deps("RocketEngine")
