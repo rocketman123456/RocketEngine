@@ -13,6 +13,11 @@ target("sort_compare")
     add_files("sort_compare.cpp")
 target_end()
 
+target("factory_test")
+    set_kind("binary")
+    add_files("factory_test.cpp")
+target_end()
+
 target("L1_cache")
     set_kind("binary")
     add_files("L1_cache.cpp")

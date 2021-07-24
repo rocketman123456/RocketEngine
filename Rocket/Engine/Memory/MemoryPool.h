@@ -9,7 +9,7 @@
 #include <ostream>
 #include <cstddef>
 #include <cstdlib>
-#ifdef RK_DEBUG
+#ifdef RK_DEBUG // TODO : make this using engine log
 #include <iostream>
 #include <iomanip>
 #endif
