@@ -75,6 +75,8 @@ namespace Rocket {
 
         // Copy
         ListBag& operator = (const ListBag& other) {
+            if (this == &other)
+                return *this;
             // delete exist data first
             while(first_) {
                 auto temp = first_;
@@ -105,6 +107,8 @@ namespace Rocket {
         }
         // Move
         ListBag& operator = (ListBag&& other) {
+            if (this == &other)
+                return *this;
             first_ = other.first_;
             last_ = other.last_;
             other.first_ = nullptr;

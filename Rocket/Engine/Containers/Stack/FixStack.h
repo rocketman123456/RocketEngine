@@ -48,9 +48,10 @@ namespace Rocket {
         }
         // Move
         FixStack& operator = (FixStack&& other) {
-            if(data_) {
+            if (this == &other)
+                return *this;
+            if(data_)
                 delete [] data_;
-            }
             this->data_ = other.data_;
             this->size_ = other.size_;
             other.data_ = nullptr;

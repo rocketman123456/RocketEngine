@@ -58,6 +58,8 @@ namespace Rocket {
 
         // Copy
         ListStack& operator = (const ListStack& other) {
+            if (this == &other)
+                return *this;
             // delete date
             if(first_) {
                 while(first_) {
@@ -92,6 +94,9 @@ namespace Rocket {
         }
         // Move
         ListStack& operator = (ListStack&& other) {
+            if (this == &other)
+                return *this;
+            
             if(first_) {
                 while(first_) {
                     auto temp = first_;

@@ -55,6 +55,8 @@ namespace Rocket {
 
         // Copy
         List& operator = (const List& other) {
+            if (this == &other)
+                return *this;
             // delete exist data first
             while(first_) {
                 auto temp = first_;
@@ -85,6 +87,9 @@ namespace Rocket {
         }
         // Move
         List& operator = (List&& other) {
+            if (this == &other)
+                return *this;
+            
             first_ = other.first_;
             last_ = other.last_;
             other.first_ = nullptr;

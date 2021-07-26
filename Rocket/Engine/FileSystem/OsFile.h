@@ -3,17 +3,16 @@
 
 #include <cstdint>
 #include <string>
-#include <functional>
 #include <cstdlib>
 #include <atomic>
 
 namespace Rocket {
-    class ZipAsyncFileOperation {
+    class OsAsyncFileOperation {
     public:
-        ZipAsyncFileOperation(const FileHandle& file, size_t position);
-        ZipAsyncFileOperation(const ZipAsyncFileOperation& other);
-        ZipAsyncFileOperation& operator=(const ZipAsyncFileOperation& other);
-        ~ZipAsyncFileOperation() = default;
+        OsAsyncFileOperation(const FileHandle& file, size_t position);
+        OsAsyncFileOperation(const OsAsyncFileOperation& other);
+        OsAsyncFileOperation& operator=(const OsAsyncFileOperation& other);
+        ~OsAsyncFileOperation() = default;
         /// Returns whether or not the asynchronous operation has finished
         bool HasFinished() const;
         /// Waits until the asynchronous operation has finished. Returns the number of transferred bytes.
@@ -25,22 +24,13 @@ namespace Rocket {
         std::atomic_int32_t overlapped_;
     };
 
-    class ZipFile {
+    class OsFile {
     public:
-        ZipFile();
-        virtual ~ZipFile();
-
-        int32_t Initialize(const std::string& path, const std::string& file_name);
-        void Finalize();
-
-        int32_t GetNumFiles() const;
-        std::string GetFilename(int32_t i) const;	
-        int32_t GetFileLen(int32_t i) const;
-        bool ReadFile(int32_t i, void* buffer);
-        int32_t Find(const std::string& path) const;
-
-        // Added to show multi-threaded decompression
-        bool ReadLargeFile(int32_t i, void* buffer, std::function<void(int32_t, bool&)> call_back);
+        OsFile(const std::string& path, FileOperateMode mode);
+        ~OsFile();
+        ////////////////////////////////////////////////////////////////////////
+        // Synchronous API
+        ////////////////////////////////////////////////////////////////////////
 
         /// Synchronously reads from the file into a buffer. Returns the number of bytes read, or 0 if the operation failed.
         std::size_t Read(FileBuffer& buffer, std::size_t length);
@@ -54,15 +44,25 @@ namespace Rocket {
         void Skip(std::size_t bytes);
         /// Returns the current position in the file, or INVALID_SET_FILE_POINTER (0xFFFFFFFF) if the operation failed.
         std::size_t Tell(void) const;
+    protected:
+        std::string file_name_;
+        FileOperateMode mode_;
+        FileHandle file_;
+    };
+
+    class OsFileAsync : public OsFile {
+    public:
+        OsFileAsync(const std::string& path, FileOperateMode mode, bool async);
+        ~OsFileAsync();
+        ////////////////////////////////////////////////////////////////////////
+        // Asynchronous API
+        ////////////////////////////////////////////////////////////////////////
 
         /// Asynchronously reads from the file into a buffer
-        ZipAsyncFileOperation ReadAsync(FileBuffer& buffer, std::size_t length);
+        OsAsyncFileOperation ReadAsync(FileBuffer& buffer, std::size_t length);
         /// Asynchronously writes from a buffer into the file
-        ZipAsyncFileOperation WriteAsync(FileBuffer& buffer, std::size_t length);
-
-    private:
-        std::string file_path_;
-        std::string file_name_;
-        FileHandle  file_;
+        OsAsyncFileOperation WriteAsync(FileBuffer& buffer, std::size_t length);
+    protected:
+        bool async_;
     };
 }

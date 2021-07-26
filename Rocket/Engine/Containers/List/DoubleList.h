@@ -57,6 +57,8 @@ namespace Rocket {
 
         // Copy
         DoubleList& operator = (const DoubleList& other) {
+            if (this == &other)
+                return *this;
             // delete exist data first
             while(first_) {
                 auto temp = first_;
@@ -84,6 +86,9 @@ namespace Rocket {
         }
         // Move
         DoubleList& operator = (DoubleList&& other) {
+            if (this == &other)
+                return *this;
+            
             first_ = other.first_;
             last_ = other.last_;
             other.first_ = nullptr;

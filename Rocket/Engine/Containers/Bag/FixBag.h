@@ -55,6 +55,9 @@ namespace Rocket {
 
         // Copy
         FixBag& operator = (const FixBag& other) {
+            if (this == &other)
+                return *this;
+            
             if(data_) {
                 delete [] data_;
             }
@@ -67,9 +70,10 @@ namespace Rocket {
         }
         // Move
         FixBag& operator = (FixBag&& other) {
-            if(data_) {
+            if (this == &other)
+                return *this;
+            if(data_)
                 delete [] data_;
-            }
             this->data_ = other.data_;
             this->size_ = other.size_;
             other.data_ = nullptr;

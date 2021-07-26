@@ -39,9 +39,10 @@ namespace Rocket {
 
         // Copy
         Stack& operator = (const Stack& other) {
-            if(data_) {
+            if (this == &other)
+                return *this;
+            if(data_)
                 delete [] data_;
-            }
             this->data_ = new T[other.size_];
             this->size_ = other.size_;
             for(int32_t i = 0; i < size_; ++i) {
@@ -51,9 +52,10 @@ namespace Rocket {
         }
         // Move
         Stack& operator = (Stack&& other) {
-            if(data_) {
+            if (this == &other)
+                return *this;
+            if(data_)
                 delete [] data_;
-            }
             this->data_ = other.data_;
             this->size_ = other.size_;
             other.data_ = nullptr;

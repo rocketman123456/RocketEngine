@@ -2,7 +2,8 @@ target("RocketEngine")
     set_kind("static")
     add_files(
         "Engine/Log/*.cpp", 
-        "Engine/Utils/*.cpp"
+        "Engine/Utils/*.cpp",
+        "Engine/FileSystem/*.cpp"
     )
     add_packages(
         "glfw", "glad", "spdlog", "fmt", {public = true}
