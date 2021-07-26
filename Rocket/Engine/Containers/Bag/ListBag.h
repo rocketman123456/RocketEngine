@@ -14,7 +14,7 @@ namespace Rocket {
         virtual T Next() final { T temp = current_->data; current_ = current_->next; return temp; }
     private:
         ListBag<T>* bag_ = nullptr;
-        ListBag<T>::Node* current_ = nullptr;
+        typename ListBag<T>::Node* current_ = nullptr;
     };
 
     // TODO : make it thread safe

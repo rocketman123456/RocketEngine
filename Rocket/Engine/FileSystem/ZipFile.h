@@ -2,6 +2,7 @@
 #include <cstdint>
 #include <string>
 #include <functional>
+#include <cstdlib>
 
 namespace Rocket {
     class ZipFile {
@@ -23,6 +24,8 @@ namespace Rocket {
         int32_t Find(const std::string& path) const;
 
     private:
+        std::string file_path_;
         std::string file_name_;
+        FILE*       file_;
     };
 }
