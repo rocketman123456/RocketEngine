@@ -13,8 +13,8 @@ add_rules(
     "mode.minsizerel", 
     "mode.releasedbg"
 )
-set_languages("c99", "c++20")
-set_warnings("all", "error")
+set_languages("c99", "c++17")
+--set_warnings("all", "error")
 
 --
 -- Add Required Modules

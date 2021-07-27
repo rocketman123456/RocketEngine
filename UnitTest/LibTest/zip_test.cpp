@@ -66,9 +66,10 @@
 #define MAXFILENAME (256)
 
 #ifdef _WIN32
-uLong filetime(f, tmzip, dt) char *f; /* name of file to get info on */
-tm_zip *tmzip;                        /* return value: access, modific. and creation times */
-uLong *dt;                            /* dostime */
+uLong filetime(const char*f, tm_zip* tmzip, uLong* dt) 
+//char *f;                              /* name of file to get info on */
+//tm_zip *tmzip;                        /* return value: access, modific. and creation times */
+//uLong *dt;                            /* dostime */
 {
     int ret = 0;
     {

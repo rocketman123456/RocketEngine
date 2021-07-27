@@ -29,7 +29,8 @@ const char* MyEnumToString(MyEnum e)
 #define MY_ENUM_2 \
     X(V1) \
     X(V2) \
-    X(V3)
+    X(V3) \
+    X(SIZE)
 
 #define X(name) name,
 enum MyEnum_2
@@ -44,6 +45,7 @@ constexpr const char* MyEnumToString_2(MyEnum_2 e) noexcept
     switch(e)
     {
         MY_ENUM_2
+        default: return "NULL";
     }
     #undef X
 }

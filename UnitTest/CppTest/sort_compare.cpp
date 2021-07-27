@@ -24,14 +24,14 @@ int main(int argc, char** argv)
     generate(begin(c), end(c), rand);
     
     auto start_time = high_resolution_clock::now();
-    accumulate(begin(c), end(c), 0);
+    auto result = accumulate(begin(c), end(c), 0);
     cout  << fixed << setprecision(3);
     cout << "List duration " << duration_cast<microseconds>(high_resolution_clock::now() - start_time).count() / 1000.f << " ms" << endl;
     
     c.sort();
     
     start_time = high_resolution_clock::now();
-    accumulate(begin(c), end(c), 0);
+    result = accumulate(begin(c), end(c), 0);
     cout << "Sorted list duration " << duration_cast<microseconds>(high_resolution_clock::now() - start_time).count() / 1000.f << " ms" << endl;
     c.clear();
     
@@ -41,13 +41,13 @@ int main(int argc, char** argv)
     generate(begin(c2), end(c2), rand);
     
     start_time = high_resolution_clock::now();
-    accumulate(begin(c2), end(c2), 0);
+    result = accumulate(begin(c2), end(c2), 0);
     cout << "Vector duration " << duration_cast<microseconds>(high_resolution_clock::now() - start_time).count() / 1000.f << " ms" << endl;
     
     sort(begin(c2), end(c2));
     
     start_time = high_resolution_clock::now();
-    accumulate(begin(c2), end(c2), 0);
+    result = accumulate(begin(c2), end(c2), 0);
     cout << "Sorted vector duration " << duration_cast<microseconds>(high_resolution_clock::now() - start_time).count() / 1000.f << " ms" << endl << endl;
 
     return 0;
