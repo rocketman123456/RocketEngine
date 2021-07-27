@@ -40,16 +40,16 @@ option("render")
     set_description("The Render config option")
 option_end()
 if is_config("render", "soft") then
-    print("soft")
+    --print("soft")
     add_defines("RK_SOFT")
 elseif is_config("render", "opengl") then
-    print("opengl")
+    --print("opengl")
     add_defines("RK_OPENGL")
 elseif is_config("render", "vulkan") then
-    print("vulkan")
+    --print("vulkan")
     add_defines("RK_VULKAN")
 elseif is_config("render", "metal") then
-    print("metal")
+    --print("metal")
     add_defines("RK_METAL")
 end
 

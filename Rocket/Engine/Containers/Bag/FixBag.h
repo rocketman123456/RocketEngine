@@ -20,7 +20,6 @@ namespace Rocket {
     };
 
     // TODO : make it thread safe
-    // TODO : make stack implements iterator
     template<typename T>
     class FixBag : implements Iterable<T, FixBagIterator<T>> {
         friend class FixBagIterator<T>;

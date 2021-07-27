@@ -1,5 +1,6 @@
 #pragma once
 #include "Pattern/Iterator.h"
+#include "Exception/Exception.h"
 
 #include <cstdint>
 #include <exception>
@@ -22,7 +23,6 @@ namespace Rocket {
     };
 
     // TODO : make it thread safe
-    // TODO : make stack implements iterator
     template<typename T>
     class Bag : implements Iterable<T, BagIterator<T>> {
         friend class BagIterator<T>;
