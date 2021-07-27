@@ -1,7 +1,8 @@
 #include "FileSystem/OsFileAsync.h"
 
 namespace Rocket {
-    OsAsyncFileOperation::OsAsyncFileOperation(const OsAsyncFileOperation& other) : file_(other.file_) {
+    OsAsyncFileOperation::OsAsyncFileOperation(const OsAsyncFileOperation& other) {
+        file_ = other.file_;
         int32_t temp = other.overlapped_;
         overlapped_ = temp;
         overlapped_++; 

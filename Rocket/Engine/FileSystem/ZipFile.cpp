@@ -3,74 +3,8 @@
 
 #include <exception>
 
-using byte = uint8_t;
-using word = uint16_t;
-using dword = uint32_t;
-
-#pragma pack(1)
-    struct ZipFileInfo {
-        enum {
-            SIGNATURE = 0x04034b50,
-        };
-        dword   sig;
-        word    version;
-        word    flag;
-        word    compression;      // Z_NO_COMPRESSION or Z_DEFLATED
-        word    modTime;
-        word    modDate;
-        dword   crc32;
-        dword   cSize;
-        dword   ucSize;
-        word    fnameLen;         // Filename string follows header.
-        word    xtraLen;          // Extra field follows filename.
-    };
-#pragma pack()
-#pragma pack(1)
-    struct ZipContentInfo {
-        enum {
-            SIGNATURE = 0x06054b50
-        };
-        dword   sig;
-        word    nDisk;
-        word    nStartDisk;
-        word    nDirEntries;
-        word    totalDirEntries;
-        dword   dirSize;
-        dword   dirOffset;
-        word    cmntLen;
-    };
-#pragma pack()
-#pragma pack(1)
-    struct ZipContentFileInfo {
-        enum {
-            SIGNATURE   = 0x02014b50
-        };
-        dword   sig;
-        word    verMade;
-        word    verNeeded;
-        word    flag;
-        word    compression;      // COMP_xxxx
-        word    modTime;
-        word    modDate;
-        dword   crc32;
-        dword   cSize;            // Compressed size
-        dword   ucSize;           // Uncompressed size
-        word    fnameLen;         // Filename string follows header.
-        word    xtraLen;          // Extra field follows filename.
-        word    cmntLen;          // Comment field follows extra field.
-        word    diskStart;
-        word    intAttr;
-        dword   extAttr;
-        dword   hdrOffset;
-
-        char *GetName   () const { return (char *)(this + 1);   }
-        char *GetExtra  () const { return GetName() + fnameLen; }
-        char *GetComment() const { return GetExtra() + xtraLen; }
-    };
-#pragma pack()
-
-void Display64BitsSize(ZPOS64_T n, int size_char) {
-    /* to avoid compatibility problem , we do here the conversion */
+static void Display64BitsSize(ZPOS64_T n, int size_char) {
+    // to avoid compatibility problem , we do here the conversion
     char number[21];
     int offset = 19;
     int pos_string = 19;
@@ -91,12 +25,12 @@ void Display64BitsSize(ZPOS64_T n, int size_char) {
             printf(" ");
         }
     }
-
     printf("%s", &number[pos_string]);
 }
 
 namespace Rocket {
-    ZipAsyncFileOperation::ZipAsyncFileOperation(const ZipAsyncFileOperation& other) : file_(other.file_) {
+    ZipAsyncFileOperation::ZipAsyncFileOperation(const ZipAsyncFileOperation& other) {
+        file_ = other.file_;
         int32_t temp = other.overlapped_;
         overlapped_ = temp;
         overlapped_++; 
@@ -192,5 +126,25 @@ namespace Rocket {
     void ZipFile::Finalize() {
         unzClose(file_.file_pointer);
         content_.clear();
+    }
+
+    std::size_t ZipFile::Read(FileBuffer& buffer, std::size_t length) {
+        return 0;
+    }
+
+    std::size_t ZipFile::ReadAll(FileBuffer& buffer) {
+        return 0;
+    }
+
+    std::size_t ZipFile::Write(FileBuffer& buffer, std::size_t length) {
+        return 0;
+    }
+
+    void ZipFile::Seek(std::size_t position) {}
+    void ZipFile::SeekToEnd(void) {}
+    void ZipFile::Skip(std::size_t bytes) {}
+
+    std::size_t ZipFile::Tell(void) const {
+        return 0;
     }
 }

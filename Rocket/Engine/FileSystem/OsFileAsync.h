@@ -2,21 +2,19 @@
 #include "FileSystem/OsFile.h"
 
 namespace Rocket {
-    class OsAsyncFileOperation {
+    // TODO : finish async file operation
+    class OsAsyncFileOperation : implements FileOperation {
     public:
         OsAsyncFileOperation(const FileHandle& file, size_t position);
         OsAsyncFileOperation(const OsAsyncFileOperation& other);
         OsAsyncFileOperation& operator=(const OsAsyncFileOperation& other);
         ~OsAsyncFileOperation() = default;
         /// Returns whether or not the asynchronous operation has finished
-        bool HasFinished() const;
+        bool HasFinished() const final { return false; }
         /// Waits until the asynchronous operation has finished. Returns the number of transferred bytes.
-        size_t WaitUntilFinished() const;
+        size_t WaitUntilFinished() const final { return 0; }
         /// Cancels the asynchronous operation
-        void Cancel();
-    private:
-        FileHandle file_;
-        std::atomic_int32_t overlapped_;
+        void Cancel() final {}
     };
 
     class OsFileAsync : public OsFile {
