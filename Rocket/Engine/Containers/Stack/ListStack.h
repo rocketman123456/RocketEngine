@@ -11,7 +11,7 @@ namespace Rocket {
             T data;
         };
     public:
-        explicit ListStack() : first_(nullptr), size_(0) {}
+        explicit ListStack() : size_(0), first_(nullptr) {}
         ListStack(const ListStack& stack) {
             this->size_ = stack.size_;
             this->first_ = nullptr;

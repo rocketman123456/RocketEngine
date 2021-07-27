@@ -1,5 +1,7 @@
 #pragma once
 #include "FileSystem/OsFile.h"
+#include "FileSystem/OsFileAsync.h"
+#include "FileSystem/ZipFile.h"
 
 #include <memory>
 #include <future>
@@ -7,12 +9,12 @@
 namespace Rocket {
     class FileSystem {
     public:
-        std::unique_ptr<OsFile> OpenSync();
-        std::unique_ptr<OsFileAsync> OpenAsync();
+        static std::unique_ptr<OsFile> OpenSync(const std::string& path, const std::string& file_name, FileOperateMode mode);
+        static std::unique_ptr<OsFileAsync> OpenAsync(const std::string& path, const std::string& file_name, FileOperateMode mode);
+        static std::unique_ptr<ZipFile> OpenZip(const std::string& path, const std::string& file_name, FileOperateMode mode);
 
-        void CloseSync(std::unique_ptr<OsFile>&& file);
-        void CloseAsync(std::unique_ptr<OsFileAsync>&& file);
-    private:
-        // TODO : register parser for different file
+        static void CloseSync(std::unique_ptr<OsFile>&& file);
+        static void CloseAsync(std::unique_ptr<OsFileAsync>&& file);
+        static void CloseZip(std::unique_ptr<ZipFile>&& file);
     };
 }

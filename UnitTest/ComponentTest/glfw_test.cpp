@@ -1,7 +1,6 @@
-#define ENABLE_NEW_DELETE_TRACE_DUMP
 #include "Memory/MemoryCheck.h"
 
-#define GLFW_INCLUDE_NONE
+//#define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
 

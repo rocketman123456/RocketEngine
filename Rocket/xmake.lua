@@ -6,7 +6,7 @@ target("RocketEngine")
         "Engine/FileSystem/*.cpp"
     )
     add_packages(
-        "glfw", "glad", "spdlog", "fmt", {public = true}
+        "glfw", "glad", "minizip", "zlib", "spdlog", "fmt", {public = true}
     )
     add_options("console_log")
     add_options("memory_check")

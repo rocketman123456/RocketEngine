@@ -8,8 +8,8 @@
 namespace Rocket {
     class ConfigSetting {
     public:
-        inline void AddSetting(const string& name, Variant var) { config_map_[name] = var; }
-        inline Variant GetSetting(const string& name) { 
+        inline void AddSetting(const std::string& name, Variant var) { config_map_[name] = var; }
+        inline Variant GetSetting(const std::string& name) { 
             auto it = config_map_.find(name);
             if(it != config_map_.end()) 
                 return it->second;

@@ -16,4 +16,12 @@ namespace Rocket {
         }
         return *this;
     }
+
+    int32_t ZipFile::Initialize(const std::string& path, const std::string& file_name, FileOperateMode mode) {
+        return 0;
+    }
+
+    void ZipFile::Finalize() {
+        
+    }
 }

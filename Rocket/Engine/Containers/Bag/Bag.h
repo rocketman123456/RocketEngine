@@ -27,8 +27,8 @@ namespace Rocket {
     class Bag : implements Iterable<T, BagIterator<T>> {
         friend class BagIterator<T>;
     public:
-        explicit Bag() : data_(new T[2]), size_(2) {}
-        explicit Bag(int32_t size) : data_(new T[size]), size_(size) {}
+        explicit Bag() : size_(2), data_(new T[2]) {}
+        explicit Bag(int32_t size) : size_(size), data_(new T[size]) {}
         Bag(const Bag& bag) {
             this->data_ = new T[bag.size_];
             this->size_ = bag.size_;

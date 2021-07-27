@@ -10,19 +10,19 @@ namespace Rocket {
     template<typename T>
     class FixStack {
         public:
-        explicit FixStack(int32_t size) : data_(new T[size]), size_(size) {}
+        explicit FixStack(int32_t size) : size_(size), data_(new T[size]) {}
         FixStack(const FixStack& stack) {
-            this->data_ = new T[stack.size_];
             this->size_ = stack.size_;
+            this->data_ = new T[stack.size_];
             for(int32_t i = 0; i < size_; ++i) {
                 this->data_[i] = stack.data_[i];
             }
         }
         FixStack(FixStack&& stack) {
-            this->data_ = stack.data_;
             this->size_ = stack.size_;
-            stack.data_ = nullptr;
+            this->data_ = stack.data_;
             stack.size_ = 0;
+            stack.data_ = nullptr;
         }
         virtual ~FixStack() {
             if(data_) {

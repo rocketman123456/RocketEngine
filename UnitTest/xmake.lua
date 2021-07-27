@@ -2,5 +2,6 @@ includes(
     "ContainerTest",
     "AlgorismTest",
     "ComponentTest",
-    "CppTest"
+    "CppTest",
+    "LibTest"
 )

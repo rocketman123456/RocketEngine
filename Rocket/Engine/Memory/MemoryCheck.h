@@ -40,7 +40,7 @@ namespace Rocket::Memory::detail {
 	struct alignas(8) new_entry_t {
 		new_entry_t(void* p = nullptr, bool a = false, std::size_t b = 0,
 			string_t f = "N/A", int l = -1, string_t fn = "N/A")
-		: ptr{ p }, is_array{ a }, bytes{ b }, file{ f }, line{ l }, func{ fn } {}
+		: bytes{ b }, ptr{ p }, file{ f }, func{ fn }, line{ l }, is_array{ a } {}
 
 		std::size_t bytes;		// 8
 		void*       ptr;		// 4

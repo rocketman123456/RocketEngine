@@ -40,8 +40,8 @@ int main()
 	//lws.add_unpack_transform<std::uint32_t>([](const serializer& s, buffer_input_t& it) { return ntohl(s.unpack_value<std::uint32_t>(it)); });
 	//lws.add_unpack_transform<std::uint64_t>([](const serializer& s, buffer_input_t& it) { return ntohll(s.unpack_value<std::uint64_t>(it)); });
 
-	auto buf_1 = lws.pack(std::uint8_t(0x12), std::uint16_t(0x1234), std::uint32_t(0x12345678), std::uint64_t(0x1234567890ABCDEF));
-	auto tup_1 = lws.unpack<std::uint8_t, std::uint16_t, std::uint32_t, std::uint64_t>(buf_1);
+	[[maybe_unused]] auto buf_1 = lws.pack(std::uint8_t(0x12), std::uint16_t(0x1234), std::uint32_t(0x12345678), std::uint64_t(0x1234567890ABCDEF));
+	[[maybe_unused]] auto tup_1 = lws.unpack<std::uint8_t, std::uint16_t, std::uint32_t, std::uint64_t>(buf_1);
 
 
 
@@ -49,15 +49,15 @@ int main()
 	lws.add_unpack_transform<std::size_t>([](const serializer& s, buffer_input_t& it) { return s.unpack_value<std::uint16_t>(it); });
 	lws.add_pack_size_proc<std::size_t>([](const serializer&, std::size_t) { return sizeof(std::uint16_t); });
 
-	auto buf_2_1 = lws.pack(std::size_t(-1));
-	auto tup_2_1 = lws.unpack<std::size_t>(buf_2_1);
+	[[maybe_unused]] auto buf_2_1 = lws.pack(std::size_t(-1));
+	[[maybe_unused]] auto tup_2_1 = lws.unpack<std::size_t>(buf_2_1);
 
 	lws.remove_pack_transform<std::size_t>();
 	lws.remove_unpack_transform<std::size_t>();
 	lws.remove_pack_size_proc<std::size_t>();
 
-	auto buf_2_2 = lws.pack(std::size_t(-1));
-	auto tup_2_2 = lws.unpack<std::size_t>(buf_2_2);
+	[[maybe_unused]] auto buf_2_2 = lws.pack(std::size_t(-1));
+	[[maybe_unused]] auto tup_2_2 = lws.unpack<std::size_t>(buf_2_2);
 
 	lws.add_pack_transform<std::size_t>([](const serializer& s, std::size_t v, buffer_output_t& it) { s.pack_value(it, std::uint16_t(v)); });
 	lws.add_unpack_transform<std::size_t>([](const serializer& s, buffer_input_t& it) { return s.unpack_value<std::uint16_t>(it); });
@@ -91,13 +91,13 @@ int main()
 	lws.add_pack_size_proc<const char*>([](const serializer& s, const char* v) { return s.pack_size(std::strlen(v)) + std::strlen(v); });
 	lws.add_pack_size_proc<std::string>([](const serializer& s, const std::string& v) { return s.pack_size(v.length()) + v.length(); });
 
-	auto ccp_1 = "this is hardcoded string #1";
-	auto buf_3 = lws.pack(ccp_1, "this is hardcoded string #2");
-	auto tup_3 = lws.unpack<std::string, std::string>(buf_3);
+	[[maybe_unused]]auto ccp_1 = "this is hardcoded string #1";
+	[[maybe_unused]]auto buf_3 = lws.pack(ccp_1, "this is hardcoded string #2");
+	[[maybe_unused]]auto tup_3 = lws.unpack<std::string, std::string>(buf_3);
 
-	auto str_1 = std::string("this is std::string #1");
-	auto buf_4 = lws.pack(str_1, std::string("this is std::string #2"));
-	auto tup_4 = lws.unpack<std::string, std::string>(buf_4);
+	[[maybe_unused]]auto str_1 = std::string("this is std::string #1");
+	[[maybe_unused]]auto buf_4 = lws.pack(str_1, std::string("this is std::string #2"));
+	[[maybe_unused]]auto tup_4 = lws.unpack<std::string, std::string>(buf_4);
 
 
 
@@ -109,12 +109,12 @@ int main()
 	lws.add_unpack_transform<N>([](const serializer& s, buffer_input_t& it) { return N(s.unpack_type<int>(it)); });
 	lws.add_pack_size_proc<N>([](const serializer& s, const N& v) { return s.pack_size(v.get_value()); });
 
-	auto n_1 = N(11);
-	auto buf_5 = lws.pack(n_1, N(17));
-	auto tup_5 = lws.unpack<N, N>(buf_5);
+	[[maybe_unused]] auto n_1 = N(11);
+	[[maybe_unused]] auto buf_5 = lws.pack(n_1, N(17));
+	[[maybe_unused]] auto tup_5 = lws.unpack<N, N>(buf_5);
 
-	auto buf_6 = lws.pack('C', '+', '+', 11, 14, 17, "this is hardcoded string", std::string("this is std::string"), N(20), N(23));
-	auto tup_6 = lws.unpack<char, char, char, int, int, int, std::string, std::string, N, N>(buf_6);
+	[[maybe_unused]] auto buf_6 = lws.pack('C', '+', '+', 11, 14, 17, "this is hardcoded string", std::string("this is std::string"), N(20), N(23));
+	[[maybe_unused]] auto tup_6 = lws.unpack<char, char, char, int, int, int, std::string, std::string, N, N>(buf_6);
 
 
 
@@ -147,9 +147,9 @@ int main()
 					[&](auto sum, const std::string& v) { return sum + s.pack_size(v); });
 		});
 
-	auto vec_1 = strings_t{ "string 1", "string 2", "string 3" };
-	auto buf_7 = lws.pack(vec_1);
-	auto tup_7 = lws.unpack<strings_t>(buf_7);
+	[[maybe_unused]] auto vec_1 = strings_t{ "string 1", "string 2", "string 3" };
+	[[maybe_unused]] auto buf_7 = lws.pack(vec_1);
+	[[maybe_unused]] auto tup_7 = lws.unpack<strings_t>(buf_7);
 
 	return 0;//rand();
 }

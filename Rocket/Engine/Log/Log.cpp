@@ -8,6 +8,7 @@
 #include <spdlog/sinks/basic_file_sink.h>
 
 IMPLEMENT_LOG_CHANNEL(Core);
+IMPLEMENT_LOG_CHANNEL(File);
 IMPLEMENT_LOG_CHANNEL(App);
 #endif
 
@@ -31,6 +32,7 @@ namespace Rocket {
     void Log::Init(LogLevel level) {
         spdlog::set_pattern("%^[%T] %n: %v%$");
         INIT_LOG_CHANNEL(Core);
+        INIT_LOG_CHANNEL(File);
         INIT_LOG_CHANNEL(App);
     }
 #else
