@@ -6,18 +6,15 @@
 namespace Rocket {
     int32_t OsFile::Initialize(const std::string& path, const std::string& file_name, FileOperateMode mode) {
         mode_ = mode;
-        file_path_ = path;
-        file_name_ = file_name;
-        full_name_ = file_path_ + file_name_;
         file_.file_path = path;
         file_.file_name = file_name;
-        file_.full_name = full_name_;
+        file_.full_name = path + file_name;
 
         switch(mode_) {
-            case FileOperateMode::ReadBinary: file_.file = fopen(full_name_.c_str(), "rb"); break;
-            case FileOperateMode::WriteBinary: file_.file = fopen(full_name_.c_str(), "wb"); break;
-            case FileOperateMode::ReadText: file_.file = fopen(full_name_.c_str(), "r"); break;
-            case FileOperateMode::WriteText: file_.file = fopen(full_name_.c_str(), "w"); break;
+            case FileOperateMode::ReadBinary: file_.file = fopen(file_.full_name.c_str(), "rb"); break;
+            case FileOperateMode::WriteBinary: file_.file = fopen(file_.full_name.c_str(), "wb"); break;
+            case FileOperateMode::ReadText: file_.file = fopen(file_.full_name.c_str(), "r"); break;
+            case FileOperateMode::WriteText: file_.file = fopen(file_.full_name.c_str(), "w"); break;
             default: break;
         };
 
@@ -27,7 +24,7 @@ namespace Rocket {
 
         initialized_ = true;
 
-        RK_TRACE(File, "Open File {} Success", full_name_);
+        RK_TRACE(File, "Open File {} Success", file_.full_name);
 
         if(file_.file == nullptr)
             return 1;

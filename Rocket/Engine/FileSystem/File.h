@@ -1,4 +1,6 @@
 #pragma once
+#include "Memory/MemoryCheck.h"
+
 #include <cstdlib>
 #include <string>
 

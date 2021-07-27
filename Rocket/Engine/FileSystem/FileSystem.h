@@ -4,7 +4,6 @@
 #include "FileSystem/ZipFile.h"
 
 #include <memory>
-#include <future>
 
 namespace Rocket {
     class FileSystem {

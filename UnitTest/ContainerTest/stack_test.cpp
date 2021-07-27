@@ -1,4 +1,3 @@
-#define ENABLE_NEW_DELETE_TRACE_DUMP
 #include "Memory/MemoryCheck.h"
 #include "Containers/Stack/Stack.h"
 #include "Containers/Stack/FixStack.h"

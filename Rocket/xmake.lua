@@ -3,7 +3,8 @@ target("RocketEngine")
     add_files(
         "Engine/Log/*.cpp", 
         "Engine/Utils/*.cpp",
-        "Engine/FileSystem/*.cpp"
+        "Engine/FileSystem/*.cpp",
+        "Engine/Memory/*.cpp"
     )
     add_packages(
         "glfw", "glad", "minizip", "zlib", "spdlog", "fmt", {public = true}

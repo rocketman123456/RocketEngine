@@ -35,9 +35,6 @@ namespace Rocket {
         inline FileOperateMode GetFileOperateMode() const { return mode_; }
         inline const FileHandle* GetFileHandle() const { return &file_; }
     protected:
-        std::string file_path_;
-        std::string file_name_;
-        std::string full_name_;
         FileOperateMode mode_;
         FileHandle  file_;
         bool        initialized_;

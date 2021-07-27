@@ -1,4 +1,3 @@
-//#include "Memory/MemoryCheck.h"
 #include "Config/ConfigSetting.h"
 #include "FileSystem/FileSystem.h"
 #include "Utils/FindRootDir.h"
@@ -24,6 +23,9 @@ int main() {
 
     std::cout << "Read Data[0]: " << ((char*)buffer.buffer)[0] << std::endl;
     std::cout << "Read Data: " << (char*)buffer.buffer << std::endl;
+
+    // must have memory manager
+    //delete[] (char*)buffer.buffer;
 
     return 0;
 }

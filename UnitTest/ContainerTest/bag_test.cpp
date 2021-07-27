@@ -1,4 +1,3 @@
-#define ENABLE_NEW_DELETE_TRACE_DUMP
 #include "Memory/MemoryCheck.h"
 #include "Containers/Bag/Bag.h"
 #include "Containers/Bag/FixBag.h"
