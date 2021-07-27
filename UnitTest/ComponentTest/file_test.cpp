@@ -12,20 +12,28 @@ int main() {
 
     std::string name = "_root_dir_";
     auto root = FindRootDir(name);
-    //std::cout << root << std::endl;
-
     root += "/";
 
-    //auto file = FileSystem::OpenSync(root, name, FileOperateMode::ReadBinary);
-    auto file = FileSystem::OpenSync(root, name, FileOperateMode::ReadText);
-    FileBuffer buffer;
-    file->ReadAll(buffer);
+    {
+        std::string name = "_root_dir_";
+        //auto file = FileSystem::OpenSync(root, name, FileOperateMode::ReadBinary);
+        auto file = FileSystem::OpenSync(root, name, FileOperateMode::ReadText);
+        FileBuffer buffer;
+        file->ReadAll(buffer);
 
-    std::cout << "Read Data[0]: " << ((char*)buffer.buffer)[0] << std::endl;
-    std::cout << "Read Data: " << (char*)buffer.buffer << std::endl;
+        std::cout << "Read Data[0]: " << ((char*)buffer.buffer)[0] << std::endl;
+        std::cout << "Read Data: " << (char*)buffer.buffer << std::endl;
 
-    // must have memory manager
-    //delete[] (char*)buffer.buffer;
+        FileSystem::CloseSync(std::move(file));
+
+        // must have memory manager
+        //delete[] (char*)buffer.buffer;
+    }
+
+    {
+        std::string name = "_root_dir_.zip";
+        auto file = FileSystem::OpenZip(root, name, FileOperateMode::ReadBinary);
+    }
 
     return 0;
 }

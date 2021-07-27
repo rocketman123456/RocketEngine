@@ -11,10 +11,10 @@ namespace Rocket {
         file_.full_name = path + file_name;
 
         switch(mode_) {
-            case FileOperateMode::ReadBinary: file_.file = fopen(file_.full_name.c_str(), "rb"); break;
-            case FileOperateMode::WriteBinary: file_.file = fopen(file_.full_name.c_str(), "wb"); break;
-            case FileOperateMode::ReadText: file_.file = fopen(file_.full_name.c_str(), "r"); break;
-            case FileOperateMode::WriteText: file_.file = fopen(file_.full_name.c_str(), "w"); break;
+            case FileOperateMode::ReadBinary: file_.file_pointer = (void*)fopen(file_.full_name.c_str(), "rb"); break;
+            case FileOperateMode::WriteBinary: file_.file_pointer = (void*)fopen(file_.full_name.c_str(), "wb"); break;
+            case FileOperateMode::ReadText: file_.file_pointer = (void*)fopen(file_.full_name.c_str(), "r"); break;
+            case FileOperateMode::WriteText: file_.file_pointer = (void*)fopen(file_.full_name.c_str(), "w"); break;
             default: break;
         };
 
@@ -26,15 +26,15 @@ namespace Rocket {
 
         RK_TRACE(File, "Open File {} Success", file_.full_name);
 
-        if(file_.file == nullptr)
+        if(file_.file_pointer == nullptr)
             return 1;
         else
             return 0;
     }
 
     void OsFile::Finalize() {
-        if(file_.file != nullptr)
-            fclose(file_.file);
+        if(file_.file_pointer != nullptr)
+            fclose((FILE*)file_.file_pointer);
         initialized_ = false;
     }
 
@@ -42,7 +42,7 @@ namespace Rocket {
         if(mode_ == FileOperateMode::ReadBinary) {
             buffer.size = length;
             buffer.buffer = new int8_t[length];
-            auto result = fread(buffer.buffer, length, 1, file_.file);
+            auto result = fread(buffer.buffer, length, 1, (FILE*)file_.file_pointer);
             if(result == 1)
                 return length;
             else
@@ -51,7 +51,7 @@ namespace Rocket {
         else if(mode_ == FileOperateMode::ReadText) {
             buffer.size = length + 1;
             buffer.buffer = new int8_t[length + 1];
-            auto result = fread(buffer.buffer, length, 1, file_.file);
+            auto result = fread(buffer.buffer, length, 1, (FILE*)file_.file_pointer);
             static_cast<char*>(buffer.buffer)[length] = '\0';
             if(result == 1)
                 return 0;
@@ -77,7 +77,7 @@ namespace Rocket {
         else
             real_length = length;
         
-        auto result = fwrite(buffer.buffer, real_length, 1, file_.file);
+        auto result = fwrite(buffer.buffer, real_length, 1, (FILE*)file_.file_pointer);
         if(result == 1)
             return length;
         else
@@ -85,7 +85,7 @@ namespace Rocket {
     }
 
     void OsFile::Seek(std::size_t position) {
-        auto result = fseek(file_.file, position, SEEK_SET);
+        auto result = fseek((FILE*)file_.file_pointer, position, SEEK_SET);
         if(result != 0) {
             RK_ERROR(File, "{} File Seek {} Error", file_.full_name, position);
             throw std::runtime_error("File Seek Error");
@@ -93,7 +93,7 @@ namespace Rocket {
     }
 
     void OsFile::SeekToEnd(void) {
-        auto result = fseek(file_.file, 0, SEEK_END);
+        auto result = fseek((FILE*)file_.file_pointer, 0, SEEK_END);
         if(result != 0) {
             RK_ERROR(File, "{} File Seek End Error", file_.full_name);
             throw std::runtime_error("File Seek End Error");
@@ -101,7 +101,7 @@ namespace Rocket {
     }
 
     void OsFile::Skip(std::size_t bytes) {
-        auto result = fseek(file_.file, bytes, SEEK_CUR);
+        auto result = fseek((FILE*)file_.file_pointer, bytes, SEEK_CUR);
         if(result != 0) {
             RK_ERROR(File, "{} File Skip {} Error", file_.full_name);
             throw std::runtime_error("File Skip Error");
@@ -109,7 +109,7 @@ namespace Rocket {
     }
 
     std::size_t OsFile::Tell(void) const {
-        std::size_t result = ftell(file_.file);
+        std::size_t result = ftell((FILE*)file_.file_pointer);
         return result;
     }
 }

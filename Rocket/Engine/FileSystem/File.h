@@ -23,7 +23,7 @@ namespace Rocket {
     };
 
     struct FileHandle {
-        FILE*   file = nullptr;
+        void*   file_pointer = nullptr;
         int64_t total_size;
         std::string file_path;
         std::string file_name;
