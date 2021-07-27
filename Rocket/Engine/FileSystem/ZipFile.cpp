@@ -62,12 +62,15 @@ namespace Rocket {
         if(err != UNZ_OK) {
             RK_ERROR(File, "Error {} with ZipFile in unzGetGlobalInfo", err);
         }
+        
+#ifdef RK_CONSOLE_LOG
         printf("  Length  Method     Size Ratio   Date    Time   CRC-32     Name\n");
         printf("  ------  ------     ---- -----   ----    ----   ------     ----\n");
+#endif
         for (int32_t i = 0; i < global_info.number_entry; i++) {
             char filename_inzip[256];
             unz_file_info64 file_info;
-            uLong ratio = 0;
+            uint32_t ratio = 0;
             const char *string_method;
             char charCrypt = ' ';
             err = unzGetCurrentFileInfo64(file_.file_pointer, &file_info, filename_inzip, sizeof(filename_inzip), nullptr, 0, nullptr, 0);
@@ -76,15 +79,18 @@ namespace Rocket {
                 break;
             }
 
-            if (file_info.uncompressed_size > 0)
-                ratio = (uLong)((file_info.compressed_size * 100) / file_info.uncompressed_size);
+            if (file_info.uncompressed_size > 0) {
+                ratio = (uint32_t)((file_info.compressed_size * 100) / file_info.uncompressed_size);
+            }
 
-            /* display a '*' if the file is crypted */
-            if ((file_info.flag & 1) != 0)
+            // display a '*' if the file is crypted
+            if ((file_info.flag & 1) != 0) {
                 charCrypt = '*';
+            }
 
-            if (file_info.compression_method == 0)
+            if (file_info.compression_method == 0) {
                 string_method = "Stored";
+            }
             else if (file_info.compression_method == Z_DEFLATED) {
                 uInt iLevel = (uInt)((file_info.flag & 0x6) / 2);
                 if (iLevel == 0)
@@ -97,19 +103,27 @@ namespace Rocket {
             else if (file_info.compression_method == Z_BZIP2ED) {
                 string_method = "BZip2 ";
             }
-            else
+            else {
                 string_method = "Unkn. ";
+            }
 
+            // display file infos
+#ifdef RK_CONSOLE_LOG
             Display64BitsSize(file_info.uncompressed_size, 7);
             printf("  %6s%c", string_method, charCrypt);
             Display64BitsSize(file_info.compressed_size, 7);
-            printf(" %3lu%%  %2.2lu-%2.2lu-%2.2lu  %2.2lu:%2.2lu  %8.8lx   %s\n",
+            printf(" %3u%%  %2.2lu-%2.2lu-%2.2lu  %2.2lu:%2.2lu  %8.8lx   %s\n",
                 ratio,
                 (uLong)file_info.tmu_date.tm_mon + 1,
                 (uLong)file_info.tmu_date.tm_mday,
                 (uLong)file_info.tmu_date.tm_year % 100,
                 (uLong)file_info.tmu_date.tm_hour, (uLong)file_info.tmu_date.tm_min,
                 (uLong)file_info.crc, filename_inzip);
+#endif
+
+            // Add Infos to content map
+            content_[filename_inzip] = file_info;
+
             if ((i + 1) < global_info.number_entry)
             {
                 err = unzGoToNextFile(file_.file_pointer);

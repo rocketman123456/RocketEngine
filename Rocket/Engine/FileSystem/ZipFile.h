@@ -28,7 +28,8 @@ namespace Rocket {
         void Cancel() final {}
     };
     
-    using ZipContentsMap = std::unordered_map<std::string, int>;
+    using ZipFileInfo = unz_file_info64;
+    using ZipContentsMap = std::unordered_map<std::string, ZipFileInfo>;
 
     class ZipFile : public OsFile {
     public:
