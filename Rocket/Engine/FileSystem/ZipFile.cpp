@@ -62,7 +62,7 @@ namespace Rocket {
         if(err != UNZ_OK) {
             RK_ERROR(File, "Error {} with ZipFile in unzGetGlobalInfo", err);
         }
-        
+
 #ifdef RK_CONSOLE_LOG
         printf("  Length  Method     Size Ratio   Date    Time   CRC-32     Name\n");
         printf("  ------  ------     ---- -----   ----    ----   ------     ----\n");
@@ -134,6 +134,7 @@ namespace Rocket {
                 }
             }
         }
+        initialized_ = true;
         return 0;
     }
 
