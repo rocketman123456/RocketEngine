@@ -33,6 +33,17 @@ int main() {
     {
         std::string name = "_root_dir_.zip";
         auto file = FileSystem::OpenZip(root, name, FileOperateMode::ReadBinary);
+        FileBuffer buffer;
+        file->ReadFile(buffer, "_root_dir_");
+        printf("Read Data: ");
+        for(int i = 0; i < buffer.size; ++i) {
+            printf("%c", ((char*)buffer.buffer)[i]);
+        }
+        printf("\n");
+        FileSystem::CloseZip(std::move(file));
+
+        // must have memory manager
+        //delete[] (char*)buffer.buffer;
     }
 
     return 0;

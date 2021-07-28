@@ -27,8 +27,13 @@ namespace Rocket {
         /// Cancels the asynchronous operation
         void Cancel() final {}
     };
+
+    struct ZipFileInfo {
+        unz64_file_pos_s file_pos;
+        unz_file_info64 file_info;
+    };
     
-    using ZipFileInfo = unz_file_info64;
+    using ZipGlobalInfo = unz_global_info64;
     using ZipContentsMap = std::unordered_map<std::string, ZipFileInfo>;
 
     class ZipFile : public OsFile {
@@ -39,25 +44,13 @@ namespace Rocket {
         virtual int32_t Initialize(const std::string& path, const std::string& file_name, FileOperateMode mode) final;
         virtual void Finalize() final;
 
-        int32_t GetNumFiles() const;
-        std::string GetFilename(int32_t i) const;	
-        int32_t GetFileLen(int32_t i) const;
-        bool ReadFile(int32_t i, void* buffer);
-        int32_t Find(const std::string& path) const;
+        int64_t GetNumFiles() const { return zip_info_.number_entry; }
+        ZipFileInfo Find(const std::string& path) const;
 
         /// Synchronously reads from the file into a buffer. Returns the number of bytes read, or 0 if the operation failed.
-        virtual std::size_t Read(FileBuffer& buffer, std::size_t length) final;
-        virtual std::size_t ReadAll(FileBuffer& buffer) final;
-        /// Synchronously writes from a buffer into the file. Returns the number of bytes written, or 0 if the operation failed.
-        virtual std::size_t Write(FileBuffer& buffer, std::size_t length) final;
-        /// Seeks to the desired position
-        virtual void Seek(std::size_t position) final;
-        /// Seeks to the end of the file
-        virtual void SeekToEnd(void) final;
-        /// Skips a certain amount of bytes
-        virtual void Skip(std::size_t bytes) final;
-        /// Returns the current position in the file, or INVALID_SET_FILE_POINTER (0xFFFFFFFF) if the operation failed.
-        virtual std::size_t Tell(void) const final;
+        std::size_t ReadFile(FileBuffer& buffer, const std::string& path);
+        /// Synchronously write from the buffer into a file. Returns the number of bytes write, or 0 if the operation failed.
+        std::size_t WriteFile(FileBuffer& buffer, const std::string& path);
 
         /// Asynchronously reads from the file into a buffer
         ZipAsyncFileOperation ReadAsync(FileBuffer& buffer, std::size_t length);
@@ -67,6 +60,10 @@ namespace Rocket {
         bool ReadLargeFile(int32_t i, void* buffer, std::function<void(int32_t, bool&)> call_back);
 
     private:
+        int32_t UnzipInit();
+        int32_t ZipInit();
+
+        ZipGlobalInfo  zip_info_;
         ZipContentsMap content_;
     };
 }

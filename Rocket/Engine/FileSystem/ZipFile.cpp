@@ -4,7 +4,7 @@
 #include <exception>
 
 static void Display64BitsSize(ZPOS64_T n, int size_char) {
-    // to avoid compatibility problem , we do here the conversion
+    // to avoid compatibility problem , we do the conversion here
     char number[21];
     int offset = 19;
     int pos_string = 19;
@@ -51,31 +51,50 @@ namespace Rocket {
         file_.file_path = path;
         file_.file_name = file_name;
         file_.full_name = path + file_name;
+
+        int32_t result;
+        if(mode_ == FileOperateMode::ReadBinary)
+            result = UnzipInit();
+        else if(mode_ == FileOperateMode::WriteBinary)
+            result = ZipInit();
+        
+        initialized_ = true;
+        return result;
+    }
+
+    int32_t ZipFile::UnzipInit() {
+        // Open File
         file_.file_pointer = unzOpen64(file_.full_name.c_str());
         if(file_.file_pointer == nullptr) {
-            RK_ERROR(File, "Open Zip File {} Error", file_.full_name);
-            throw std::runtime_error("Open Zip File Error");
+            RK_ERROR(File, "Open ZipFile {} Error", file_.full_name);
+            throw std::runtime_error("Open ZipFile Error");
         }
+        // Get Zip Global Info
         int32_t err = 0;
-        unz_global_info64 global_info;
-        err = unzGetGlobalInfo64(file_.file_pointer, &global_info);
+        err = unzGetGlobalInfo64(file_.file_pointer, &zip_info_);
         if(err != UNZ_OK) {
-            RK_ERROR(File, "Error {} with ZipFile in unzGetGlobalInfo", err);
+            RK_ERROR(File, "Error {} with ZipFile in unzGetGlobalInfo64", err);
         }
-
 #ifdef RK_CONSOLE_LOG
         printf("  Length  Method     Size Ratio   Date    Time   CRC-32     Name\n");
         printf("  ------  ------     ---- -----   ----    ----   ------     ----\n");
 #endif
-        for (int32_t i = 0; i < global_info.number_entry; i++) {
+        for (int32_t i = 0; i < zip_info_.number_entry; i++) {
+            // Iterate Through each File Info
             char filename_inzip[256];
             unz_file_info64 file_info;
+            unz64_file_pos_s file_pos;
             uint32_t ratio = 0;
             const char *string_method;
             char charCrypt = ' ';
             err = unzGetCurrentFileInfo64(file_.file_pointer, &file_info, filename_inzip, sizeof(filename_inzip), nullptr, 0, nullptr, 0);
             if (err != UNZ_OK) {
-                RK_ERROR(File, "Error {} with ZipFile in unzGetCurrentFileInfo", err);
+                RK_ERROR(File, "Error {} with ZipFile in unzGetCurrentFileInfo64", err);
+                break;
+            }
+            err = unzGetFilePos64(file_.file_pointer, &file_pos);
+            if(err != UNZ_OK) {
+                RK_ERROR(File, "Error {} with ZipFile in unzGetFilePos64", err);
                 break;
             }
 
@@ -106,9 +125,8 @@ namespace Rocket {
             else {
                 string_method = "Unkn. ";
             }
-
-            // display file infos
 #ifdef RK_CONSOLE_LOG
+            // display file infos
             Display64BitsSize(file_info.uncompressed_size, 7);
             printf("  %6s%c", string_method, charCrypt);
             Display64BitsSize(file_info.compressed_size, 7);
@@ -120,21 +138,21 @@ namespace Rocket {
                 (uLong)file_info.tmu_date.tm_hour, (uLong)file_info.tmu_date.tm_min,
                 (uLong)file_info.crc, filename_inzip);
 #endif
-
             // Add Infos to content map
-            content_[filename_inzip] = file_info;
-
-            if ((i + 1) < global_info.number_entry)
-            {
+            content_[filename_inzip] = {file_pos, file_info};
+            // Get Next File
+            if ((i + 1) < zip_info_.number_entry) {
                 err = unzGoToNextFile(file_.file_pointer);
-                if (err != UNZ_OK)
-                {
-                    printf("error %d with zipfile in unzGoToNextFile\n", err);
+                if (err != UNZ_OK) {
+                    RK_ERROR(File, "Error {} with ZipFile in unzGoToNextFile", err);
                     break;
                 }
             }
         }
-        initialized_ = true;
+        return 0;
+    }
+
+    int32_t ZipFile::ZipInit() {
         return 0;
     }
 
@@ -143,23 +161,48 @@ namespace Rocket {
         content_.clear();
     }
 
-    std::size_t ZipFile::Read(FileBuffer& buffer, std::size_t length) {
+    ZipFileInfo ZipFile::Find(const std::string& path) const {
+        auto it = content_.find(path);
+        if(it == content_.end()) {
+            RK_ERROR(File, "Cannot Find {} in ZipFile {}", path, file_.full_name);
+            throw std::runtime_error("Cannot Find File in ZipFile");
+        }
+        else {
+            return it->second;
+        }
+    }
+
+    std::size_t ZipFile::ReadFile(FileBuffer& buffer, const std::string& path) {
+        auto file_info = Find(path);
+        auto length = file_info.file_info.uncompressed_size;
+        buffer.size = length;
+        buffer.buffer = new uint8_t[length];
+        int32_t err = unzGoToFilePos64(file_.file_pointer, &file_info.file_pos);
+        if(err != UNZ_OK) {
+            RK_ERROR(File, "Error {} with ZipFile in unzGoToFilePos64", err);
+            return 1;
+        }
+        // TODO : add password support
+        //unzOpenCurrentFilePassword(uf, password);
+        err = unzOpenCurrentFile(file_.file_pointer);
+        if(err < 0) {
+            RK_ERROR(File, "Error {} with ZipFile in unzOpenCurrentFile", err);
+            return 1;
+        }
+        err = unzReadCurrentFile(file_.file_pointer, buffer.buffer, length);
+        if(err < 0) {
+            RK_ERROR(File, "Error {} with ZipFile in unzReadCurrentFile", err);
+            return 1;
+        }
+        err = unzCloseCurrentFile(file_.file_pointer);
+        if (err != UNZ_OK) {
+            RK_ERROR(File, "Error {} with ZipFile in unzCloseCurrentFile", err);
+            return 1;
+        }
         return 0;
     }
 
-    std::size_t ZipFile::ReadAll(FileBuffer& buffer) {
-        return 0;
-    }
-
-    std::size_t ZipFile::Write(FileBuffer& buffer, std::size_t length) {
-        return 0;
-    }
-
-    void ZipFile::Seek(std::size_t position) {}
-    void ZipFile::SeekToEnd(void) {}
-    void ZipFile::Skip(std::size_t bytes) {}
-
-    std::size_t ZipFile::Tell(void) const {
+    std::size_t ZipFile::WriteFile(FileBuffer& buffer, const std::string& path) {
         return 0;
     }
 }

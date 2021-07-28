@@ -41,7 +41,7 @@ namespace Rocket {
     std::size_t OsFile::Read(FileBuffer& buffer, std::size_t length) {
         if(mode_ == FileOperateMode::ReadBinary) {
             buffer.size = length;
-            buffer.buffer = new int8_t[length];
+            buffer.buffer = new uint8_t[length];
             auto result = fread(buffer.buffer, length, 1, (FILE*)file_.file_pointer);
             if(result == 1)
                 return length;
@@ -50,7 +50,7 @@ namespace Rocket {
         }
         else if(mode_ == FileOperateMode::ReadText) {
             buffer.size = length + 1;
-            buffer.buffer = new int8_t[length + 1];
+            buffer.buffer = new uint8_t[length + 1];
             auto result = fread(buffer.buffer, length, 1, (FILE*)file_.file_pointer);
             static_cast<char*>(buffer.buffer)[length] = '\0';
             if(result == 1)
