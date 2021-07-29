@@ -3,11 +3,14 @@
 #ifdef RK_CONSOLE_LOG
 #include <spdlog/async.h>
 #include <spdlog/fmt/ostr.h>
+#include <spdlog/fmt/chrono.h>
 #include <spdlog/fmt/fmt.h>
+#include <fmt/ostream.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/sinks/basic_file_sink.h>
 
 IMPLEMENT_LOG_CHANNEL(Core);
+IMPLEMENT_LOG_CHANNEL(Event);
 IMPLEMENT_LOG_CHANNEL(File);
 IMPLEMENT_LOG_CHANNEL(App);
 #endif
@@ -32,6 +35,7 @@ namespace Rocket {
     void Log::Init(LogLevel level) {
         spdlog::set_pattern("%^[%T] %n: %v%$");
         INIT_LOG_CHANNEL(Core);
+        INIT_LOG_CHANNEL(Event);
         INIT_LOG_CHANNEL(File);
         INIT_LOG_CHANNEL(App);
     }
