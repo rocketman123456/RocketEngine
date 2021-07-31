@@ -11,7 +11,8 @@
 
 namespace Rocket {
     // TODO : use custom data structure instead
-    using EventChannelMap = std::unordered_map<EventType, std::unordered_map<std::string, std::unique_ptr<EventChannel>>>;
+    using ChannelMap = std::unordered_map<std::string, std::shared_ptr<EventChannel>>;
+    using EventChannelMap = std::unordered_map<EventType, ChannelMap>;
 
     class EventManager : implements IRuntimeModule {
         RUNTIME_MODULE_TYPE(EventManager);
@@ -23,9 +24,13 @@ namespace Rocket {
         virtual void Finalize() final;
         virtual void Tick(TimeStep step) final;
 
-        void AddChannel(EventType type, std::unique_ptr<EventChannel> channel);
+        void AddChannel(EventType type, std::shared_ptr<EventChannel> channel);
         void RemoveChannel(EventType type, const std::string name);
+
+        void AddEventListener(void* function, EventType type, const std::string& channel_name);
+        void RemoveEventListener(void* function, EventType type, const std::string& channel_name);
     private:
-        EventChannelMap event_channels_;
+        ChannelMap channels_;
+        EventChannelMap event_channel_map_;
     };
 }

@@ -1,5 +1,6 @@
 #pragma once
 #include "EventSystem/Event.h"
+#include "Utils/TimeStep.h"
 
 #include <unordered_map>
 #include <functional>
@@ -10,17 +11,20 @@ namespace Rocket {
 
     class EventChannel {
     public:
-        explicit EventChannel();    // Auto Generate Name
-        explicit EventChannel(const std::string name);    // Custom Name
+        explicit EventChannel();                        // Auto Generate Name
+        explicit EventChannel(const std::string name);  // Custom Name
         virtual ~EventChannel() = default;
-        void RegisterEvent(EventType type);
-        void UnregisterEvent(EventType type);
 
-        void QueueEvent();
-        void DispatchEvent();
-        void TriggerEvent();
+        void RegisterEvent(EventType type, void* function);
+        void UnregisterEvent(EventType type, void* function);
 
-        inline const std::string& GetName() { return name_; }
+        virtual void Tick(TimeStep step);
+        virtual void QueueEvent(EventSPtr event);
+        virtual void DispatchEvent(EventSPtr event);
+        virtual void TriggerEvent(EventSPtr event);
+
+        inline const std::string& GetName() const { return name_; }
+        inline bool GetIsEmpty() const { return event_map_.empty(); }
     private:
         std::string name_;
         EventMap event_map_;

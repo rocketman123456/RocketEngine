@@ -7,12 +7,21 @@ namespace Rocket {
     EventChannel::EventChannel(const std::string name) : name_(name) {
     }
 
-    void EventChannel::QueueEvent() {
+    void EventChannel::RegisterEvent(EventType type, void* function) {
     }
 
-    void EventChannel::DispatchEvent() {
+    void EventChannel::UnregisterEvent(EventType type, void* function) {
     }
 
-    void EventChannel::TriggerEvent(){
+    void EventChannel::Tick(TimeStep step) {
+    }
+
+    void EventChannel::QueueEvent(EventSPtr event) {
+    }
+
+    void EventChannel::DispatchEvent(EventSPtr event) {
+    }
+
+    void EventChannel::TriggerEvent(EventSPtr event) {
     }
 }
