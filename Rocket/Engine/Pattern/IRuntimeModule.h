@@ -10,6 +10,8 @@ namespace Rocket {
     public:
         virtual ~IRuntimeModule() = default;
 
+        // Return == 0 : everything OK
+        // Return != 0 : something wrong
         [[nodiscard]] virtual int Initialize() = 0;
         virtual void Finalize() = 0;
         virtual void Tick(TimeStep step) = 0;
