@@ -1,5 +1,6 @@
 #pragma once
 #include "EventSystem/Event.h"
+#include "Containers/Queue/BlockingQueue.h"
 #include "Utils/TimeStep.h"
 
 #include <unordered_map>

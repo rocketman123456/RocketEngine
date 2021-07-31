@@ -1,10 +1,28 @@
 #pragma once
+#include "Pattern/Iterator.h"
+
 #include <exception>
 
-// FIFO
 namespace Rocket {
+    template<typename T> class Queue;
+
     template<typename T>
-    class Queue {
+    class QueueIterator : implements Iterator<T> {
+    public:
+        // TODO : If Queue Changed After Get Iterator, this will cause error
+        explicit QueueIterator(Queue<T>* queue) : queue_(queue), current_(queue->first_) {}
+        virtual ~QueueIterator() = default;
+        virtual bool HasNext() final { return current_ != nullptr; }
+        virtual T Next() final { T temp = current_->data; current_ = current_->next; return temp; }
+    private:
+        Queue<T>* queue_ = nullptr;
+        typename Queue<T>::Node* current_ = nullptr;
+    };
+
+    // FIFO
+    template<typename T>
+    class Queue : Iterable<T, QueueIterator<T>> {
+        friend class QueueIterator<T>;
         struct Node {
             Node* next;
             T data;
@@ -47,6 +65,10 @@ namespace Rocket {
                 delete temp;
             }
             first_ = last_ = nullptr;
+        }
+
+        virtual QueueIterator<T> GetIterator() final {
+            return QueueIterator<T>(this);
         }
 
         Queue* operator & () { return this; }
