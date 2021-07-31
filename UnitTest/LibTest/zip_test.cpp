@@ -132,7 +132,7 @@ uLong filetime(const char *f, tm_zip* tmzip, uLong* dt)
     return ret;
 }
 #else
-uLong filetime(char *f, tm_zip *tmzip, uLong *dt)
+uLong filetime(const char *f, tm_zip *tmzip, uLong *dt)
 //char *f;                /* name of file to get info on */
 //tm_zip *tmzip;             /* return value: access, modific. and creation times */
 //uLong *dt;             /* dostime */

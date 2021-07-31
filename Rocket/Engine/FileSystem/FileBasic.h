@@ -3,6 +3,8 @@
 #include "Core/Declare.h"
 
 #include <cstdlib>
+#include <atomic>
+#include <cstdint>
 #include <string>
 
 namespace Rocket {
@@ -42,6 +44,6 @@ namespace Rocket {
         virtual void Cancel() = 0;
     protected:
         FileHandle file_;
-        std::atomic_int32_t overlapped_;
+        std::atomic<int32_t> overlapped_;
     };
 }
