@@ -4,24 +4,27 @@ namespace Rocket {
     EventChannel::EventChannel() {
     }
 
-    EventChannel::EventChannel(const std::string name) : name_(name) {
+    void EventChannel::RegisterEvent(const EventType& type, const EventDelegate& function) {
     }
 
-    void EventChannel::RegisterEvent(EventType type, void* function) {
-    }
-
-    void EventChannel::UnregisterEvent(EventType type, void* function) {
+    void EventChannel::UnregisterEvent(const EventType& type, const EventDelegate& function) {
     }
 
     void EventChannel::Tick(TimeStep step) {
+        if(this->IsEmpty()) {
+            return;
+        }
+        else {
+            // Handle Events
+        }
     }
 
-    void EventChannel::QueueEvent(EventSPtr event) {
+    void EventChannel::QueueEvent(EventPtr& event) {
     }
 
-    void EventChannel::DispatchEvent(EventSPtr event) {
+    void EventChannel::DispatchEvent(EventPtr& event) {
     }
 
-    void EventChannel::TriggerEvent(EventSPtr event) {
+    void EventChannel::TriggerEvent(EventPtr& event) {
     }
 }

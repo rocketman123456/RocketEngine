@@ -3,17 +3,15 @@
 #include "EventSystem/Event.h"
 #include "EventSystem/EventChannel.h"
 
-#include <unordered_map>
-#include <string>
-#include <vector>
 #include <set>
 #include <memory>
 
 namespace Rocket {
     // TODO : use custom data structure instead
-    using ChannelMap = std::unordered_map<std::string, std::shared_ptr<EventChannel>>;
+    using ChannelMap = std::unordered_map<std::string, ChannelPtr>;
     using EventChannelMap = std::unordered_map<EventType, ChannelMap>;
 
+    // TODO : use hash string id to replace string, for better compare performance
     class EventManager : implements IRuntimeModule {
         RUNTIME_MODULE_TYPE(EventManager);
     public:
@@ -24,13 +22,32 @@ namespace Rocket {
         virtual void Finalize() final;
         virtual void Tick(TimeStep step) final;
 
-        void AddChannel(EventType type, std::shared_ptr<EventChannel> channel);
-        void RemoveChannel(EventType type, const std::string name);
+        void AddChannel(EventType type, ChannelPtr channel);
+        // Remove Channel From Special Event Type, Will NOT Remove Empty Channel
+        void RemoveChannel(EventType type, const std::string& name);
+        // Remove Channel Completely
+        void RemoveChannel(const std::string& name);
 
-        void AddEventListener(void* function, EventType type, const std::string& channel_name);
-        void RemoveEventListener(void* function, EventType type, const std::string& channel_name);
+        void QueueEvent(EventPtr& event);
+        void TriggerEvent(EventPtr& event);
+
+        void AddEventListener(const EventDelegate& function, const EventType& type, const std::string& channel_name);
+        void RemoveEventListener(const EventDelegate& function, const EventType& type, const std::string& channel_name);
+        void AddEventListener(const EventDelegate& function, const std::string& name, const std::string& channel_name);
+        void RemoveEventListener(const EventDelegate& function, const std::string& name, const std::string& channel_name);
     private:
         ChannelMap channels_;
         EventChannelMap event_channel_map_;
     };
+
+    extern EventManager* g_EventManager;
+
+#define REGISTER_DELEGATE_CLASS(c,f,x,name, ch_name) {\
+    EventDelegate delegate; \
+    delegate.Bind<c,&f>(x); \
+    g_EventManager->AddEventListener(delegate, "hash", "hash");}
+#define REGISTER_DELEGATE_FN(f,name, ch_name) {\
+    EventDelegate delegate; \
+    delegate.Bind<&f>(); \
+    ret = g_EventManager->RemoveEventListener(delegate, "hash", "hash");}
 }

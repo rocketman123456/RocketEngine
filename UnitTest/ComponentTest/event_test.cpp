@@ -11,11 +11,8 @@ int main() {
 
     {
         // Event Log
-        EventVarVec var;
-        for(int i = 0; i < 10; i++)
-            var.emplace_back(Variant::TYPE_INT32, std::rand());
-        Event event(std::move(var));
-        RK_TRACE(Event, "Event {}", event.ToString());
+        Event event("test", 0x01);
+        RK_TRACE(Event, "{}", event.ToString());
     }
 
     {

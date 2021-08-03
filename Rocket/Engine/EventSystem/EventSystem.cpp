@@ -3,76 +3,143 @@
 
 namespace Rocket {
     int EventManager::Initialize() {
+        channels_.clear();
+        event_channel_map_.clear();
         return 0;
     }
 
     void EventManager::Finalize() {
+        channels_.clear();
+        event_channel_map_.clear();
     }
 
     void EventManager::Tick(TimeStep step) {
         // Loop Through Every Event Channel And Dispatch Events
-    }
-
-    void EventManager::AddChannel(EventType type, std::shared_ptr<EventChannel> channel) {
-        // TODO : use hash string id to replace string, for better compare performance
-        {
-            auto it = event_channel_map_.find(type);
-            if(it == event_channel_map_.end()) {
-                it->second = {};
-                it->second[channel->GetName()] = channel;
+        for(auto channel : channels_) {
+            if(channel.second->IsEmpty()) {
+                continue;
             }
             else {
-                auto& map = it->second;
-                // avoid re-insert same channel to same type
-                auto ch = map.find(channel->GetName());
-                if(ch == map.end()) {
-                    map[channel->GetName()] = channel;
-                }
-            }
-        }
-        {
-            auto it = channels_.find(channel->GetName());
-            if(it == channels_.end()) {
-                channels_[channel->GetName()] = channel;
+                channel.second->Tick(step);
             }
         }
     }
 
-    void EventManager::RemoveChannel(EventType type, const std::string name) {
-        {
-            auto it = event_channel_map_.find(type);
-            if(it == event_channel_map_.end()) {
-                RK_INFO(Event, "Cannot Find Channel {} For Event {}, Nothing to Remove", name, type);
+    void EventManager::QueueEvent(EventPtr& event) {
+        EventType type = event->GetEventType();
+    }
+
+    void EventManager::TriggerEvent(EventPtr& event) {
+        EventType type = event->GetEventType();
+    }
+
+    void EventManager::AddChannel(EventType type, ChannelPtr channel) {
+        auto it = event_channel_map_.find(type);
+        if(it == event_channel_map_.end()) {
+            event_channel_map_[type] = {};
+            event_channel_map_[type][channel->GetName()] = channel;
+        }
+        else {
+            auto& map = it->second;
+            map[channel->GetName()] = channel;
+        }
+        channels_[channel->GetName()] = channel;
+    }
+
+    void EventManager::RemoveChannel(EventType type, const std::string& name) {
+        auto it = event_channel_map_.find(type);
+        if(it == event_channel_map_.end()) {
+            RK_INFO(Event, "Cannot Find Channel {} For Event {}, Nothing to Remove", name, type);
+        }
+        else {
+            auto& map = it->second;
+            auto ch = map.find(name);
+            if(ch == map.end()) {
+                RK_INFO(Event, "Cannot Find Channel: {}, Nothing to Remove", name);
             }
             else {
-                auto& map = it->second;
-                auto ch = map.find(name);
-                if(ch == map.end()) {
-                    RK_INFO(Event, "Cannot Find Channel: {}, Nothing to Remove", name);
-                }
-                else {
-                    map.erase(ch);
-                }
+                map.erase(ch);
             }
         }
-        {
-            // TODO : maybe should not use this auto delete, may cause some error
-            //auto it = channels_.find(name);
-            //if(it == channels_.end()) {
-            //    RK_INFO(Event, "Cannot Find Channel: {}, Nothing to Remove", name);
-            //}
-            //else if(it->second->GetIsEmpty()) {
-            //    // Remove Empty Event Channel
-            //    channels_.erase(it);
-            //}
+    }
+
+    void EventManager::RemoveChannel(const std::string& name) {
+        for(auto it : event_channel_map_) {
+            auto& channel = it.second;
+            auto result = channel.find(name);
+            if(result != channel.end()) {
+                channel.erase(result);
+            }
+        }
+        auto it = channels_.find(name);
+        if(it != channels_.end()) {
+            channels_.erase(it);
         }
     }
 
-    void EventManager::AddEventListener(void* function, EventType type, const std::string& channel_name) {
-
+    void EventManager::AddEventListener(const EventDelegate& function, const EventType& type, const std::string& channel_name) {
+        auto type_map = event_channel_map_.find(type);
+        if(type_map != event_channel_map_.end()){
+            auto it = type_map->second.find(channel_name);
+            if(it != type_map->second.end()) {
+                it->second->RegisterEvent(type, function);
+            }
+            else {
+                RK_WARN(Event, "Cannot Find Channel : {}", channel_name);
+            }
+        }
+        else {
+            RK_WARN(Event, "Cannot Find Channel {} In Event Channel Map", channel_name);
+        }
     }
 
-    void EventManager::RemoveEventListener(void* function, EventType type, const std::string& channel_name) {
+    void EventManager::RemoveEventListener(const EventDelegate& function, const EventType& type, const std::string& channel_name) {
+        auto type_map = event_channel_map_.find(type);
+        if(type_map != event_channel_map_.end()){
+            auto it = type_map->second.find(channel_name);
+            if(it != type_map->second.end()) {
+                it->second->UnregisterEvent(type, function);
+            }
+            else {
+                RK_WARN(Event, "Cannot Find Channel : {}", channel_name);
+            }
+        }
+        else {
+            RK_WARN(Event, "Cannot Find Channel {} In Event Channel Map", channel_name);
+        }
+    }
 
+    void EventManager::AddEventListener(const EventDelegate& function, const std::string& name, const std::string& channel_name) {
+        EventType type = 0x00;  // TODO : hash name
+        auto type_map = event_channel_map_.find(type);
+        if(type_map != event_channel_map_.end()){
+            auto it = type_map->second.find(channel_name);
+            if(it != type_map->second.end()) {
+                it->second->RegisterEvent(type, function);
+            }
+            else {
+                RK_WARN(Event, "Cannot Find Channel : {}", channel_name);
+            }
+        }
+        else {
+            RK_WARN(Event, "Cannot Find Channel {} In Event Channel Map", channel_name);
+        }
+    }
+
+    void EventManager::RemoveEventListener(const EventDelegate& function, const std::string& name, const std::string& channel_name) {
+        EventType type = 0x00;  // TODO : hash name
+        auto type_map = event_channel_map_.find(type);
+        if(type_map != event_channel_map_.end()){
+            auto it = type_map->second.find(channel_name);
+            if(it != type_map->second.end()) {
+                it->second->UnregisterEvent(type, function);
+            }
+            else {
+                RK_WARN(Event, "Cannot Find Channel : {}", channel_name);
+            }
+        }
+        else {
+            RK_WARN(Event, "Cannot Find Channel {} In Event Channel Map", channel_name);
+        }
     }
 }
