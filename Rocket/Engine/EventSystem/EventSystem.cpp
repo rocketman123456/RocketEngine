@@ -37,13 +37,13 @@ namespace Rocket {
         auto it = event_channel_map_.find(type);
         if(it == event_channel_map_.end()) {
             event_channel_map_[type] = {};
-            event_channel_map_[type][channel->GetName()] = channel;
+            event_channel_map_[type][hash(channel->GetName())] = channel;
         }
         else {
             auto& map = it->second;
-            map[channel->GetName()] = channel;
+            map[hash(channel->GetName())] = channel;
         }
-        channels_[channel->GetName()] = channel;
+        channels_[hash(channel->GetName())] = channel;
     }
 
     void EventManager::RemoveChannel(EventType type, const std::string& name) {
@@ -53,7 +53,7 @@ namespace Rocket {
         }
         else {
             auto& map = it->second;
-            auto ch = map.find(name);
+            auto ch = map.find(hash(name));
             if(ch == map.end()) {
                 RK_INFO(Event, "Cannot Find Channel: {}, Nothing to Remove", name);
             }
@@ -66,12 +66,12 @@ namespace Rocket {
     void EventManager::RemoveChannel(const std::string& name) {
         for(auto it : event_channel_map_) {
             auto& channel = it.second;
-            auto result = channel.find(name);
+            auto result = channel.find(hash(name));
             if(result != channel.end()) {
                 channel.erase(result);
             }
         }
-        auto it = channels_.find(name);
+        auto it = channels_.find(hash(name));
         if(it != channels_.end()) {
             channels_.erase(it);
         }
@@ -80,7 +80,7 @@ namespace Rocket {
     void EventManager::AddEventListener(const EventDelegate& function, const EventType& type, const std::string& channel_name) {
         auto type_map = event_channel_map_.find(type);
         if(type_map != event_channel_map_.end()){
-            auto it = type_map->second.find(channel_name);
+            auto it = type_map->second.find(hash(channel_name));
             if(it != type_map->second.end()) {
                 it->second->RegisterEvent(type, function);
             }
@@ -96,7 +96,7 @@ namespace Rocket {
     void EventManager::RemoveEventListener(const EventDelegate& function, const EventType& type, const std::string& channel_name) {
         auto type_map = event_channel_map_.find(type);
         if(type_map != event_channel_map_.end()){
-            auto it = type_map->second.find(channel_name);
+            auto it = type_map->second.find(hash(channel_name));
             if(it != type_map->second.end()) {
                 it->second->UnregisterEvent(type, function);
             }
@@ -110,10 +110,10 @@ namespace Rocket {
     }
 
     void EventManager::AddEventListener(const EventDelegate& function, const std::string& name, const std::string& channel_name) {
-        EventType type = 0x00;  // TODO : hash name
+        EventType type = hash(name);
         auto type_map = event_channel_map_.find(type);
         if(type_map != event_channel_map_.end()){
-            auto it = type_map->second.find(channel_name);
+            auto it = type_map->second.find(hash(channel_name));
             if(it != type_map->second.end()) {
                 it->second->RegisterEvent(type, function);
             }
@@ -127,10 +127,10 @@ namespace Rocket {
     }
 
     void EventManager::RemoveEventListener(const EventDelegate& function, const std::string& name, const std::string& channel_name) {
-        EventType type = 0x00;  // TODO : hash name
+        EventType type = hash(name);
         auto type_map = event_channel_map_.find(type);
         if(type_map != event_channel_map_.end()){
-            auto it = type_map->second.find(channel_name);
+            auto it = type_map->second.find(hash(channel_name));
             if(it != type_map->second.end()) {
                 it->second->UnregisterEvent(type, function);
             }

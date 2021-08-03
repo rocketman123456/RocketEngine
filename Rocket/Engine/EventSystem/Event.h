@@ -1,6 +1,7 @@
 #pragma once
 #include "Utils/Variant.h"
 #include "Utils/Delegate.h"
+#include "Utils/Hashing.h"
 #include "Log/Log.h"
 
 #include <vector>
@@ -26,9 +27,9 @@ namespace Rocket {
     // TODO : reflect event data
     // TODO : add event time stamp
     struct Event {
-        explicit Event(const std::string& name) : name_(name), type_(0x00), variable_(nullptr), size_(0) {}
+        explicit Event(const std::string& name) : name_(name), variable_(nullptr), size_(0) { type_ = hash(name); }
         explicit Event(const std::string& name, EventType type) : name_(name), type_(type), variable_(nullptr), size_(0) {}
-		explicit Event(const std::string& name, EventDataPtr ptr, uint64_t size) : name_(name), variable_(ptr), size_(size), type_(0x00) {}
+		explicit Event(const std::string& name, EventDataPtr ptr, uint64_t size) : name_(name), variable_(ptr), size_(size) { type_ = hash(name); }
         explicit Event(const std::string& name, EventType type, EventDataPtr ptr, uint64_t size) : name_(name), type_(type), variable_(ptr), size_(size) {}
         Event(const Event& event) {
             name_ = event.name_;

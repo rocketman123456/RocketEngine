@@ -5,6 +5,11 @@ target("memory_test")
     add_options("memory_check")
 target_end()
 
+target("hash_test")
+    set_kind("binary")
+    add_files("hash_test.cpp")
+target_end()
+
 target("glfw_test")
     set_kind("binary")
     add_files("glfw_test.cpp")
