@@ -36,11 +36,11 @@ namespace Rocket {
     };
 
     inline std::ostream& operator << (std::ostream& os, const MilliSecond& s) {
-		return os << s << " ms ";
+		return os << double(s) << " ms ";
 	}
 
     inline std::ostream& operator << (std::ostream& os, const Second& s) {
-		return os << s << " s ";
+		return os << double(s) << " s ";
 	}
 
     inline std::ostream& operator << (std::ostream& os, const TimeStep& s) {

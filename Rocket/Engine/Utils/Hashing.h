@@ -14,7 +14,7 @@ namespace Rocket {
         template<>
         struct hasher<const char *> {
             uint64_t constexpr operator()(char const* input) const { return *input ? static_cast<unsigned int>(*input) + 33 * (*this)(input + 1) : 5381; }
-            uint64_t operator()( const std::string& str ) const { return (*this)(str); }
+            uint64_t operator()( const std::string& str ) const { return (*this)(str.c_str()); }
         };
 
         constexpr int16_t i16(const char* s, int16_t v) { return *s ? i16(s + 1, v * 256 + *s) : v; }

@@ -12,8 +12,8 @@ namespace Rocket {
     class OutOfRange : implements Execption {
     public:
         OutOfRange(): flag_(1) {}
-        OutOfRange(int len, int index): len_(len), index_(index), flag_(2) {}
-        OutOfRange(const char* err): err_(err), flag_(3) {}
+        OutOfRange(int len, int index): flag_(2), len_(len), index_(index) {}
+        OutOfRange(const char* err): flag_(3), err_(err) {}
         virtual ~OutOfRange() = default;
     public:
         void what() const final;  //获取具体的错误信息

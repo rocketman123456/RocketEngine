@@ -42,13 +42,13 @@ namespace Rocket {
     };
 
     extern EventManager* g_EventManager;
-
-#define REGISTER_DELEGATE_CLASS(c,f,x,name, ch_name) {\
-    EventDelegate delegate; \
-    delegate.Bind<c,&f>(x); \
-    g_EventManager->AddEventListener(delegate, "hash", "hash");}
-#define REGISTER_DELEGATE_FN(f,name, ch_name) {\
-    EventDelegate delegate; \
-    delegate.Bind<&f>(); \
-    ret = g_EventManager->RemoveEventListener(delegate, "hash", "hash");}
 }
+
+#define REGISTER_DELEGATE_CLASS(class,function,instance,name,ch_name) {\
+    Rocket::EventDelegate delegate; \
+    delegate.Bind<class,&function>(instance); \
+    Rocket::g_EventManager->AddEventListener(delegate, name, ch_name); }
+#define REGISTER_DELEGATE_FN(function,name,ch_name) {\
+    Rocket::EventDelegate delegate; \
+    delegate.Bind<&function>(); \
+    Rocket::g_EventManager->RemoveEventListener(delegate, name, ch_name); }

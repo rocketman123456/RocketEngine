@@ -14,7 +14,7 @@ add_rules(
     "mode.releasedbg"
 )
 set_languages("c99", "c++17")
---set_warnings("all", "error")
+set_warnings("all", "error")
 
 --
 -- Add Required Modules

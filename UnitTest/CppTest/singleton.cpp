@@ -1,6 +1,7 @@
 #include <iostream>
-#include "singleton.h"
+#include "Pattern/Singleton.h"
 
+using namespace Rocket;
 using namespace std;
 
 SINGLETON_CLASS(A) {};

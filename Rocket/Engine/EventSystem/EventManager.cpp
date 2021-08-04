@@ -1,4 +1,4 @@
-#include "EventSystem/EventSystem.h"
+#include "EventSystem/EventManager.h"
 #include "Log/Log.h"
 
 namespace Rocket {
@@ -27,10 +27,12 @@ namespace Rocket {
 
     void EventManager::QueueEvent(EventPtr& event) {
         EventType type = event->GetEventType();
+        event_channel_map_.find(type);
     }
 
     void EventManager::TriggerEvent(EventPtr& event) {
         EventType type = event->GetEventType();
+        event_channel_map_.find(type);
     }
 
     void EventManager::AddChannel(EventType type, ChannelPtr channel) {

@@ -52,7 +52,7 @@ namespace Rocket {
         file_.file_name = file_name;
         file_.full_name = path + file_name;
 
-        int32_t result;
+        int32_t result = 0;
         if(mode_ == FileOperateMode::ReadBinary)
             result = UnzipInit();
         else if(mode_ == FileOperateMode::WriteBinary)

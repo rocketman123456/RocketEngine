@@ -20,17 +20,16 @@ namespace Rocket {
     using EventDataPtr = Variant*;
     using EventPtr = std::shared_ptr<Event>;
     using EventDelegate = Delegate<bool(EventPtr&)>;
-    using EventListener = std::unordered_map<EventType, EventDelegate>;
     using EventFunction = bool (*) (EventPtr&);
     //typedef bool(*EventFunction)(EventPtr&);
 
     // TODO : reflect event data
     // TODO : add event time stamp
     struct Event {
-        explicit Event(const std::string& name) : name_(name), variable_(nullptr), size_(0) { type_ = hash(name); }
-        explicit Event(const std::string& name, EventType type) : name_(name), type_(type), variable_(nullptr), size_(0) {}
-		explicit Event(const std::string& name, EventDataPtr ptr, uint64_t size) : name_(name), variable_(ptr), size_(size) { type_ = hash(name); }
-        explicit Event(const std::string& name, EventType type, EventDataPtr ptr, uint64_t size) : name_(name), type_(type), variable_(ptr), size_(size) {}
+        explicit Event(const std::string& name) : size_(0), variable_(nullptr), name_(name) { type_ = hash(name); }
+        explicit Event(const std::string& name, EventType type) : type_(type), size_(0), variable_(nullptr), name_(name) {}
+		explicit Event(const std::string& name, EventDataPtr ptr, uint64_t size) : size_(size), variable_(ptr), name_(name) { type_ = hash(name); }
+        explicit Event(const std::string& name, EventType type, EventDataPtr ptr, uint64_t size) : type_(type), size_(size), variable_(ptr), name_(name) {}
         Event(const Event& event) {
             name_ = event.name_;
             type_ = event.type_;
@@ -72,6 +71,7 @@ namespace Rocket {
             memcpy(variable_, other.variable_, sizeof(Variant) * size_);
             time_stamp_ = other.time_stamp_;
             time_delay_ = other.time_delay_;
+            return *this;
         }
         Event& operator = (Event&& other) {
             name_ = other.name_;
@@ -80,6 +80,7 @@ namespace Rocket {
             variable_ = other.variable_;
             time_stamp_ = other.time_stamp_;
             time_delay_ = other.time_delay_;
+            return *this;
         }
         
         // 0. use different channel to handle different event type

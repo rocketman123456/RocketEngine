@@ -28,6 +28,6 @@ namespace Rocket {
 		os << "}";
         std::string temp;
         os >> temp;
-		return std::move(temp);
+		return temp;
     }
 }

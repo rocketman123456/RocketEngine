@@ -1,3 +1,4 @@
+//https://vorbrodt.blog/2020/07/10/singleton-pattern/
 #pragma once
 #include "Core/Declare.h"
 
@@ -12,11 +13,11 @@ namespace Rocket {
     public:
         template<typename... Args>
         static void Create(Args&&... args) {
-            static std::mutex s_lock;
-            std::scoped_lock lock(s_lock);
-
-            if(!s_instance) s_instance.reset(new T(std::forward<Args>(args)...));
-            else throw std::logic_error("This singleton has already been created!");
+            //static std::mutex s_lock;
+            //std::scoped_lock lock(s_lock);
+            std::call_once(flag, [&](){ s_instance.reset(new T(std::forward<Args>(args)...)); });
+            //if(!s_instance) s_instance.reset(new T(std::forward<Args>(args)...));
+            //else throw std::logic_error("This singleton has already been created!");
         }
 
         static T* Instance() noexcept { return s_instance.get(); }
@@ -32,6 +33,7 @@ namespace Rocket {
     private:
         using storage_t = std::unique_ptr<T>;
         inline static storage_t s_instance = nullptr;
+        inline static std::once_flag flag;
     };
 
     template<typename T>
@@ -39,16 +41,17 @@ namespace Rocket {
     public:
         template<typename... Args>
         static void Create(Args&&... args) {
-            static std::mutex s_lock;
-            std::scoped_lock lock(s_lock);
+            //static std::mutex s_lock;
+            //std::scoped_lock lock(s_lock);
 
             struct Q : T {
                 using T::T;
                 void __abstract_singleton__() override {}
             };
 
-            if(!s_instance) s_instance.reset(new Q(std::forward<Args>(args)...));
-            else throw std::logic_error("This abstract singleton has already been created!");
+            std::call_once(flag, [&](){ s_instance.reset(new Q(std::forward<Args>(args)...)); });
+            //if(!s_instance) s_instance.reset(new Q(std::forward<Args>(args)...));
+            //else throw std::logic_error("This abstract singleton has already been created!");
         }
 
         static T* Instance() noexcept { return s_instance.get(); }
@@ -64,6 +67,7 @@ namespace Rocket {
     private:
         using storage_t = std::unique_ptr<T>;
         inline static storage_t s_instance = nullptr;
+        inline static std::once_flag flag;
 
         virtual void __abstract_singleton__() = 0;
     };
