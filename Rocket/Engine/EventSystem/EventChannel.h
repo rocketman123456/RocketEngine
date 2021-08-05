@@ -4,16 +4,18 @@
 #include "Containers/Queue/BoundedQueue.h"
 #include "Utils/TimeStep.h"
 
+#include <vector>
+
 namespace Rocket {
     class EventChannel;
-    using EventListener = std::unordered_map<EventType, EventDelegate>;
     using ChannelPtr = std::shared_ptr<EventChannel>;
+    using EventListener = std::unordered_map<EventType, std::vector<EventDelegate>>;
     using EventStorage = std::unordered_map<EventType, UnboundedQueue<EventPtr>>;
 
     class EventChannel {
     public:
         explicit EventChannel();                                        // Auto Generate Name
-        explicit EventChannel(const std::string name): name_(name) {}   // Custom Name
+        explicit EventChannel(const std::string& name): name_(name) {}   // Custom Name
         virtual ~EventChannel() = default;
 
         void RegisterEvent(const EventType& type, const EventDelegate& function);

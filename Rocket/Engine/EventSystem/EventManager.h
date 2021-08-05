@@ -23,6 +23,7 @@ namespace Rocket {
         virtual void Finalize() final;
         virtual void Tick(TimeStep step) final;
 
+        void AddChannel(const std::string& name, ChannelPtr channel);
         void AddChannel(EventType type, ChannelPtr channel);
         // Remove Channel From Special Event Type, Will NOT Remove Empty Channel
         void RemoveChannel(EventType type, const std::string& name);
@@ -51,4 +52,4 @@ namespace Rocket {
 #define REGISTER_DELEGATE_FN(function,name,ch_name) {\
     Rocket::EventDelegate delegate; \
     delegate.Bind<&function>(); \
-    Rocket::g_EventManager->RemoveEventListener(delegate, name, ch_name); }
+    Rocket::g_EventManager->AddEventListener(delegate, name, ch_name); }

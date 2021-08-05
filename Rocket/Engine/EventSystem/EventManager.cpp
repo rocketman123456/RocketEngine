@@ -27,25 +27,30 @@ namespace Rocket {
 
     void EventManager::QueueEvent(EventPtr& event) {
         EventType type = event->GetEventType();
-        event_channel_map_.find(type);
+        auto result = event_channel_map_.find(type);
+        for(auto channel : result->second) {
+            channel.second->QueueEvent(event);
+        }
     }
 
     void EventManager::TriggerEvent(EventPtr& event) {
         EventType type = event->GetEventType();
-        event_channel_map_.find(type);
+        auto result = event_channel_map_.find(type);
+        for(auto channel : result->second) {
+            channel.second->TriggerEvent(event);
+        }
+    }
+
+    void EventManager::AddChannel(const std::string& name, ChannelPtr channel) {
+        event_channel_map_[hash(name)][hash(channel->GetName())] = channel;
+        channels_[hash(channel->GetName())] = channel;
+        RK_INFO(Event, "Channels Size {}", channels_.size());
     }
 
     void EventManager::AddChannel(EventType type, ChannelPtr channel) {
-        auto it = event_channel_map_.find(type);
-        if(it == event_channel_map_.end()) {
-            event_channel_map_[type] = {};
-            event_channel_map_[type][hash(channel->GetName())] = channel;
-        }
-        else {
-            auto& map = it->second;
-            map[hash(channel->GetName())] = channel;
-        }
+        event_channel_map_[type][hash(channel->GetName())] = channel;
         channels_[hash(channel->GetName())] = channel;
+        RK_INFO(Event, "Channels Size {}", channels_.size());
     }
 
     void EventManager::RemoveChannel(EventType type, const std::string& name) {

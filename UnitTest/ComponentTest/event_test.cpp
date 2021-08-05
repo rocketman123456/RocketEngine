@@ -5,6 +5,9 @@
 #include "Log/Log.h"
 
 #include <random>
+#include <thread>
+#include <mutex>
+#include <chrono>
 
 using namespace Rocket;
 
@@ -13,11 +16,13 @@ namespace Rocket {
 }
 
 bool EventHandle(EventPtr& event) {
+    RK_TRACE(Event, "EventHandle: {}", event->ToString());
     return false;
 }
 
 struct TestEventHandle {
     bool EventHandle(EventPtr& event) {
+        RK_TRACE(Event, "EventHandleClass: {}", event->ToString());
         return false;
     }
 };
@@ -31,7 +36,7 @@ int main() {
         return 1;
     }
     ChannelPtr channel = std::shared_ptr<EventChannel>(new EventChannel("test_channel"));
-    g_EventManager->AddChannel("test"_hash, channel);
+    g_EventManager->AddChannel("test", channel);
     // Event Listener Register
     REGISTER_DELEGATE_FN(EventHandle, "test", "test_channel");
     TestEventHandle test;
@@ -40,9 +45,15 @@ int main() {
     EventPtr event = EventPtr(new Event("test"));
     RK_TRACE(Event, "{}", event->ToString());
     // Event Dispatch
-    for(int i = 0; i < 100'000; ++i) {
-        g_EventManager->Tick(10);
-        for(int k = 0; k < 100'000; ++k){
+    std::thread producer([&]() {
+		while(1) {
+			g_EventManager->Tick(10);
+            std::this_thread::sleep_for(std::chrono::milliseconds(10));
+		}
+	});
+
+    std::thread consumer([](){
+        while(1) {
             Variant* data = new Variant[20];
             for(int j = 0; j < 20; ++j) {
                 data[j].type = Variant::TYPE_INT32;
@@ -50,8 +61,13 @@ int main() {
             }
             EventPtr event = EventPtr(new Event("test", data, 20));
             g_EventManager->QueueEvent(event);
+            std::this_thread::sleep_for(std::chrono::milliseconds(1000));
         }
-    }
+    });
+
+    producer.join();
+	consumer.join();
+
     // Finalize
     g_EventManager->Finalize();
     delete g_EventManager;
