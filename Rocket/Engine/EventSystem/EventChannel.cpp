@@ -40,9 +40,11 @@ namespace Rocket {
                 EventPtr event;
                 auto& queue_ = event_queue->second;
                 RK_INFO(Event, "Queue Event Count {}", queue_.size());
+                //queue_.block();
                 while(queue_.pop(event)) {
                     DispatchEvent(event);
                 }
+                //queue_.unblock();
                 event_queue++;
             }
         }
