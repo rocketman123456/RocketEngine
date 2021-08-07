@@ -15,6 +15,7 @@
 #include <ostream>
 #include <cstdlib>
 
+#ifdef RK_MEMORY_CHECK
 namespace Rocket::Memory::detail {
 	template<typename T>
 	struct malloc_allocator_t : std::allocator<T> {
@@ -148,4 +149,5 @@ void operator delete [] (void* ptr, Rocket::Memory::detail::string_t, int, Rocke
 
 #ifndef new
 #define new new(__FILE__, __LINE__, __FUNCTION__)
+#endif
 #endif

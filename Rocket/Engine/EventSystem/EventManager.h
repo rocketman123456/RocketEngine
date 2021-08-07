@@ -2,6 +2,7 @@
 #include "Pattern/IRuntimeModule.h"
 #include "EventSystem/Event.h"
 #include "EventSystem/EventChannel.h"
+#include "Utils/Timer.h"
 
 #include <set>
 #include <memory>
@@ -42,6 +43,7 @@ namespace Rocket {
         EventChannelMap event_channel_map_;
     };
 
+    // Must Generate An Instance Somewhere
     extern EventManager* g_EventManager;
 }
 

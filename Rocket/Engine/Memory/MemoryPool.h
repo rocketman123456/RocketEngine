@@ -114,7 +114,7 @@ namespace Rocket {
             m_allocated_blocks.push_back(block);
 
             chunk_ptr_t chunk = block;
-#ifdef ENABLE_NEW_DELETE_TRACE_DUMP
+#ifdef RK_MEMORY_CHECK
 #ifdef new  // For Placement New
 #undef new
 #endif
@@ -124,7 +124,7 @@ namespace Rocket {
                 chunk = chunk->m_next;
             }
             new (chunk) chunk_t{ tail };
-#ifdef ENABLE_NEW_DELETE_TRACE_DUMP
+#ifdef RK_MEMORY_CHECK
 #ifndef new
 #define new new(__FILE__, __LINE__, __FUNCTION__)
 #endif

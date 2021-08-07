@@ -2,6 +2,7 @@
 #include "Utils/Variant.h"
 #include "Utils/Delegate.h"
 #include "Utils/Hashing.h"
+#include "Utils/Timer.h"
 #include "Log/Log.h"
 
 #include <vector>
@@ -26,10 +27,10 @@ namespace Rocket {
     // TODO : reflect event data
     // TODO : add event time stamp
     struct Event {
-        explicit Event(const std::string& name) : size_(0), variable_(nullptr), name_(name) { type_ = hash(name); }
-        explicit Event(const std::string& name, EventType type) : type_(type), size_(0), variable_(nullptr), name_(name) {}
-		explicit Event(const std::string& name, EventDataPtr ptr, uint64_t size) : size_(size), variable_(ptr), name_(name) { type_ = hash(name); }
-        explicit Event(const std::string& name, EventType type, EventDataPtr ptr, uint64_t size) : type_(type), size_(size), variable_(ptr), name_(name) {}
+        explicit Event(const std::string& name);
+        explicit Event(const std::string& name, EventType type);
+		explicit Event(const std::string& name, EventDataPtr ptr, uint64_t size);
+        explicit Event(const std::string& name, EventType type, EventDataPtr ptr, uint64_t size);
         Event(const Event& event) {
             name_ = event.name_;
             type_ = event.type_;
@@ -94,5 +95,7 @@ namespace Rocket {
         double time_delay_ = 0.0f;  //  ms  4 bytes
         bool handled_ = false;      //  1 byte
         std::string name_;          //  event name
+
+        static ElapseTimer timer_s;
     };
 }

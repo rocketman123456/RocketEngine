@@ -1,17 +1,18 @@
 #include "Memory/MemoryCheck.h"
 
+#ifdef RK_MEMORY_CHECK
+#include <thread>
+#include <mutex>
+
 #ifdef new
 #undef new
 #endif
 
-#ifdef RK_MEMORY_CHECK
-#define ENABLE_NEW_DELETE_TRACE_DUMP
-#endif
+static inline std::mutex memory_allocate_mutex_s;
 
-#ifdef ENABLE_NEW_DELETE_TRACE_DUMP
 // create global dump variable, when program exit, it will use ~__dump_all__() automatically and dump all info
 namespace { inline const struct __dump_all__ { ~__dump_all__() { Rocket::Memory::dump_all(); } } __dump_all_on_exit__; }
-#endif
+
 
 void* operator new (std::size_t n) {
 	void* ptr = std::malloc(n);
@@ -22,7 +23,10 @@ void* operator new (std::size_t n) {
 void* operator new (std::size_t n, Rocket::Memory::detail::new_entry_t&& entry) {
 	void* ptr = ::operator new(n);
 	entry.ptr = ptr;
-	try { Rocket::Memory::detail::get_new_entry_set()->insert(std::forward<decltype(entry)>(entry)); }
+	try {
+		std::unique_lock guard(memory_allocate_mutex_s);
+		Rocket::Memory::detail::get_new_entry_set()->insert(std::forward<decltype(entry)>(entry)); 
+	}
 	catch(...) {}
 	return ptr;
 }
@@ -69,4 +73,5 @@ void operator delete [] (
 
 #ifndef new
 #define new new(__FILE__, __LINE__, __FUNCTION__)
+#endif
 #endif

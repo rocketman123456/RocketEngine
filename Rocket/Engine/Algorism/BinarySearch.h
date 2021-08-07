@@ -4,9 +4,9 @@
 namespace Rocket {
     namespace Algorism {
         // sorted  -- a sorted array, Small first !
-        // compare -- >0 T1 > T2
-        //         -- =0 T1 = T2
-        //         -- <0 T1 < T2
+        // compare -- >0 -> T1 > T2
+        //         -- =0 -> T1 = T2
+        //         -- <0 -> T1 < T2
         template<typename T>
         int64_t BinarySearchSF(T* sorted, std::size_t size, T& key, std::function<int64_t(T&,T&)> compare) {
             int64_t low = 0;

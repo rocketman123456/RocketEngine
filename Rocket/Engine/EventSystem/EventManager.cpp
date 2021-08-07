@@ -3,12 +3,14 @@
 
 namespace Rocket {
     int EventManager::Initialize() {
+        Event::timer_s.Start();
         channels_.clear();
         event_channel_map_.clear();
         return 0;
     }
 
     void EventManager::Finalize() {
+        Event::timer_s.Stop();
         channels_.clear();
         event_channel_map_.clear();
     }
