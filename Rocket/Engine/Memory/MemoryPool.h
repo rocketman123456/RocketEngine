@@ -1,5 +1,4 @@
 //https://vorbrodt.blog/2021/06/04/how-to-implement-a-memory-pool/
-
 #pragma once
 
 #include <new>
@@ -63,7 +62,7 @@ namespace Rocket {
             chunk->m_next = m_next_chunk;
             m_next_chunk = chunk;
             --m_chunks;
-#ifndef NDEBUG
+#ifdef RK_DEBUG
             std::cout << "free   chunk #" << std::setw(2) << std::setfill('0') << m_next_chunk->m_seq << " " << ptr << std::endl;
 #endif
         }
@@ -115,16 +114,20 @@ namespace Rocket {
             m_allocated_blocks.push_back(block);
 
             chunk_ptr_t chunk = block;
+#ifdef ENABLE_NEW_DELETE_TRACE_DUMP
 #ifdef new  // For Placement New
 #undef new
+#endif
 #endif
             for(std::size_t i = 0; i < ChunksPerBlock - 1; ++i) {
                 new (chunk) chunk_t{ chunk + 1 };
                 chunk = chunk->m_next;
             }
             new (chunk) chunk_t{ tail };
+#ifdef ENABLE_NEW_DELETE_TRACE_DUMP
 #ifndef new
 #define new new(__FILE__, __LINE__, __FUNCTION__)
+#endif
 #endif
             return block;
         }
