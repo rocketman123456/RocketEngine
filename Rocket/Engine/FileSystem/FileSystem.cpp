@@ -4,7 +4,7 @@
 #include <exception>
 
 namespace Rocket {
-    std::unique_ptr<OsFile> FileSystem::OpenSync(
+    OsFilePtr FileSystem::OpenSync(
         const std::string& path, 
         const std::string& file_name, 
         FileOperateMode mode) {
@@ -21,7 +21,7 @@ namespace Rocket {
         file->Finalize();
     }
 
-    std::unique_ptr<ZipFile> FileSystem::OpenZip(
+    ZipFilePtr FileSystem::OpenZip(
         const std::string& path, 
         const std::string& file_name, 
         FileOperateMode mode) {
@@ -34,11 +34,11 @@ namespace Rocket {
         return file;
     }
 
-    void FileSystem::CloseZip(std::unique_ptr<ZipFile>&& file) {
+    void FileSystem::CloseZip(ZipFilePtr&& file) {
         file->Finalize();
     }
 
-    std::unique_ptr<OsFileAsync> FileSystem::OpenAsync(
+    OsFileAsyncPtr FileSystem::OpenAsync(
         const std::string& path, 
         const std::string& file_name, 
         FileOperateMode mode) {
@@ -51,7 +51,7 @@ namespace Rocket {
         return file;
     }
 
-    void FileSystem::CloseAsync(std::unique_ptr<OsFileAsync>&& file) {
+    void FileSystem::CloseAsync(OsFileAsyncPtr&& file) {
         file->Finalize();
     }
 }

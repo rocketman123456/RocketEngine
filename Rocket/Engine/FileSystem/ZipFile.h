@@ -66,4 +66,6 @@ namespace Rocket {
         ZipGlobalInfo  zip_info_;
         ZipContentsMap content_;
     };
+
+    using ZipFilePtr = std::unique_ptr<ZipFile>;
 }

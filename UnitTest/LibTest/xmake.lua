@@ -13,3 +13,12 @@ target("unzip_test")
         "minizip", "zlib", {public = true}
     )
 target_end()
+
+target("yaml_test")
+    set_kind("binary")
+    add_files("yaml_test.cpp")
+    add_packages("yaml-cpp", {public = true})
+    add_deps("RocketEngine")
+    add_options("console_log")
+    add_options("memory_check")
+target_end()

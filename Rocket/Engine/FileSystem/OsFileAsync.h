@@ -35,4 +35,6 @@ namespace Rocket {
     protected:
         bool async_;
     };
+
+    using OsFileAsyncPtr = std::unique_ptr<OsFileAsync>;
 }

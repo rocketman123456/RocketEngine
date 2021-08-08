@@ -28,7 +28,10 @@ namespace Rocket {
             if(quit) {
                 break;
             }
-            root_path = root_path.parent_path();
+            if(root_path.has_parent_path())
+                root_path = root_path.parent_path();
+            else
+                break;
         }
 
         std::string root_dir = root_path.string();

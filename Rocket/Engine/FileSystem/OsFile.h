@@ -39,4 +39,6 @@ namespace Rocket {
         FileHandle  file_;
         bool        initialized_;
     };
+
+    using OsFilePtr = std::unique_ptr<OsFile>;
 }
