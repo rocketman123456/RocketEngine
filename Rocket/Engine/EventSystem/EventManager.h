@@ -1,5 +1,6 @@
 #pragma once
 #include "Pattern/IRuntimeModule.h"
+#include "Pattern/Singleton.h"
 #include "EventSystem/Event.h"
 #include "EventSystem/EventChannel.h"
 #include "Utils/Timer.h"
@@ -14,7 +15,7 @@ namespace Rocket {
     using EventChannelMap = std::unordered_map<EventType, ChannelMap>;
 
     // TODO : use hash string id to replace string, for better compare performance
-    class EventManager : implements IRuntimeModule {
+    class EventManager : implements IRuntimeModule, implements AbstractSingleton<EventManager> {
         RUNTIME_MODULE_TYPE(EventManager);
     public:
         EventManager() = default;
@@ -42,16 +43,13 @@ namespace Rocket {
         ChannelMap channels_;
         EventChannelMap event_channel_map_;
     };
-
-    // Must Generate An Instance Somewhere
-    extern EventManager* g_EventManager;
 }
 
 #define REGISTER_DELEGATE_CLASS(class,function,instance,name,ch_name) {\
     Rocket::EventDelegate delegate; \
     delegate.Bind<class,&function>(instance); \
-    Rocket::g_EventManager->AddEventListener(delegate, name, ch_name); }
+    Rocket::EventManager::Instance()->AddEventListener(delegate, name, ch_name); }
 #define REGISTER_DELEGATE_FN(function,name,ch_name) {\
     Rocket::EventDelegate delegate; \
     delegate.Bind<&function>(); \
-    Rocket::g_EventManager->AddEventListener(delegate, name, ch_name); }
+    Rocket::EventManager::Instance()->AddEventListener(delegate, name, ch_name); }

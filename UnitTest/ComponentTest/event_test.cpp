@@ -11,10 +11,6 @@
 
 using namespace Rocket;
 
-namespace Rocket {
-    EventManager* g_EventManager = nullptr;
-}
-
 bool EventHandle(EventPtr& event) {
     RK_TRACE(Event, "EventHandle: {}", event->ToString());
     return false;
@@ -30,13 +26,13 @@ struct TestEventHandle {
 int main() {
     Rocket::Log::Init();
     // Initialize
-    g_EventManager = new EventManager;
-    auto result = g_EventManager->Initialize();
+    EventManager::Create();
+    auto result = EventManager::Instance()->Initialize();
     if(result != 0) {
         return 1;
     }
     ChannelPtr channel = std::shared_ptr<EventChannel>(new EventChannel("test_channel"));
-    g_EventManager->AddChannel("test", channel);
+    EventManager::Instance()->AddChannel("test", channel);
     // Event Listener Register
     REGISTER_DELEGATE_FN(EventHandle, "test", "test_channel");
     TestEventHandle test;
@@ -54,9 +50,9 @@ int main() {
                     data[j].as_int32 = std::rand();
                 }
                 EventPtr event = EventPtr(new Event("test", data, 4));
-                g_EventManager->QueueEvent(event);
+                EventManager::Instance()->QueueEvent(event);
             }
-			g_EventManager->Tick(10);
+			EventManager::Instance()->Tick(10);
             std::this_thread::sleep_for(std::chrono::milliseconds(10));
 		}
 	};
@@ -69,7 +65,7 @@ int main() {
                 data[j].as_int32 = std::rand();
             }
             EventPtr event = EventPtr(new Event("test", data, 4));
-            g_EventManager->QueueEvent(event);
+            EventManager::Instance()->QueueEvent(event);
             std::this_thread::sleep_for(std::chrono::milliseconds(1000));
         }
     };
@@ -83,9 +79,9 @@ int main() {
                     data[j].as_int32 = std::rand();
                 }
                 EventPtr event = EventPtr(new Event("test", data, 4));
-                g_EventManager->QueueEvent(event);
+                EventManager::Instance()->QueueEvent(event);
             }
-			g_EventManager->Tick(10);
+			EventManager::Instance()->Tick(10);
             std::this_thread::sleep_for(std::chrono::milliseconds(10));
 		}
 	});
@@ -116,8 +112,7 @@ int main() {
     //}
 
     // Finalize
-    g_EventManager->Finalize();
-    delete g_EventManager;
+    EventManager::Instance()->Finalize();
 
     return 0;
 }

@@ -1,6 +1,7 @@
 target("RocketEngine")
     set_kind("static")
     add_files(
+        "Engine/AudioSystem/*.cpp",
         "Engine/Config/*.cpp",
         "Engine/EventSystem/*.cpp",
         "Engine/Exception/*.cpp",
@@ -10,7 +11,7 @@ target("RocketEngine")
         "Engine/Utils/*.cpp"
     )
     add_packages(
-        "glfw", "glad", "minizip", "zlib", "yaml-cpp", "spdlog", "fmt", {public = true}
+        "glfw", "glad", "minizip", "zlib", "yaml-cpp", "spdlog", "fmt", "openal-soft", {public = true}
     )
     add_options("console_log")
     add_options("memory_check")
