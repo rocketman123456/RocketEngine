@@ -5,6 +5,8 @@
 #undef new
 #endif
 
+#ifdef RK_MEMORY_CHECK
+
 #include <new>
 #include <memory>
 #include <vector>
@@ -15,7 +17,6 @@
 #include <ostream>
 #include <cstdlib>
 
-#ifdef RK_MEMORY_CHECK
 namespace Rocket::Memory::detail {
 	using string_t = const char*;
 	struct new_entry_t;
