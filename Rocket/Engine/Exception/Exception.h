@@ -5,7 +5,7 @@ namespace Rocket {
     Interface Execption {
     public:
         virtual ~Execption() = default;
-        virtual void what() const = 0;  //获取具体的错误信息
+        virtual void what() const = 0;
     };
 
     // TODO : replace std::execption s
@@ -16,11 +16,11 @@ namespace Rocket {
         OutOfRange(const char* err): flag_(3), err_(err) {}
         virtual ~OutOfRange() = default;
     public:
-        void what() const final;  //获取具体的错误信息
+        void what() const final;
     private:
-        int flag_;      //不同的flag表示不同的错误
-        int len_;       //当前数组的长度
-        int index_;     //当前使用的数组下标
+        int flag_;
+        int len_;
+        int index_;
         const char* err_;
     };
 
