@@ -38,6 +38,14 @@ namespace Rocket {
         file->Finalize();
     }
 
+    AudioFilePtr FileSystem::OpenAudio(const std::string& path, const std::string& file_name, FileOperateMode mode) {
+        return {};
+    }
+
+    void FileSystem::CloseAudio(AudioFilePtr&& file) {
+
+    }
+
     OsFileAsyncPtr FileSystem::OpenAsync(
         const std::string& path, 
         const std::string& file_name, 

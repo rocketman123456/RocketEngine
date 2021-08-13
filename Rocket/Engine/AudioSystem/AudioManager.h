@@ -1,6 +1,7 @@
 #pragma once
 #include "Pattern/IRuntimeModule.h"
 #include "Pattern/Singleton.h"
+#include "Parser/AudioPraser.h"
 
 namespace Rocket {
     class AudioManager : implements IRuntimeModule, implements AbstractSingleton<AudioManager> {
