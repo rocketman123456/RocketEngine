@@ -17,6 +17,9 @@
 #include <AL/alc.h>
 #include <AL/alext.h>
 
+#include <stdio.h>
+#include <sndfile.h>
+
 using namespace Rocket;
 
 namespace std {
@@ -232,13 +235,19 @@ int main() {
     std::vector<std::string> wav_files;
     for (auto& it:dir_list) {
         std::string name = it.path().filename().string();
-        std::cout << "File Name: " << root_path.string() + name << std::endl;
+        //std::cout << "File Name: " << root_path.string() + name << std::endl;
         wav_files.push_back(root_path.string() + name);
     }
 
     ALCdevice* openALDevice = alcOpenDevice(nullptr);
     if(!openALDevice)
         return 0;
+    
+    std::vector<std::string> device_name;
+    get_available_devices(device_name, openALDevice);
+    for(auto name : device_name) {
+        std::cout << "Device Name: " << name << std::endl;
+    }
 
     ALCcontext* openALContext;
     if(!alcCall(alcCreateContext, openALContext, openALDevice, openALDevice, nullptr) || !openALContext)
@@ -254,39 +263,46 @@ int main() {
         return 0;
     }
 
-    std::uint8_t channels;
-    std::int32_t sampleRate;
-    std::uint8_t bitsPerSample;
-    std::vector<char> soundData;
-    if(!load_wav(wav_files[0], channels, sampleRate, bitsPerSample, soundData))
-    {
-        std::cerr << "ERROR: Could not load wav" << std::endl;
-        return 0;
-    }
+    //std::uint8_t channels;
+    //std::int32_t sampleRate;
+    //std::uint8_t bitsPerSample;
+    //std::vector<char> soundData;
+    //if(!load_wav(wav_files[0], channels, sampleRate, bitsPerSample, soundData))
+    //{
+    //    std::cerr << "ERROR: Could not load wav" << std::endl;
+    //    return 0;
+    //}
+
+    SNDFILE* file = nullptr;
+    SF_INFO info;
+    sf_open(wav_files[0].c_str(), SFM_READ, &info);
+
+    printf ("Opened file '%s'\n", wav_files[0].c_str());
+	printf ("    Sample rate : %d\n", info.samplerate);
+	printf ("    Channels    : %d\n", info.channels);
+    printf ("    Format      : %X\n", info.format);
+    printf ("    Frames      : %d\n", info.frames);
+    printf ("    Sections    : %d\n", info.sections);
+
+    int16_t* data = new int16_t[info.frames * info.channels];
+    sf_readf_short(file, data, info.frames * info.channels);
 
     ALuint buffer;
     alCall(alGenBuffers, 1, &buffer);
 
-    ALenum format;
-    if(channels == 1 && bitsPerSample == 8)
-        format = AL_FORMAT_MONO8;
-    else if(channels == 1 && bitsPerSample == 16)
-        format = AL_FORMAT_MONO16;
-    else if(channels == 2 && bitsPerSample == 8)
-        format = AL_FORMAT_STEREO8;
-    else if(channels == 2 && bitsPerSample == 16)
-        format = AL_FORMAT_STEREO16;
-    else
-    {
-        std::cerr
-            << "ERROR: unrecognised wave format: "
-            << channels << " channels, "
-            << bitsPerSample << " bps" << std::endl;
-        return 0;
-    }
+    // TODO : use info.format to decode bit per sample and eiden etc.
+    ALenum format;// = info.format;
+    //if(info.channels == 1 && bitsPerSample == 8)
+    //    format = AL_FORMAT_MONO8;
+    //else if(info.channels == 1 && bitsPerSample == 16)
+    //    format = AL_FORMAT_MONO16;
+    //else if(info.channels == 2 && bitsPerSample == 8)
+    //    format = AL_FORMAT_STEREO8;
+    //else if(info.channels == 2 && bitsPerSample == 16)
+    format = AL_FORMAT_STEREO16;
 
-    alCall(alBufferData, buffer, format, soundData.data(), soundData.size(), sampleRate);
-    soundData.clear(); // erase the sound in RAM
+    alCall(alBufferData, buffer, format, data, info.frames * info.channels * sizeof(short), info.samplerate);
+    delete[] data;
 
     ALuint source;
     alCall(alGenSources, 1, &source);
