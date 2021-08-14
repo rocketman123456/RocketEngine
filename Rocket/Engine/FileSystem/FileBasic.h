@@ -12,10 +12,10 @@ namespace Rocket {
         NoOperation = 0,
         ReadBinary,
         WriteBinary,
-        ReadWriteBinary,
+        //ReadWriteBinary,
         ReadText,
         WriteText,
-        ReadWriteText,
+        //ReadWriteText,
         //AllOperation
     };
 
@@ -26,7 +26,8 @@ namespace Rocket {
     };
 
     struct FileHandle {
-        void*   file_pointer = nullptr;
+        void* file_pointer = nullptr;
+        void* extra_file_info = nullptr;
         int64_t total_size;
         std::string file_path;
         std::string file_name;

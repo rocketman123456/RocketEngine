@@ -23,6 +23,5 @@ namespace Rocket {
     }
     
     void OsFileAsync::Finalize() {
-        
     }
 }

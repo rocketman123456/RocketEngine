@@ -11,18 +11,8 @@ target("RocketEngine")
         "Engine/Utils/*.cpp"
     )
     add_packages(
-        "glfw", 
-        "glad", 
-        "minizip", 
-        "zlib", 
-        "yaml-cpp", 
-        "spdlog", 
-        "fmt", 
-        "openal-soft", 
-        "libsndfile",
-        {public = true}
+        "glfw", "glad", "minizip", "zlib", "yaml-cpp", "spdlog", "fmt", "openal-soft", {public = true}
     )
     add_options("console_log")
     add_options("memory_check")
-    set_license("LGPL-2.0")
 target_end()

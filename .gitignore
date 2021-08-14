@@ -45,3 +45,6 @@ build_cmake/
 #External/
 Target/
 ThirdParty/build/
+
+# Ignore Large Asset File
+Asset/Music/*.wav

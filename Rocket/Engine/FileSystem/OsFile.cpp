@@ -35,6 +35,8 @@ namespace Rocket {
     void OsFile::Finalize() {
         if(file_.file_pointer != nullptr)
             fclose((FILE*)file_.file_pointer);
+        if(file_.extra_file_info != nullptr)
+            delete file_.extra_file_info;
         initialized_ = false;
     }
 
