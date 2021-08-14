@@ -46,5 +46,6 @@ int main() {
         //delete[] (char*)buffer.buffer;
     }
 
+    Rocket::Log::End();
     return 0;
 }

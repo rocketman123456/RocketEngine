@@ -11,5 +11,6 @@ int main() {
     auto root = FindRootDir(name);
     std::cout << root << std::endl;
 
+    Rocket::Log::End();
     return 0;
 }

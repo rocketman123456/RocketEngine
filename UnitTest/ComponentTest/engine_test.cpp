@@ -8,5 +8,6 @@ int main() {
     RK_INFO(Core, "Hello Rocket Engine");
     RK_INFO(App, "Hello Rocket App");
 
+    Rocket::Log::End();
     return 0;
 }

@@ -27,5 +27,6 @@ int main() {
     std::string result = loader.Get<std::string>("basic", "app-name");
     std::cout << "app-name From Config Loader : " << node["app-name"].as<std::string>() << std::endl;
 
+    Rocket::Log::End();
     return 0;
 }

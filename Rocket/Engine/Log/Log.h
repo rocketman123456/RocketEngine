@@ -5,6 +5,7 @@
 #include <spdlog/spdlog.h>
 
 #define INIT_LOG_CHANNEL(x) s_##x##_logger_ = spdlog::stdout_color_mt(#x); SetLevel(level, s_##x##_logger_.get());
+#define END_LOG_CHANNEL(x) s_##x##_logger_.reset();
 #define DECLARE_LOG_CHANNEL(x) \
     public:\
         inline static spdlog::logger* Get##x##Logger() { return s_##x##_logger_.get(); } \
@@ -21,6 +22,7 @@ namespace Rocket {
     class Log {
     public:
         static void Init(LogLevel level = LogLevel::TRACE);
+        static void End();
 #ifdef RK_CONSOLE_LOG
         // 声明Log输出频道
         DECLARE_LOG_CHANNEL(Core);

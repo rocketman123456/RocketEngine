@@ -114,5 +114,6 @@ int main() {
     // Finalize
     EventManager::Instance()->Finalize();
 
+    Rocket::Log::End();
     return 0;
 }

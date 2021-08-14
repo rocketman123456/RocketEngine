@@ -12,10 +12,10 @@ namespace Rocket {
         NoOperation = 0,
         ReadBinary,
         WriteBinary,
-        //ReadWriteBinary,
+        ReadWriteBinary,
         ReadText,
         WriteText,
-        //ReadWriteText,
+        ReadWriteText,
         //AllOperation
     };
 

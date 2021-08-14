@@ -39,7 +39,15 @@ namespace Rocket {
         INIT_LOG_CHANNEL(File);
         INIT_LOG_CHANNEL(App);
     }
+
+    void Log::End() {
+        END_LOG_CHANNEL(Core);
+        END_LOG_CHANNEL(Event);
+        END_LOG_CHANNEL(File);
+        END_LOG_CHANNEL(App);
+    }
 #else
     void Log::Init(LogLevel level) {}
+    void Log::End() {}
 #endif
 } // namespace Rocket

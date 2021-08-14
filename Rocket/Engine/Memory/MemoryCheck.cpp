@@ -8,7 +8,9 @@
 #undef new
 #endif
 
-static inline std::mutex memory_allocate_mutex_s;
+namespace {
+	static inline std::mutex memory_allocate_mutex_s;
+}
 
 namespace Rocket::Memory::detail {
 	template<typename T>
@@ -84,7 +86,7 @@ namespace Rocket::Memory::detail {
 
 	// remove previous new object in info list
 	inline void operator_delete(void* ptr, bool array_delete) noexcept {
-		std::unique_lock guard(memory_allocate_mutex_s);
+		std::unique_lock guard(::memory_allocate_mutex_s);
 		auto it = get_new_entry_set()->find(ptr);
 		if(it != get_new_entry_set()->end()) {
 			if(it->is_array == array_delete) {
@@ -151,6 +153,14 @@ namespace Rocket::Memory {
 // create global dump variable, when program exit, it will use ~__dump_all__() automatically and dump all info
 namespace { inline const struct __dump_all__ { ~__dump_all__() { Rocket::Memory::dump_all(); } } __dump_all_on_exit__; }
 
+void* operator new (std::size_t n, Rocket::Memory::detail::string_t file, int line, Rocket::Memory::detail::string_t func) {
+	return ::operator new(n, Rocket::Memory::detail::new_entry_t{ nullptr, false, n, file, line, func });
+}
+
+void* operator new [] (std::size_t n, Rocket::Memory::detail::string_t file, int line, Rocket::Memory::detail::string_t func) {
+	return ::operator new(n, Rocket::Memory::detail::new_entry_t{ nullptr, true, n, file, line, func });
+}
+
 void* operator new (std::size_t n) {
 	void* ptr = std::malloc(n);
 	if(!ptr) throw std::bad_alloc();
@@ -161,19 +171,11 @@ void* operator new (std::size_t n, Rocket::Memory::detail::new_entry_t&& entry) 
 	void* ptr = ::operator new(n);
 	entry.ptr = ptr;
 	try {
-		std::unique_lock guard(memory_allocate_mutex_s);
+		std::unique_lock guard(::memory_allocate_mutex_s);
 		Rocket::Memory::detail::get_new_entry_set()->insert(std::forward<decltype(entry)>(entry)); 
 	}
 	catch(...) {}
 	return ptr;
-}
-
-void* operator new (std::size_t n, Rocket::Memory::detail::string_t file, int line, Rocket::Memory::detail::string_t func) {
-	return ::operator new(n, Rocket::Memory::detail::new_entry_t{ nullptr, false, n, file, line, func });
-}
-
-void* operator new [] (std::size_t n, Rocket::Memory::detail::string_t file, int line, Rocket::Memory::detail::string_t func) {
-	return ::operator new(n, Rocket::Memory::detail::new_entry_t{ nullptr, true, n, file, line, func });
 }
 
 void operator delete (void* ptr) noexcept {

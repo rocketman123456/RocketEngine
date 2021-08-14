@@ -13,5 +13,6 @@ int main() {
     RK_ERROR(App, "Hello Rocket App");
     RK_CRITICAL(App, "Hello Rocket App");
 
+    Rocket::Log::End();
     return 0;
 }
