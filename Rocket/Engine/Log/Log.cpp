@@ -12,6 +12,7 @@
 IMPLEMENT_LOG_CHANNEL(Core);
 IMPLEMENT_LOG_CHANNEL(Event);
 IMPLEMENT_LOG_CHANNEL(File);
+IMPLEMENT_LOG_CHANNEL(Audio);
 IMPLEMENT_LOG_CHANNEL(App);
 #endif
 
@@ -37,6 +38,7 @@ namespace Rocket {
         INIT_LOG_CHANNEL(Core);
         INIT_LOG_CHANNEL(Event);
         INIT_LOG_CHANNEL(File);
+        INIT_LOG_CHANNEL(Audio);
         INIT_LOG_CHANNEL(App);
     }
 
@@ -44,6 +46,7 @@ namespace Rocket {
         END_LOG_CHANNEL(Core);
         END_LOG_CHANNEL(Event);
         END_LOG_CHANNEL(File);
+        END_LOG_CHANNEL(Audio);
         END_LOG_CHANNEL(App);
     }
 #else

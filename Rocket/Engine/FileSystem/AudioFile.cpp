@@ -1,12 +1,6 @@
 #include "FileSystem/AudioFile.h"
 #include "Log/Log.h"
 
-#ifdef RK_MEMORY_CHECK
-#ifdef new
-#undef new
-#endif
-#endif
-
 #include <iostream>
 
 #include <sndfile.h>
@@ -81,14 +75,12 @@ namespace Rocket {
         }
 
         printf ("Opened file '%s'\n", file_.full_name.c_str());
-        printf ("    Sample rate : %d\n", file_info->samplerate);
-        printf ("    Channels    : %d\n", file_info->channels);
-        printf ("    Format      : %X\n", file_info->format);
-        printf ("    Format Name : %s\n", FormatName(format));
-        printf ("    Frames      : %d\n", (int)file_info->frames);
-        printf ("    Sections    : %d\n", file_info->sections);
-        //printf ("    Read Frame  : %lld\n", num_frames);
-        //printf ("    Read Bytes  : %d\n", num_bytes);
+        //printf ("    Sample rate : %d\n", file_info->samplerate);
+        //printf ("    Channels    : %d\n", file_info->channels);
+        //printf ("    Format      : %X\n", file_info->format);
+        //printf ("    Format Name : %s\n", FormatName(format));
+        //printf ("    Frames      : %d\n", (int)file_info->frames);
+        //printf ("    Sections    : %d\n", file_info->sections);
 
         return 0;
     }
@@ -100,7 +92,7 @@ namespace Rocket {
         initialized_ = false;
     }
 
-    std::size_t AudioFile::Read(FileBuffer& buffer, std::size_t frames) {
+    std::size_t AudioFile::Read(AudioBuffer& buffer, std::size_t frames) {
         SF_INFO* info = (SF_INFO*)file_.extra_file_info;
         buffer.buffer = new int16_t[info->frames * info->channels];
         sf_count_t num_frames = sf_readf_short((SNDFILE*)file_.file_pointer, (int16_t*)buffer.buffer, frames);
@@ -109,7 +101,7 @@ namespace Rocket {
         return 0;
     }
 
-    std::size_t AudioFile::ReadAll(FileBuffer& buffer) {
+    std::size_t AudioFile::ReadAll(AudioBuffer& buffer) {
         SF_INFO* info = (SF_INFO*)file_.extra_file_info;
         buffer.buffer = new int16_t[info->frames * info->channels];
         sf_count_t num_frames = sf_readf_short((SNDFILE*)file_.file_pointer, (int16_t*)buffer.buffer, info->frames);
@@ -118,14 +110,14 @@ namespace Rocket {
         return 0;
     }
 
-    std::size_t AudioFile::Write(FileBuffer& buffer, std::size_t frames) {
+    std::size_t AudioFile::Write(AudioBuffer& buffer, std::size_t frames) {
         SF_INFO* info = (SF_INFO*)file_.extra_file_info;
         sf_writef_short((SNDFILE*)file_.file_pointer, (short*)buffer.buffer, frames);
         CheckSndFileError();
         return frames;
     }
 
-    std::size_t AudioFile::Write(FileBuffer& buffer) {
+    std::size_t AudioFile::Write(AudioBuffer& buffer) {
         SF_INFO* info = (SF_INFO*)file_.extra_file_info;
         sf_writef_short((SNDFILE*)file_.file_pointer, (short*)buffer.buffer, info->frames);
         CheckSndFileError();
@@ -159,9 +151,3 @@ namespace Rocket {
         }
     }
 }
-
-#ifdef RK_MEMORY_CHECK
-#ifndef new
-#define new new(__FILE__, __LINE__, __FUNCTION__)
-#endif
-#endif

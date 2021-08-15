@@ -1,6 +1,8 @@
 #include "Memory/MemoryCheck.h"
 #include "Utils/AudioChecker.h"
 #include "Utils/FindRootDir.h"
+#include "FileSystem/FileSystem.h"
+#include "AudioSystem/AudioManager.h"
 #include "Log/Log.h"
 
 //#define GLFW_INCLUDE_NONE
@@ -12,14 +14,19 @@
 #include <AL/alext.h>
 
 #include <iostream>
-#include <string>
+#include <string> 
 #include <vector>
 #include <random>
 #include <filesystem>
+#include <memory>
 
 using namespace Rocket;
 
-void processInput(GLFWwindow *window);
+#define generate_task(X) {\
+    auto buffer = AudioManager::Instance()->FindBuffer(X);\
+    AudioTaskPtr task = std::make_unique<AudioTask>();\
+    task->Initialize(buffer);\
+    AudioManager::Instance()->AddTask(std::move(task));}
 
 int main() {
     Log::Init();
@@ -47,121 +54,112 @@ int main() {
     }
 
     std::string root = FindRootDir("_root_dir_");
-    std::filesystem::path root_path = root + "\\Asset\\Music\\";
+    std::filesystem::path root_path = root + "/Asset/Music/";
     std::filesystem::directory_iterator dir_list(root_path);
     std::vector<std::string> wav_files;
+    std::vector<std::string> wav_file_names;
     for (auto& it:dir_list) {
         std::string name = it.path().filename().string();
-        //std::cout << "File Name: " << root_path.string() + name << std::endl;
         wav_files.push_back(root_path.string() + name);
+        wav_file_names.push_back(name);
     }
 
-    ALCdevice* openALDevice = alcOpenDevice(nullptr);
-    if(!openALDevice)
-        return 0;
-
-    ALCcontext* openALContext;
-    if(!alcCall(alcCreateContext, openALContext, openALDevice, openALDevice, nullptr) || !openALContext) {
-        std::cerr << "ERROR: Could not create audio context" << std::endl;
-        return 0;
-    }
-    ALCboolean contextMadeCurrent = false;
-    if(!alcCall(alcMakeContextCurrent, contextMadeCurrent, openALDevice, openALContext) 
-        || contextMadeCurrent != ALC_TRUE) {
-        std::cerr << "ERROR: Could not make audio context current" << std::endl;
+    AudioManager::Create();
+    auto result = AudioManager::Instance()->Initialize();
+    if(result) {
         return 0;
     }
 
-    std::vector<ALuint> buffers;
-    std::vector<ALuint> sources;
-
-    for(int i = 0; i < 88; i++) {
-        auto name = wav_files[i];
-        SNDFILE* file = nullptr;
-        SF_INFO info;
-        file = sf_open(name.c_str(), SFM_READ, &info);
-
-        // TODO : use info.format to decode bit per sample and eiden etc.
-        ALenum format = AL_NONE;
-        if(info.channels == 1)
-            format = AL_FORMAT_MONO16;
-        else if(info.channels == 2)
-            format = AL_FORMAT_STEREO16;
-        else if(info.channels == 3) {
-            if(sf_command(file, SFC_WAVEX_GET_AMBISONIC, NULL, 0) == SF_AMBISONIC_B_FORMAT)
-                format = AL_FORMAT_BFORMAT2D_16;
-        }
-        else if(info.channels == 4) {
-            if(sf_command(file, SFC_WAVEX_GET_AMBISONIC, NULL, 0) == SF_AMBISONIC_B_FORMAT)
-                format = AL_FORMAT_BFORMAT3D_16;
-        }
-
-        // Decode the whole audio file to a buffer
-        int16_t* data = new int16_t[info.frames * info.channels];
-        sf_count_t num_frames = sf_readf_short(file, data, info.frames);
-        ALsizei num_bytes = (ALsizei)(num_frames * info.channels) * (ALsizei)sizeof(int16_t);
-
-        ALuint buffer;
-        alCall(alGenBuffers, 1, &buffer);
-        alCall(alBufferData, buffer, format, data, num_bytes, info.samplerate);
-        delete[] data;
-        sf_close(file);
-
-        auto err = alGetError();
-        if(err != AL_NO_ERROR) {
-            fprintf(stderr, "OpenAL Error: %s\n", alGetString(err));
-            if(buffer && alIsBuffer(buffer))
-                alDeleteBuffers(1, &buffer);
-            return 0;
-        }
-
-        ALuint source;
-        alCall(alGenSources, 1, &source);
-        alCall(alSourcei, source, AL_BUFFER, buffer);
-        assert(alGetError()==AL_NO_ERROR && "Failed to setup sound source");
-
-        buffers.push_back(buffer);
-        sources.push_back(source);
+    for(int i = 0; i < wav_files.size(); ++i) {
+        AudioFilePtr file_ptr = FileSystem::OpenAudio(root_path.string(), wav_file_names[i], FileOperateMode::ReadBinary);
+        AudioManager::Instance()->InsertBuffer(file_ptr.get());
+        FileSystem::CloseAudio(std::move(file_ptr));
     }
 
-    std::default_random_engine rand_engine;
-    std::uniform_int_distribution<int32_t> gen_rand(0, buffers.size() - 1);
+    glfwSetKeyCallback(window, [](GLFWwindow* window, int key, int scancode, int action, int mods){
+        if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
+            glfwSetWindowShouldClose(window, true);
+        }
+        if (key == GLFW_KEY_1 && action == GLFW_PRESS) {
+            generate_task("Piano.ff.C2.wav");
+        }
+        if (key == GLFW_KEY_2 && action == GLFW_PRESS) {
+            generate_task("Piano.ff.D2.wav");
+        }
+        if (key == GLFW_KEY_3 && action == GLFW_PRESS) {
+            generate_task("Piano.ff.E2.wav");
+        }
+        if (key == GLFW_KEY_4 && action == GLFW_PRESS) {
+            generate_task("Piano.ff.F2.wav");
+        }
+        if (key == GLFW_KEY_5 && action == GLFW_PRESS) {
+            generate_task("Piano.ff.G2.wav");
+        }
+        if (key == GLFW_KEY_6 && action == GLFW_PRESS) {
+            generate_task("Piano.ff.A2.wav");
+        }
+        if (key == GLFW_KEY_7 && action == GLFW_PRESS) {
+            generate_task("Piano.ff.B2.wav");
+        }
+        if (key == GLFW_KEY_Q && action == GLFW_PRESS) {
+            generate_task("Piano.ff.C3.wav");
+        }
+        if (key == GLFW_KEY_W && action == GLFW_PRESS) {
+            generate_task("Piano.ff.D3.wav");
+        }
+        if (key == GLFW_KEY_E && action == GLFW_PRESS) {
+            generate_task("Piano.ff.E3.wav");
+        }
+        if (key == GLFW_KEY_R && action == GLFW_PRESS) {
+            generate_task("Piano.ff.F3.wav");
+        }
+        if (key == GLFW_KEY_T && action == GLFW_PRESS) {
+            generate_task("Piano.ff.G3.wav");
+        }
+        if (key == GLFW_KEY_Y && action == GLFW_PRESS) {
+            generate_task("Piano.ff.A3.wav");
+        }
+        if (key == GLFW_KEY_U && action == GLFW_PRESS) {
+            generate_task("Piano.ff.B3.wav");
+        }
+        if (key == GLFW_KEY_A && action == GLFW_PRESS) {
+            generate_task("Piano.ff.C4.wav");
+        }
+        if (key == GLFW_KEY_S && action == GLFW_PRESS) {
+            generate_task("Piano.ff.D4.wav");
+        }
+        if (key == GLFW_KEY_D && action == GLFW_PRESS) {
+            generate_task("Piano.ff.E4.wav");
+        }
+        if (key == GLFW_KEY_F && action == GLFW_PRESS) {
+            generate_task("Piano.ff.F4.wav");
+        }
+        if (key == GLFW_KEY_G && action == GLFW_PRESS) {
+            generate_task("Piano.ff.G4.wav");
+        }
+        if (key == GLFW_KEY_H && action == GLFW_PRESS) {
+            generate_task("Piano.ff.A4.wav");
+        }
+        if (key == GLFW_KEY_J && action == GLFW_PRESS) {
+            generate_task("Piano.ff.B4.wav");
+        }
+    });
 
 	while (!glfwWindowShouldClose(window)) {
-        processInput(window);
-
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        int x = gen_rand(rand_engine);
-
-        alCall(alSourcePlay, sources[x]);
-
+        AudioManager::Instance()->Tick(10);
+        
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
 
-    for(int i = 0; i < sources.size(); ++i) {
-        alSourceStop(sources[i]);
-        alCall(alDeleteSources, 1, &sources[i]);
-        alCall(alDeleteBuffers, 1, &buffers[i]);
-    }
-
-    alcCall(alcMakeContextCurrent, contextMadeCurrent, openALDevice, nullptr);
-    alcCall(alcDestroyContext, openALDevice, openALContext);
-
-    ALCboolean closed;
-    alcCall(alcCloseDevice, closed, openALDevice, openALDevice);
+    AudioManager::Instance()->Finalize();
 
 	glfwDestroyWindow(window);
 	glfwTerminate();
 
     Log::End();
     return 0;
-}
-
-void processInput(GLFWwindow *window)
-{
-    if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, true);
 }

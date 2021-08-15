@@ -28,6 +28,7 @@ namespace Rocket {
         DECLARE_LOG_CHANNEL(Core);
         DECLARE_LOG_CHANNEL(Event);
         DECLARE_LOG_CHANNEL(File);
+        DECLARE_LOG_CHANNEL(Audio);
         DECLARE_LOG_CHANNEL(App);
 #endif
     };

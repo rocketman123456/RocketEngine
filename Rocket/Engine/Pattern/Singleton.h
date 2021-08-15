@@ -49,7 +49,7 @@ namespace Rocket {
                 void __abstract_singleton__() override {}
             };
 
-            std::call_once(flag, [&](){ s_instance.reset(new Q(std::forward<Args>(args)...)); });
+            std::call_once(flag, [&](){ s_instance = std::make_unique<Q>(args...); });
             //if(!s_instance) s_instance.reset(new Q(std::forward<Args>(args)...));
             //else throw std::logic_error("This abstract singleton has already been created!");
         }
