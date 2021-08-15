@@ -86,7 +86,6 @@ namespace Rocket::Memory::detail {
 
 	// remove previous new object in info list
 	inline void operator_delete(void* ptr, bool array_delete) noexcept {
-		std::unique_lock guard(::memory_allocate_mutex_s);
 		auto it = get_new_entry_set()->find(ptr);
 		if(it != get_new_entry_set()->end()) {
 			if(it->is_array == array_delete) {
@@ -179,10 +178,12 @@ void* operator new (std::size_t n, Rocket::Memory::detail::new_entry_t&& entry) 
 }
 
 void operator delete (void* ptr) noexcept {
+	std::unique_lock guard(::memory_allocate_mutex_s);
 	Rocket::Memory::detail::operator_delete(ptr, false);
 }
 
 void operator delete [] (void* ptr) noexcept {
+	std::unique_lock guard(::memory_allocate_mutex_s);
 	Rocket::Memory::detail::operator_delete(ptr, true);
 }
 

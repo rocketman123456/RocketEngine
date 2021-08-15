@@ -22,6 +22,10 @@ namespace Rocket {
 
         static T* Instance() noexcept { return s_instance.get(); }
 
+        static void Destroy() {
+            s_instance.reset();
+        }
+
     protected:
         Singleton() = default;
         Singleton(const Singleton&) = delete;
@@ -52,6 +56,10 @@ namespace Rocket {
             std::call_once(flag, [&](){ s_instance = std::make_unique<Q>(args...); });
             //if(!s_instance) s_instance.reset(new Q(std::forward<Args>(args)...));
             //else throw std::logic_error("This abstract singleton has already been created!");
+        }
+
+        static void Destroy() {
+            s_instance.reset();
         }
 
         static T* Instance() noexcept { return s_instance.get(); }

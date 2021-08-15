@@ -160,6 +160,7 @@ int main() {
 	glfwDestroyWindow(window);
 	glfwTerminate();
 
+    AudioManager::Destroy();
     Log::End();
     return 0;
 }

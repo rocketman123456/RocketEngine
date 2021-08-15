@@ -42,8 +42,9 @@ int main() {
     RK_TRACE(Event, "{}", event->ToString());
     // Event Dispatch
     [[maybe_unused]] auto consumer_function = [&]() {
-		while(1) {
-            for(int i = 0; i < 100; ++i) {
+		int count = 0;
+		while(count++ < 1'000) {
+            for(int i = 0; i < 10; ++i) {
                 Variant* data = new Variant[4];
                 for(int j = 0; j < 4; ++j) {
                     data[j].type = Variant::TYPE_INT32;
@@ -58,7 +59,8 @@ int main() {
 	};
 
     [[maybe_unused]] auto produce_function = [&](){
-        while(1) {
+        int count = 0;
+		while(count++ < 1'000) {
             Variant* data = new Variant[4];
             for(int j = 0; j < 4; ++j) {
                 data[j].type = Variant::TYPE_INT32;
@@ -70,22 +72,7 @@ int main() {
         }
     };
 
-    std::thread consumer([&]() {
-		while(1) {
-            for(int i = 0; i < 100; ++i) {
-                Variant* data = new Variant[4];
-                for(int j = 0; j < 4; ++j) {
-                    data[j].type = Variant::TYPE_INT32;
-                    data[j].as_int32 = std::rand();
-                }
-                EventPtr event = EventPtr(new Event("test", data, 4));
-                EventManager::Instance()->QueueEvent(event);
-            }
-			EventManager::Instance()->Tick(10);
-            std::this_thread::sleep_for(std::chrono::milliseconds(10));
-		}
-	});
-
+    std::thread consumer(consumer_function);
     std::thread producer_1(produce_function);
     std::thread producer_2(produce_function);
     std::thread producer_3(produce_function);
