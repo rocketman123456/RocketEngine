@@ -23,6 +23,7 @@ namespace Rocket {
         virtual std::size_t ReadAll(FileBuffer& buffer);
         /// Synchronously writes from a buffer into the file. Returns the number of bytes written, or 0 if the operation failed.
         virtual std::size_t Write(FileBuffer& buffer, std::size_t length);
+        virtual std::size_t Write(FileBuffer& buffer);
         /// Seeks to the desired position
         virtual void Seek(std::size_t position);
         /// Seeks to the end of the file

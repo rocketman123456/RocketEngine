@@ -86,6 +86,14 @@ namespace Rocket {
             return 0;
     }
 
+    std::size_t OsFile::Write(FileBuffer& buffer) {
+        auto result = fwrite(buffer.buffer, buffer.size, 1, (FILE*)file_.file_pointer);
+        if(result == 1)
+            return buffer.size;
+        else
+            return 0;
+    }
+
     void OsFile::Seek(std::size_t position) {
         auto result = fseek((FILE*)file_.file_pointer, position, SEEK_SET);
         if(result != 0) {

@@ -47,4 +47,5 @@ Target/
 ThirdParty/build/
 
 # Ignore Large Asset File
-Asset/Music/*.wav
+*.wav
+*.ogg

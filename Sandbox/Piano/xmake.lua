@@ -1,0 +1,7 @@
+target("piano")
+    set_kind("binary")
+    add_files("piano.cpp")
+    add_deps("RocketEngine")
+    add_options("console_log")
+    add_options("memory_check")
+target_end()

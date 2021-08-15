@@ -19,6 +19,7 @@ namespace Rocket {
 
     void FileSystem::CloseSync(std::unique_ptr<OsFile>&& file) {
         file->Finalize();
+        file.reset();
     }
 
     ZipFilePtr FileSystem::OpenZip(
@@ -36,6 +37,7 @@ namespace Rocket {
 
     void FileSystem::CloseZip(ZipFilePtr&& file) {
         file->Finalize();
+        file.reset();
     }
 
     OsFileAsyncPtr FileSystem::OpenAsync(
@@ -53,5 +55,21 @@ namespace Rocket {
 
     void FileSystem::CloseAsync(OsFileAsyncPtr&& file) {
         file->Finalize();
+        file.reset();
+    }
+
+    AudioFilePtr FileSystem::OpenAudio(const std::string& path, const std::string& file_name, FileOperateMode mode) {
+        AudioFilePtr file(new AudioFile);
+        int32_t result = file->Initialize(path, file_name, mode);
+        if(result != 0) {
+            RK_ERROR(Core, "{},{}: Audio File Open Error", path, file_name);
+            throw std::runtime_error("Audio File Open Error");
+        }
+        return file;
+    }
+
+    void FileSystem::CloseAudio(AudioFilePtr&& file) {
+        file->Finalize();
+        file.reset();
     }
 }

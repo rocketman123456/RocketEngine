@@ -11,7 +11,8 @@
 #include <string>
 #include <vector>
 #include <filesystem>
-#include <bit>
+#include <thread>
+#include <random>
 
 #include <AL/al.h>
 #include <AL/alc.h>
@@ -36,179 +37,6 @@ namespace std {
     };
 }
 
-std::int32_t convert_to_int(char* buffer, std::size_t len)
-{
-    std::int32_t a = 0;
-    if(std::endian::native == std::endian::little)
-        std::memcpy(&a, buffer, len);
-    else
-        for(std::size_t i = 0; i < len; ++i)
-            reinterpret_cast<char*>(&a)[3 - i] = buffer[i];
-    return a;
-}
-
-bool load_wav_file_header(
-    std::ifstream& file,
-    std::uint8_t& channels,
-    std::int32_t& sampleRate,
-    std::uint8_t& bitsPerSample,
-    ALsizei& size)
-{
-    char buffer[4];
-    if(!file.is_open())
-        return false;
-
-    // the RIFF
-    if(!file.read(buffer, 4))
-    {
-        std::cerr << "ERROR: could not read RIFF" << std::endl;
-        return false;
-    }
-    if(std::strncmp(buffer, "RIFF", 4) != 0)
-    {
-        std::cerr << "ERROR: file is not a valid WAVE file (header doesn't begin with RIFF)" << std::endl;
-        return false;
-    }
-
-    // the size of the file
-    if(!file.read(buffer, 4))
-    {
-        std::cerr << "ERROR: could not read size of file" << std::endl;
-        return false;
-    }
-
-    // the WAVE
-    if(!file.read(buffer, 4))
-    {
-        std::cerr << "ERROR: could not read WAVE" << std::endl;
-        return false;
-    }
-    if(std::strncmp(buffer, "WAVE", 4) != 0)
-    {
-        std::cerr << "ERROR: file is not a valid WAVE file (header doesn't contain WAVE)" << std::endl;
-        return false;
-    }
-
-    // "fmt/0"
-    if(!file.read(buffer, 4))
-    {
-        std::cerr << "ERROR: could not read fmt/0" << std::endl;
-        return false;
-    }
-
-    // this is always 16, the size of the fmt data chunk
-    if(!file.read(buffer, 4))
-    {
-        std::cerr << "ERROR: could not read the 16" << std::endl;
-        return false;
-    }
-
-    // PCM should be 1?
-    if(!file.read(buffer, 2))
-    {
-        std::cerr << "ERROR: could not read PCM" << std::endl;
-        return false;
-    }
-
-    // the number of channels
-    if(!file.read(buffer, 2))
-    {
-        std::cerr << "ERROR: could not read number of channels" << std::endl;
-        return false;
-    }
-    channels = convert_to_int(buffer, 2);
-
-    // sample rate
-    if(!file.read(buffer, 4))
-    {
-        std::cerr << "ERROR: could not read sample rate" << std::endl;
-        return false;
-    }
-    sampleRate = convert_to_int(buffer, 4);
-
-    // (sampleRate * bitsPerSample * channels) / 8
-    if(!file.read(buffer, 4))
-    {
-        std::cerr << "ERROR: could not read (sampleRate * bitsPerSample * channels) / 8" << std::endl;
-        return false;
-    }
-
-    // ?? dafaq
-    if(!file.read(buffer, 2))
-    {
-        std::cerr << "ERROR: could not read dafaq" << std::endl;
-        return false;
-    }
-
-    // bitsPerSample
-    if(!file.read(buffer, 2))
-    {
-        std::cerr << "ERROR: could not read bits per sample" << std::endl;
-        return false;
-    }
-    bitsPerSample = convert_to_int(buffer, 2);
-    
-    // data chunk header "data"
-    if(!file.read(buffer, 4))
-    {
-        std::cerr << "ERROR: could not read data chunk header" << std::endl;
-        return false;
-    }
-    if(std::strncmp(buffer, "data", 4) != 0)
-    {
-        std::cerr << "ERROR: file is not a valid WAVE file (doesn't have 'data' tag)" << std::endl;
-        return false;
-    }
-
-    // size of data
-    if(!file.read(buffer, 4))
-    {
-        std::cerr << "ERROR: could not read data size" << std::endl;
-        return false;
-    }
-    size = convert_to_int(buffer, 4);
-
-    /* cannot be at the end of file */
-    if(file.eof())
-    {
-        std::cerr << "ERROR: reached EOF on the file" << std::endl;
-        return false;
-    }
-    if(file.fail())
-    {
-        std::cerr << "ERROR: fail state set on the file" << std::endl;
-        return false;
-    }
-
-    return true;
-}
-
-bool load_wav(
-    const std::string& filename,
-    std::uint8_t& channels,
-    std::int32_t& sampleRate,
-    std::uint8_t& bitsPerSample,
-    std::vector<char> data)
-{
-    ALsizei size = 0;
-    std::ifstream in(filename, std::ios::binary);
-    if(!in.is_open())
-    {
-        std::cerr << "ERROR: Could not open \"" << filename << "\"" << std::endl;
-        return false;
-    }
-    if(!load_wav_file_header(in, channels, sampleRate, bitsPerSample, size))
-    {
-        std::cerr << "ERROR: Could not load wav header of \"" << filename << "\"" << std::endl;
-        return false;
-    }
-
-    data.resize(size);
-    in.read(data.data(), size);
-
-    return true;
-}
-
 bool get_available_devices(std::vector<std::string>& devicesVec, ALCdevice* device) {
     const ALCchar* devices;
     if(!alcCall(alcGetString, devices, device, nullptr, ALC_DEVICE_SPECIFIER))
@@ -227,10 +55,28 @@ bool get_available_devices(std::vector<std::string>& devicesVec, ALCdevice* devi
     return true;
 }
 
+const char* FormatName(ALenum format) {
+    switch(format) {
+    case AL_FORMAT_MONO8: return "Mono, U8";
+    case AL_FORMAT_MONO16: return "Mono, S16";
+    case AL_FORMAT_MONO_FLOAT32: return "Mono, Float32";
+    case AL_FORMAT_STEREO8: return "Stereo, U8";
+    case AL_FORMAT_STEREO16: return "Stereo, S16";
+    case AL_FORMAT_STEREO_FLOAT32: return "Stereo, Float32";
+    case AL_FORMAT_BFORMAT2D_8: return "B-Format 2D, U8";
+    case AL_FORMAT_BFORMAT2D_16: return "B-Format 2D, S16";
+    case AL_FORMAT_BFORMAT2D_FLOAT32: return "B-Format 2D, Float32";
+    case AL_FORMAT_BFORMAT3D_8: return "B-Format 3D, U8";
+    case AL_FORMAT_BFORMAT3D_16: return "B-Format 3D, S16";
+    case AL_FORMAT_BFORMAT3D_FLOAT32: return "B-Format 3D, Float32";
+    }
+    return "Unknown Format";
+}
+
 int main() {
     Log::Init();
     std::string root = FindRootDir("_root_dir_");
-    std::filesystem::path root_path = root + "/Asset/Music/";
+    std::filesystem::path root_path = root + "\\Asset\\Music\\";
     std::filesystem::directory_iterator dir_list(root_path);
     std::vector<std::string> wav_files;
     for (auto& it:dir_list) {
@@ -250,80 +96,95 @@ int main() {
     }
 
     ALCcontext* openALContext;
-    if(!alcCall(alcCreateContext, openALContext, openALDevice, openALDevice, nullptr) || !openALContext)
-    {
+    if(!alcCall(alcCreateContext, openALContext, openALDevice, openALDevice, nullptr) || !openALContext) {
         std::cerr << "ERROR: Could not create audio context" << std::endl;
         return 0;
     }
     ALCboolean contextMadeCurrent = false;
     if(!alcCall(alcMakeContextCurrent, contextMadeCurrent, openALDevice, openALContext) 
-        || contextMadeCurrent != ALC_TRUE)
-    {
+        || contextMadeCurrent != ALC_TRUE) {
         std::cerr << "ERROR: Could not make audio context current" << std::endl;
         return 0;
     }
 
-    //std::uint8_t channels;
-    //std::int32_t sampleRate;
-    //std::uint8_t bitsPerSample;
-    //std::vector<char> soundData;
-    //if(!load_wav(wav_files[0], channels, sampleRate, bitsPerSample, soundData))
-    //{
-    //    std::cerr << "ERROR: Could not load wav" << std::endl;
-    //    return 0;
-    //}
+    for(auto name : wav_files) {
+        SNDFILE* file = nullptr;
+        SF_INFO info;
+        file = sf_open(name.c_str(), SFM_READ, &info);
 
-    SNDFILE* file = nullptr;
-    SF_INFO info;
-    sf_open(wav_files[0].c_str(), SFM_READ, &info);
+        // TODO : use info.format to decode bit per sample and eiden etc.
+        ALenum format = AL_NONE;
+        if(info.channels == 1)
+            format = AL_FORMAT_MONO16;
+        else if(info.channels == 2)
+            format = AL_FORMAT_STEREO16;
+        else if(info.channels == 3) {
+            if(sf_command(file, SFC_WAVEX_GET_AMBISONIC, NULL, 0) == SF_AMBISONIC_B_FORMAT)
+                format = AL_FORMAT_BFORMAT2D_16;
+        }
+        else if(info.channels == 4) {
+            if(sf_command(file, SFC_WAVEX_GET_AMBISONIC, NULL, 0) == SF_AMBISONIC_B_FORMAT)
+                format = AL_FORMAT_BFORMAT3D_16;
+        }
 
-    printf ("Opened file '%s'\n", wav_files[0].c_str());
-	printf ("    Sample rate : %d\n", info.samplerate);
-	printf ("    Channels    : %d\n", info.channels);
-    printf ("    Format      : %X\n", info.format);
-    printf ("    Frames      : %d\n", info.frames);
-    printf ("    Sections    : %d\n", info.sections);
+        // Decode the whole audio file to a buffer
+        int16_t* data = new int16_t[info.frames * info.channels];
+        sf_count_t num_frames = sf_readf_short(file, data, info.frames);
+        ALsizei num_bytes = (ALsizei)(num_frames * info.channels) * (ALsizei)sizeof(int16_t);
 
-    int16_t* data = new int16_t[info.frames * info.channels];
-    sf_readf_short(file, data, info.frames * info.channels);
+        printf ("Opened file '%s'\n", name.c_str());
+        printf ("    Sample rate : %d\n", info.samplerate);
+        printf ("    Channels    : %d\n", info.channels);
+        printf ("    Format      : %X\n", info.format);
+        printf ("    Format Name : %s\n", FormatName(format));
+        printf ("    Frames      : %d\n", (int)info.frames);
+        printf ("    Sections    : %d\n", info.sections);
+        printf ("    Read Frame  : %lld\n", num_frames);
+        printf ("    Read Bytes  : %d\n", num_bytes);
 
-    ALuint buffer;
-    alCall(alGenBuffers, 1, &buffer);
+        ALuint buffer;
+        alCall(alGenBuffers, 1, &buffer);
+        alCall(alBufferData, buffer, format, data, num_bytes, info.samplerate);
+        delete[] data;
+        sf_close(file);
 
-    // TODO : use info.format to decode bit per sample and eiden etc.
-    ALenum format;// = info.format;
-    //if(info.channels == 1 && bitsPerSample == 8)
-    //    format = AL_FORMAT_MONO8;
-    //else if(info.channels == 1 && bitsPerSample == 16)
-    //    format = AL_FORMAT_MONO16;
-    //else if(info.channels == 2 && bitsPerSample == 8)
-    //    format = AL_FORMAT_STEREO8;
-    //else if(info.channels == 2 && bitsPerSample == 16)
-    format = AL_FORMAT_STEREO16;
+        auto err = alGetError();
+        if(err != AL_NO_ERROR) {
+            fprintf(stderr, "OpenAL Error: %s\n", alGetString(err));
+            if(buffer && alIsBuffer(buffer))
+                alDeleteBuffers(1, &buffer);
+            return 0;
+        }
 
-    alCall(alBufferData, buffer, format, data, info.frames * info.channels * sizeof(short), info.samplerate);
-    delete[] data;
+        //std::default_random_engine rand_engine;
+        //std::uniform_real_distribution<float> gen_rand(-10.0f, 10.0f);
+        //float x = gen_rand(rand_engine);
+        //float y = gen_rand(rand_engine);
+        //float z = gen_rand(rand_engine);
 
-    ALuint source;
-    alCall(alGenSources, 1, &source);
-    alCall(alSourcef, source, AL_PITCH, 1);
-    alCall(alSourcef, source, AL_GAIN, 1.0f);
-    alCall(alSource3f, source, AL_POSITION, 0, 0, 0);
-    alCall(alSource3f, source, AL_VELOCITY, 0, 0, 0);
-    alCall(alSourcei, source, AL_LOOPING, AL_FALSE);
-    alCall(alSourcei, source, AL_BUFFER, buffer);
+        ALuint source;
+        alCall(alGenSources, 1, &source);
+        alCall(alSourcef, source, AL_PITCH, 1);
+        alCall(alSourcef, source, AL_GAIN, 1.0f);
+        alCall(alSource3f, source, AL_POSITION, 0, 0, 0);
+        //alCall(alSource3f, source, AL_POSITION, x, y, z);
+        alCall(alSource3f, source, AL_VELOCITY, 0, 0, 0);
+        alCall(alSourcei, source, AL_LOOPING, AL_FALSE);
+        alCall(alSourcei, source, AL_BUFFER, buffer);
 
-    alCall(alSourcePlay, source);
+        assert(alGetError()==AL_NO_ERROR && "Failed to setup sound source");
 
-    ALint state = AL_PLAYING;
+        alCall(alSourcePlay, source);
 
-    while(state == AL_PLAYING)
-    {
-        alCall(alGetSourcei, source, AL_SOURCE_STATE, &state);
+        ALint state = AL_PLAYING;
+        while(state == AL_PLAYING) {
+            alCall(alGetSourcei, source, AL_SOURCE_STATE, &state);
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        }
+
+        alCall(alDeleteSources, 1, &source);
+        alCall(alDeleteBuffers, 1, &buffer);
     }
-
-    alCall(alDeleteSources, 1, &source);
-    alCall(alDeleteBuffers, 1, &buffer);
 
     alcCall(alcMakeContextCurrent, contextMadeCurrent, openALDevice, nullptr);
     alcCall(alcDestroyContext, openALDevice, openALContext);

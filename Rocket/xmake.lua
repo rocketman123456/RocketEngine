@@ -7,6 +7,7 @@ target("RocketEngine")
         "Engine/Exception/*.cpp",
         "Engine/FileSystem/*.cpp",
         "Engine/Log/*.cpp", 
+        "Engine/Parser/*.cpp",
         "Engine/Memory/*.cpp",
         "Engine/Utils/*.cpp"
     )
@@ -21,5 +22,5 @@ target("RocketEngine")
     )
     add_options("console_log")
     add_options("memory_check")
-    --set_policy("GPL-2.0")
+    set_license("LGPL-2.0")
 target_end()

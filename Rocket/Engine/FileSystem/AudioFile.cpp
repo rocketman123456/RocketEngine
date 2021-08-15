@@ -8,7 +8,29 @@
 #endif
 
 #include <iostream>
-#include <sndfile.hh>
+
+#include <sndfile.h>
+#include <AL/al.h>
+#include <AL/alc.h>
+#include <AL/alext.h>
+
+static const char* FormatName(ALenum format) {
+    switch(format) {
+    case AL_FORMAT_MONO8: return "Mono, U8";
+    case AL_FORMAT_MONO16: return "Mono, S16";
+    case AL_FORMAT_MONO_FLOAT32: return "Mono, Float32";
+    case AL_FORMAT_STEREO8: return "Stereo, U8";
+    case AL_FORMAT_STEREO16: return "Stereo, S16";
+    case AL_FORMAT_STEREO_FLOAT32: return "Stereo, Float32";
+    case AL_FORMAT_BFORMAT2D_8: return "B-Format 2D, U8";
+    case AL_FORMAT_BFORMAT2D_16: return "B-Format 2D, S16";
+    case AL_FORMAT_BFORMAT2D_FLOAT32: return "B-Format 2D, Float32";
+    case AL_FORMAT_BFORMAT3D_8: return "B-Format 3D, U8";
+    case AL_FORMAT_BFORMAT3D_16: return "B-Format 3D, S16";
+    case AL_FORMAT_BFORMAT3D_FLOAT32: return "B-Format 3D, Float32";
+    }
+    return "Unknown Format";
+}
 
 namespace Rocket {
     void AudioFile::CheckSndFileError() {
@@ -23,7 +45,6 @@ namespace Rocket {
         file_.file_name = file_name;
         file_.full_name = path + file_name;
 
-        //SndfileHandle* file = new SndfileHandle(file_.full_name.c_str());
         SNDFILE* file = nullptr;
         SF_INFO* file_info = new SF_INFO;
         switch(mode) {
@@ -43,6 +64,32 @@ namespace Rocket {
         file_.file_pointer = file;
         file_.extra_file_info = file_info;
 
+        ALenum format = AL_NONE;
+        if(file_info->channels == 1) {
+            format = AL_FORMAT_MONO16;
+        }
+        else if(file_info->channels == 2) {
+            format = AL_FORMAT_STEREO16;
+        }
+        else if(file_info->channels == 3) {
+            if(sf_command(file, SFC_WAVEX_GET_AMBISONIC, NULL, 0) == SF_AMBISONIC_B_FORMAT)
+                format = AL_FORMAT_BFORMAT2D_16;
+        }
+        else if(file_info->channels == 4) {
+            if(sf_command(file, SFC_WAVEX_GET_AMBISONIC, NULL, 0) == SF_AMBISONIC_B_FORMAT)
+                format = AL_FORMAT_BFORMAT3D_16;
+        }
+
+        printf ("Opened file '%s'\n", file_.full_name.c_str());
+        printf ("    Sample rate : %d\n", file_info->samplerate);
+        printf ("    Channels    : %d\n", file_info->channels);
+        printf ("    Format      : %X\n", file_info->format);
+        printf ("    Format Name : %s\n", FormatName(format));
+        printf ("    Frames      : %d\n", (int)file_info->frames);
+        printf ("    Sections    : %d\n", file_info->sections);
+        //printf ("    Read Frame  : %lld\n", num_frames);
+        //printf ("    Read Bytes  : %d\n", num_bytes);
+
         return 0;
     }
 
@@ -53,19 +100,36 @@ namespace Rocket {
         initialized_ = false;
     }
 
-    std::size_t AudioFile::Read(FileBuffer& buffer, std::size_t length) {
+    std::size_t AudioFile::Read(FileBuffer& buffer, std::size_t frames) {
+        SF_INFO* info = (SF_INFO*)file_.extra_file_info;
+        buffer.buffer = new int16_t[info->frames * info->channels];
+        sf_count_t num_frames = sf_readf_short((SNDFILE*)file_.file_pointer, (int16_t*)buffer.buffer, frames);
+        buffer.size = num_frames * info->channels * sizeof(int16_t);
         CheckSndFileError();
         return 0;
     }
 
     std::size_t AudioFile::ReadAll(FileBuffer& buffer) {
+        SF_INFO* info = (SF_INFO*)file_.extra_file_info;
+        buffer.buffer = new int16_t[info->frames * info->channels];
+        sf_count_t num_frames = sf_readf_short((SNDFILE*)file_.file_pointer, (int16_t*)buffer.buffer, info->frames);
+        buffer.size = num_frames * info->channels * sizeof(int16_t);
         CheckSndFileError();
         return 0;
     }
 
-    std::size_t AudioFile::Write(FileBuffer& buffer, std::size_t length) {
+    std::size_t AudioFile::Write(FileBuffer& buffer, std::size_t frames) {
+        SF_INFO* info = (SF_INFO*)file_.extra_file_info;
+        sf_writef_short((SNDFILE*)file_.file_pointer, (short*)buffer.buffer, frames);
         CheckSndFileError();
-        return 0;
+        return frames;
+    }
+
+    std::size_t AudioFile::Write(FileBuffer& buffer) {
+        SF_INFO* info = (SF_INFO*)file_.extra_file_info;
+        sf_writef_short((SNDFILE*)file_.file_pointer, (short*)buffer.buffer, info->frames);
+        CheckSndFileError();
+        return info->frames;
     }
 
     void AudioFile::Seek(std::size_t position) {
@@ -94,11 +158,6 @@ namespace Rocket {
             throw std::runtime_error("Audio File Skip Error");
         }
     }
-    
-    //std::size_t AudioFile::Tell(void) const {
-    //    //CheckSndFileError();
-    //    return 0;
-    //}
 }
 
 #ifdef RK_MEMORY_CHECK

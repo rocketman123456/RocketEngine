@@ -105,7 +105,7 @@ namespace Rocket::Memory::detail {
 namespace Rocket::Memory {
 	inline bool dump_leak() {
 		if(auto leaks = detail::get_new_entry_set(); !leaks->empty()) {
-			std::cerr << "****************************\n";
+			std::cerr << "\n****************************\n";
 			std::cerr << "*** MEMORY LEAK(S) FOUND ***\n";
 			std::cerr << "****************************\n\n";
 
@@ -123,7 +123,7 @@ namespace Rocket::Memory {
 
 	inline bool dump_mismatch() {
 		if(auto mismatches = detail::get_mismatch_list(); !mismatches->empty()) {
-			std::cerr << "***************************\n";
+			std::cerr << "\n***************************\n";
 			std::cerr << "*** NEW/DELETE MISMATCH ***\n";
 			std::cerr << "***************************\n\n";
 
@@ -143,7 +143,7 @@ namespace Rocket::Memory {
 		bool result_1 = dump_leak();
 		bool result_2 = dump_mismatch();
 		if(result_1 && result_2) {
-			std::cerr << "***************************\n";
+			std::cerr << "\n***************************\n";
 			std::cerr << "***** NO MEMORY LEAK ******\n";
 			std::cerr << "***************************\n\n";
 		}
