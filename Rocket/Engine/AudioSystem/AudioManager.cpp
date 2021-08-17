@@ -46,8 +46,6 @@ namespace Rocket {
 
         auto result = buffers_.find(hash_name);
         if(result == buffers_.end()) {
-            AudioBuffer buffer;
-            file->ReadAll(buffer);
             SNDFILE* file_ptr = (SNDFILE*)file->GetFileHandle()->file_pointer;
             SF_INFO* file_info = (SF_INFO*)file->GetFileHandle()->extra_file_info;
 
@@ -65,6 +63,8 @@ namespace Rocket {
                     format = AL_FORMAT_BFORMAT3D_16;
             }
 
+            AudioBuffer buffer;
+            file->ReadAll(buffer);
             ALuint audio_buffer;
             alCall(alGenBuffers, 1, &audio_buffer);
             alCall(alBufferData, audio_buffer, format, buffer.buffer, buffer.size, file_info->samplerate);
