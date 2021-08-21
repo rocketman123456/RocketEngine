@@ -43,9 +43,9 @@ namespace Rocket {
                 //RK_TRACE(Event, "Queue Event Count {}", queue.size());
                 //queue_.block();
                 while(queue.pop(event)) {
+                    double dt = step;
+                    event->time_delay_ = event->time_delay_ - dt;
                     if(event->time_delay_ > 0) {
-                        double dt = step;
-                        event->time_delay_ = event->time_delay_ - dt;
                         delay_queue.push_back(event);
                         continue;
                     }
@@ -56,6 +56,8 @@ namespace Rocket {
                 //queue_.unblock();
                 event_queue++;
             }
+            //if(delay_queue.size())
+            //    RK_TRACE(Event, "Delayed Event Count {}", delay_queue.size());
             for(auto event : delay_queue) {
                 QueueEvent(event);
             }

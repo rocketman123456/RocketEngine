@@ -1,7 +1,7 @@
 {
     "base": "Piano.ff.",
     "type": ".wav",
-    "one_step": 500.0,
+    "one_step": 500,
     "music": [
         {
             "id": "1",
@@ -14,21 +14,21 @@
             "id": "2",
             "note": "D3",
             "begin": "1",
-            "delay": 1,
+            "delay": 0,
             "last": 1
         },
         {
             "id": "3",
             "note": "E3",
             "begin": "2",
-            "delay": 1,
+            "delay": 0,
             "last": 1
         },
         {
             "id": "3-",
             "note": "C3",
             "begin": "3",
-            "delay": 1,
+            "delay": 0,
             "last": 1
         },
 
@@ -36,28 +36,28 @@
             "id": "4",
             "note": "C3",
             "begin": "3-",
-            "delay": 1,
+            "delay": 0,
             "last": 1
         },
         {
             "id": "5",
             "note": "D3",
             "begin": "4",
-            "delay": 1,
+            "delay": 0,
             "last": 1
         },
         {
             "id": "6",
             "note": "E3",
             "begin": "5",
-            "delay": 1,
+            "delay": 0,
             "last": 1
         },
         {
             "id": "7",
             "note": "C3",
             "begin": "6",
-            "delay": 1,
+            "delay": 0,
             "last": 1
         },
 
@@ -65,86 +65,86 @@
             "id": "8",
             "note": "E3",
             "begin": "7",
-            "delay": 1,
+            "delay": 0,
             "last": 1
         },
         {
             "id": "9",
             "note": "F3",
             "begin": "8",
-            "delay": 1,
+            "delay": 0,
             "last": 1
         },
         {
             "id": "10",
             "note": "G3",
             "begin": "9",
-            "delay": 1,
-            "last": 1
+            "delay": 0,
+            "last": 2
         },
 
         {
             "id": "11",
             "note": "E3",
             "begin": "10",
-            "delay": 2,
+            "delay": 0,
             "last": 1
         },
         {
             "id": "12",
             "note": "F3",
             "begin": "11",
-            "delay": 1,
+            "delay": 0,
             "last": 1
         },
         {
             "id": "13",
             "note": "G3",
             "begin": "12",
-            "delay": 1,
-            "last": 1
+            "delay": 0,
+            "last": 2
         },
 
         {
             "id": "14",
             "note": "G3",
             "begin": "13",
-            "delay": 2,
-            "last": 1
+            "delay": 0,
+            "last": 0.5
         },
         {
             "id": "15",
             "note": "A3",
             "begin": "14",
-            "delay": 0.5,
-            "last": 1
+            "delay": 0,
+            "last": 0.5
         },
         {
             "id": "16",
             "note": "G3",
             "begin": "15",
-            "delay": 0.5,
-            "last": 1
+            "delay": 0,
+            "last": 0.5
         },
         {
             "id": "17",
             "note": "F3",
             "begin": "16",
-            "delay": 0.5,
-            "last": 1
+            "delay": 0,
+            "last": 0.5
         },
         {
             "id": "18",
             "note": "E3",
             "begin": "17",
-            "delay": 0.5,
+            "delay": 0,
             "last": 1
         },
         {
             "id": "19",
             "note": "C3",
             "begin": "18",
-            "delay": 1,
+            "delay": 0,
             "last": 1
         },
 
@@ -152,42 +152,42 @@
             "id": "20",
             "note": "G3",
             "begin": "19",
-            "delay": 1,
-            "last": 1
+            "delay": 0,
+            "last": 0.5
         },
         {
             "id": "21",
             "note": "A3",
             "begin": "20",
-            "delay": 0.5,
-            "last": 1
+            "delay": 0,
+            "last": 0.5
         },
         {
             "id": "22",
             "note": "G3",
             "begin": "21",
-            "delay": 0.5,
-            "last": 1
+            "delay": 0,
+            "last": 0.5
         },
         {
             "id": "23",
             "note": "F3",
             "begin": "22",
-            "delay": 0.5,
-            "last": 1
+            "delay": 0,
+            "last": 0.5
         },
         {
             "id": "24",
             "note": "E3",
             "begin": "23",
-            "delay": 0.5,
+            "delay": 0,
             "last": 1
         },
         {
             "id": "25",
             "note": "C3",
             "begin": "24",
-            "delay": 1,
+            "delay": 0,
             "last": 1
         },
 
@@ -195,44 +195,44 @@
             "id": "26",
             "note": "C3",
             "begin": "25",
-            "delay": 1,
+            "delay": 0,
             "last": 1
         },
         {
             "id": "27",
             "note": "G2",
             "begin": "26",
-            "delay": 1,
+            "delay": 0,
             "last": 1
         },
         {
             "id": "28",
             "note": "C3",
             "begin": "27",
-            "delay": 1,
-            "last": 1
+            "delay": 0,
+            "last": 2
         },
 
         {
             "id": "29",
             "note": "C3",
             "begin": "28",
-            "delay": 2,
+            "delay": 0,
             "last": 1
         },
         {
             "id": "30",
             "note": "G2",
             "begin": "29",
-            "delay": 1,
+            "delay": 0,
             "last": 1
         },
         {
             "id": "31",
             "note": "C3",
             "begin": "30",
-            "delay": 1,
-            "last": 1
+            "delay": 0,
+            "last": 2
         }
     ]
 }

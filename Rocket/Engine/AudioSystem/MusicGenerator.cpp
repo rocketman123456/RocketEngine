@@ -21,7 +21,8 @@ namespace Rocket {
         one_step_ = (*raw)["one_step"];
 
         events.clear();
-        std::unordered_map<std::string, EventPtr> event_map;
+        static std::unordered_map<std::string, double> start_map;
+        static std::unordered_map<std::string, double> last_map;
 
         auto music = (*raw)["music"];
         for(auto note = music.begin(); note != music.end(); ++note) {
@@ -41,16 +42,20 @@ namespace Rocket {
             double start_time = 0;
             if(!(*note)["begin"].is_null()) {
                 std::string begin_name = (*note)["begin"];
-                auto temp_event = event_map[begin_name];
-                start_time = temp_event->time_delay_;
+                auto temp_event_start = start_map[begin_name];
+                auto temp_note_last = last_map[begin_name];
+                start_time = temp_event_start + temp_note_last * one_step_;
             }
-
-            start_time += one_step_ * (double)(*note)["delay"];
-            event->time_delay_ = start_time;
+            double time_delay = (*note)["delay"];
+            double time_last = (*note)["last"];
+            event->time_delay_ = start_time + time_delay * one_step_;
 
             std::string id = (*note)["id"];
-            event_map[id] = event;
+            start_map[id] = event->time_delay_;
+            last_map[id] = time_last;
             events.push_back(event);
         }
+        start_map.clear();
+        last_map.clear();
     }
 }

@@ -146,6 +146,13 @@ int main() {
         if (key == GLFW_KEY_G && action == GLFW_PRESS) {GenerateEvent("Piano.ff.G4.wav");}
         if (key == GLFW_KEY_H && action == GLFW_PRESS) {GenerateEvent("Piano.ff.A4.wav");}
         if (key == GLFW_KEY_J && action == GLFW_PRESS) {GenerateEvent("Piano.ff.B4.wav");}
+        if (key == GLFW_KEY_Z && action == GLFW_PRESS) {GenerateEvent("Piano.ff.C5.wav");}
+        if (key == GLFW_KEY_X && action == GLFW_PRESS) {GenerateEvent("Piano.ff.D5.wav");}
+        if (key == GLFW_KEY_C && action == GLFW_PRESS) {GenerateEvent("Piano.ff.E5.wav");}
+        if (key == GLFW_KEY_V && action == GLFW_PRESS) {GenerateEvent("Piano.ff.F5.wav");}
+        if (key == GLFW_KEY_B && action == GLFW_PRESS) {GenerateEvent("Piano.ff.G5.wav");}
+        if (key == GLFW_KEY_N && action == GLFW_PRESS) {GenerateEvent("Piano.ff.A5.wav");}
+        if (key == GLFW_KEY_M && action == GLFW_PRESS) {GenerateEvent("Piano.ff.B5.wav");}
         if (key == GLFW_KEY_SPACE && action == GLFW_PRESS) { 
             std::vector<EventPtr> events;
             generator_g.GetMusicNotes(events);
