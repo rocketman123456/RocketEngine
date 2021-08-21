@@ -19,7 +19,7 @@ set_languages("c99", "c++17")
 --
 -- Add Required Modules
 --
-add_requires("spdlog", {system = false, shared = false, debug = true, configs = {fmt_external = false, cxflags = "-fPIC"}})
+add_requires("spdlog", {system = false, shared = false, debug = true, configs = {fmt_external = true, cxflags = "-fPIC"}})
 add_requires("fmt", {system = false, shared = false, debug = true, configs = {cxflags = "-fPIC"}})
 add_requires("glad", {system = false, shared = false, debug = true, configs = {cxflags = "-fPIC"}})
 add_requires("minizip", {system = false, shared = false, debug = true, configs = {cxflags = "-fPIC"}})
