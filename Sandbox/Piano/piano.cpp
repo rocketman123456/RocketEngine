@@ -2,12 +2,25 @@
 #include "FileSystem/FileSystem.h"
 #include "AudioSystem/AudioManager.h"
 #include "EventSystem/EventManager.h"
-#include "Parser/JsonParser.h"
-#include "AudioSystem/MusicGenerator.h"
 #include "Utils/AudioChecker.h"
 #include "Utils/FindRootDir.h"
 #include "Utils/Timer.h"
 #include "Log/Log.h"
+
+#ifdef RK_MEMORY_CHECK
+#ifdef new
+#undef new
+#endif
+#endif
+
+#include "Parser/JsonParser.h"
+#include "AudioSystem/MusicGenerator.h"
+
+#ifdef RK_MEMORY_CHECK
+#ifndef new
+#define new new(__FILE__, __LINE__, __FUNCTION__)
+#endif
+#endif
 
 //#define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>

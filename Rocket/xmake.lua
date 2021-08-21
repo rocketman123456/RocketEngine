@@ -16,7 +16,7 @@ target("RocketEngine")
         "glad", 
         "minizip", "zlib", 
         "yaml-cpp", 
-        "spdlog", "fmt", 
+        "spdlog", --"fmt", 
         "openal-soft", "libsndfile",
         "nlohmann_json",
         {public = true}
