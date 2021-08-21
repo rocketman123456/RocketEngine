@@ -91,8 +91,15 @@ int main() {
         }
     }
 
+    auto file_select = FileSystem::OpenSync(root, "/Asset/Config/music_name.txt", FileOperateMode::ReadText);
+    FileBuffer buffer;
+    file_select->ReadAll(buffer);
+    std::string music_name = (char*)buffer.buffer;
+    delete[] buffer.buffer;
+
     JsonParserPtr parser = JsonParserPtr(new JsonParser);
-    parser->Initialize(root, "/Asset/Note/Castle in the Sky.json");
+    std::string note_name = "/Asset/Note/" + music_name + ".json";
+    parser->Initialize(root, note_name);
     generator_g.Initialize(std::move(parser));
 
     EventManager::Create();
@@ -139,7 +146,11 @@ int main() {
         if (key == GLFW_KEY_G && action == GLFW_PRESS) {GenerateEvent("Piano.ff.G4.wav");}
         if (key == GLFW_KEY_H && action == GLFW_PRESS) {GenerateEvent("Piano.ff.A4.wav");}
         if (key == GLFW_KEY_J && action == GLFW_PRESS) {GenerateEvent("Piano.ff.B4.wav");}
-        if (key == GLFW_KEY_SPACE && action == GLFW_PRESS) { InsertEvents(generator_g.GetMusicNotes()); }
+        if (key == GLFW_KEY_SPACE && action == GLFW_PRESS) { 
+            std::vector<EventPtr> events;
+            generator_g.GetMusicNotes(events);
+            InsertEvents(events); 
+        }
     });
 
     ElapseTimer timer;
@@ -166,6 +177,8 @@ int main() {
 
     isStop = true;
     module_thread.join();
+
+    generator_g.Finalize();
 
     AudioManager::Instance()->Finalize();
     EventManager::Instance()->Finalize();

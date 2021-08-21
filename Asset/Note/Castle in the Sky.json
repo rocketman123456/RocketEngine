@@ -1,7 +1,7 @@
 {
     "base": "Piano.ff.",
     "type": ".wav",
-    "one_step": 1.0,
+    "one_step": 1000.0,
     "music": [
         {
             "id": "1",
@@ -14,7 +14,7 @@
             "id": "2",
             "note": "C3",
             "begin": "1",
-            "delay": 0,
+            "delay": 1,
             "last": 0.25
         }
     ]

@@ -8,7 +8,8 @@ namespace Rocket {
     class MusicGenerator {
     public:
         int32_t Initialize(JsonParserPtr&& ptr);
-        std::vector<EventPtr>& GetMusicNotes() { return events_; }
+        void Finalize();
+        void GetMusicNotes(std::vector<EventPtr>& events);
     private:
         JsonParserPtr json_file_;
         std::vector<EventPtr> events_;
