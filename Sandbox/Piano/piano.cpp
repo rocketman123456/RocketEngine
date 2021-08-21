@@ -60,8 +60,11 @@ int main() {
     std::vector<std::string> wav_file_names;
     for (auto& it:dir_list) {
         std::string name = it.path().filename().string();
-        wav_files.push_back(root_path.string() + name);
-        wav_file_names.push_back(name);
+        std::string type_name = name.substr(name.find_last_of('.')+1);
+        if(type_name == "wav" || type_name == "ogg") {
+            wav_files.push_back(root_path.string() + name);
+            wav_file_names.push_back(name);
+        }
     }
 
     AudioManager::Create();
