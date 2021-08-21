@@ -95,6 +95,17 @@ namespace Rocket {
         }
     }
 
+    ALuint AudioManager::FindBuffer(const uint64_t name_id) {
+        auto result = buffers_.find(name_id);
+        if(result != buffers_.end()) {
+            RK_TRACE(Audio, "Find Buffer: {}", name_id);
+            return result->second;
+        } else {
+            RK_TRACE(Audio, "Cannot Find Buffer: {}", name_id);
+            return 0;
+        }
+    }
+
     void AudioManager::AddTask(AudioTaskPtr&& task) {
         //task->Initialize();
         task->Start();

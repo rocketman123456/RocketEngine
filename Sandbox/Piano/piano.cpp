@@ -1,8 +1,12 @@
 #include "Memory/MemoryCheck.h"
-#include "Utils/AudioChecker.h"
-#include "Utils/FindRootDir.h"
 #include "FileSystem/FileSystem.h"
 #include "AudioSystem/AudioManager.h"
+#include "EventSystem/EventManager.h"
+#include "Parser/JsonParser.h"
+#include "AudioSystem/MusicGenerator.h"
+#include "Utils/AudioChecker.h"
+#include "Utils/FindRootDir.h"
+#include "Utils/Timer.h"
 #include "Log/Log.h"
 
 //#define GLFW_INCLUDE_NONE
@@ -19,14 +23,34 @@
 #include <random>
 #include <filesystem>
 #include <memory>
+#include <thread>
 
 using namespace Rocket;
 
-#define generate_task(X) {\
-    auto buffer = AudioManager::Instance()->FindBuffer(X);\
-    AudioTaskPtr task = std::make_unique<AudioTask>();\
-    task->Initialize(buffer);\
-    AudioManager::Instance()->AddTask(std::move(task));}
+void InsertEvents(std::vector<EventPtr>& events) {
+    for(auto event : events) {
+        EventManager::Instance()->QueueEvent(event);
+    }
+}
+
+void GenerateEvent(const std::string& name) {
+    Variant* data = new Variant[1];
+    data[0].type = Variant::TYPE_STRING_ID;
+    data[0].as_string_id = hash(name);
+    EventPtr event = EventPtr(new Event("audio", data, 1));
+    EventManager::Instance()->QueueEvent(event);
+}
+
+bool AudioEventHandle(EventPtr& event) {
+    auto name_id = event->GetStringId(0);
+    auto buffer = AudioManager::Instance()->FindBuffer(name_id);
+    AudioTaskPtr task = std::make_unique<AudioTask>();
+    task->Initialize(buffer);
+    AudioManager::Instance()->AddTask(std::move(task));
+    return false;
+}
+
+MusicGenerator generator_g;
 
 int main() {
     Log::Init();
@@ -67,10 +91,23 @@ int main() {
         }
     }
 
-    AudioManager::Create();
-    auto result = AudioManager::Instance()->Initialize();
+    JsonParserPtr parser = JsonParserPtr(new JsonParser);
+    parser->Initialize(root, "/Asset/Note/Castle in the Sky.json");
+    generator_g.Initialize(std::move(parser));
+
+    EventManager::Create();
+    auto result = EventManager::Instance()->Initialize();
     if(result) {
-        return 0;
+        return 1;
+    }
+    ChannelPtr channel = std::shared_ptr<EventChannel>(new EventChannel("audio_channel"));
+    EventManager::Instance()->AddChannel("audio", channel);
+    REGISTER_DELEGATE_FN(AudioEventHandle, "audio", "audio_channel");
+
+    AudioManager::Create();
+    result = AudioManager::Instance()->Initialize();
+    if(result) {
+        return 1;
     }
 
     for(int i = 0; i < wav_files.size(); ++i) {
@@ -80,71 +117,42 @@ int main() {
     }
 
     glfwSetKeyCallback(window, [](GLFWwindow* window, int key, int scancode, int action, int mods){
-        if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
-            glfwSetWindowShouldClose(window, true);
-        }
-        if (key == GLFW_KEY_1 && action == GLFW_PRESS) {
-            generate_task("Piano.ff.C2.wav");
-        }
-        if (key == GLFW_KEY_2 && action == GLFW_PRESS) {
-            generate_task("Piano.ff.D2.wav");
-        }
-        if (key == GLFW_KEY_3 && action == GLFW_PRESS) {
-            generate_task("Piano.ff.E2.wav");
-        }
-        if (key == GLFW_KEY_4 && action == GLFW_PRESS) {
-            generate_task("Piano.ff.F2.wav");
-        }
-        if (key == GLFW_KEY_5 && action == GLFW_PRESS) {
-            generate_task("Piano.ff.G2.wav");
-        }
-        if (key == GLFW_KEY_6 && action == GLFW_PRESS) {
-            generate_task("Piano.ff.A2.wav");
-        }
-        if (key == GLFW_KEY_7 && action == GLFW_PRESS) {
-            generate_task("Piano.ff.B2.wav");
-        }
-        if (key == GLFW_KEY_Q && action == GLFW_PRESS) {
-            generate_task("Piano.ff.C3.wav");
-        }
-        if (key == GLFW_KEY_W && action == GLFW_PRESS) {
-            generate_task("Piano.ff.D3.wav");
-        }
-        if (key == GLFW_KEY_E && action == GLFW_PRESS) {
-            generate_task("Piano.ff.E3.wav");
-        }
-        if (key == GLFW_KEY_R && action == GLFW_PRESS) {
-            generate_task("Piano.ff.F3.wav");
-        }
-        if (key == GLFW_KEY_T && action == GLFW_PRESS) {
-            generate_task("Piano.ff.G3.wav");
-        }
-        if (key == GLFW_KEY_Y && action == GLFW_PRESS) {
-            generate_task("Piano.ff.A3.wav");
-        }
-        if (key == GLFW_KEY_U && action == GLFW_PRESS) {
-            generate_task("Piano.ff.B3.wav");
-        }
-        if (key == GLFW_KEY_A && action == GLFW_PRESS) {
-            generate_task("Piano.ff.C4.wav");
-        }
-        if (key == GLFW_KEY_S && action == GLFW_PRESS) {
-            generate_task("Piano.ff.D4.wav");
-        }
-        if (key == GLFW_KEY_D && action == GLFW_PRESS) {
-            generate_task("Piano.ff.E4.wav");
-        }
-        if (key == GLFW_KEY_F && action == GLFW_PRESS) {
-            generate_task("Piano.ff.F4.wav");
-        }
-        if (key == GLFW_KEY_G && action == GLFW_PRESS) {
-            generate_task("Piano.ff.G4.wav");
-        }
-        if (key == GLFW_KEY_H && action == GLFW_PRESS) {
-            generate_task("Piano.ff.A4.wav");
-        }
-        if (key == GLFW_KEY_J && action == GLFW_PRESS) {
-            generate_task("Piano.ff.B4.wav");
+        if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {glfwSetWindowShouldClose(window, true);}
+        if (key == GLFW_KEY_1 && action == GLFW_PRESS) {GenerateEvent("Piano.ff.C2.wav");}
+        if (key == GLFW_KEY_2 && action == GLFW_PRESS) {GenerateEvent("Piano.ff.D2.wav");}
+        if (key == GLFW_KEY_3 && action == GLFW_PRESS) {GenerateEvent("Piano.ff.E2.wav");}
+        if (key == GLFW_KEY_4 && action == GLFW_PRESS) {GenerateEvent("Piano.ff.F2.wav");}
+        if (key == GLFW_KEY_5 && action == GLFW_PRESS) {GenerateEvent("Piano.ff.G2.wav");}
+        if (key == GLFW_KEY_6 && action == GLFW_PRESS) {GenerateEvent("Piano.ff.A2.wav");}
+        if (key == GLFW_KEY_7 && action == GLFW_PRESS) {GenerateEvent("Piano.ff.B2.wav");}
+        if (key == GLFW_KEY_Q && action == GLFW_PRESS) {GenerateEvent("Piano.ff.C3.wav");}
+        if (key == GLFW_KEY_W && action == GLFW_PRESS) {GenerateEvent("Piano.ff.D3.wav");}
+        if (key == GLFW_KEY_E && action == GLFW_PRESS) {GenerateEvent("Piano.ff.E3.wav");}
+        if (key == GLFW_KEY_R && action == GLFW_PRESS) {GenerateEvent("Piano.ff.F3.wav");}
+        if (key == GLFW_KEY_T && action == GLFW_PRESS) {GenerateEvent("Piano.ff.G3.wav");}
+        if (key == GLFW_KEY_Y && action == GLFW_PRESS) {GenerateEvent("Piano.ff.A3.wav");}
+        if (key == GLFW_KEY_U && action == GLFW_PRESS) {GenerateEvent("Piano.ff.B3.wav");}
+        if (key == GLFW_KEY_A && action == GLFW_PRESS) {GenerateEvent("Piano.ff.C4.wav");}
+        if (key == GLFW_KEY_S && action == GLFW_PRESS) {GenerateEvent("Piano.ff.D4.wav");}
+        if (key == GLFW_KEY_D && action == GLFW_PRESS) {GenerateEvent("Piano.ff.E4.wav");}
+        if (key == GLFW_KEY_F && action == GLFW_PRESS) {GenerateEvent("Piano.ff.F4.wav");}
+        if (key == GLFW_KEY_G && action == GLFW_PRESS) {GenerateEvent("Piano.ff.G4.wav");}
+        if (key == GLFW_KEY_H && action == GLFW_PRESS) {GenerateEvent("Piano.ff.A4.wav");}
+        if (key == GLFW_KEY_J && action == GLFW_PRESS) {GenerateEvent("Piano.ff.B4.wav");}
+        if (key == GLFW_KEY_SPACE && action == GLFW_PRESS) { InsertEvents(generator_g.GetMusicNotes()); }
+    });
+
+    ElapseTimer timer;
+    timer.Start();
+
+    bool isStop = false;
+
+    std::thread module_thread = std::thread([&](){
+        while(!isStop) {
+            double dt = timer.GetTickTime();
+            //RK_TRACE(App, "dt: {}", dt);
+            AudioManager::Instance()->Tick(dt);
+            EventManager::Instance()->Tick(dt);
         }
     });
 
@@ -152,18 +160,21 @@ int main() {
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        AudioManager::Instance()->Tick(10);
-        
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
 
+    isStop = true;
+    module_thread.join();
+
     AudioManager::Instance()->Finalize();
+    EventManager::Instance()->Finalize();
 
 	glfwDestroyWindow(window);
 	glfwTerminate();
 
     AudioManager::Destroy();
+    EventManager::Destroy();
     Log::End();
     return 0;
 }

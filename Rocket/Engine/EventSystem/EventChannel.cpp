@@ -34,18 +34,30 @@ namespace Rocket {
             return;
         }
         else {
+            auto delay_queue = std::vector<EventPtr>();
             auto event_queue = event_storage_.begin();
             auto end_queue = event_storage_.end();
             while(event_queue != end_queue) {
                 EventPtr event;
-                auto& queue_ = event_queue->second;
-                RK_INFO(Event, "Queue Event Count {}", queue_.size());
+                auto& queue = event_queue->second;
+                //RK_TRACE(Event, "Queue Event Count {}", queue.size());
                 //queue_.block();
-                while(queue_.pop(event)) {
-                    DispatchEvent(event);
+                while(queue.pop(event)) {
+                    if(event->time_delay_ > 0) {
+                        double dt = step;
+                        event->time_delay_ = event->time_delay_ - dt;
+                        delay_queue.push_back(event);
+                        continue;
+                    }
+                    else {
+                        DispatchEvent(event);
+                    }
                 }
                 //queue_.unblock();
                 event_queue++;
+            }
+            for(auto event : delay_queue) {
+                QueueEvent(event);
             }
         }
     }

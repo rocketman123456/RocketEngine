@@ -1,6 +1,7 @@
 {
     "base": "Piano.ff.",
     "type": ".wav",
+    "one_step": 1.0,
     "music": [
         {
             "id": "1",

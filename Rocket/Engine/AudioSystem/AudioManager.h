@@ -29,6 +29,7 @@ namespace Rocket {
 
         void InsertBuffer(AudioFile* file);
         ALuint FindBuffer(const std::string& name);
+        ALuint FindBuffer(const uint64_t name_id);
 
         void AddTask(AudioTaskPtr&& task);
 

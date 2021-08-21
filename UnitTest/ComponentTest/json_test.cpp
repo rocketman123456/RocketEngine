@@ -1,6 +1,6 @@
 #include "Parser/JsonParser.h"
-#include "Log/Log.h"
 #include "Utils/FindRootDir.h"
+#include "Log/Log.h"
 
 #include <iostream>
 
@@ -14,13 +14,6 @@ int main() {
     JsonParser parser;
 
     parser.Initialize(root, "/Asset/Note/Castle in the Sky.json");
-
-    std::cout << " \"Hello\" " << std::endl;
-    int32_t result = parser.Initialize(" \"Hello\" ");
-    parser.Finalize();
-
-    auto value = parser.GetJsonValue()->value_s;
-    std::cout << value << "," << (value == "Hello") << std::endl;
 
     Log::End();
     return 0;
