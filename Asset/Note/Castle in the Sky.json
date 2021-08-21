@@ -1,0 +1,20 @@
+{
+    "base": "Piano.ff.",
+    "type": ".wav",
+    "music": [
+        {
+            "id": "1",
+            "note": "C4",
+            "begin": null,
+            "delay": 0,
+            "last": 0.25
+        },
+        {
+            "id": "2",
+            "note": "C3",
+            "begin": "1",
+            "delay": 0,
+            "last": 0.25
+        }
+    ]
+}

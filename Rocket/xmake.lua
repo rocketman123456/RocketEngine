@@ -18,6 +18,7 @@ target("RocketEngine")
         "yaml-cpp", 
         "spdlog", "fmt", 
         "openal-soft", "libsndfile",
+        "nlohmann_json",
         {public = true}
     )
     add_options("console_log")
