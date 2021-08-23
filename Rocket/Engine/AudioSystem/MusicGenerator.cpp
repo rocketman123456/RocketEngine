@@ -32,13 +32,6 @@ namespace Rocket {
             // std::cout << "delay : " << (*note)["delay"] << "\n";
             // std::cout << "last : " << (*note)["last"] << "\n";
 
-            std::string note_name = (*note)["note"];
-            std::string complete_name = base_ + note_name + type_;
-            Variant* data = new Variant[1];
-            data[0].type = Variant::TYPE_STRING_ID;
-            data[0].as_string_id = hash(complete_name);
-            EventPtr event = EventPtr(new Event("audio", data, 1));
-
             double start_time = 0;
             if(!(*note)["begin"].is_null()) {
                 std::string begin_name = (*note)["begin"];
@@ -48,12 +41,23 @@ namespace Rocket {
             }
             double time_delay = (*note)["delay"];
             double time_last = (*note)["last"];
+
+            if((*note)["note"].is_null()) {
+                continue;
+            }
+
+            std::string note_name = (*note)["note"];
+            std::string complete_name = base_ + note_name + type_;
+            Variant* data = new Variant[1];
+            data[0].type = Variant::TYPE_STRING_ID;
+            data[0].as_string_id = hash(complete_name);
+            EventPtr event = EventPtr(new Event("audio", data, 1));
             event->time_delay_ = start_time + time_delay * one_step_;
+            events.push_back(event);
 
             std::string id = (*note)["id"];
             start_map[id] = event->time_delay_;
             last_map[id] = time_last;
-            events.push_back(event);
         }
         start_map.clear();
         last_map.clear();

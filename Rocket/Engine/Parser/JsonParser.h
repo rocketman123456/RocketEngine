@@ -1,4 +1,12 @@
 #pragma once
+#include "Memory/MemoryCheck.h"
+
+#ifdef RK_MEMORY_CHECK
+#ifdef new
+#undef new
+#endif
+#endif
+
 #include <nlohmann/json.hpp>
 
 #include <string>
@@ -27,3 +35,9 @@ namespace Rocket {
 
     using JsonParserPtr = std::unique_ptr<JsonParser>;
 }
+
+#ifdef RK_MEMORY_CHECK
+#ifndef new
+#define new new(__FILE__, __LINE__, __FUNCTION__)
+#endif
+#endif
