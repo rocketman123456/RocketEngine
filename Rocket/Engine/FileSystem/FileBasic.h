@@ -20,9 +20,48 @@ namespace Rocket {
     };
 
     struct FileBuffer {
-        int64_t uuid = 0;
-        int64_t size = 0;
+        int64_t uuid = 0;           // hash code for check
+        int64_t size = 0;           // bytes
         void*   buffer = nullptr;
+
+        FileBuffer() = default;
+        ~FileBuffer() { if(buffer) delete[] buffer; }
+
+        FileBuffer(const FileBuffer& buffer) {
+            this->buffer = new int8_t[buffer.size];
+            this->size = buffer.size;
+            memcpy(this->buffer, buffer.buffer, size);
+        }
+        FileBuffer(FileBuffer&& buffer) {
+            this->uuid = buffer.uuid;
+            this->size = buffer.size;
+            buffer.buffer = nullptr;
+            buffer.size = 0;
+        }
+
+        // Copy
+        FileBuffer& operator = (const FileBuffer& buffer) {
+            if (this == &buffer)
+                return *this;
+            if(this->buffer)
+                delete [] this->buffer;
+            this->buffer = new int8_t[buffer.size];
+            this->size = buffer.size;
+            memcpy(this->buffer, buffer.buffer, size);
+            return *this;
+        }
+        // Move
+        FileBuffer& operator = (FileBuffer&& buffer) {
+            if (this == &buffer)
+                return *this;
+            if(this->buffer)
+                delete [] this->buffer;
+            this->uuid = buffer.uuid;
+            this->size = buffer.size;
+            buffer.buffer = nullptr;
+            buffer.size = 0;
+            return *this;
+        }
     };
 
     struct FileHandle {

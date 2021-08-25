@@ -108,7 +108,6 @@ int main() {
     FileBuffer buffer;
     file_select->ReadAll(buffer);
     std::string music_name = (char*)buffer.buffer;
-    delete[] buffer.buffer;
 
     JsonParserPtr parser = JsonParserPtr(new JsonParser);
     std::string note_name = "/Asset/Note/" + music_name + ".json";

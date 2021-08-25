@@ -10,7 +10,6 @@ namespace Rocket {
         FileBuffer buffer;
         file->ReadAll(buffer);
         content_ = std::string((char*)buffer.buffer);
-        delete[] buffer.buffer;
         FileSystem::CloseSync(std::move(file));
 
         Serialize(content_);

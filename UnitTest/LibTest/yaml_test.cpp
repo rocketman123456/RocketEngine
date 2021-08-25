@@ -16,7 +16,6 @@ int main() {
     FileBuffer buffer;
     file->ReadAll(buffer);
     printf((const char*)buffer.buffer);
-    delete[] buffer.buffer;
 
     YAML::Node node = YAML::LoadFile(root + "/Config/basic.yaml");
     std::cout << "YAML Node Size: " << node.size() << std::endl;

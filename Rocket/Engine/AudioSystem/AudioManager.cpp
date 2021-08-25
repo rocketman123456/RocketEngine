@@ -68,7 +68,6 @@ namespace Rocket {
             ALuint audio_buffer;
             alCall(alGenBuffers, 1, &audio_buffer);
             alCall(alBufferData, audio_buffer, format, buffer.buffer, buffer.size, file_info->samplerate);
-            delete[] buffer.buffer;
 
             auto err = alGetError();
             if(err != AL_NO_ERROR) {

@@ -1,3 +1,3 @@
-target("RocketRender")
+target("RocketPlatform")
     set_kind("static")
 target_end()

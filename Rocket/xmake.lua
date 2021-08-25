@@ -1,4 +1,5 @@
 includes(
     "Engine",
+    "Platform",
     "Render"
 )
