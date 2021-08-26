@@ -1,5 +1,5 @@
 {
-    "base": "Piano.mf.",
+    "base": "Piano.ff.",
     "type": ".wav",
     "one_step": 500,
     "music": [

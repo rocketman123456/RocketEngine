@@ -28,9 +28,9 @@ namespace Rocket {
         if (size < 2) return {array, size};
         int64_t mid = size / 2;
         T* left = new T[mid];
-        memcpy(left, &array[0], sizeof(T) * mid);
+        std::memcpy(left, &array[0], sizeof(T) * mid);
         T* right = new T[size - mid];
-        memcpy(right, &array[mid], sizeof(T) * (size - mid));
+        std::memcpy(right, &array[mid], sizeof(T) * (size - mid));
         auto left_result = MergeSortBF<T>(left, mid, compare);
         auto right_result = MergeSortBF<T>(right, size - mid, compare);
         auto result = MergeBF<T>(left_result, right_result, compare);
@@ -66,9 +66,9 @@ namespace Rocket {
         if (size < 2) return {array, size};
         int64_t mid = size / 2;
         T* left = new T[mid];
-        memcpy(left, &array[0], sizeof(T) * mid);
+        std::memcpy(left, &array[0], sizeof(T) * mid);
         T* right = new T[size - mid];
-        memcpy(right, &array[mid], sizeof(T) * (size - mid));
+        std::memcpy(right, &array[mid], sizeof(T) * (size - mid));
         auto left_result = MergeSortSF<T>(left, mid, compare);
         auto right_result = MergeSortSF<T>(right, size - mid, compare);
         auto result = MergeSF<T>(left_result, right_result, compare);

@@ -37,7 +37,7 @@ namespace Rocket {
                 tmp[count[9 - k] - 1] = array[j];
                 count[9 - k]--;
             }
-            memcpy(array, tmp, size * sizeof(int32_t));
+            std::memcpy(array, tmp, size * sizeof(int32_t));
             radix = radix * 10;
         }
         delete[] tmp;
@@ -63,7 +63,7 @@ namespace Rocket {
                 tmp[count[k] - 1] = array[j];
                 count[k]--;
             }
-            memcpy(array, tmp, size * sizeof(int32_t));
+            std::memcpy(array, tmp, size * sizeof(int32_t));
             radix = radix * 10;
         }
         delete[] tmp;

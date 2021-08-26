@@ -1,6 +1,8 @@
 #include "AudioSystem/AudioTask.h"
 #include "Log/Log.h"
 
+#include <stdexcept>
+
 namespace Rocket {
     int32_t AudioTask::Initialize(ALuint buffer) {
         alCall(alGenSources, 1, &source_);
@@ -13,7 +15,7 @@ namespace Rocket {
 
         if(alGetError() != AL_NO_ERROR) {
             RK_ERROR(Audio, "Failed to setup sound source");
-            return 1;
+            throw std::exception("Failed to setup sound source");
         }
         return 0;
     }

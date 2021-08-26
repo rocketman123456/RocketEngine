@@ -9,7 +9,7 @@ namespace Rocket {
         if (size < 2) return;
         T current;
         for (int64_t i = 0; i < size - 1; i++) {
-            memcpy(&current, &array[i + 1], sizeof(T));
+            std::memcpy(&current, &array[i + 1], sizeof(T));
             //current = array[i + 1];
             int64_t pre_index = i;
             while (pre_index >= 0 && (compare(current, array[pre_index]) > 0)) {
@@ -26,7 +26,7 @@ namespace Rocket {
         if (size < 2) return;
         T current;
         for (int64_t i = 0; i < size - 1; i++) {
-            memcpy(&current, &array[i + 1], sizeof(T));
+            std::memcpy(&current, &array[i + 1], sizeof(T));
             //current = array[i + 1];
             int64_t pre_index = i;
             while (pre_index >= 0 && (compare(current, array[pre_index]) < 0)) {

@@ -36,7 +36,7 @@ namespace Rocket {
             type_ = event.type_;
             size_ = event.size_;
             variable_ = new Variant[size_];
-            memcpy(variable_, event.variable_, sizeof(Variant) * size_);
+            std::memcpy(variable_, event.variable_, sizeof(Variant) * size_);
             time_stamp_ = event.time_stamp_;
             time_delay_ = event.time_delay_;
         }
@@ -69,7 +69,7 @@ namespace Rocket {
             type_ = other.type_;
             size_ = other.size_;
             variable_ = new Variant[size_];
-            memcpy(variable_, other.variable_, sizeof(Variant) * size_);
+            std::memcpy(variable_, other.variable_, sizeof(Variant) * size_);
             time_stamp_ = other.time_stamp_;
             time_delay_ = other.time_delay_;
             return *this;

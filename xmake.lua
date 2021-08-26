@@ -40,7 +40,7 @@ end
 option("render")
     set_default("vulkan")
     set_showmenu(true)
-    set_values("soft", "opengl", "vulkan", "metal")
+    set_values("soft", "opengl", "vulkan", "metal", "dx12", "dx11")
     set_description("The Render config option")
 option_end()
 if is_config("render", "soft") then
@@ -55,6 +55,12 @@ elseif is_config("render", "vulkan") then
 elseif is_config("render", "metal") then
     --print("metal")
     add_defines("RK_METAL")
+elseif is_config("render", "dx12") then
+    --print("metal")
+    add_defines("RK_DX12")
+elseif is_config("render", "dx11") then
+    --print("metal")
+    add_defines("RK_DX11")
 end
 
 --
@@ -87,8 +93,14 @@ option_end()
 -- Set Include Dirs
 --
 add_includedirs(
-    "Rocket/Engine"
+    "Rocket/Engine",
+    "Rocket/Render/SoftRender",
+    "Rocket/Render/OpenGLRender",
+    "Rocket/Platform/Common"
 )
+if is_plat("windows", "macosx", "linux") then
+    add_includedirs("Rocket/Platform/Desktop")
+end
 
 --
 -- Add ISPC Build Rule
@@ -129,8 +141,4 @@ end
 --
 -- Add Sub Module
 --
-includes(
-    "Rocket", 
-    "Sandbox",
-    "UnitTest"
-)
+includes("Rocket", "Sandbox", "UnitTest")

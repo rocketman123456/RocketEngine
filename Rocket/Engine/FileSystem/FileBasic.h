@@ -30,7 +30,7 @@ namespace Rocket {
         FileBuffer(const FileBuffer& buffer) {
             this->buffer = new int8_t[buffer.size];
             this->size = buffer.size;
-            memcpy(this->buffer, buffer.buffer, size);
+            std::memcpy(this->buffer, buffer.buffer, size);
         }
         FileBuffer(FileBuffer&& buffer) {
             this->uuid = buffer.uuid;
@@ -47,7 +47,7 @@ namespace Rocket {
                 delete [] this->buffer;
             this->buffer = new int8_t[buffer.size];
             this->size = buffer.size;
-            memcpy(this->buffer, buffer.buffer, size);
+            std::memcpy(this->buffer, buffer.buffer, size);
             return *this;
         }
         // Move

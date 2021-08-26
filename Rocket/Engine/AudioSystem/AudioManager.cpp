@@ -4,15 +4,17 @@
 namespace Rocket {
     int AudioManager::Initialize() {
         openal_device_ = alcOpenDevice(nullptr);
-        if(!openal_device_)
-            return 1;
+        if(!openal_device_) {
+            RK_ERROR(Audio, "ERROR: Failed to open audio device");
+            throw std::exception("ERROR: Failed to open audio device");
+        }
         if(!alcCall(alcCreateContext, openal_context_, openal_device_, openal_device_, nullptr) || !openal_context_) {
             RK_ERROR(Audio, "ERROR: Could not create audio context");
-            return 2;
+            throw std::exception("ERROR: Could not create audio context");
         }
         if(!alcCall(alcMakeContextCurrent, context_made_current_, openal_device_, openal_context_) || context_made_current_ != ALC_TRUE) {
             RK_ERROR(Audio, "ERROR: Could not make audio context current");
-            return 3;
+            throw std::exception("ERROR: Could not make audio context current");
         }
         return 0;
     }
@@ -30,9 +32,6 @@ namespace Rocket {
 
     void AudioManager::Tick(TimeStep step) {
         for(auto it = tasks_.begin(); it != tasks_.end(); ++it) {
-            // /if((*it)->IsInitial()) {
-            // /    (*it)->Start();
-            // /}
             if((*it)->IsStoped()) {
                 (*it)->Finalize();
                 tasks_.erase(it);
@@ -106,7 +105,6 @@ namespace Rocket {
     }
 
     void AudioManager::AddTask(AudioTaskPtr&& task) {
-        //task->Initialize();
         task->Start();
         tasks_.push_back(std::move(task));
     }

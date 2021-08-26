@@ -26,6 +26,7 @@ namespace Rocket {
 #ifdef RK_CONSOLE_LOG
         // 声明Log输出频道
         DECLARE_LOG_CHANNEL(Core);
+        DECLARE_LOG_CHANNEL(Window);
         DECLARE_LOG_CHANNEL(Event);
         DECLARE_LOG_CHANNEL(File);
         DECLARE_LOG_CHANNEL(Audio);
