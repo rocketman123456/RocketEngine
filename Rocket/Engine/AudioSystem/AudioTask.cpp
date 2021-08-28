@@ -15,7 +15,7 @@ namespace Rocket {
 
         if(alGetError() != AL_NO_ERROR) {
             RK_ERROR(Audio, "Failed to setup sound source");
-            throw std::exception("Failed to setup sound source");
+            throw std::runtime_error("Failed to setup sound source");
         }
         return 0;
     }

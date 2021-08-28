@@ -30,7 +30,7 @@ namespace Rocket {
     void AudioFile::CheckSndFileError() {
         if(sf_error((SNDFILE*)file_.file_pointer) > 0) {
             RK_ERROR(File, "Audio File Error : {}", sf_strerror((SNDFILE*)file_.file_pointer));
-            throw std::exception("Audio File Error : " + sf_strerror((SNDFILE*)file_.file_pointer));
+            throw std::runtime_error("Audio File Error");
         }
     }
 

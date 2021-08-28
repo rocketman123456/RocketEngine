@@ -45,11 +45,11 @@ namespace Rocket {
     };
 }
 
-#define REGISTER_DELEGATE_CLASS(class,function,instance,name,ch_name) {\
+#define REGISTER_DELEGATE_CLASS(class,function,instance,name,ch_name) do {\
     Rocket::EventDelegate delegate; \
     delegate.Bind<class,&function>(instance); \
-    Rocket::EventManager::Instance()->AddEventListener(delegate, name, ch_name); }
-#define REGISTER_DELEGATE_FN(function,name,ch_name) {\
+    Rocket::EventManager::Instance()->AddEventListener(delegate, name, ch_name); } while(0);
+#define REGISTER_DELEGATE_FN(function,name,ch_name) do {\
     Rocket::EventDelegate delegate; \
     delegate.Bind<&function>(); \
-    Rocket::EventManager::Instance()->AddEventListener(delegate, name, ch_name); }
+    Rocket::EventManager::Instance()->AddEventListener(delegate, name, ch_name); } while(0);

@@ -28,6 +28,7 @@ add_requires("yaml-cpp", {system = false, shared = false, debug = true, configs 
 add_requires("openal-soft", {system = false, shared = false, debug = true, configs = {cxflags = "-fPIC"}})
 add_requires("libsndfile", {system = false, shared = false, debug = true, configs = {cxflags = "-fPIC"}})
 add_requires("nlohmann_json", {system = false, shared = false, debug = true, configs = {cxflags = "-fPIC"}})
+add_requires("stb", {system = false, shared = false, debug = true, configs = {cxflags = "-fPIC"}})
 
 if is_plat("linux", "macosx", "windows") then
     add_requires("glfw", {system = false, shared = false, debug = true, glfw_include = "none", configs = {cxflags = "-fPIC"}})
@@ -94,6 +95,7 @@ option_end()
 --
 add_includedirs(
     "Rocket/Engine",
+    "Rocket/Render/Common",
     "Rocket/Render/SoftRender",
     "Rocket/Render/OpenGLRender",
     "Rocket/Platform/Common"

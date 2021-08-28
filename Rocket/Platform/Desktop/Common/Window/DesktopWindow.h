@@ -1,22 +1,14 @@
 #pragma once
-#include "Window/WindowInfo.h"
+#include "Core/Declare.h"
+#include "Window/WindowInstance.h"
 
 namespace Rocket {
-    class DesktopWindow {
+    class DesktopWindow : implements WindowInstance {
     public:
         DesktopWindow() = default;
         ~DesktopWindow() = default;
 
         int32_t Initialize(const WindowInfo& info);
         void Finalize();
-
-        // Cannot Copy Window Class
-        DesktopWindow(const DesktopWindow& buffer) = delete;
-        DesktopWindow(DesktopWindow&& buffer) = delete;
-        DesktopWindow& operator = (const DesktopWindow& buffer) = delete;
-        DesktopWindow& operator = (DesktopWindow&& buffer) = delete;
-    private:
-        WindowInfo info_;
-        void* handle_ = nullptr;
     };
 }

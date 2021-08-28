@@ -6,15 +6,15 @@ namespace Rocket {
         openal_device_ = alcOpenDevice(nullptr);
         if(!openal_device_) {
             RK_ERROR(Audio, "ERROR: Failed to open audio device");
-            throw std::exception("ERROR: Failed to open audio device");
+            throw std::runtime_error("ERROR: Failed to open audio device");
         }
         if(!alcCall(alcCreateContext, openal_context_, openal_device_, openal_device_, nullptr) || !openal_context_) {
             RK_ERROR(Audio, "ERROR: Could not create audio context");
-            throw std::exception("ERROR: Could not create audio context");
+            throw std::runtime_error("ERROR: Could not create audio context");
         }
         if(!alcCall(alcMakeContextCurrent, context_made_current_, openal_device_, openal_context_) || context_made_current_ != ALC_TRUE) {
             RK_ERROR(Audio, "ERROR: Could not make audio context current");
-            throw std::exception("ERROR: Could not make audio context current");
+            throw std::runtime_error("ERROR: Could not make audio context current");
         }
         return 0;
     }
