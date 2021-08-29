@@ -24,7 +24,7 @@ namespace Rocket {
         AudioManager() = default;
         virtual ~AudioManager() = default;
 
-        [[nodiscard]] virtual int Initialize() final;
+        [[nodiscard]] virtual int32_t Initialize() final;
         virtual void Finalize() final;
         virtual void Tick(TimeStep step) final;
 

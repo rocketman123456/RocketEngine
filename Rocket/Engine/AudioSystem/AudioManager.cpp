@@ -2,7 +2,7 @@
 #include "Log/Log.h"
 
 namespace Rocket {
-    int AudioManager::Initialize() {
+    int32_t AudioManager::Initialize() {
         openal_device_ = alcOpenDevice(nullptr);
         if(!openal_device_) {
             RK_ERROR(Audio, "ERROR: Failed to open audio device");

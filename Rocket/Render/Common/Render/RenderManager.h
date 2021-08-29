@@ -6,6 +6,8 @@
 #include "Render/RenderDriver.h"
 #include "Render/RenderAPI.h"
 
+#include <vector>
+
 namespace Rocket {
     class RenderManager : public AbstractSingleton<RenderManager>, public IRuntimeModule {
         RUNTIME_MODULE_TYPE(RenderManager);
@@ -13,12 +15,15 @@ namespace Rocket {
         RenderManager() = default;
         virtual ~RenderManager() = default;
 
-        [[nodiscard]] virtual int Initialize() final;
+        [[nodiscard]] virtual int32_t Initialize() final;
         virtual void Finalize() final;
         virtual void Tick(TimeStep step) final;
 
+        void InstallRenderDriver(RenderDriverPtr&& driver);
+        void InstallRenderAPI(RenderAPIPtr&& api);
+
     private:
-        RenderDriverPtr render_driver_;
-        RenderAPIPtr render_api_;
+        std::vector<RenderDriverPtr> render_driver_;
+        std::vector<RenderAPIPtr> render_api_;
     };
 }

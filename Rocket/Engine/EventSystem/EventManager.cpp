@@ -2,7 +2,7 @@
 #include "Log/Log.h"
 
 namespace Rocket {
-    int EventManager::Initialize() {
+    int32_t EventManager::Initialize() {
         Event::timer_s.Start();
         channels_.clear();
         event_channel_map_.clear();

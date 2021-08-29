@@ -25,9 +25,6 @@ int main() {
         std::cout << "Read Data: " << (char*)buffer.buffer << std::endl;
 
         FileSystem::CloseSync(std::move(file));
-
-        // must have memory manager
-        //delete[] (char*)buffer.buffer;
     }
 
     {
@@ -41,9 +38,6 @@ int main() {
         }
         printf("\n");
         FileSystem::CloseZip(std::move(file));
-
-        // must have memory manager
-        //delete[] (char*)buffer.buffer;
     }
 
     Rocket::Log::End();
