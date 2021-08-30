@@ -1,4 +1,4 @@
-target("RocketPlatform")
+target("RocketPlatformDesktop")
     set_kind("static")
     add_files(
         "Window/*.cpp"

@@ -1,0 +1,5 @@
+target("RocketRenderSoft")
+    set_kind("static")
+    add_files("Render/*.cpp")
+    add_packages("eigen", {public = true})
+target_end()

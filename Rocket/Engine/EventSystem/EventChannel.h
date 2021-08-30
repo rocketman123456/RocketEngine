@@ -14,7 +14,7 @@ namespace Rocket {
 
     class EventChannel {
     public:
-        explicit EventChannel();                                        // Auto Generate Name
+        explicit EventChannel() {}                                       // Auto Generate Name
         explicit EventChannel(const std::string& name): name_(name) {}   // Custom Name
         virtual ~EventChannel() = default;
 
@@ -33,5 +33,6 @@ namespace Rocket {
         std::string name_;
         EventListener event_listener_;
         EventStorage event_storage_;
+        EventStorage waiting_event_storage_;
     };
 }

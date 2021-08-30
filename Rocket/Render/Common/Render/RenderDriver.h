@@ -3,7 +3,10 @@
 #include <memory>
 
 namespace Rocket {
-    class RenderDriver {};
+    class RenderDriver {
+    public:
+        virtual ~RenderDriver() = default;
+    };
 
     using RenderDriverPtr = std::unique_ptr<RenderDriver>;
 }

@@ -51,7 +51,7 @@ void GenerateEvent(const std::string& name) {
     data[0].type = Variant::TYPE_STRING_ID;
     data[0].as_string_id = hash(name);
     EventPtr event = EventPtr(new Event("audio", data, 1));
-    EventManager::Instance()->QueueEvent(event);
+    EventManager::Instance()->TriggerEvent(event);
 }
 
 bool AudioEventHandle(EventPtr& event) {
@@ -178,11 +178,20 @@ int main() {
     bool isStop = false;
 
     std::thread module_thread = std::thread([&](){
+        static int32_t count = 0;
+        static double count_dt = 0;
         while(!isStop) {
             double dt = timer.GetTickTime();
             //RK_TRACE(App, "dt: {}", dt);
             AudioManager::Instance()->Tick(dt);
             EventManager::Instance()->Tick(dt);
+            count++;
+            count_dt += dt;
+            if(count_dt >= 1000.0) {
+                RK_INFO(App, "Loop Count : {}", count);
+                count_dt = 0;
+                count = 0;
+            }
         }
     });
 

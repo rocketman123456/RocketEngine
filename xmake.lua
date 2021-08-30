@@ -29,6 +29,8 @@ add_requires("openal-soft", {system = false, shared = false, debug = true, confi
 add_requires("libsndfile", {system = false, shared = false, debug = true, configs = {cxflags = "-fPIC"}})
 add_requires("nlohmann_json", {system = false, shared = false, debug = true, configs = {cxflags = "-fPIC"}})
 add_requires("stb", {system = false, shared = false, debug = true, configs = {cxflags = "-fPIC"}})
+add_requires("taskflow", {system = false, shared = false, debug = true, configs = {cxflags = "-fPIC"}})
+add_requires("eigen", {system = false, shared = false, debug = true, configs = {cxflags = "-fPIC"}})
 
 if is_plat("linux", "macosx", "windows") then
     add_requires("glfw", {system = false, shared = false, debug = true, glfw_include = "none", configs = {cxflags = "-fPIC"}})
@@ -39,7 +41,7 @@ end
 -- Set Render Options
 --
 option("render")
-    set_default("vulkan")
+    set_default("soft")
     set_showmenu(true)
     set_values("soft", "opengl", "vulkan", "metal", "dx12", "dx11")
     set_description("The Render config option")
@@ -97,7 +99,6 @@ add_includedirs(
     "Rocket/Engine",
     "Rocket/Render/Common",
     "Rocket/Render/SoftRender",
-    "Rocket/Render/OpenGLRender",
     "Rocket/Platform/Common"
 )
 if is_plat("windows", "macosx", "linux") then
