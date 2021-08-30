@@ -32,14 +32,14 @@ namespace Rocket {
             return;
         }
         else {
-            auto& waiting_queue = waiting_event_storage_.begin();
-            auto& waiting_end = waiting_event_storage_.end();
+            auto waiting_queue = waiting_event_storage_.begin();
+            auto waiting_end = waiting_event_storage_.end();
             while(waiting_queue != waiting_end) {
                 EventPtr event;
                 auto& queue = waiting_queue->second;
                 static std::vector<EventPtr> delay_queue;
                 delay_queue.clear();
-                queue.block();
+                //queue.block();
                 while(queue.pop(event)) {
                     double dt = step;
                     event->time_delay_ -= dt;
@@ -52,19 +52,19 @@ namespace Rocket {
                 for(auto delay_event : delay_queue) {
                     queue.push(delay_event);
                 }
-                queue.unblock();
+                //queue.unblock();
                 waiting_queue++;
             }
-            auto& event_queue = event_storage_.begin();
-            auto& event_end = event_storage_.end();
+            auto event_queue = event_storage_.begin();
+            auto event_end = event_storage_.end();
             while(event_queue != event_end) {
                 EventPtr event;
                 auto& queue = event_queue->second;
-                queue.block();
+                //queue.block();
                 while(queue.pop(event)) {
                     DispatchEvent(event);
                 }
-                queue.unblock();
+                //queue.unblock();
                 event_queue++;
             }
         }
@@ -72,11 +72,13 @@ namespace Rocket {
 
     void EventChannel::QueueEvent(EventPtr& event) {
         if(event->time_delay_ > 1e-6) {
-            auto& event_queue = waiting_event_storage_.find(event->GetEventType());
-            while(!event_queue->second.try_push(event));
+            auto event_queue = waiting_event_storage_.find(event->GetEventType());
+            event_queue->second.push(event);
+            //while(!event_queue->second.try_push(event));
         } else {
-            auto& event_queue = event_storage_.find(event->GetEventType());
-            while(!event_queue->second.try_push(event));
+            auto event_queue = event_storage_.find(event->GetEventType());
+            event_queue->second.push(event);
+            //while(!event_queue->second.try_push(event));
         }
         
     }
