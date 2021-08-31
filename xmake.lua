@@ -102,7 +102,14 @@ add_includedirs(
     "Rocket/Platform/Common"
 )
 if is_plat("windows", "macosx", "linux") then
-    add_includedirs("Rocket/Platform/Desktop")
+    add_includedirs("Rocket/Platform/Desktop/Common")
+    if is_plat("windows") then
+        add_includedirs("Rocket/Platform/Desktop/Windows")
+    elseif is_plat("macosx") then
+        add_includedirs("Rocket/Platform/Desktop/MacOS")
+    elseif is_plat("linux") then
+        add_includedirs("Rocket/Platform/Desktop/Linux")
+    end
 end
 
 --

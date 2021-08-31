@@ -1,4 +1,4 @@
-#include "Common/Window/DesktopWindow.h"
+#include "Window/DesktopWindow.h"
 #include "Log/Log.h"
 
 #include <GLFW/glfw3.h>
@@ -7,11 +7,13 @@
 
 namespace Rocket {
     int32_t DesktopWindow::Initialize(const WindowInfo& info) {
-        info_.width = info.width;
-        info_.height = info.height;
-        info_.name = info.name;
-        info_.resizeable = info.resizeable;
-        info_.fullscreen = info.fullscreen;
+        // Copy Info
+        info_ = info;
+        // info_.width = info.width;
+        // info_.height = info.height;
+        // info_.name = info.name;
+        // info_.resizeable = info.resizeable;
+        // info_.fullscreen = info.fullscreen;
 
         glfwInit();
 
@@ -26,6 +28,7 @@ namespace Rocket {
 #elif defined(RK_VULKAN)
         glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 #endif
+        glfwWindowHint(GLFW_RESIZABLE, info_.resizeable);
 
         handle_ = glfwCreateWindow(info_.width, info_.height, info_.name.c_str(), nullptr, nullptr);
         if (handle_ == nullptr) {
@@ -41,5 +44,13 @@ namespace Rocket {
     void DesktopWindow::Finalize() {
         glfwDestroyWindow((GLFWwindow*)handle_);
         glfwTerminate();
+    }
+
+    void DesktopWindow::Tick(TimeStep dt) {
+        glfwPollEvents();
+    }
+
+    bool DesktopWindow::GetShouldClose() {
+        return glfwWindowShouldClose((GLFWwindow*)handle_);
     }
 }

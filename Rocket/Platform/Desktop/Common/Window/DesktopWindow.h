@@ -6,9 +6,11 @@ namespace Rocket {
     class DesktopWindow : implements WindowInstance {
     public:
         DesktopWindow() = default;
-        ~DesktopWindow() = default;
+        virtual ~DesktopWindow() = default;
 
-        int32_t Initialize(const WindowInfo& info);
-        void Finalize();
+        virtual int32_t Initialize(const WindowInfo& info) final;
+        virtual void Finalize() final;
+        virtual void Tick(TimeStep dt) final;
+        virtual bool GetShouldClose() final;
     };
 }
