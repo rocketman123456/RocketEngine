@@ -1,13 +1,14 @@
 #pragma once
+#include "Log/Log.h"
 
 #include <cstdint>
-#include <unordered_map>
 #include <memory>
 
 namespace Rocket {
     enum class ShaderType : uint32_t {
         VERTEX_SHADER = 0,
         FRAGMENT_SHADER,
+        COMPUTE_SHADER,
         UNKNOWN_SHADER,
     };
 
