@@ -38,11 +38,11 @@ namespace Rocket {
 
 #ifdef RK_CONSOLE_LOG
 
-#define RK_CRITICAL(x, ...)     do{::Rocket::Log::Get##x##Logger()->critical(__VA_ARGS__);}while(1);
-#define RK_ERROR(x, ...)        do{::Rocket::Log::Get##x##Logger()->error(__VA_ARGS__);}while(1);
-#define RK_WARN(x, ...)         do{::Rocket::Log::Get##x##Logger()->warn(__VA_ARGS__);}while(1);
-#define RK_INFO(x, ...)         do{::Rocket::Log::Get##x##Logger()->info(__VA_ARGS__);}while(1);
-#define RK_TRACE(x, ...)        do{::Rocket::Log::Get##x##Logger()->trace(__VA_ARGS__);}while(1);
+#define RK_CRITICAL(x, ...)     do{::Rocket::Log::Get##x##Logger()->critical(__VA_ARGS__);}while(0);
+#define RK_ERROR(x, ...)        do{::Rocket::Log::Get##x##Logger()->error(__VA_ARGS__);}while(0);
+#define RK_WARN(x, ...)         do{::Rocket::Log::Get##x##Logger()->warn(__VA_ARGS__);}while(0);
+#define RK_INFO(x, ...)         do{::Rocket::Log::Get##x##Logger()->info(__VA_ARGS__);}while(0);
+#define RK_TRACE(x, ...)        do{::Rocket::Log::Get##x##Logger()->trace(__VA_ARGS__);}while(0);
 
 #else
 
