@@ -19,22 +19,22 @@ set_languages("c99", "c++17")
 --
 -- Add Required Modules
 --
-add_requires("spdlog", {system = false, shared = false, debug = true, configs = {fmt_external = true, cxflags = "-fPIC"}})
-add_requires("fmt", {system = false, shared = false, debug = true, configs = {cxflags = "-fPIC"}})
-add_requires("glad", {system = false, shared = false, debug = true, configs = {cxflags = "-fPIC"}})
-add_requires("minizip", {system = false, shared = false, debug = true, configs = {cxflags = "-fPIC"}})
-add_requires("zlib", {system = false, shared = false, debug = true, configs = {cxflags = "-fPIC"}})
-add_requires("yaml-cpp", {system = false, shared = false, debug = true, configs = {cxflags = "-fPIC"}})
-add_requires("openal-soft", {system = false, shared = false, debug = true, configs = {cxflags = "-fPIC"}})
-add_requires("libsndfile", {system = false, shared = false, debug = true, configs = {cxflags = "-fPIC"}})
-add_requires("nlohmann_json", {system = false, shared = false, debug = true, configs = {cxflags = "-fPIC"}})
-add_requires("stb", {system = false, shared = false, debug = true, configs = {cxflags = "-fPIC"}})
-add_requires("taskflow", {system = false, shared = false, debug = true, configs = {cxflags = "-fPIC"}})
-add_requires("eigen", {system = false, shared = false, debug = true, configs = {cxflags = "-fPIC"}})
+add_requires("spdlog 1.8.1", {system = false, shared = false, debug = true, configs = {fmt_external = true, cxflags = "-fPIC"}})
+add_requires("fmt 8.0.1", {system = false, shared = false, debug = true, configs = {cxflags = "-fPIC"}})
+add_requires("glad v0.1.34", {system = false, shared = false, debug = true, configs = {cxflags = "-fPIC"}})
+add_requires("minizip 1.2.11", {system = false, shared = false, debug = true, configs = {cxflags = "-fPIC"}})
+add_requires("zlib 1.2.11", {system = false, shared = false, debug = true, configs = {cxflags = "-fPIC"}})
+add_requires("yaml-cpp 0.7.0", {system = false, shared = false, debug = true, configs = {cxflags = "-fPIC"}})
+add_requires("openal-soft 1.21.1", {system = false, shared = false, debug = true, configs = {cxflags = "-fPIC"}})
+add_requires("libsndfile 1.0.30", {system = false, shared = false, debug = true, configs = {cxflags = "-fPIC"}})
+add_requires("nlohmann_json v3.10.0", {system = false, shared = false, debug = true, configs = {cxflags = "-fPIC"}})
+add_requires("stb 0.0", {system = false, shared = false, debug = false, configs = {cxflags = "-fPIC"}})
+add_requires("taskflow v3.2.0", {system = false, shared = false, debug = true, configs = {cxflags = "-fPIC"}})
+add_requires("eigen 3.4.0", {system = false, shared = false, debug = true, configs = {cxflags = "-fPIC"}})
 
 if is_plat("linux", "macosx", "windows") then
-    add_requires("glfw", {system = false, shared = false, debug = true, glfw_include = "none", configs = {cxflags = "-fPIC"}})
-    add_requires("libsdl", {system = false, shared = false, debug = true, configs = {cxflags = "-fPIC"}})
+    add_requires("glfw 3.3.4", {system = false, shared = false, debug = true, glfw_include = "none", configs = {cxflags = "-fPIC"}})
+    add_requires("libsdl 2.0.16", {system = false, shared = false, debug = true, configs = {cxflags = "-fPIC"}})
 end
 
 --

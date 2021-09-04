@@ -1,13 +1,16 @@
 #include "Log/Log.h"
 
 #ifdef RK_CONSOLE_LOG
+
+#define SPDLOG_FMT_EXTERNAL
+#include <spdlog/spdlog.h>
 #include <spdlog/async.h>
-#include <spdlog/fmt/ostr.h>
-#include <spdlog/fmt/chrono.h>
-#include <spdlog/fmt/fmt.h>
-#include <fmt/ostream.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/sinks/basic_file_sink.h>
+#include <spdlog/fmt/ostr.h>
+#include <spdlog/fmt/bin_to_hex.h>
+#include <spdlog/fmt/chrono.h>
+#include <spdlog/fmt/fmt.h>
 
 IMPLEMENT_LOG_CHANNEL(Core);
 IMPLEMENT_LOG_CHANNEL(Window);

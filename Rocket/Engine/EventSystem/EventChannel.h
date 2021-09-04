@@ -5,6 +5,8 @@
 #include "Utils/TimeStep.h"
 
 #include <vector>
+#include <mutex>
+#include <thread>
 
 namespace Rocket {
     class EventChannel;
@@ -31,6 +33,8 @@ namespace Rocket {
         inline bool IsEmpty() const { return event_listener_.empty(); }
     private:
         std::string name_;
+        std::mutex normal_mutex_;
+        std::mutex waiting_mutex_;
         EventListener event_listener_;
         EventStorage event_storage_;
         EventStorage waiting_event_storage_;
