@@ -8,9 +8,9 @@
 #include <vector>
 
 namespace Rocket {
-    class SoftRenderBuffer : implements RenderBuffer {
+    class SoftBuffer : implements RenderBuffer {
     public:
-        virtual ~SoftRenderBuffer() = default;
+        virtual ~SoftBuffer() = default;
 
         void SetPixel(const Eigen::Vector3f& point, const Eigen::Vector3f& color);
 
@@ -22,5 +22,5 @@ namespace Rocket {
         int32_t height_;
     };
 
-    using SoftRenderBufferPtr = std::unique_ptr<SoftRenderBuffer>;
+    using SoftBufferPtr = std::unique_ptr<SoftBuffer>;
 }
