@@ -1,5 +1,6 @@
 #pragma once
 #include "Log/Log.h"
+#include "Render/RenderInfo.h"
 
 #include <memory>
 #include <cstdint>
@@ -8,21 +9,7 @@
 #include <vector>
 
 namespace Rocket {
-    enum class BufferType : uint32_t {
-        COLOR = 0,
-        DEPTH,
-        UNKNOWN,
-    };
-
-    enum class BufferDataType : uint32_t {
-        NONE = 0,
-        FLOAT, FLOAT2, FLOAT3, FLOAT4,
-        INT, INT2, INT3, INT4,
-        MAT2, MAT3, MAT4,
-        BOOL,
-    };
-
-    static uint32_t BufferDataTypeSize(BufferDataType type) {
+	static uint32_t BufferDataTypeSize(BufferDataType type) {
 		switch (type) {
 			case BufferDataType::FLOAT:    return 4;
 			case BufferDataType::FLOAT2:   return 4 * 2;
@@ -57,7 +44,7 @@ namespace Rocket {
             default: RK_ERROR(Render, "Unknown BufferDataType"); return 0;
 		}
 	}
-
+	
     typedef struct BufferElement {
         std::string name = "";
 		BufferDataType type = BufferDataType::NONE;

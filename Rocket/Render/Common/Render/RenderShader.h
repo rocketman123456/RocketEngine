@@ -1,17 +1,11 @@
 #pragma once
 #include "Log/Log.h"
+#include "Render/RenderInfo.h"
 
 #include <cstdint>
 #include <memory>
 
 namespace Rocket {
-    enum class ShaderType : uint32_t {
-        VERTEX_SHADER = 0,
-        FRAGMENT_SHADER,
-        COMPUTE_SHADER,
-        UNKNOWN_SHADER,
-    };
-
     class RenderShader {
     public:
         virtual ~RenderShader() = default;
