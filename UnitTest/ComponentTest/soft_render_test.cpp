@@ -112,7 +112,7 @@ Eigen::Matrix4f get_orthographic_matrix(float zLeft, float zRight, float zNear, 
     return orthographic;
 }
 
-Eigen::Matrix4f get_projection_matrix(float eye_fov, float aspect_ratio, float zNear, float zFar) {
+Eigen::Matrix4f get_perspective_matrix(float eye_fov, float aspect_ratio, float zNear, float zFar) {
     // Students will implement this function
     Eigen::Matrix4f projection = Eigen::Matrix4f::Zero();
 
@@ -298,7 +298,7 @@ int main(int argc, char** argv) {
         rst.Clear(BufferType::COLOR | BufferType::DEPTH);
         rst.SetModel(get_model_matrix(global_angle));
         rst.SetView(get_view_matrix(eye_pos));
-        rst.SetProjection(get_projection_matrix(45, ((float)info.width/(float)info.height), 0.1, 50));
+        rst.SetProjection(get_perspective_matrix(45, ((float)info.width/(float)info.height), 0.1, 50));
         //rst.SetProjection(get_orthographic_matrix(-6.4, 6.4, -50, 50, 3.6, -3.6));
         rst.Draw(pos_id, ind_id, RenderPrimitive::TRIANGLE);
 
