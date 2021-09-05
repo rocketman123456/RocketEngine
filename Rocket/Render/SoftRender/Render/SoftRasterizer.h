@@ -17,6 +17,8 @@ namespace Rocket {
         int ind_id = 0;
     };
 
+    constexpr int32_t FRAME_COUNT = 2;
+
     class SoftRasterizer {
     public:
         SoftRasterizer(int32_t w, int32_t h);
@@ -31,12 +33,14 @@ namespace Rocket {
 
         void SetPixel(const Eigen::Vector3f& point, const Eigen::Vector3f& color);
 
+        void NextFrame();
         void Clear(BufferType buff);
+        void ClearAll(BufferType buff);
 
         void Draw(pos_buf_id pos_buffer, ind_buf_id ind_buffer, RenderPrimitive type);
 
-        std::vector<Eigen::Vector3f>& FrameBuffer() { return frame_buf_; }
-        std::vector<float>& DepthBuffer() { return depth_buf_; }
+        std::vector<Eigen::Vector3f>& FrameBuffer() { return frame_buf_[last_frame_]; }
+        std::vector<float>& DepthBuffer() { return depth_buf_[last_frame_]; }
     private:
         void DrawLine(Eigen::Vector3f begin, Eigen::Vector3f end);
         void RasterizeWireframe(const SoftTriangle& t);
@@ -51,8 +55,11 @@ namespace Rocket {
         std::map<int32_t, std::vector<Eigen::Vector3f>> pos_buf_;
         std::map<int32_t, std::vector<Eigen::Vector3i>> ind_buf_;
 
-        std::vector<Eigen::Vector3f> frame_buf_;
-        std::vector<float> depth_buf_;
+        int32_t current_frame_ = 0;
+        int32_t last_frame_ = 0;
+
+        std::vector<Eigen::Vector3f> frame_buf_[FRAME_COUNT];
+        std::vector<float> depth_buf_[FRAME_COUNT];
 
         int32_t width_ = 0;
         int32_t height_ = 0;

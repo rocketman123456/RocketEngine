@@ -9,6 +9,7 @@ using namespace Rocket;
 #include <glad/glad.h>
 
 #include <iostream>
+#include <iomanip>
 
 const char *vertexShaderSource = R"(
     #version 330 core
@@ -110,6 +111,12 @@ int main(int argc, char** argv) {
         std::cout << "Failed to initialize GLAD" << std::endl;
         return -1;
     }
+
+    // Show OpenGL Info
+    std::cout << std::setw(34) << std::left << "OpenGL Version: " << GLVersion.major << "." << GLVersion.minor << std::endl;
+    std::cout << std::setw(34) << std::left << "OpenGL Shading Language Version: " << (char *)glGetString(GL_SHADING_LANGUAGE_VERSION) << std::endl;
+    std::cout << std::setw(34) << std::left << "OpenGL Vendor:" << (char *)glGetString(GL_VENDOR) << std::endl;
+    std::cout << std::setw(34) << std::left << "OpenGL Renderer:" << (char *)glGetString(GL_RENDERER) << std::endl;
 
     // build and compile our shader program
     // ------------------------------------
@@ -216,6 +223,7 @@ int main(int argc, char** argv) {
     int nrChannels = 4;
 
     SoftRasterizer rst(info.width, info.height);
+    rst.ClearAll(BufferType::COLOR | BufferType::DEPTH);
 
     Eigen::Vector3f eye_pos = {0, 0, 5};
     std::vector<Eigen::Vector3f> pos{{2, 0, -2}, {0, 2, -2}, {-2, 0, -2}};
@@ -230,8 +238,8 @@ int main(int argc, char** argv) {
     glfwSetKeyCallback((GLFWwindow*)window.GetWindowHandle(), 
         [](GLFWwindow* window, int key, int scancode, int action, int mods){
         if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) { glfwSetWindowShouldClose(window, true); }
-        if (key == GLFW_KEY_A && action == GLFW_PRESS) { global_angle -= 5.0; }
-        if (key == GLFW_KEY_D && action == GLFW_PRESS) { global_angle += 5.0; }
+        if (key == GLFW_KEY_A && action == GLFW_PRESS) { global_angle += 5.0; }
+        if (key == GLFW_KEY_D && action == GLFW_PRESS) { global_angle -= 5.0; }
     });
     
     while(!window.GetShouldClose()) {
@@ -246,10 +254,11 @@ int main(int argc, char** argv) {
         int vertexColorLocation = glGetUniformLocation(shaderProgram, "uniColor");
         int textureLocation = glGetUniformLocation(shaderProgram, "texture1");
 
+        rst.NextFrame();
         rst.Clear(BufferType::COLOR | BufferType::DEPTH);
         rst.SetModel(get_model_matrix(global_angle));
         rst.SetView(get_view_matrix(eye_pos));
-        rst.SetProjection(get_projection_matrix(45, 1, 0.1, 50));
+        rst.SetProjection(get_projection_matrix(45, ((float)info.width/(float)info.height), 0.1, 50));
         rst.Draw(pos_id, ind_id, RenderPrimitive::TRIANGLE);
 
         // bind Texture

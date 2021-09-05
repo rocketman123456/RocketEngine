@@ -104,10 +104,17 @@ namespace Rocket {
         }
     }
 
+    void SoftRasterizer::NextFrame() {
+        last_frame_ = current_frame_;
+        current_frame_++;
+        current_frame_ = current_frame_ % FRAME_COUNT;
+    }
+
     void SoftRasterizer::Draw(pos_buf_id pos_buffer, ind_buf_id ind_buffer, RenderPrimitive type) {
         if (type != RenderPrimitive::TRIANGLE) {
             throw std::runtime_error("Drawing primitives other than triangle is not implemented yet!");
         }
+
         auto &buf = pos_buf_[pos_buffer.pos_id];
         auto &ind = ind_buf_[ind_buffer.ind_id];
 
@@ -155,16 +162,31 @@ namespace Rocket {
 
     void SoftRasterizer::Clear(BufferType buff) {
         if ((buff & BufferType::COLOR) == BufferType::COLOR) {
-            std::fill(frame_buf_.begin(), frame_buf_.end(), Eigen::Vector3f{0, 0, 0});
+            std::fill(frame_buf_[current_frame_].begin(), frame_buf_[current_frame_].end(), Eigen::Vector3f{0, 0, 0});
         }
         if ((buff & BufferType::DEPTH) == BufferType::DEPTH) {
-            std::fill(depth_buf_.begin(), depth_buf_.end(), std::numeric_limits<float>::infinity());
+            std::fill(depth_buf_[current_frame_].begin(), depth_buf_[current_frame_].end(), std::numeric_limits<float>::infinity());
+        }
+    }
+
+    void SoftRasterizer::ClearAll(BufferType buff) {
+        if ((buff & BufferType::COLOR) == BufferType::COLOR) {
+            for(int i = 0; i < FRAME_COUNT; ++i) {
+                std::fill(frame_buf_[i].begin(), frame_buf_[i].end(), Eigen::Vector3f{0, 0, 0});
+            }
+        }
+        if ((buff & BufferType::DEPTH) == BufferType::DEPTH) {
+            for(int i = 0; i < FRAME_COUNT; ++i) {
+                std::fill(depth_buf_[i].begin(), depth_buf_[i].end(), std::numeric_limits<float>::infinity());
+            }
         }
     }
 
     SoftRasterizer::SoftRasterizer(int w, int h) : width_(w), height_(h) {
-        frame_buf_.resize(w * h);
-        depth_buf_.resize(w * h);
+        for(int i = 0; i < FRAME_COUNT; ++i) {
+            frame_buf_[i].resize(w * h);
+            depth_buf_[i].resize(w * h);
+        }
     }
 
     void SoftRasterizer::SetPixel(const Eigen::Vector3f &point, const Eigen::Vector3f &color) {
@@ -172,6 +194,6 @@ namespace Rocket {
         if (point.x() < 0 || point.x() >= width_ || point.y() < 0 || point.y() >= height_)
             return;
         auto ind = (height_ - point.y()) * width_ + point.x();
-        frame_buf_[ind] = color;
+        frame_buf_[current_frame_][ind] = color;
     }
 }
