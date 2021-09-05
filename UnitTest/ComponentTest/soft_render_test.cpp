@@ -35,7 +35,7 @@ const char *fragmentShaderSource = R"(
     in vec2 TexCoord;
 
     // texture sampler
-    uniform sampler2D texture1;
+    uniform sampler2D soft_texture;
 
     // texture color
     uniform vec4 uniColor;
@@ -125,7 +125,7 @@ int main(int argc, char** argv) {
     glShaderSource(vertexShader, 1, &vertexShaderSource, nullptr);
     glCompileShader(vertexShader);
     // check for shader compile errors
-    int success;
+    int32_t success;
     char infoLog[512];
     glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
     if (!success) {
@@ -196,12 +196,12 @@ int main(int argc, char** argv) {
     // note that this is allowed, the call to glVertexAttribPointer registered VBO as the vertex attribute's bound vertex buffer object so afterwards we can safely unbind
     glBindBuffer(GL_ARRAY_BUFFER, 0); 
 
-    // remember: do NOT unbind the EBO while a VAO is active as the bound element buffer object IS stored in the VAO; keep the EBO bound.
-    //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
     // You can unbind the VAO afterwards so other VAO calls won't accidentally modify this VAO, but this rarely happens. Modifying other
     // VAOs requires a call to glBindVertexArray anyways so we generally don't unbind VAOs (nor VBOs) when it's not directly necessary.
-    glBindVertexArray(0); 
+    glBindVertexArray(0);
+
+    // remember: do NOT unbind the EBO while a VAO is active as the bound element buffer object IS stored in the VAO; keep the EBO bound.
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
     // load and create a texture 
     // -------------------------
@@ -218,9 +218,9 @@ int main(int argc, char** argv) {
     glBindTexture(GL_TEXTURE_2D, 0);
 
     // load image, create texture and generate mipmaps
-    int width = info.width;
-    int height = info.height;
-    int nrChannels = 4;
+    int32_t width = info.width;
+    int32_t height = info.height;
+    int32_t nrChannels = 4;
 
     SoftRasterizer rst(info.width, info.height);
     rst.ClearAll(BufferType::COLOR | BufferType::DEPTH);
@@ -232,8 +232,8 @@ int main(int argc, char** argv) {
     auto pos_id = rst.LoadPositions(pos);
     auto ind_id = rst.LoadIndices(ind);
 
-    int key = 0;
-    int frame_count = 0;
+    int32_t key = 0;
+    int32_t frame_count = 0;
 
     glfwSetKeyCallback((GLFWwindow*)window.GetWindowHandle(), 
         [](GLFWwindow* window, int key, int scancode, int action, int mods){
@@ -252,7 +252,7 @@ int main(int argc, char** argv) {
         float greenValue = (sin(timeValue) / 2.0f) + 0.5f;
         float redValue = (cos(timeValue) / 2.0f) + 0.5f;
         int vertexColorLocation = glGetUniformLocation(shaderProgram, "uniColor");
-        int textureLocation = glGetUniformLocation(shaderProgram, "texture1");
+        int textureLocation = glGetUniformLocation(shaderProgram, "soft_texture");
 
         rst.NextFrame();
         rst.Clear(BufferType::COLOR | BufferType::DEPTH);

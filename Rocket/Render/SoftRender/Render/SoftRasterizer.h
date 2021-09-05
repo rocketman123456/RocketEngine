@@ -7,6 +7,9 @@
 #include <cstdint>
 #include <vector>
 #include <map>
+#include <mutex>
+#include <thread>
+#include <atomic>
 
 namespace Rocket {
     struct pos_buf_id {
@@ -57,6 +60,7 @@ namespace Rocket {
 
         int32_t current_frame_ = 0;
         int32_t last_frame_ = 0;
+        std::atomic<bool> has_finish_ = false;
 
         std::vector<Eigen::Vector3f> frame_buf_[FRAME_COUNT];
         std::vector<float> depth_buf_[FRAME_COUNT];

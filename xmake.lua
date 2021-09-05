@@ -29,7 +29,7 @@ add_requires("openal-soft 1.21.1", {system = false, shared = false, debug = true
 add_requires("libsndfile 1.0.30", {system = false, shared = false, debug = true, configs = {cxflags = "-fPIC"}})
 add_requires("nlohmann_json v3.10.0", {system = false, shared = false, debug = true, configs = {cxflags = "-fPIC"}})
 add_requires("stb", {system = false, shared = false, debug = false, configs = {cxflags = "-fPIC"}})
---add_requires("taskflow v3.2.0", {system = false, shared = false, debug = true, configs = {cxflags = "-fPIC"}})
+add_requires("taskflow v3.2.0", {system = false, shared = false, debug = true, configs = {cxflags = "-fPIC"}})
 add_requires("eigen 3.4.0", {system = false, shared = false, debug = true, configs = {cxflags = "-fPIC"}})
 add_requires("glfw 3.3.4", {system = false, shared = false, debug = true, glfw_include = "none", configs = {cxflags = "-fPIC"}})
 add_requires("libsdl 2.0.16", {system = false, shared = false, debug = true, configs = {cxflags = "-fPIC"}})
