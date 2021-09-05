@@ -24,7 +24,7 @@ const char *vertexShaderSource = R"(
     {
         gl_Position = vec4(aPos, 1.0);
         ourColor = aColor;
-        TexCoord = vec2(aTexCoord.x, aTexCoord.y);
+        TexCoord = vec2(aTexCoord.x, 1.0 - aTexCoord.y);
     }
 )";
 const char *fragmentShaderSource = R"(
@@ -43,7 +43,7 @@ const char *fragmentShaderSource = R"(
     void main()
     {
         //FragColor = uniColor;
-        FragColor = texture(texture1, TexCoord) * uniColor;
+        FragColor = texture(soft_texture, TexCoord) * uniColor;
     }
 )";
 
@@ -60,6 +60,9 @@ Eigen::Matrix4f get_view_matrix(Eigen::Vector3f eye_pos) {
         0, 1, 0, -eye_pos[1], 
         0, 0, 1, -eye_pos[2], 
         0, 0, 0, 1;
+
+    // give look_at and up
+    // view ^ -1 = [look_at x up; up; -look_at]
 
     view = translate * view;
 
@@ -81,17 +84,54 @@ Eigen::Matrix4f get_model_matrix(float rotation_angle) {
     return model;
 }
 
+Eigen::Matrix4f get_orthographic_matrix(float zLeft, float zRight, float zNear, float zFar, float zTop, float zBottom) {
+    Eigen::Matrix4f orthographic = Eigen::Matrix4f::Zero();
+
+    const float center_x = (zRight + zLeft) / 2.0;
+    const float center_y = (zTop + zBottom) / 2.0;
+    const float center_z = (zNear + zFar) / 2.0;
+    const float range_x = (zRight - zLeft);
+    const float range_y = (zTop - zBottom);
+    const float range_z = (zFar - zNear);
+
+    Eigen::Matrix4f scale;
+    Eigen::Matrix4f trans;
+    scale << 
+        2.0 / range_x, 0, 0, 0,
+        0, 2.0 / range_y, 0, 0,
+        0, 0, 2.0 / range_z, 0,
+        0, 0, 0, 1;
+    trans <<
+        1, 0, 0, -center_x,
+        0, 1, 0, -center_y,
+        0, 0, 1, -center_z,
+        0, 0, 0, 1;
+
+    orthographic = scale * trans;
+
+    return orthographic;
+}
+
 Eigen::Matrix4f get_projection_matrix(float eye_fov, float aspect_ratio, float zNear, float zFar) {
     // Students will implement this function
     Eigen::Matrix4f projection = Eigen::Matrix4f::Zero();
 
     const float zRange = (zFar - zNear);
     const float tanHalfFOV = tanf((eye_fov / 2.0f / 180.0f * MY_PI));
+    const float A = zNear + zFar;
+    const float B = - zFar * zNear;
+
+    // per = [n 0 0 0]
+    //        0 n 0 0
+    //        0 0 A B
+    //        0 0 1 0
+
+    // projection = ortho * per;
     
     projection(0,0) = 1.0f / (tanHalfFOV * aspect_ratio); 
     projection(1,1) = 1.0f / tanHalfFOV;   
-    projection(2,2) = -(zNear + zFar) / zRange;  
-    projection(2,3) = -2.0f * zFar * zNear / zRange;
+    projection(2,2) = -A / zRange;  
+    projection(2,3) = -2.0f * B / zRange;
     projection(3,2) = -1.0f;            
 
     return projection;
@@ -225,7 +265,7 @@ int main(int argc, char** argv) {
     SoftRasterizer rst(info.width, info.height);
     rst.ClearAll(BufferType::COLOR | BufferType::DEPTH);
 
-    Eigen::Vector3f eye_pos = {0, 0, 5};
+    Eigen::Vector3f eye_pos = {0.0, 0.0, 5};
     std::vector<Eigen::Vector3f> pos{{2, 0, -2}, {0, 2, -2}, {-2, 0, -2}};
     std::vector<Eigen::Vector3i> ind{{0, 1, 2}};
 
@@ -259,6 +299,7 @@ int main(int argc, char** argv) {
         rst.SetModel(get_model_matrix(global_angle));
         rst.SetView(get_view_matrix(eye_pos));
         rst.SetProjection(get_projection_matrix(45, ((float)info.width/(float)info.height), 0.1, 50));
+        //rst.SetProjection(get_orthographic_matrix(-6.4, 6.4, -50, 50, 3.6, -3.6));
         rst.Draw(pos_id, ind_id, RenderPrimitive::TRIANGLE);
 
         // bind Texture
@@ -272,7 +313,7 @@ int main(int argc, char** argv) {
         glBindVertexArray(VAO); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized
         //glDrawArrays(GL_TRIANGLES, 0, 6);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-        // glBindVertexArray(0); // no need to unbind it every time 
+        //glBindVertexArray(0); // no need to unbind it every time 
 
         // TODO : make clear where to swap buffer
         glfwSwapBuffers((GLFWwindow*)window.GetWindowHandle());

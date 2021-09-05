@@ -128,7 +128,8 @@ namespace Rocket {
             Eigen::Vector4f v[] = {
                 mvp * to_vec4(buf[i[0]], 1.0f),
                 mvp * to_vec4(buf[i[1]], 1.0f),
-                mvp * to_vec4(buf[i[2]], 1.0f)};
+                mvp * to_vec4(buf[i[2]], 1.0f)
+            };
 
             for (auto &vec : v) {
                 vec /= vec.w();
