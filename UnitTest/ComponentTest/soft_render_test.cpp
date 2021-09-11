@@ -51,6 +51,19 @@ constexpr double MY_PI = 3.1415926;
 
 static float global_angle = 0;
 
+Eigen::Matrix4f get_viewport_matrix(float width, float height) {
+    Eigen::Matrix4f view = Eigen::Matrix4f::Identity();
+
+    // from [-1, 1]^2 -> [0,w] X [0,h]
+
+    view(0, 0) = width / 2.0;
+    view(1, 1) = height / 2.0;
+    view(0, 3) = width / 2.0;
+    view(1, 3) = height / 2.0;
+
+    return view;
+}
+
 Eigen::Matrix4f get_view_matrix(Eigen::Vector3f eye_pos) {
     Eigen::Matrix4f view = Eigen::Matrix4f::Identity();
 
@@ -94,20 +107,25 @@ Eigen::Matrix4f get_orthographic_matrix(float zLeft, float zRight, float zNear, 
     const float range_y = (zTop - zBottom);
     const float range_z = (zFar - zNear);
 
-    Eigen::Matrix4f scale;
-    Eigen::Matrix4f trans;
-    scale << 
-        2.0 / range_x, 0, 0, 0,
-        0, 2.0 / range_y, 0, 0,
-        0, 0, 2.0 / range_z, 0,
-        0, 0, 0, 1;
-    trans <<
-        1, 0, 0, -center_x,
-        0, 1, 0, -center_y,
-        0, 0, 1, -center_z,
-        0, 0, 0, 1;
+    // Eigen::Matrix4f scale;
+    // Eigen::Matrix4f trans;
+    // scale << 
+    //     2.0 / range_x, 0, 0, 0,
+    //     0, 2.0 / range_y, 0, 0,
+    //     0, 0, 2.0 / range_z, 0,
+    //     0, 0, 0, 1;
+    // trans <<
+    //     1, 0, 0, -center_x,
+    //     0, 1, 0, -center_y,
+    //     0, 0, 1, -center_z,
+    //     0, 0, 0, 1;
+    // orthographic = scale * trans;
 
-    orthographic = scale * trans;
+    orthographic << 
+        1, 0, 0, -2.0 * center_x / range_x,
+        0, 1, 0, -2.0 * center_y / range_y,
+        0, 0, 1, -2.0 * center_z / range_z,
+        0, 0, 0, 1;
 
     return orthographic;
 }
@@ -121,10 +139,18 @@ Eigen::Matrix4f get_perspective_matrix(float eye_fov, float aspect_ratio, float 
     const float A = zNear + zFar;
     const float B = - zFar * zNear;
 
-    // per = [n 0 0 0]
-    //        0 n 0 0
-    //        0 0 A B
-    //        0 0 1 0
+    // Eigen::Matrix4f perspect_to_ortho;
+    // Eigen::Matrix4f ortho;
+
+    // perspect_to_ortho << 
+    //  zNear, 0, 0, 0,
+    //  0, zNear, 0, 0,
+    //  0, 0, A, B,
+    //  0, 0, 1, 0;
+
+    // float right = aspect_ratio * tanHalfFOV * zNear;
+    // float top = tanHalfFOV * zNear;
+    // ortho = get_orthographic_matrix(-right, right, zNear, zFar, top, -top);
 
     // projection = ortho * per;
     
