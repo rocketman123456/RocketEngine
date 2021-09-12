@@ -4,6 +4,7 @@
 #include <glad/glad.h>
 
 #include <iostream>
+#include <cmath>
 
 // settings
 const unsigned int SCR_WIDTH = 1280;

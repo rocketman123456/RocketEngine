@@ -2,6 +2,7 @@
 #include "Pattern/Iterator.h"
 
 #include <exception>
+#include <stdexcept>
 
 namespace Rocket {
     template<typename T> class ListBag;

@@ -5,6 +5,7 @@
 #include <string>
 #include <cstdlib>
 #include <atomic>
+#include <memory>
 
 namespace Rocket {
     class OsFile {

@@ -20,7 +20,7 @@ set_languages("c99", "c++17")
 -- Add Required Modules
 --
 add_requires("spdlog 1.8.1", {system = false, shared = false, debug = true, configs = {fmt_external = true, cxflags = "-fPIC"}})
-add_requires("fmt 8.0.1", {system = false, shared = false, debug = true, configs = {cxflags = "-fPIC"}})
+add_requires("fmt 7.1.3", {system = false, shared = false, debug = true, configs = {cxflags = "-fPIC"}})
 add_requires("glad v0.1.34", {system = false, shared = false, debug = true, configs = {cxflags = "-fPIC"}})
 add_requires("minizip 1.2.11", {system = false, shared = false, debug = true, configs = {cxflags = "-fPIC"}})
 add_requires("zlib 1.2.11", {system = false, shared = false, debug = true, configs = {cxflags = "-fPIC"}})
@@ -87,7 +87,7 @@ option_end()
 -- Set memory_check Options
 --
 option("memory_check")
-    set_default(true)
+    set_default(false)
     set_showmenu(true)
     set_values(false, true)
     set_description("The Memory Leak Check config option")

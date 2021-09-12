@@ -1,7 +1,9 @@
 #pragma once
 #include "Pattern/Iterator.h"
 
+#include <cstdint>
 #include <exception>
+#include <stdexcept>
 
 namespace Rocket {
     template<typename T> class Queue;

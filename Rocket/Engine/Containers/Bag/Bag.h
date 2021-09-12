@@ -4,6 +4,7 @@
 
 #include <cstdint>
 #include <exception>
+#include <stdexcept>
 
 namespace Rocket {
     template<typename T> class Bag;

@@ -1,5 +1,6 @@
 #pragma once
 #include <exception>
+#include <stdexcept>
 
 namespace Rocket {
     // TODO : make it thread safe

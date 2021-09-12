@@ -6,6 +6,7 @@
 #include <atomic>
 #include <cstdint>
 #include <string>
+#include <cstring>    // std::memcpy
 
 namespace Rocket {
     enum class FileOperateMode : int8_t {

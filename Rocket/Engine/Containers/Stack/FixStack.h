@@ -2,6 +2,7 @@
 #include <cstdint>
 //#include <iostream>
 #include <exception>
+#include <stdexcept>
 
 // LIFO
 namespace Rocket {

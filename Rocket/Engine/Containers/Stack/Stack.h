@@ -2,6 +2,7 @@
 #include <cstdint>
 //#include <iostream>
 #include <exception>
+#include <stdexcept>
 
 // LIFO
 namespace Rocket {
@@ -73,7 +74,7 @@ namespace Rocket {
         }
         T Pop() {
             if(current_ == 0) {
-                throw std::out_of_range("Pop Empty Stack");
+                throw std::runtime_error("Pop Empty Stack");
             }
             else {
                 current_--;
