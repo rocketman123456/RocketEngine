@@ -24,6 +24,7 @@ namespace Rocket {
         inline void SetVertex(int32_t ind, Eigen::Vector3f ver) { v[ind] = ver; } // set i-th vertex coordinates 
         inline void SetNormal(int32_t ind, Eigen::Vector3f n) { normal[ind] = n; } // set i-th vertex normal vector
         void SetColor(int32_t ind, float r, float g, float b); // set i-th vertex color
+        Eigen::Vector3f GetColor(int32_t index = 0) const { return color[index] * 255; }
         void SetTexCoord(int32_t ind, float s, float t); // set i-th vertex texture coordinate
         std::array<Eigen::Vector4f, 3> ToVector4() const;
     };

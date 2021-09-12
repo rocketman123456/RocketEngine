@@ -29,7 +29,7 @@ target_end()
 
 target("soft_render_test")
     set_kind("binary")
-    add_files("soft_render_test.cpp")
+    add_files("soft_render_test.cpp", "soft_render.cpp")
     add_deps("RocketEngine")
     add_deps("RocketPlatformDesktop")
     add_deps("RocketRenderCommon")
