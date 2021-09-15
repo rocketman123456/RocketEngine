@@ -40,6 +40,12 @@ namespace Rocket {
         void SetView(const Eigen::Matrix4f& v) { view_ = v; }
         void SetProjection(const Eigen::Matrix4f& p) { projection_ = p; }
 
+        inline void EnableMsaa() { msaa_ = true; }
+        inline void DisableMsaa() { msaa_ = false; }
+        inline void EnableWireFram() { wireframe_ = true; }
+        inline void DisableWireFram() { wireframe_ = false; }
+        inline void SetMsaaLevel(int32_t level = 0) { msaa_level_ = level; }
+
         void SetPixel(const Eigen::Vector3f& point, const Eigen::Vector3f& color);
 
         void NextFrame();
@@ -49,8 +55,8 @@ namespace Rocket {
         void Draw(pos_buf_id pos_buffer, ind_buf_id ind_buffer, RenderPrimitive type);
         void Draw(pos_buf_id pos_buffer, ind_buf_id ind_buffer, col_buf_id col_buffer, RenderPrimitive type);
 
-        std::vector<Eigen::Vector3f>& FrameBuffer() { return frame_buf_[last_frame_]; }
-        std::vector<float>& DepthBuffer() { return depth_buf_[last_frame_]; }
+        inline std::vector<Eigen::Vector3f>& FrameBuffer() { return frame_buf_[last_frame_]; }
+        inline std::vector<float>& DepthBuffer() { return depth_buf_[last_frame_]; }
     private:
         void DrawLine(Eigen::Vector3f begin, Eigen::Vector3f end);
         void RasterizeWireframe(const SoftTriangle& t);
@@ -62,7 +68,7 @@ namespace Rocket {
         std::tuple<float, float, float> ComputeBarycentric2D(float x, float y, const Eigen::Vector3f* v);
 
         inline int32_t GetNextId() { return next_id_++; }
-        inline int32_t GetIndex(int32_t x, int32_t y) { return (height_-y)*width_ + x; }
+        inline int32_t GetIndex(int32_t x, int32_t y) { return (height_-1-y)*width_ + x; }
     private:
         Eigen::Matrix4f model_;
         Eigen::Matrix4f view_;
@@ -83,7 +89,9 @@ namespace Rocket {
         int32_t width_ = 0;
         int32_t height_ = 0;
         int32_t next_id_ = 0;
-        bool wireframe_ = true;
+        bool wireframe_ = false;
         bool msaa_ = false;
+        int32_t msaa_level_ = 0;
+        int32_t msaa_count_ = 1; // 1 << msaa_level_;
     };
 }

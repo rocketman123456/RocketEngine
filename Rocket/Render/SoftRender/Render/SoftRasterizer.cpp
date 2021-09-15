@@ -1,4 +1,7 @@
 #include "Render/SoftRasterizer.h"
+#include "Log/Log.h"
+
+//#include <iostream>
 
 namespace Rocket {
     static auto to_vec4(const Eigen::Vector3f &v3, float w = 1.0f) {
@@ -184,8 +187,6 @@ namespace Rocket {
 
             for (int i = 0; i < 3; ++i) {
                 t.SetVertex(i, v[i].head<3>());
-                // t.SetVertex(i, v[i].head<3>());
-                // t.SetVertex(i, v[i].head<3>());
             }
 
             t.SetColor(0, 255.0, 0.0, 0.0);
@@ -241,7 +242,6 @@ namespace Rocket {
             auto col_y = col[i[1]];
             auto col_z = col[i[2]];
 
-            // TODO : add color interpolate
             t.SetColor(0, col_x[0], col_x[1], col_x[2]);
             t.SetColor(1, col_y[0], col_y[1], col_y[2]);
             t.SetColor(2, col_z[0], col_z[1], col_z[2]);
@@ -286,10 +286,14 @@ namespace Rocket {
         std::vector<Eigen::Vector2f> pos;
 
         if(msaa_) {
-            pos.push_back({0.25,0.25});
-            pos.push_back({0.75,0.25});
-            pos.push_back({0.25,0.75});
-            pos.push_back({0.75,0.75});
+            msaa_count_ = 1 << msaa_level_;
+            float step = 1.0 / (msaa_count_ * 2);
+            //std::cout << "msaa_count: " << msaa_count_ << std::endl;
+            for(int i = 0; i < msaa_count_; ++i) {
+                for(int j = 0; j < msaa_count_; ++j) {
+                    pos.push_back({step + i * step * 2, step + j * step * 2});
+                }
+            }
         }
         else {
             pos.push_back({0.5, 0.5});
@@ -301,7 +305,7 @@ namespace Rocket {
                 float minDepth = FLT_MAX;
                 // color sample point count
                 int count = 0;
-                // check four sample point
+                // check sample point
                 for (int i = 0; i < pos.size(); i++) {
                     // check point in triangle
                     if (InsideTriangle((float)x + pos[i][0], (float)y + pos[i][1], t.v)) {
@@ -316,7 +320,7 @@ namespace Rocket {
                 }
                 if (count != 0) {
                     if (depth_buf_[current_frame_][GetIndex(x, y)] > minDepth) {
-                        Eigen::Vector3f color = t.GetColor() * count / (float)pos.size();
+                        Eigen::Vector3f color = t.GetColor() * count / (float)pos.size() / 255.0;
                         Eigen::Vector3f point(3);
                         point << (float)x, (float)y, minDepth;
                         // Update Depth

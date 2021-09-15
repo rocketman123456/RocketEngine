@@ -45,7 +45,7 @@ const char *fragmentShaderSource = R"(
     void main()
     {
         //FragColor = uniColor;
-        FragColor = texture(soft_texture, TexCoord) * uniColor;
+        FragColor = texture(soft_texture, TexCoord);// * uniColor;
     }
 )";
 
@@ -180,11 +180,33 @@ int main(int argc, char** argv) {
     rst.ClearAll(BufferType::COLOR | BufferType::DEPTH);
 
     Eigen::Vector3f eye_pos = {0.0, 0.0, 5};
-    std::vector<Eigen::Vector3f> pos{{2, 0, -2}, {0, 2, -2}, {-2, 0, -2}};
-    std::vector<Eigen::Vector3i> ind{{0, 1, 2}};
+
+    std::vector<Eigen::Vector3f> pos {
+            {2, 0, -2},
+            {0, 2, -2},
+            {-2, 0, -2},
+            {3.5, -1, -5},
+            {2.5, 1.5, -5},
+            {-1, 0.5, -5}
+    };
+
+    std::vector<Eigen::Vector3i> ind {
+            {0, 1, 2},
+            {3, 4, 5}
+    };
+
+    std::vector<Eigen::Vector3f> cols {
+            {217.0, 238.0, 185.0},
+            {217.0, 238.0, 185.0},
+            {217.0, 238.0, 185.0},
+            {185.0, 217.0, 238.0},
+            {185.0, 217.0, 238.0},
+            {185.0, 217.0, 238.0}
+    };
 
     auto pos_id = rst.LoadPositions(pos);
     auto ind_id = rst.LoadIndices(ind);
+    auto col_id = rst.LoadColors(cols);
 
     int32_t key = 0;
     int32_t frame_count = 0;
@@ -192,9 +214,14 @@ int main(int argc, char** argv) {
     glfwSetKeyCallback((GLFWwindow*)window.GetWindowHandle(), 
         [](GLFWwindow* window, int key, int scancode, int action, int mods){
         if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) { glfwSetWindowShouldClose(window, true); }
+        if (key == GLFW_KEY_SPACE && action == GLFW_PRESS) {}
         if (key == GLFW_KEY_A && action == GLFW_PRESS) { global_angle += 5.0; }
         if (key == GLFW_KEY_D && action == GLFW_PRESS) { global_angle -= 5.0; }
     });
+
+    rst.DisableWireFram();
+    rst.EnableMsaa();
+    rst.SetMsaaLevel(0);
     
     while(!window.GetShouldClose()) {
         window.Tick(10);
@@ -214,7 +241,8 @@ int main(int argc, char** argv) {
         rst.SetView(get_view_matrix(eye_pos));
         rst.SetProjection(get_perspective_matrix(45, ((float)info.width/(float)info.height), 0.1, 50));
         //rst.SetProjection(get_orthographic_matrix(-6.4, 6.4, -50, 50, 3.6, -3.6));
-        rst.Draw(pos_id, ind_id, RenderPrimitive::TRIANGLE);
+        //rst.Draw(pos_id, ind_id, RenderPrimitive::TRIANGLE);
+        rst.Draw(pos_id, ind_id, col_id, RenderPrimitive::TRIANGLE);
 
         // bind Texture
         glBindTexture(GL_TEXTURE_2D, texture);
