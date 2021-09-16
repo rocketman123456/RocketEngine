@@ -26,8 +26,9 @@ namespace Rocket {
         void*   buffer = nullptr;
 
         FileBuffer() = default;
-        ~FileBuffer() { if(buffer) delete[] buffer; }
+        ~FileBuffer() { if(buffer) delete[] buffer; } // Auto Delete
 
+        // Always Deep Copy
         FileBuffer(const FileBuffer& buffer) {
             this->buffer = new int8_t[buffer.size];
             this->size = buffer.size;

@@ -85,7 +85,7 @@ Eigen::Matrix4f get_perspective_matrix(float eye_fov, float aspect_ratio, float 
     const float zRange = (zFar - zNear);
     const float tanHalfFOV = tanf((eye_fov / 2.0f / 180.0f * MY_PI));
     const float A = zNear + zFar;
-    const float B = zFar * zNear;
+    const float B = -zFar * zNear;
 
     // Eigen::Matrix4f perspect_to_ortho;
     // Eigen::Matrix4f ortho;
@@ -105,7 +105,7 @@ Eigen::Matrix4f get_perspective_matrix(float eye_fov, float aspect_ratio, float 
     projection(0,0) = 1.0f / (tanHalfFOV * aspect_ratio); 
     projection(1,1) = 1.0f / tanHalfFOV;   
     projection(2,2) = -A / zRange;  
-    projection(2,3) = -2.0f * B / zRange;
+    projection(2,3) = 2.0f * B / zRange;
     projection(3,2) = -1.0f;            
 
     return projection;

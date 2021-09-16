@@ -26,7 +26,7 @@ namespace Rocket {
         inline void Serialize(const std::string& content) { json_ = nlohmann::json::parse(content); }
         inline std::string Deserialize() { return json_.dump(); }
 
-        nlohmann::json* GetRawJson() { return &json_; }
+        nlohmann::json& GetRawJson() { return json_; }
 
     private:
         std::string content_;

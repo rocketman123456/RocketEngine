@@ -8,6 +8,7 @@ target("RocketEngine")
         "FileSystem/*.cpp",
         "Log/*.cpp", 
         "Parser/*.cpp",
+        "PhysicsSystem/*.cpp",
         "Memory/*.cpp",
         "Utils/*.cpp"
     )

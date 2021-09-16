@@ -16,15 +16,15 @@ namespace Rocket {
     void MusicGenerator::GetMusicNotes(std::vector<EventPtr>& events) {
         auto raw = json_file_->GetRawJson();
 
-        base_ = (*raw)["base"];
-        type_ = (*raw)["type"];
-        one_step_ = (*raw)["one_step"];
+        base_ = (raw)["base"];
+        type_ = (raw)["type"];
+        one_step_ = (raw)["one_step"];
 
         events.clear();
         static std::unordered_map<std::string, double> start_map;
         static std::unordered_map<std::string, double> last_map;
 
-        auto music = (*raw)["music"];
+        auto music = (raw)["music"];
         for(auto note = music.begin(); note != music.end(); ++note) {
             // std::cout << "id : " << (*note)["id"] << "\n";
             // std::cout << "note : " << (*note)["note"] << "\n";
