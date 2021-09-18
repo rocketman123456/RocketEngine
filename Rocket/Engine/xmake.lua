@@ -2,6 +2,7 @@ target("RocketEngine")
     set_kind("static")
     add_files(
         "AudioSystem/*.cpp",
+        "Application/*.cpp",
         "Config/*.cpp",
         "EventSystem/*.cpp",
         "Exception/*.cpp",

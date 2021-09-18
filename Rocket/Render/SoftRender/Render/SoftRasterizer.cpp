@@ -63,15 +63,18 @@ namespace Rocket {
         return {c1,c2,c3};
     }
 
-    // Bresenham's line drawing algorithm
-    // Code taken from a stack overflow answer: https://stackoverflow.com/a/16405254
-    void SoftRasterizer::DrawLine(Eigen::Vector3f begin, Eigen::Vector3f end) {
+    void SoftRasterizer::DrawLine(
+        const Eigen::Vector3f& begin, const Eigen::Vector3f& end, 
+        const Eigen::Vector3f& color_begin, const Eigen::Vector3f& color_end) {
+        
         auto x1 = begin.x();
         auto y1 = begin.y();
         auto x2 = end.x();
         auto y2 = end.y();
 
-        Eigen::Vector3f line_color = {255, 255, 255};
+        Eigen::Vector3f color_delta = {0, 0, 0};
+        Eigen::Vector3f line_color = {0, 0, 0};
+        float length = (end - begin).norm();
 
         int x, y, dx, dy, dx1, dy1, px, py, xe, ye, i;
 
@@ -87,11 +90,18 @@ namespace Rocket {
                 x = x1;
                 y = y1;
                 xe = x2;
+                line_color = color_begin;
+                color_delta = color_end - color_begin;
             }
             else {
                 x = x2;
                 y = y2;
                 xe = x1;
+                line_color = color_end;
+                color_delta = color_begin - color_end;
+            }
+            if(length > 1e-6) {
+                color_delta = color_delta / length;
             }
             Eigen::Vector3f point = Eigen::Vector3f(x, y, 1.0f);
             SetPixel(point, line_color);
@@ -109,8 +119,8 @@ namespace Rocket {
                     }
                     px = px + 2 * (dy1 - dx1);
                 }
-                //            delay(0);
                 Eigen::Vector3f point = Eigen::Vector3f(x, y, 1.0f);
+                line_color += color_delta;
                 SetPixel(point, line_color);
             }
         }
@@ -119,11 +129,19 @@ namespace Rocket {
                 x = x1;
                 y = y1;
                 ye = y2;
+                line_color = color_begin;
+                color_delta = color_end - color_begin;
+
             }
             else {
                 x = x2;
                 y = y2;
                 ye = y1;
+                line_color = color_end;
+                color_delta = color_begin - color_end;
+            }
+            if(length > 1e-6) {
+                color_delta = color_delta / length;
             }
             Eigen::Vector3f point = Eigen::Vector3f(x, y, 1.0f);
             SetPixel(point, line_color);
@@ -141,17 +159,116 @@ namespace Rocket {
                     }
                     py = py + 2 * (dx1 - dy1);
                 }
-                //            delay(0);
                 Eigen::Vector3f point = Eigen::Vector3f(x, y, 1.0f);
+                line_color += color_delta;
                 SetPixel(point, line_color);
             }
         }
+    }
+
+    // Bresenham's line drawing algorithm
+    // Code taken from a stack overflow answer: https://stackoverflow.com/a/16405254
+    void SoftRasterizer::DrawLine(const Eigen::Vector3f& begin, const Eigen::Vector3f& end) {
+        DrawLine(begin, end, {255,0,0}, {0,255,0});
     }
 
     void SoftRasterizer::NextFrame() {
         last_frame_ = current_frame_;
         current_frame_++;
         current_frame_ = current_frame_ % FRAME_COUNT;
+    }
+
+    void SoftRasterizer::DrawLine3D(const Eigen::Vector3f& begin, const Eigen::Vector3f& end) {
+        DrawLine3D(begin, end, {255, 255, 255}, {255, 255, 255});
+    }
+
+    void SoftRasterizer::DrawLines3D(const std::vector<Eigen::Vector3f>& begin, const std::vector<Eigen::Vector3f>& end) {
+        assert(begin.size() == end.size());
+
+        for(int32_t i = 0; i < begin.size(); ++i) {
+            DrawLine3D(begin[i], end[i], {255, 255, 255}, {255, 255, 255});
+        }
+    }
+
+    void SoftRasterizer::DrawPoint3D(const Eigen::Vector3f& point) {
+        Eigen::Vector3f point_color = {255, 255, 255};
+        DrawPoint3D(point, point_color);
+    }
+
+    void SoftRasterizer::DrawPoints3D(const std::vector<Eigen::Vector3f>& point) {
+        Eigen::Vector3f point_color = {255, 255, 255};
+        for(auto single_point : point) {
+            DrawPoint3D(single_point, point_color);
+        }
+    }
+
+    void SoftRasterizer::DrawLine3D(
+        const Eigen::Vector3f& begin, const Eigen::Vector3f& end, 
+        const Eigen::Vector3f& color_begin, const Eigen::Vector3f& color_end) {
+        
+        Eigen::Matrix4f mvp = projection_ * view_ * model_;
+
+        float f1 = (100 - 0.1) / 2.0;
+        float f2 = (100 + 0.1) / 2.0;
+
+        Eigen::Vector4f v[] = {
+            mvp * to_vec4(begin, 1.0f),
+            mvp * to_vec4(end, 1.0f),
+        };
+        // Homogeneous division
+        for (auto &vec : v) {
+            vec /= vec.w();
+        }
+        // Viewport transformation
+        for (auto &vert : v) {
+            vert.x() = 0.5 * width_ * (vert.x() + 1.0);
+            vert.y() = 0.5 * height_ * (vert.y() + 1.0);
+            vert.z() = vert.z() * f1 + f2;
+        }
+
+        DrawLine(v[0].head<3>(), v[1].head<3>(), color_begin, color_end);
+    }
+    void SoftRasterizer::DrawLines3D(
+        const std::vector<Eigen::Vector3f>& begin, const std::vector<Eigen::Vector3f>& end, 
+        const std::vector<Eigen::Vector3f>& color_begin, const std::vector<Eigen::Vector3f>& color_end) {
+        
+        assert(begin.size() == end.size());
+        assert(color_begin.size() == color_end.size());
+        assert(begin.size() == color_begin.size());
+
+        for(int32_t i = 0; i < begin.size(); ++i) {
+            DrawLine3D(begin[i], end[i], color_begin[i], color_end[i]);
+        }
+    }
+    void SoftRasterizer::DrawPoint3D(const Eigen::Vector3f& point, const Eigen::Vector3f& color) {
+        Eigen::Matrix4f mvp = projection_ * view_ * model_;
+
+        float f1 = (100 - 0.1) / 2.0;
+        float f2 = (100 + 0.1) / 2.0;
+
+        Eigen::Vector4f v[] = {
+            mvp * to_vec4(point, 1.0f),
+        };
+        // Homogeneous division
+        for (auto &vec : v) {
+            vec /= vec.w();
+        }
+        // Viewport transformation
+        for (auto &vert : v) {
+            vert.x() = 0.5 * width_ * (vert.x() + 1.0);
+            vert.y() = 0.5 * height_ * (vert.y() + 1.0);
+            vert.z() = vert.z() * f1 + f2;
+        }
+
+        Eigen::Vector3f point_color = {255, 255, 255};
+        SetPixel(v[0].head<3>(), color);
+    }
+    void SoftRasterizer::DrawPoints3D(const std::vector<Eigen::Vector3f>& point, const std::vector<Eigen::Vector3f>& color) {
+        assert(point.size() == color.size());
+        
+        for(int32_t i = 0; i < point.size(); i++) {
+            DrawPoint3D(point[i], color[i]);
+        }
     }
 
     void SoftRasterizer::Draw(pos_buf_id pos_buffer, ind_buf_id ind_buffer, RenderPrimitive type) {
@@ -320,7 +437,7 @@ namespace Rocket {
                 }
                 if (count != 0) {
                     if (depth_buf_[current_frame_][GetIndex(x, y)] > minDepth) {
-                        Eigen::Vector3f color = t.GetColor() * count / (float)pos.size() / 255.0;
+                        Eigen::Vector3f color = t.GetColor() * count / (float)pos.size();
                         Eigen::Vector3f point(3);
                         point << (float)x, (float)y, minDepth;
                         // Update Depth
@@ -367,6 +484,6 @@ namespace Rocket {
         if (point.x() < 0 || point.x() >= width_ || point.y() < 0 || point.y() >= height_)
             return;
         auto ind = (height_ - 1 - point.y()) * width_ + point.x();
-        frame_buf_[current_frame_][ind] = color;
+        frame_buf_[current_frame_][ind] = color / 255.0;
     }
 }

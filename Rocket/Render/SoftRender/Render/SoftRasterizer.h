@@ -55,12 +55,25 @@ namespace Rocket {
         void Draw(pos_buf_id pos_buffer, ind_buf_id ind_buffer, RenderPrimitive type);
         void Draw(pos_buf_id pos_buffer, ind_buf_id ind_buffer, col_buf_id col_buffer, RenderPrimitive type);
 
+        // For Debug or Other use
+        void DrawLine3D(const Eigen::Vector3f& begin, const Eigen::Vector3f& end);
+        void DrawLines3D(const std::vector<Eigen::Vector3f>& begin, const std::vector<Eigen::Vector3f>& end);
+        void DrawPoint3D(const Eigen::Vector3f& point);
+        void DrawPoints3D(const std::vector<Eigen::Vector3f>& point);
+
+        void DrawLine3D(const Eigen::Vector3f& begin, const Eigen::Vector3f& end, const Eigen::Vector3f& color_begin, const Eigen::Vector3f& color_end);
+        void DrawLines3D(const std::vector<Eigen::Vector3f>& begin, const std::vector<Eigen::Vector3f>& end, const std::vector<Eigen::Vector3f>& color_begin, const std::vector<Eigen::Vector3f>& color_end);
+        void DrawPoint3D(const Eigen::Vector3f& point, const Eigen::Vector3f& color);
+        void DrawPoints3D(const std::vector<Eigen::Vector3f>& point, const std::vector<Eigen::Vector3f>& color);
+
         inline std::vector<Eigen::Vector3f>& FrameBuffer() { return frame_buf_[last_frame_]; }
         inline std::vector<float>& DepthBuffer() { return depth_buf_[last_frame_]; }
     private:
-        void DrawLine(Eigen::Vector3f begin, Eigen::Vector3f end);
         void RasterizeWireframe(const SoftTriangle& t);
         void RasterizeTriangle(const SoftTriangle& t);
+
+        void DrawLine(const Eigen::Vector3f& begin, const Eigen::Vector3f& end);
+        void DrawLine(const Eigen::Vector3f& begin, const Eigen::Vector3f& end, const Eigen::Vector3f& color_begin, const Eigen::Vector3f& color_end);
 
         // Using Cross-Product Count to Check
         // Must Input 3 vector array
