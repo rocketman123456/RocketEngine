@@ -11,22 +11,31 @@ namespace Rocket {
     pos_buf_id SoftRasterizer::LoadPositions(const std::vector<Eigen::Vector3f> &positions) {
         auto id = GetNextId();
         pos_buf_.emplace(id, positions);
-
         return {id};
     }
 
     ind_buf_id SoftRasterizer::LoadIndices(const std::vector<Eigen::Vector3i> &indices) {
         auto id = GetNextId();
         ind_buf_.emplace(id, indices);
-
         return {id};
     }
 
     col_buf_id SoftRasterizer::LoadColors(const std::vector<Eigen::Vector3f>& colors) {
         auto id = GetNextId();
         col_buf_.emplace(id, colors);
-
         return {id};
+    }
+
+    void SoftRasterizer::UnloadPositions(const pos_buf_id& positions) {
+        pos_buf_.erase(pos_buf_.find(positions.pos_id));
+    }
+
+    void SoftRasterizer::UnloadIndices(const ind_buf_id& indices) {
+        ind_buf_.erase(ind_buf_.find(indices.ind_id));
+    }
+
+    void SoftRasterizer::UnloadColors(const col_buf_id& colors) {
+        col_buf_.erase(col_buf_.find(colors.col_id));
     }
 
     bool SoftRasterizer::InsideTriangle(float x, float y, const Eigen::Vector3f* _v) {
@@ -260,9 +269,9 @@ namespace Rocket {
             vert.z() = vert.z() * f1 + f2;
         }
 
-        Eigen::Vector3f point_color = {255, 255, 255};
-        SetPixel(v[0].head<3>(), color);
+        DrawLine(v[0].head<3>(), v[0].head<3>(), color, color);
     }
+
     void SoftRasterizer::DrawPoints3D(const std::vector<Eigen::Vector3f>& point, const std::vector<Eigen::Vector3f>& color) {
         assert(point.size() == color.size());
         

@@ -36,6 +36,10 @@ namespace Rocket {
         ind_buf_id LoadIndices(const std::vector<Eigen::Vector3i>& indices);
         col_buf_id LoadColors(const std::vector<Eigen::Vector3f>& colors);
 
+        void UnloadPositions(const pos_buf_id& positions);
+        void UnloadIndices(const ind_buf_id& indices);
+        void UnloadColors(const col_buf_id& colors);
+
         void SetModel(const Eigen::Matrix4f& m) { model_ = m; }
         void SetView(const Eigen::Matrix4f& v) { view_ = v; }
         void SetProjection(const Eigen::Matrix4f& p) { projection_ = p; }

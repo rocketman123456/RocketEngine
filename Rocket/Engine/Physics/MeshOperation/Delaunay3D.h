@@ -1,7 +1,7 @@
 #pragma once
 
 namespace Rocket {
-    class Mesh {
+    class Delaunay3D {
 
     };
 }
