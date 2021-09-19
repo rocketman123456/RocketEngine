@@ -1,5 +1,5 @@
 #include "Memory/MemoryCheck.h"
-#include "Pattern/IRuntimeModule.h"
+#include "Application/Application.h"
 #include "Containers/Bag/Bag.h"
 #include "Log/Log.h"
 

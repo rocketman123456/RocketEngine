@@ -27,7 +27,7 @@ add_requires("zlib 1.2.11", {system = false, shared = false, debug = true, confi
 add_requires("yaml-cpp 0.7.0", {system = false, shared = false, debug = true, configs = {cxflags = "-fPIC"}})
 add_requires("openal-soft 1.21.1", {system = false, shared = false, debug = true, configs = {cxflags = "-fPIC"}})
 add_requires("libsndfile 1.0.30", {system = false, shared = false, debug = true, configs = {cxflags = "-fPIC"}})
-add_requires("nlohmann_json v3.9.1", {system = false, shared = false, debug = true, configs = {cxflags = "-fPIC"}})
+--add_requires("nlohmann_json v3.9.1", {system = false, shared = false, debug = true, configs = {cxflags = "-fPIC"}})
 add_requires("stb", {system = false, shared = false, debug = false, configs = {cxflags = "-fPIC"}})
 add_requires("taskflow v3.2.0", {system = false, shared = false, debug = true, configs = {cxflags = "-fPIC"}})
 add_requires("eigen 3.4.0", {system = false, shared = false, debug = true, configs = {cxflags = "-fPIC"}})

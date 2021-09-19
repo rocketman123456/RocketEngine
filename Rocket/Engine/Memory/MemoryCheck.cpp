@@ -8,17 +8,13 @@
 #undef new
 #endif
 
-namespace {
-	static inline std::mutex memory_allocate_mutex_s;
-}
+// namespace {
+// 	static inline std::mutex memory_allocate_mutex_s;
+// }
 
 namespace Rocket::Memory::detail {
 	template<typename T>
 	struct malloc_allocator_t : std::allocator<T> {
-		malloc_allocator_t() = default;
-
-		template<class U>
-		malloc_allocator_t(const malloc_allocator_t<U>&) noexcept {}
 
 		T* allocate(std::size_t n) {
 			T* ptr = (T*)std::malloc(n * sizeof(T));
@@ -27,9 +23,6 @@ namespace Rocket::Memory::detail {
 		}
 
 		void deallocate(T* ptr, std::size_t) { std::free(ptr); }
-
-		template<typename U>
-		struct rebind { typedef malloc_allocator_t<U> other; };
 	};
 
 	
@@ -86,6 +79,8 @@ namespace Rocket::Memory::detail {
 
 	// remove previous new object in info list
 	inline void operator_delete(void* ptr, bool array_delete) noexcept {
+		static std::recursive_mutex operator_delete_lock;
+		std::scoped_lock guard{ operator_delete_lock };
 		auto it = get_new_entry_set()->find(ptr);
 		if(it != get_new_entry_set()->end()) {
 			if(it->is_array == array_delete) {
@@ -170,7 +165,8 @@ void* operator new (std::size_t n, Rocket::Memory::detail::new_entry_t&& entry) 
 	void* ptr = ::operator new(n);
 	entry.ptr = ptr;
 	try {
-		std::unique_lock guard(::memory_allocate_mutex_s);
+		static std::recursive_mutex operator_new_lock;
+		std::scoped_lock guard{ operator_new_lock };
 		Rocket::Memory::detail::get_new_entry_set()->insert(std::forward<decltype(entry)>(entry)); 
 	}
 	catch(...) {}
@@ -178,12 +174,10 @@ void* operator new (std::size_t n, Rocket::Memory::detail::new_entry_t&& entry) 
 }
 
 void operator delete (void* ptr) noexcept {
-	std::unique_lock guard(::memory_allocate_mutex_s);
 	Rocket::Memory::detail::operator_delete(ptr, false);
 }
 
 void operator delete [] (void* ptr) noexcept {
-	std::unique_lock guard(::memory_allocate_mutex_s);
 	Rocket::Memory::detail::operator_delete(ptr, true);
 }
 
@@ -195,7 +189,13 @@ void operator delete [] (void* ptr, Rocket::Memory::detail::string_t, int, Rocke
 	Rocket::Memory::detail::operator_delete(ptr, true);
 }
 
+// #warning If '__PRETTY_FUNCTION__' is undefined replace it with '__proc__' below. \
+// Otherwise comment these warnings out and hope we get 'std::source_location' soon! \
+// https://en.cppreference.com/w/cpp/utility/source_location/
+
 #ifndef new
-#define new new(__FILE__, __LINE__, __FUNCTION__)
+// #define new new(__FILE__, __LINE__, __FUNCTION__)
+#define new new(__FILE__, __LINE__, __proc__)
+// #define new new(__FILE__, __LINE__, __PRETTY_FUNCTION__)
 #endif
 #endif
