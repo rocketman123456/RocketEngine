@@ -1,4 +1,5 @@
 #include "Render/SoftRasterizer.h"
+#include "Physics/BasicElement/Parameter.h"
 #include "Log/Log.h"
 
 //#include <iostream>

@@ -31,11 +31,62 @@ Eigen::Matrix4f get_view_matrix(Eigen::Vector3f eye_pos) {
     return view;
 }
 
+Eigen::Matrix4f get_model_matrix(float angle_x, float angle_y, float angle_z) {
+    Eigen::Matrix4f model = Eigen::Matrix4f::Identity();
+    Eigen::Matrix4f rot_x = Eigen::Matrix4f::Zero();
+    Eigen::Matrix4f rot_y = Eigen::Matrix4f::Zero();
+    Eigen::Matrix4f rot_z = Eigen::Matrix4f::Zero();
+
+    float t1 = angle_x / 180.0 * MY_PI;
+    float t2 = angle_y / 180.0 * MY_PI;
+    float t3 = angle_z / 180.0 * MY_PI;
+    rot_x <<
+        1, 0, 0, 0,
+        0, cos(t1), sin(t1), 0,
+        0, -sin(t1), cos(t1), 0,
+        0, 0, 0, 1;
+    rot_y << 
+        cos(t2), 0, -sin(t2), 0,
+        0, 1, 0, 0,
+        sin(t2), 0, cos(t2), 0,
+        0, 0, 0, 1;
+    rot_z << 
+        cos(t3),-sin(t3), 0, 0,
+        sin(t3), cos(t3), 0, 0,
+        0, 0, 1, 0,
+        0, 0, 0, 1;
+
+    model = rot_x * rot_y * rot_z;
+
+    return model;
+}
+
+Eigen::Matrix4f get_model_matrix(float angle_y, float angle_z) {
+    Eigen::Matrix4f model = Eigen::Matrix4f::Identity();
+    Eigen::Matrix4f rot_y = Eigen::Matrix4f::Zero();
+    Eigen::Matrix4f rot_z = Eigen::Matrix4f::Zero();
+
+    float t1 = angle_y / 180.0 * MY_PI;
+    float t2 = angle_z / 180.0 * MY_PI;
+    rot_y << 
+        cos(t1), 0, -sin(t1), 0,
+        0, 1, 0, 0,
+        sin(t1), 0, cos(t1), 0,
+        0, 0, 0, 1;
+    rot_z << 
+        cos(t2),-sin(t2), 0, 0,
+        sin(t2), cos(t2), 0, 0,
+        0, 0, 1, 0,
+        0, 0, 0, 1;
+
+    model = rot_y * rot_z;
+
+    return model;
+}
+
 Eigen::Matrix4f get_model_matrix(float rotation_angle) {
     Eigen::Matrix4f model = Eigen::Matrix4f::Identity();
 
-    // Create the model matrix for rotating the triangle around the Z axis.
-    // Then return it.
     float t = rotation_angle / 180.0 * MY_PI;
     model << 
         cos(t),-sin(t), 0, 0,

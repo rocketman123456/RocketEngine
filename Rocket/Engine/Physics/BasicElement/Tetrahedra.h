@@ -12,17 +12,22 @@ namespace Rocket {
     public:
         Tetrahedra();
         Tetrahedra(const Sphere& sphere);
+        Tetrahedra(const Vertex& p0, const Vertex& p1, const Vertex& p2, const Vertex& p3);
 
-        inline const Eigen::Vector3d& P0() const { return p0_; }
-        inline const Eigen::Vector3d& P1() const { return p1_; }
-        inline const Eigen::Vector3d& P2() const { return p2_; }
-        inline const Eigen::Vector3d& P3() const { return p3_; }
-        inline Eigen::Vector3d& P0() { return p0_; }
-        inline Eigen::Vector3d& P1() { return p1_; }
-        inline Eigen::Vector3d& P2() { return p2_; }
-        inline Eigen::Vector3d& P3() { return p3_; }
-        inline const std::array<Triangle, 4>& Faces() const { return faces_; }
-        inline std::array<Triangle, 4>& Faces() { return faces_; }
+        void CreateBoundingTetrahedra(const Sphere& sphere);
+        void CreateBoundingTetrahedra(const Sphere& sphere, const Eigen::Vector3d& x, const Eigen::Vector3d& y, const Eigen::Vector3d& z);
+        void UpdateFaces();
+        void GenerateBasicParameter(
+            const Eigen::Vector3d& p0, 
+            const Eigen::Vector3d& p1, 
+            const Eigen::Vector3d& p2, 
+            const Eigen::Vector3d& p3);
+
+        std::shared_ptr<Tetrahedra> GetLocateId(Vertex& v);
+		bool IsInSphere(Vertex& v);
+		Triangle* GetAdjacentSurface(std::shared_ptr<Tetrahedra> t);
+
+        bool operator==(const Tetrahedra& t);
 
     private:
         static int32_t GenerateId() {
@@ -30,12 +35,16 @@ namespace Rocket {
             return id++;
         }
 
-    private:
-        int32_t id_ = 0;
-        Eigen::Vector3d p0_ = Eigen::Vector3d::Zero();
-        Eigen::Vector3d p1_ = Eigen::Vector3d::Zero();
-        Eigen::Vector3d p2_ = Eigen::Vector3d::Zero();
-        Eigen::Vector3d p3_ = Eigen::Vector3d::Zero();
-        std::array<Triangle, 4> faces_;
+    public:
+        // TODO : remove copy when possible
+        int32_t id = 0;
+        std::array<Vertex, 4> nodes = {};
+        std::array<Triangle, 4> faces = {};
+        Vertex scenter;
+		Vertex gcenter;
+		double sround;
+		double volume;
+		double aspect;
+        bool is_active = false;
     };
 }

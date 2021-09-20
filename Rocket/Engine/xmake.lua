@@ -11,6 +11,7 @@ target("RocketEngine")
         "Parser/*.cpp",
         "Physics/*.cpp",
         "Physics/BasicElement/*.cpp",
+        "Physics/MeshOperation/*.cpp",
         "Memory/*.cpp",
         "Utils/*.cpp"
     )

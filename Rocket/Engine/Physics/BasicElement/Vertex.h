@@ -5,13 +5,21 @@
 namespace Rocket {
     class Vertex {
     public:
-        Vertex() : id_(GenerateId()) {}
-        Vertex(const Eigen::Vector3d& pos) : id_(GenerateId()), position_(pos) {}
+        Vertex() : id(GenerateId()) {}
+        Vertex(double x, double y, double z, int32_t type = 0) 
+            : id(GenerateId()), type(type), position(x, y, z) {}
+        Vertex(const Eigen::Vector3d& pos, int32_t type = 0) 
+            : id(GenerateId()), type(type), position(pos) {}
         ~Vertex() = default;
 
-        inline const Eigen::Vector3d& Position() const { return position_; }
-        inline Eigen::Vector3d& Position() { return position_; }
-        inline int32_t Id() const { return id_; }
+        bool IsCoincidentWith(const Vertex& v);
+        // Vertex operator+(const Vertex&);
+		// Vertex operator-(const Vertex&);
+		// Vertex operator*(const Vertex&);
+		// double operator^(const Vertex&);
+		// Vertex operator*(double);
+		// Vertex operator/(double);
+        bool operator==(const Vertex&);
 
     private:
         static int32_t GenerateId() {
@@ -19,8 +27,12 @@ namespace Rocket {
             return id++;
         }
 
-    private:
-        int32_t id_ = 0;
-        Eigen::Vector3d position_ = Eigen::Vector3d::Zero();
+    public:
+        int32_t id = 0;
+        int32_t type = 0;
+        Eigen::Vector3d position = Eigen::Vector3d::Zero();
+        bool is_auxiliary = false;
+        bool is_visited = false;
+        bool is_active = false;
     };
 }

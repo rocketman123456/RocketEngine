@@ -49,7 +49,7 @@ const char *fragmentShaderSource = R"(
     }
 )";
 
-static float global_angle = 0;
+static float global_angle_z = 0;
 
 int main(int argc, char** argv) {
     DesktopWindow window;
@@ -215,8 +215,8 @@ int main(int argc, char** argv) {
         [](GLFWwindow* window, int key, int scancode, int action, int mods){
         if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) { glfwSetWindowShouldClose(window, true); }
         if (key == GLFW_KEY_SPACE && action == GLFW_PRESS) {}
-        if (key == GLFW_KEY_A && action == GLFW_PRESS) { global_angle += 5.0; }
-        if (key == GLFW_KEY_D && action == GLFW_PRESS) { global_angle -= 5.0; }
+        if (key == GLFW_KEY_A && action == GLFW_PRESS) { global_angle_z += 5.0; }
+        if (key == GLFW_KEY_D && action == GLFW_PRESS) { global_angle_z -= 5.0; }
     });
 
     rst.DisableWireFram();
@@ -238,7 +238,7 @@ int main(int argc, char** argv) {
 
         rst.NextFrame();
         rst.Clear(BufferType::COLOR | BufferType::DEPTH);
-        rst.SetModel(get_model_matrix(global_angle));
+        rst.SetModel(get_model_matrix(global_angle_z));
         rst.SetView(get_view_matrix(eye_pos));
         rst.SetProjection(get_perspective_matrix(45, ((float)info.width/(float)info.height), 0.1, 50));
         //rst.SetProjection(get_orthographic_matrix(-6.4, 6.4, -50, 50, 3.6, -3.6));

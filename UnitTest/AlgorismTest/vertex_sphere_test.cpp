@@ -3,6 +3,12 @@
 #include "Render/SoftRasterizer.h"
 #include "Render/SoftTriangle.h"
 
+#include "Physics/BasicElement/Vertex.h"
+#include "Physics/BasicElement/Triangle.h"
+#include "Physics/BasicElement/Sphere.h"
+#include "Physics/BasicElement/Tetrahedra.h"
+#include "Physics/MeshOperation/Delaunay3D.h"
+
 using namespace Rocket;
 
 #include <GLFW/glfw3.h>
@@ -49,9 +55,45 @@ const char *fragmentShaderSource = R"(
     }
 )";
 
-static float global_angle = 0;
+static float global_angle_x = 0;
+static float global_angle_y = 0;
+static float global_angle_z = 0;
+
+double random(double a = 0.0, double b = 1.0) {
+    return (double)std::rand() / (double)RAND_MAX * (b-a) + a;
+}
+
+Sphere sphere;
+Tetrahedra tetrahedra;
+Delaunay3D delaunay_3d;
+
+void VertexSphereTest() {
+    std::vector<Vertex> vertices;
+    for(int i = 0; i < 1000; i++) {
+        vertices.emplace_back(Eigen::Vector3d(random(), random(), random()));
+    }
+
+    sphere.CreateBoundingSphere(vertices);
+
+    std::cout << "Sphere Center: " 
+        << sphere.center[0] << "," 
+        << sphere.center[1] << "," 
+        << sphere.center[2] << std::endl;
+    std::cout << "Sphere Radius: " << sphere.radius << std::endl;
+
+    tetrahedra.CreateBoundingTetrahedra(
+        sphere,
+        Eigen::Vector3d(0,0,1),
+        Eigen::Vector3d(1,0,0),
+        Eigen::Vector3d(0,1,0)
+    );
+
+    delaunay_3d.Initialize(vertices);
+}
 
 int main(int argc, char** argv) {
+    Log::Init();
+
     DesktopWindow window;
     WindowInfo info;
     info.name = "Rocket";
@@ -187,15 +229,21 @@ int main(int argc, char** argv) {
     glfwSetKeyCallback((GLFWwindow*)window.GetWindowHandle(), 
         [](GLFWwindow* window, int key, int scancode, int action, int mods){
         if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) { glfwSetWindowShouldClose(window, true); }
-        if (key == GLFW_KEY_SPACE && action == GLFW_PRESS) {}
-        if (key == GLFW_KEY_A && action == GLFW_PRESS) { global_angle += 5.0; }
-        if (key == GLFW_KEY_D && action == GLFW_PRESS) { global_angle -= 5.0; }
+        if (key == GLFW_KEY_SPACE && action == GLFW_PRESS) { delaunay_3d.Generate(); }
+        if (key == GLFW_KEY_A && action == GLFW_PRESS) { global_angle_z += 5.0; }
+        if (key == GLFW_KEY_D && action == GLFW_PRESS) { global_angle_z -= 5.0; }
+        if (key == GLFW_KEY_Q && action == GLFW_PRESS) { global_angle_y += 5.0; }
+        if (key == GLFW_KEY_E && action == GLFW_PRESS) { global_angle_y -= 5.0; }
+        if (key == GLFW_KEY_W && action == GLFW_PRESS) { global_angle_x += 5.0; }
+        if (key == GLFW_KEY_S && action == GLFW_PRESS) { global_angle_x -= 5.0; }
     });
 
     rst.DisableWireFram();
     rst.EnableWireFram();
     rst.EnableMsaa();
     rst.SetMsaaLevel(0);
+
+    VertexSphereTest();
     
     while(!window.GetShouldClose()) {
         window.Tick(10);
@@ -211,14 +259,52 @@ int main(int argc, char** argv) {
 
         rst.NextFrame();
         rst.Clear(BufferType::COLOR | BufferType::DEPTH);
-        rst.SetModel(get_model_matrix(global_angle));
+        rst.SetModel(get_model_matrix(global_angle_x, global_angle_y, global_angle_z));
+        //rst.SetModel(get_model_matrix(global_angle_y, global_angle_z));
+        //rst.SetModel(get_model_matrix(global_angle_z));
         rst.SetView(get_view_matrix(eye_pos));
         rst.SetProjection(get_perspective_matrix(45, ((float)info.width/(float)info.height), 0.1, 50));
         //rst.SetProjection(get_orthographic_matrix(-6.4, 6.4, -50, 50, 3.6, -3.6));
 
-        rst.DrawLine3D({0,0,0}, {1,0,0}, {255,0,0}, {0,255,0});
-        rst.DrawLine3D({0,0,0}, {0,1,0}, {255,0,0}, {0,255,0});
+        rst.DrawLine3D({0,0,0}, {1,0,0}, {255,0,0}, {255,0,0}); // x
+        rst.DrawLine3D({0,0,0}, {0,1,0}, {0,255,0}, {0,255,0}); // y
+        rst.DrawLine3D({0,0,0}, {0,0,1}, {0,0,255}, {0,0,255}); // z
+        //rst.DrawLine3D({0.5,0.5,0}, {0.5,0.5,2}, {255,0,0}, {0,255,0});
         rst.DrawPoint3D({1,1,0}, {255,0,0});
+
+        for(auto vertex : delaunay_3d.GetNodes()) {
+            rst.DrawPoint3D(Eigen::Vector3f(vertex.position[0], vertex.position[1], vertex.position[2]));
+        }
+
+        std::vector<std::shared_ptr<Tetrahedra>>& meshs = delaunay_3d.GetResultTetrahedras();
+        for(std::shared_ptr<Tetrahedra>& mesh : meshs) {
+            mesh->UpdateFaces();
+            std::array<Triangle, 4>& faces = mesh->faces;
+            for(Triangle& face : faces) {
+                std::array<Edge, 3>& edges = face.edges;
+                for(Edge& edge : edges) {
+                    rst.DrawLine3D(
+                        Eigen::Vector3f(edge.first.position[0], edge.first.position[1], edge.first.position[2]), 
+                        Eigen::Vector3f(edge.second.position[0], edge.second.position[1], edge.second.position[2]),
+                        Eigen::Vector3f(255,0,0),
+                        Eigen::Vector3f(0,0,255)
+                    );
+                }
+            }
+        }
+
+        // auto& faces = tetrahedra.faces;
+        // for(auto face : faces) {
+        //     auto& edges = face.edges;
+        //     for(auto edge : edges) {
+        //         rst.DrawLine3D(
+        //             Eigen::Vector3f(edge.first.position[0], edge.first.position[1], edge.first.position[2]), 
+        //             Eigen::Vector3f(edge.second.position[0], edge.second.position[1], edge.second.position[2]),
+        //             Eigen::Vector3f(255,0,0),
+        //             Eigen::Vector3f(0,0,255)
+        //         );
+        //     }
+        // }
 
         // bind Texture
         glBindTexture(GL_TEXTURE_2D, texture);
@@ -238,5 +324,7 @@ int main(int argc, char** argv) {
     }
 
     window.Finalize();
+
+    Log::End();
     return 0;
 }
