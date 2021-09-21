@@ -4,6 +4,8 @@
 #include <iostream>
 #include <algorithm>
 #include <random>
+#include <unordered_map>
+#include <list>
 
 namespace Rocket {
     void Delaunay3D::Initialize(std::vector<VertexPtr>& dots) {
@@ -99,16 +101,14 @@ namespace Rocket {
 		//----------Make connection of supertetrahedron----------
 		for (auto& pelement : elements) {
 			for (auto& psurface : pelement->faces) {
-				if (psurface->neighbor == nullptr) {
-					for (auto& pelement2 : elements) {
-						if(pelement2 != pelement) {
-							for (auto& psurface2 : pelement2->faces) {
-								if (psurface->IsCoincidentWith(psurface2.get())) {
-									psurface->neighbor = pelement2.get();
-									psurface2->neighbor = pelement.get();
-									break;
-								}
-							}
+				if (psurface->neighbor != nullptr) continue;
+				for (auto& pelement2 : elements) {
+					if(pelement2 == pelement) continue;
+					for (auto& psurface2 : pelement2->faces) {
+						if (psurface->IsCoincidentWith(psurface2.get())) {
+							psurface->neighbor = pelement2.get();
+							psurface2->neighbor = pelement.get();
+							break;
 						}
 					}
 				}
@@ -241,31 +241,76 @@ namespace Rocket {
 		//std::cout << "After Delete Size : " << elements.size() << std::endl;
     }
 
+	void Delaunay3D::StandardMethod(VertexPtr& pnode, std::unordered_map<int32_t, TrianglePtr>& faces) {
+		// Origin Method Slow
+		for(auto pelement = elements.begin(); pelement != elements.end();) {
+			//----------if node is in the element----------
+			if((*pelement)->IsInSphere(pnode)) {
+				for(auto pface : (*pelement)->faces) {
+					bool find = false;
+					for(auto face_find = faces.begin(); face_find != faces.end();) {
+						if((*face_find).second->id == pface->id) {
+							faces.erase(face_find++);
+							find = true;
+						}
+						else if((*face_find).second->IsCoincidentWith((pface).get())) {
+							faces.erase(face_find++);
+							find = true;
+						}
+						else {
+							face_find++;
+						}
+					}
+					if(!find) {
+						faces[pface->id] = pface;
+					}
+				}
+				elements.erase(pelement);
+			}
+			else {
+				pelement++;
+			}
+		}
+
+		for(auto& face_pair : faces) {
+			auto& pface = face_pair.second;
+			TetrahedraPtr tmp = TetrahedraPtr(new Tetrahedra(pface->vertices[0], pface->vertices[1], pface->vertices[2], pnode));
+			elements.push_back(tmp);
+		}
+	}
+
+	void Delaunay3D::FastMethod(VertexPtr& pnode, Tetrahedra* pethis) {
+		// Bug Method Fast
+		while (1) {
+			Tetrahedra* penext = pethis->GetLocateId(pnode);				
+			//----------if node is in the element----------
+			if (penext == pethis) {
+				MeshLocal(pnode, pethis);
+				pethis = elements.back().get();
+				break;
+			}
+			else {
+				pethis = penext;
+			}
+		}
+	}
+
     void Delaunay3D::MakeRoughMesh() {
         std::cout << "Make rough mesh\n";
 
-        Tetrahedra* pethis = elements[0].get();									
+		bool method = true;
+		std::unordered_map<int32_t, TrianglePtr> faces;
+        Tetrahedra* pethis = elements[0].get();								
 		for (auto& pnode : nodes) {
 			if (pnode->type != -1) {
-				// for(auto& element : elements) {
-				// 	//----------if node is in the element----------
-				// 	if(element->IsInSphere(pnode)) {
-				// 		MeshLocal(pnode, pethis);
-				// 		break;
-				// 	}
-				// }
-				while (1) {
-					Tetrahedra* penext = pethis->GetLocateId(pnode);				
-					//----------if node is in the element----------
-					if (penext == pethis) {
-						MeshLocal(pnode, pethis);
-						pethis = elements.back().get();
-						break;
-					}
-					else {
-						pethis = penext;
-					}
+				if(method) {
+					StandardMethod(pnode, faces);
 				}
+				else {
+					FastMethod(pnode, pethis);
+				}
+
+				
 			}
 		}
     }

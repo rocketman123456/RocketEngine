@@ -6,6 +6,7 @@
 
 #include <vector>
 #include <memory>
+#include <unordered_map>
 
 #define INIT_VERTICES_COUNT 6 // count of vertices in the initial hull
 #define INIT_FACES_COUNT 8 // count of faces in the initial hull
@@ -27,6 +28,8 @@ namespace Rocket {
         void MakeMesh(int addnodenum, bool iscopynodeexist);
         void MakeSupertetrahedron(double xmax, double ymax, double zmax);
         void MeshLocal(VertexPtr& node, Tetrahedra*& ethis);
+        void StandardMethod(VertexPtr& pnode, std::unordered_map<int32_t, TrianglePtr>& faces);
+        void FastMethod(VertexPtr& pnode, Tetrahedra* pethis);
         void MakeRoughMesh();
         void DeleteSupertetrahedron();
         void DeleteCreviceElement();

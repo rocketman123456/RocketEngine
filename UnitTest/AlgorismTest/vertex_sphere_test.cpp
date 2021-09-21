@@ -16,6 +16,7 @@ using namespace Rocket;
 
 #include <iostream>
 #include <iomanip>
+#include <random>
 
 #include "soft_render.h"
 
@@ -58,15 +59,16 @@ const char *fragmentShaderSource = R"(
 static float global_angle_x = 0;
 static float global_angle_y = 0;
 static float global_angle_z = 0;
+static std::mt19937 generator(0);
+static std::uniform_real_distribution<> range_distribute(0.0, 1.0);
+static std::vector<VertexPtr> nodes;
+static SpherePtr sphere;
+static TetrahedraPtr tetrahedra;
+static Delaunay3DPtr delaunay_3d;
 
 double random(double a = 0.0, double b = 1.0) {
-    return (double)std::rand() / (double)RAND_MAX * (b-a) + a;
+    return range_distribute(generator) * (b-a) + a;
 }
-
-std::vector<VertexPtr> nodes;
-SpherePtr sphere;
-TetrahedraPtr tetrahedra;
-Delaunay3DPtr delaunay_3d;
 
 void VertexSphereTest() {
     int32_t count = 0;
@@ -293,7 +295,28 @@ int main(int argc, char** argv) {
         }
 
         std::vector<TetrahedraPtr>& meshs = delaunay_3d->GetResultTetrahedras();
-        for(TetrahedraPtr& mesh : meshs) {
+        
+        // for(TetrahedraPtr& mesh : meshs) {
+        //     mesh->UpdateFaces();
+        //     std::array<TrianglePtr, 4>& faces = mesh->faces;
+        //     for(TrianglePtr& face : faces) {
+        //         std::array<EdgePtr, 3>& edges = face->edges;
+        //         for(EdgePtr& edge : edges) {
+        //             rst.DrawLine3D(
+        //                 Eigen::Vector3f(edge->start->position[0], edge->start->position[1], edge->start->position[2]), 
+        //                 Eigen::Vector3f(edge->end->position[0], edge->end->position[1], edge->end->position[2]),
+        //                 Eigen::Vector3f(255,0,0),
+        //                 Eigen::Vector3f(0,0,255)
+        //             );
+        //         }
+        //     }
+        // }
+
+        static int32_t current = 0;
+        if(meshs.size() > 0) {
+            current++;
+            current = current % meshs.size();
+            auto mesh = meshs[current];
             mesh->UpdateFaces();
             std::array<TrianglePtr, 4>& faces = mesh->faces;
             for(TrianglePtr& face : faces) {
@@ -308,6 +331,7 @@ int main(int argc, char** argv) {
                 }
             }
         }
+        
 
         // auto& faces = tetrahedra.faces;
         // for(auto face : faces) {
