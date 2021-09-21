@@ -26,10 +26,10 @@ namespace Rocket {
         const Eigen::Vector3d& y, 
         const Eigen::Vector3d& z) {
 
-        nodes[0] = std::make_shared<Vertex>();
-        nodes[1] = std::make_shared<Vertex>();
-        nodes[2] = std::make_shared<Vertex>();
-        nodes[3] = std::make_shared<Vertex>();
+        nodes[0] = VertexPtr(new Vertex());
+        nodes[1] = VertexPtr(new Vertex());
+        nodes[2] = VertexPtr(new Vertex());
+        nodes[3] = VertexPtr(new Vertex());
         
         double r = sphere->radius;
         nodes[0]->position = sphere->center + z * r * 3.0;
@@ -65,10 +65,10 @@ namespace Rocket {
 
     void Tetrahedra::GenerateFaces() {
         faces = {
-            std::make_shared<Triangle>(std::vector<VertexPtr>({nodes[1], nodes[3], nodes[2]}), this, nullptr),
-            std::make_shared<Triangle>(std::vector<VertexPtr>({nodes[0], nodes[1], nodes[2]}), this, nullptr),
-            std::make_shared<Triangle>(std::vector<VertexPtr>({nodes[0], nodes[2], nodes[3]}), this, nullptr), 
-            std::make_shared<Triangle>(std::vector<VertexPtr>({nodes[0], nodes[3], nodes[1]}), this, nullptr), 
+            TrianglePtr(new Triangle(std::vector<VertexPtr>({nodes[1], nodes[3], nodes[2]}), this, nullptr)),
+            TrianglePtr(new Triangle(std::vector<VertexPtr>({nodes[0], nodes[1], nodes[2]}), this, nullptr)),
+            TrianglePtr(new Triangle(std::vector<VertexPtr>({nodes[0], nodes[2], nodes[3]}), this, nullptr)), 
+            TrianglePtr(new Triangle(std::vector<VertexPtr>({nodes[0], nodes[3], nodes[1]}), this, nullptr)), 
         };
     }
 
@@ -100,15 +100,15 @@ namespace Rocket {
 		Eigen::Vector3d P2 = v0.cross(v1);
 
         int32_t x = 0, y = 1, z = 2;
-		this->scenter = std::make_shared<Vertex>(Eigen::Vector3d(
+		this->scenter = VertexPtr(new Vertex(Eigen::Vector3d(
             (ABC[x] * P0[x] + ABC[y] * P1[x] + ABC[z] * P2[x]) / detP, 
             (ABC[x] * P0[y] + ABC[y] * P1[y] + ABC[z] * P2[y]) / detP, 
             (ABC[x] * P0[z] + ABC[y] * P1[z] + ABC[z] * P2[z]) / detP
-        ));
+        )));
 		this->sround = (this->scenter->position - p0).norm();
 
 		//----------Get center of gravity----------
-        this->gcenter = std::make_shared<Vertex>((p0 + p1 + p2 + p3) / 4.0);
+        this->gcenter = VertexPtr(new Vertex((p0 + p1 + p2 + p3) / 4.0));
 
 		//----------Get volume----------
 		this->volume = ((p1 - p0).cross(p2 - p0)).dot(p3 - p0);
@@ -123,7 +123,7 @@ namespace Rocket {
 
     Tetrahedra* Tetrahedra::GetLocateId(VertexPtr& v) {
         for (auto& surface : this->faces) {
-            auto v_ = std::make_shared<Vertex>(this->gcenter->position - v->position);
+            auto v_ = VertexPtr(new Vertex(this->gcenter->position - v->position));
 			if (surface->IsRayCross(this->gcenter, v_)) {
                 if(surface->neighbor) {
 				    return surface->neighbor;

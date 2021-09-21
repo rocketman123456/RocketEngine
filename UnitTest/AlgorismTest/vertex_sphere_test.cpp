@@ -70,16 +70,23 @@ Delaunay3DPtr delaunay_3d;
 
 void VertexSphereTest() {
     int32_t count = 0;
-    while(count <= 0) {
-        std::cout << "Input node count:";
-        std::cin >> count;
+    // while(count <= 0) {
+    //     std::cout << "Input node count:";
+    //     std::cin >> count;
+    // }
+
+    double radius = 1.0;
+    for(int i = 0; i < 20; i++) {
+        double t1 = random(-3.14/2.0,3.14/2.0);
+        double t2 = random(0,3.14*2.0);
+        double x = radius * sin(t1) * sin(t2);
+        double y = radius * sin(t1) * cos(t2);
+        double z = radius * cos(t1);
+        //nodes.push_back(VertexPtr(new Vertex(Eigen::Vector3d(x, y, z))));
+        nodes.push_back(VertexPtr(new Vertex(Eigen::Vector3d(random(-1,1), random(-1,1), random(-1,1)))));
     }
 
-    for(int i = 0; i < count; i++) {
-        nodes.push_back(std::make_shared<Vertex>(Eigen::Vector3d(random(-1,1), random(-1,1), random(-1,1))));
-    }
-
-    sphere = std::make_shared<Sphere>();
+    sphere = SpherePtr(new Sphere());
     sphere->CreateBoundingSphere(nodes);
 
     std::cout << "Sphere Center: " 
@@ -88,7 +95,7 @@ void VertexSphereTest() {
         << sphere->center[2] << std::endl;
     std::cout << "Sphere Radius: " << sphere->radius << std::endl;
 
-    tetrahedra = std::make_shared<Tetrahedra>();
+    tetrahedra = TetrahedraPtr(new Tetrahedra());
     tetrahedra->CreateBoundingTetrahedra(
         sphere,
         Eigen::Vector3d(0,0,1),
@@ -96,7 +103,7 @@ void VertexSphereTest() {
         Eigen::Vector3d(0,1,0)
     );
 
-    delaunay_3d = std::make_shared<Delaunay3D>();
+    delaunay_3d = Delaunay3DPtr(new Delaunay3D());
     delaunay_3d->Initialize(nodes);
 }
 

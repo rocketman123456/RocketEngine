@@ -4,9 +4,9 @@
 namespace Rocket {
     Triangle::Triangle() : id(GenerateId()) {
         vertices = {
-            std::make_shared<Vertex>(Eigen::Vector3d::Zero()),
-            std::make_shared<Vertex>(Eigen::Vector3d::Zero()),
-            std::make_shared<Vertex>(Eigen::Vector3d::Zero())
+            VertexPtr(new Vertex(Eigen::Vector3d::Zero())),
+            VertexPtr(new Vertex(Eigen::Vector3d::Zero())),
+            VertexPtr(new Vertex(Eigen::Vector3d::Zero()))
         };
         UpdateEdges();
     }
@@ -33,9 +33,9 @@ namespace Rocket {
 
     void Triangle::UpdateEdges() {
         edges = {
-            std::make_shared<Edge>(vertices[0], vertices[1]),
-            std::make_shared<Edge>(vertices[1], vertices[2]),
-            std::make_shared<Edge>(vertices[2], vertices[0])
+            EdgePtr(new Edge(vertices[0], vertices[1])),
+            EdgePtr(new Edge(vertices[1], vertices[2])),
+            EdgePtr(new Edge(vertices[2], vertices[0]))
         };
     }
 

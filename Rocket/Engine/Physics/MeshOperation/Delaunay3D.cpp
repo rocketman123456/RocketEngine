@@ -10,13 +10,13 @@ namespace Rocket {
         std::copy(dots.begin(), dots.end(), std::back_inserter(nodes));
 		std::mt19937 generator(0);
         std::sort(nodes.begin(), nodes.end(), CompareVertex);
-        std::shuffle(nodes.begin(), nodes.end(), generator);
+        //std::shuffle(nodes.begin(), nodes.end(), generator);
 
         elements.clear();
     }
 
     void Delaunay3D::Generate() {
-        MakeMesh(20, false);
+        MakeMesh(1000, false);
     }
 
     void Delaunay3D::MakeMesh(int addnodenum, bool iscopynodeexist) {
@@ -89,32 +89,39 @@ namespace Rocket {
 		nodes.push_back(nst7);
 		
 		//----------Make elements of supertetrahedron----------
-		elements.push_back(std::make_shared<Tetrahedra>(nst1, nst3, nst0, nst7));
-		elements.push_back(std::make_shared<Tetrahedra>(nst2, nst1, nst6, nst7));
-		elements.push_back(std::make_shared<Tetrahedra>(nst2, nst3, nst1, nst7));
-		elements.push_back(std::make_shared<Tetrahedra>(nst1, nst5, nst6, nst7));
-		elements.push_back(std::make_shared<Tetrahedra>(nst1, nst0, nst5, nst7));
-		elements.push_back(std::make_shared<Tetrahedra>(nst4, nst5, nst0, nst7));
-
-		//std::copy(elements.begin(), elements.end(), std::back_inserter(temp_storage));
+		elements.emplace_back(new Tetrahedra(nst1, nst3, nst0, nst7));
+		elements.emplace_back(new Tetrahedra(nst2, nst1, nst6, nst7));
+		elements.emplace_back(new Tetrahedra(nst2, nst3, nst1, nst7));
+		elements.emplace_back(new Tetrahedra(nst1, nst5, nst6, nst7));
+		elements.emplace_back(new Tetrahedra(nst1, nst0, nst5, nst7));
+		elements.emplace_back(new Tetrahedra(nst4, nst5, nst0, nst7));
 
 		//----------Make connection of supertetrahedron----------
 		for (auto& pelement : elements) {
 			for (auto& psurface : pelement->faces) {
 				if (psurface->neighbor == nullptr) {
 					for (auto& pelement2 : elements) {
-						if(pelement2 == pelement) continue;
-						for (auto& psurface2 : pelement2->faces) {
-							if (psurface->IsCoincidentWith(psurface2.get())) {
-								psurface->neighbor = pelement2.get();
-								psurface2->neighbor = pelement.get();
-								break;
+						if(pelement2 != pelement) {
+							for (auto& psurface2 : pelement2->faces) {
+								if (psurface->IsCoincidentWith(psurface2.get())) {
+									psurface->neighbor = pelement2.get();
+									psurface2->neighbor = pelement.get();
+									break;
+								}
 							}
 						}
 					}
 				}
 			}
 		}
+		// Check null neighbor
+		// for (auto& pelement : elements) {
+		// 	for (auto& psurface : pelement->faces) {
+		// 		if (psurface->neighbor == nullptr) {
+		// 			psurface->neighbor = pelement.get();
+		// 		}
+		// 	}
+		// }
     }
 
     void Delaunay3D::MeshLocal(VertexPtr& node, Tetrahedra*& ethis) {
@@ -192,7 +199,7 @@ namespace Rocket {
 		std::vector<TetrahedraPtr> penew;			
 		for (auto& psurface : sstack) {
 			if (psurface->is_active) {
-				TetrahedraPtr tmp = std::make_shared<Tetrahedra>(psurface->vertices[0], psurface->vertices[1], psurface->vertices[2], node);
+				TetrahedraPtr tmp = TetrahedraPtr(new Tetrahedra(psurface->vertices[0], psurface->vertices[1], psurface->vertices[2], node));
 				tmp->faces[3]->neighbor = psurface->neighbor;
 				if (psurface->neighbor != nullptr) {
 					psurface->neighbor->GetAdjacentSurface(psurface->parent)->neighbor = tmp.get();
@@ -248,7 +255,6 @@ namespace Rocket {
         Tetrahedra* pethis = elements[0].get();									
 		for (auto& pnode : nodes) {
 			if (pnode->type != -1) {
-				int count = 0;
 				while (1) {
 					Tetrahedra* penext = pethis->GetLocateId(pnode);				
 					//----------if node is in the element----------
@@ -256,7 +262,8 @@ namespace Rocket {
 						MeshLocal(pnode, pethis);
 						pethis = elements.back().get();
 						break;
-					} else {
+					}
+					else {
 						pethis = penext;
 					}
 				}
