@@ -220,7 +220,7 @@ int main(int argc, char** argv) {
     });
 
     rst.DisableWireFram();
-    rst.EnableWireFram();
+    //rst.EnableWireFram();
     rst.EnableMsaa();
     rst.SetMsaaLevel(0);
     

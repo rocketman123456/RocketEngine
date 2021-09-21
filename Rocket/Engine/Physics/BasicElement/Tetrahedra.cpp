@@ -5,14 +5,14 @@
 
 namespace Rocket {
     Tetrahedra::Tetrahedra() : id(GenerateId()) {
-        UpdateFaces();
+        GenerateFaces();
     }
 
-    Tetrahedra::Tetrahedra(const Sphere& sphere) : id(GenerateId()) {
+    Tetrahedra::Tetrahedra(const SpherePtr& sphere) : id(GenerateId()) {
         CreateBoundingTetrahedra(sphere);
     }
 
-    void Tetrahedra::CreateBoundingTetrahedra(const Sphere& sphere) {
+    void Tetrahedra::CreateBoundingTetrahedra(const SpherePtr& sphere) {
         auto x = Eigen::Vector3d(0, 0, 1);
         auto y = Eigen::Vector3d(1, 0, 0);
         auto z = Eigen::Vector3d(0, 1, 0);
@@ -21,53 +21,61 @@ namespace Rocket {
     }
 
     void Tetrahedra::CreateBoundingTetrahedra(
-        const Sphere& sphere, 
+        const SpherePtr& sphere, 
         const Eigen::Vector3d& x, 
         const Eigen::Vector3d& y, 
         const Eigen::Vector3d& z) {
-        
-        double r = sphere.radius;
-        nodes[0].position = sphere.center + z * r * 3.0;
-        nodes[1].position = sphere.center + z * r * -1.0 + x * 2.0 * r + y * std::sqrt(6) * r;
-        nodes[2].position = sphere.center + z * r * -1.0 + x * 2.0 * r - y * std::sqrt(6) * r;
-        nodes[3].position = sphere.center + z * r * -1.0 - x * 4.0 * r;
 
-        Eigen::Vector3d p0 = nodes[0].position;
-        Eigen::Vector3d p1 = nodes[1].position;
-        Eigen::Vector3d p2 = nodes[2].position;
-        Eigen::Vector3d p3 = nodes[3].position;
+        nodes[0] = std::make_shared<Vertex>();
+        nodes[1] = std::make_shared<Vertex>();
+        nodes[2] = std::make_shared<Vertex>();
+        nodes[3] = std::make_shared<Vertex>();
         
-        UpdateFaces();
+        double r = sphere->radius;
+        nodes[0]->position = sphere->center + z * r * 3.0;
+        nodes[1]->position = sphere->center + z * r * -1.0 + x * 2.0 * r + y * std::sqrt(6) * r;
+        nodes[2]->position = sphere->center + z * r * -1.0 + x * 2.0 * r - y * std::sqrt(6) * r;
+        nodes[3]->position = sphere->center + z * r * -1.0 - x * 4.0 * r;
+
+        Eigen::Vector3d p0 = nodes[0]->position;
+        Eigen::Vector3d p1 = nodes[1]->position;
+        Eigen::Vector3d p2 = nodes[2]->position;
+        Eigen::Vector3d p3 = nodes[3]->position;
+        
+        GenerateFaces();
         GenerateBasicParameter(p0, p1, p2, p3);
     }
 
-    Tetrahedra::Tetrahedra(const Vertex& p0_, const Vertex& p1_, const Vertex& p2_, const Vertex& p3_) : id(GenerateId()) {
+    Tetrahedra::Tetrahedra(const VertexPtr& p0_, const VertexPtr& p1_, const VertexPtr& p2_, const VertexPtr& p3_) : id(GenerateId()) {
+        this->is_active = true;
+
         nodes[0] = (p0_);
         nodes[1] = (p1_);
         nodes[2] = (p2_);
         nodes[3] = (p3_);
 
-        Eigen::Vector3d p0 = p0_.position;
-        Eigen::Vector3d p1 = p1_.position;
-        Eigen::Vector3d p2 = p2_.position;
-        Eigen::Vector3d p3 = p3_.position;
+        Eigen::Vector3d p0 = p0_->position;
+        Eigen::Vector3d p1 = p1_->position;
+        Eigen::Vector3d p2 = p2_->position;
+        Eigen::Vector3d p3 = p3_->position;
 
-        UpdateFaces();
+        GenerateFaces();
         GenerateBasicParameter(p0, p1, p2, p3);
     }
 
-    void Tetrahedra::UpdateFaces() {
-        Eigen::Vector3d p0 = nodes[0].position;
-        Eigen::Vector3d p1 = nodes[1].position;
-        Eigen::Vector3d p2 = nodes[2].position;
-        Eigen::Vector3d p3 = nodes[3].position;
-
+    void Tetrahedra::GenerateFaces() {
         faces = {
-            Triangle(std::vector<Vertex>({p0, p1, p2})),
-            Triangle(std::vector<Vertex>({p0, p2, p3})), 
-            Triangle(std::vector<Vertex>({p0, p3, p1})), 
-            Triangle(std::vector<Vertex>({p1, p2, p3}))
+            std::make_shared<Triangle>(std::vector<VertexPtr>({nodes[1], nodes[3], nodes[2]}), this, nullptr),
+            std::make_shared<Triangle>(std::vector<VertexPtr>({nodes[0], nodes[1], nodes[2]}), this, nullptr),
+            std::make_shared<Triangle>(std::vector<VertexPtr>({nodes[0], nodes[2], nodes[3]}), this, nullptr), 
+            std::make_shared<Triangle>(std::vector<VertexPtr>({nodes[0], nodes[3], nodes[1]}), this, nullptr), 
         };
+    }
+
+    void Tetrahedra::UpdateFaces() {
+        for(auto& face : faces) {
+            face->UpdateEdges();
+        }
     }
 
     void Tetrahedra::GenerateBasicParameter(
@@ -92,15 +100,15 @@ namespace Rocket {
 		Eigen::Vector3d P2 = v0.cross(v1);
 
         int32_t x = 0, y = 1, z = 2;
-		this->scenter = Eigen::Vector3d(
+		this->scenter = std::make_shared<Vertex>(Eigen::Vector3d(
             (ABC[x] * P0[x] + ABC[y] * P1[x] + ABC[z] * P2[x]) / detP, 
             (ABC[x] * P0[y] + ABC[y] * P1[y] + ABC[z] * P2[y]) / detP, 
             (ABC[x] * P0[z] + ABC[y] * P1[z] + ABC[z] * P2[z]) / detP
-        );
-		this->sround = (this->scenter.position - p0).norm();
+        ));
+		this->sround = (this->scenter->position - p0).norm();
 
 		//----------Get center of gravity----------
-		this->gcenter.position = (p0 + p1 + p2 + p3) / 4.0;
+        this->gcenter = std::make_shared<Vertex>((p0 + p1 + p2 + p3) / 4.0);
 
 		//----------Get volume----------
 		this->volume = ((p1 - p0).cross(p2 - p0)).dot(p3 - p0);
@@ -113,35 +121,30 @@ namespace Rocket {
 		}
     }
 
-    bool Tetrahedra::operator==(const Tetrahedra& t) {
-        return t.id == id;
-    }
-
-    std::shared_ptr<Tetrahedra> Tetrahedra::GetLocateId(Vertex& v) {
-        for (auto surface : this->faces) {
-            Vertex v_;
-            v_.position = this->gcenter.position - v.position;
-			if (surface.IsRayCross(this->gcenter, v_)) {
-				return surface.neighbor;
+    Tetrahedra* Tetrahedra::GetLocateId(VertexPtr& v) {
+        for (auto& surface : this->faces) {
+            auto v_ = std::make_shared<Vertex>(this->gcenter->position - v->position);
+			if (surface->IsRayCross(this->gcenter, v_)) {
+                if(surface->neighbor) {
+				    return surface->neighbor;
+                }
 			}
 		}
-        auto this_copy = std::make_shared<Tetrahedra>();
-        *this_copy = *this;
-		return this_copy;
+		return this;
     }
 
-    bool Tetrahedra::IsInSphere(Vertex& v) {
-        Eigen::Vector3d dt = this->scenter.position - v.position;
-        if ((sround + EPS) * (sround + EPS) > dt.squaredNorm()) {
+    bool Tetrahedra::IsInSphere(VertexPtr& v) {
+        Eigen::Vector3d dt = this->scenter->position - v->position;
+        if ((sround + EPS) > dt.norm()) {
 			return true;
 		}
 		return false;
     }
 
-    Triangle* Tetrahedra::GetAdjacentSurface(std::shared_ptr<Tetrahedra> t) {
+    TrianglePtr Tetrahedra::GetAdjacentSurface(Tetrahedra* t) {
         for (auto& surface : this->faces) {
-			if (*surface.neighbor.get() == *t.get()) {
-				return &surface;
+			if (surface->neighbor == t) {
+				return surface;
 			}
 		}
         return nullptr;

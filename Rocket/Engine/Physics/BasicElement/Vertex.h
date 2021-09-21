@@ -1,6 +1,7 @@
 #pragma once
 #include <Eigen/Eigen>
 #include <atomic>
+#include <memory>
 
 namespace Rocket {
     class Vertex {
@@ -12,14 +13,7 @@ namespace Rocket {
             : id(GenerateId()), type(type), position(pos) {}
         ~Vertex() = default;
 
-        bool IsCoincidentWith(const Vertex& v);
-        // Vertex operator+(const Vertex&);
-		// Vertex operator-(const Vertex&);
-		// Vertex operator*(const Vertex&);
-		// double operator^(const Vertex&);
-		// Vertex operator*(double);
-		// Vertex operator/(double);
-        bool operator==(const Vertex&);
+        bool IsCoincidentWith(const Vertex* v);
 
     private:
         static int32_t GenerateId() {
@@ -35,4 +29,7 @@ namespace Rocket {
         bool is_visited = false;
         bool is_active = false;
     };
+
+    using VertexPtr = std::shared_ptr<Vertex>;
+    bool CompareVertex(const VertexPtr& lhs, const VertexPtr& rhs);
 }

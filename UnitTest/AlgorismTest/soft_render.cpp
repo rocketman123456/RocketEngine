@@ -122,9 +122,9 @@ Eigen::Matrix4f get_orthographic_matrix(float zLeft, float zRight, float zNear, 
     // orthographic = scale * trans;
 
     orthographic << 
-        1, 0, 0, -2.0 * center_x / range_x,
-        0, 1, 0, -2.0 * center_y / range_y,
-        0, 0, 1, -2.0 * center_z / range_z,
+        2.0 / range_x, 0, 0, -2.0 * center_x / range_x,
+        0, 2.0 / range_y, 0, -2.0 * center_y / range_y,
+        0, 0, 2.0 / range_z, -2.0 * center_z / range_z,
         0, 0, 0, 1;
 
     return orthographic;
@@ -156,7 +156,7 @@ Eigen::Matrix4f get_perspective_matrix(float eye_fov, float aspect_ratio, float 
     projection(0,0) = 1.0f / (tanHalfFOV * aspect_ratio); 
     projection(1,1) = 1.0f / tanHalfFOV;   
     projection(2,2) = -A / zRange;  
-    projection(2,3) = 2.0f * B / zRange;
+    projection(2,3) = -2.0f * B / zRange;
     projection(3,2) = -1.0f;            
 
     return projection;

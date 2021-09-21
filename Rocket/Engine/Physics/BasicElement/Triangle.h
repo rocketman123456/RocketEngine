@@ -1,28 +1,29 @@
 #pragma once
 #include "Physics/BasicElement/Vertex.h"
+#include "Physics/BasicElement/Edge.h"
 
 #include <Eigen/Eigen>
 #include <array>
 #include <vector>
 #include <atomic>
+#include <memory>
 
 namespace Rocket {
     class Tetrahedra;
-    using Edge = std::pair<Vertex, Vertex>;
+    //using Edge = std::pair<std::shared_ptr<Vertex>, std::shared_ptr<Vertex>>;
 
     class Triangle {
     public:
         Triangle();
-        Triangle(const std::vector<Vertex>& vertices);
-        Triangle(const std::vector<Vertex>& vertices, std::shared_ptr<Tetrahedra>& parent, std::shared_ptr<Tetrahedra>& neighbor);
+        Triangle(const std::vector<VertexPtr>& vertices);
+        Triangle(const std::vector<VertexPtr>& vertices, Tetrahedra* parent, Tetrahedra* neighbor);
         ~Triangle() = default;
 
-        bool IsCoincidentWith(const Vertex& v);
+        bool IsCoincidentWith(const VertexPtr& v);
+        bool IsCoincidentWith(Triangle* t);
+        bool IsRayCross(VertexPtr& a, VertexPtr& b);
 
-        bool operator==(const Triangle& t);
-        bool IsRayCross(Vertex a, Vertex b);
-
-        void UpdateFaces();
+        void UpdateEdges();
     private:
         static int32_t GenerateId() {
             static std::atomic<int32_t> id = 0;
@@ -32,10 +33,12 @@ namespace Rocket {
     public:
         // TODO : remove copy when possible
         int32_t id = 0;
-        std::array<Vertex, 3> vertices = {};
-        std::array<Edge, 3> edges = {};
-        std::shared_ptr<Tetrahedra> parent = nullptr;
-        std::shared_ptr<Tetrahedra> neighbor = nullptr;
+        std::array<VertexPtr, 3> vertices = {};
+        std::array<EdgePtr, 3> edges = {};
+        Tetrahedra* parent = nullptr;
+        Tetrahedra* neighbor = nullptr;
         bool is_active = false;
     };
+
+    using TrianglePtr = std::shared_ptr<Triangle>;
 }

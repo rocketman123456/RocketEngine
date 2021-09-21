@@ -11,11 +11,10 @@ namespace Rocket {
     class Tetrahedra {
     public:
         Tetrahedra();
-        Tetrahedra(const Sphere& sphere);
-        Tetrahedra(const Vertex& p0, const Vertex& p1, const Vertex& p2, const Vertex& p3);
+        Tetrahedra(const SpherePtr& sphere);
+        Tetrahedra(const VertexPtr& p0, const VertexPtr& p1, const VertexPtr& p2, const VertexPtr& p3);
 
-        void CreateBoundingTetrahedra(const Sphere& sphere);
-        void CreateBoundingTetrahedra(const Sphere& sphere, const Eigen::Vector3d& x, const Eigen::Vector3d& y, const Eigen::Vector3d& z);
+        void GenerateFaces();
         void UpdateFaces();
         void GenerateBasicParameter(
             const Eigen::Vector3d& p0, 
@@ -23,11 +22,12 @@ namespace Rocket {
             const Eigen::Vector3d& p2, 
             const Eigen::Vector3d& p3);
 
-        std::shared_ptr<Tetrahedra> GetLocateId(Vertex& v);
-		bool IsInSphere(Vertex& v);
-		Triangle* GetAdjacentSurface(std::shared_ptr<Tetrahedra> t);
+        void CreateBoundingTetrahedra(const SpherePtr& sphere);
+        void CreateBoundingTetrahedra(const SpherePtr& sphere, const Eigen::Vector3d& x, const Eigen::Vector3d& y, const Eigen::Vector3d& z);
 
-        bool operator==(const Tetrahedra& t);
+        Tetrahedra* GetLocateId(VertexPtr& v);
+		TrianglePtr GetAdjacentSurface(Tetrahedra* t);
+		bool IsInSphere(VertexPtr& v);
 
     private:
         static int32_t GenerateId() {
@@ -38,13 +38,15 @@ namespace Rocket {
     public:
         // TODO : remove copy when possible
         int32_t id = 0;
-        std::array<Vertex, 4> nodes = {};
-        std::array<Triangle, 4> faces = {};
-        Vertex scenter;
-		Vertex gcenter;
+        std::array<VertexPtr, 4> nodes = {};
+        std::array<TrianglePtr, 4> faces = {};
+        VertexPtr scenter;
+		VertexPtr gcenter;
 		double sround;
 		double volume;
 		double aspect;
         bool is_active = false;
     };
+
+    using TetrahedraPtr = std::shared_ptr<Tetrahedra>;
 }

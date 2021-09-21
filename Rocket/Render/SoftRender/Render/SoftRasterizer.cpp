@@ -67,9 +67,12 @@ namespace Rocket {
     }
 
     std::tuple<float, float, float> SoftRasterizer::ComputeBarycentric2D(float x, float y, const Eigen::Vector3f* v) {
-        float c1 = (x*(v[1].y() - v[2].y()) + (v[2].x() - v[1].x())*y + v[1].x()*v[2].y() - v[2].x()*v[1].y()) / (v[0].x()*(v[1].y() - v[2].y()) + (v[2].x() - v[1].x())*v[0].y() + v[1].x()*v[2].y() - v[2].x()*v[1].y());
-        float c2 = (x*(v[2].y() - v[0].y()) + (v[0].x() - v[2].x())*y + v[2].x()*v[0].y() - v[0].x()*v[2].y()) / (v[1].x()*(v[2].y() - v[0].y()) + (v[0].x() - v[2].x())*v[1].y() + v[2].x()*v[0].y() - v[0].x()*v[2].y());
-        float c3 = (x*(v[0].y() - v[1].y()) + (v[1].x() - v[0].x())*y + v[0].x()*v[1].y() - v[1].x()*v[0].y()) / (v[2].x()*(v[0].y() - v[1].y()) + (v[1].x() - v[0].x())*v[2].y() + v[0].x()*v[1].y() - v[1].x()*v[0].y());
+        float c1 = (x*(v[1].y() - v[2].y()) + (v[2].x() - v[1].x())*y + v[1].x()*v[2].y() - v[2].x()*v[1].y()) / 
+            (v[0].x()*(v[1].y() - v[2].y()) + (v[2].x() - v[1].x())*v[0].y() + v[1].x()*v[2].y() - v[2].x()*v[1].y());
+        float c2 = (x*(v[2].y() - v[0].y()) + (v[0].x() - v[2].x())*y + v[2].x()*v[0].y() - v[0].x()*v[2].y()) / 
+            (v[1].x()*(v[2].y() - v[0].y()) + (v[0].x() - v[2].x())*v[1].y() + v[2].x()*v[0].y() - v[0].x()*v[2].y());
+        float c3 = (x*(v[0].y() - v[1].y()) + (v[1].x() - v[0].x())*y + v[0].x()*v[1].y() - v[1].x()*v[0].y()) / 
+            (v[2].x()*(v[0].y() - v[1].y()) + (v[1].x() - v[0].x())*v[2].y() + v[0].x()*v[1].y() - v[1].x()*v[0].y());
         return {c1,c2,c3};
     }
 
@@ -238,6 +241,7 @@ namespace Rocket {
 
         DrawLine(v[0].head<3>(), v[1].head<3>(), color_begin, color_end);
     }
+
     void SoftRasterizer::DrawLines3D(
         const std::vector<Eigen::Vector3f>& begin, const std::vector<Eigen::Vector3f>& end, 
         const std::vector<Eigen::Vector3f>& color_begin, const std::vector<Eigen::Vector3f>& color_end) {
@@ -250,6 +254,7 @@ namespace Rocket {
             DrawLine3D(begin[i], end[i], color_begin[i], color_end[i]);
         }
     }
+    
     void SoftRasterizer::DrawPoint3D(const Eigen::Vector3f& point, const Eigen::Vector3f& color) {
         Eigen::Matrix4f mvp = projection_ * view_ * model_;
 
@@ -441,6 +446,7 @@ namespace Rocket {
                         float w_reciprocal = 1.0 / (alpha / v[0].w() + beta / v[1].w() + gamma / v[2].w());
                         float z_interpolated = alpha * v[0].z() / v[0].w() + beta * v[1].z() / v[1].w() + gamma * v[2].z() / v[2].w();
                         z_interpolated *= w_reciprocal;
+                        z_interpolated *= -1;   // invert z
                         minDepth = std::min(minDepth, z_interpolated);
                         count++;
                     }

@@ -2,27 +2,33 @@
 #include "Physics/BasicElement/Parameter.h"
 
 #include <iostream>
+#include <algorithm>
+#include <random>
 
 namespace Rocket {
-    void Delaunay3D::Initialize(std::vector<Vertex>& dots) {
+    void Delaunay3D::Initialize(std::vector<VertexPtr>& dots) {
         std::copy(dots.begin(), dots.end(), std::back_inserter(nodes));
+		std::mt19937 generator(0);
+        std::sort(nodes.begin(), nodes.end(), CompareVertex);
+        std::shuffle(nodes.begin(), nodes.end(), generator);
+
         elements.clear();
     }
 
     void Delaunay3D::Generate() {
-        MakeMesh(50000, true);
+        MakeMesh(20, false);
     }
 
     void Delaunay3D::MakeMesh(int addnodenum, bool iscopynodeexist) {
-        //----------Get region which nodes exist----------
+		//----------Get region which nodes exist----------
 		double xmax = 0.0, xmin = 0.0, ymax = 0.0, ymin = 0.0, zmax = 0.0, zmin = 0.0;
-		for (auto node : nodes) {
-			if (node.position[0] > xmax) { xmax = node.position[0]; }
-			if (node.position[0] < xmin) { xmin = node.position[0]; }
-			if (node.position[1] > ymax) { ymax = node.position[1]; }
-			if (node.position[1] < ymin) { ymin = node.position[1]; }
-			if (node.position[2] > zmax) { zmax = node.position[2]; }
-			if (node.position[2] < zmin) { zmin = node.position[2]; }
+		for (auto& node : nodes) {
+			if (node->position[0] > xmax) { xmax = node->position[0]; }
+			if (node->position[0] < xmin) { xmin = node->position[0]; }
+			if (node->position[1] > ymax) { ymax = node->position[1]; }
+			if (node->position[1] < ymin) { ymin = node->position[1]; }
+			if (node->position[2] > zmax) { zmax = node->position[2]; }
+			if (node->position[2] < zmin) { zmin = node->position[2]; }
 		}
 
 		//----------Normalize coordinate----------
@@ -31,9 +37,9 @@ namespace Rocket {
 		if (dmax < yrange) { dmax = yrange;	}
 		if (dmax < zrange) { dmax = zrange;	}
 		for (auto& node : nodes) {
-			node.position[0] = (node.position[0] - xmin) / dmax + 0.5*(ALPHA - 1.0)*xrange / dmax;
-			node.position[1] = (node.position[1] - ymin) / dmax + 0.5*(ALPHA - 1.0)*yrange / dmax;
-			node.position[2] = (node.position[2] - zmin) / dmax + 0.5*(ALPHA - 1.0)*zrange / dmax;
+			node->position[0] = (node->position[0] - xmin) / dmax + 0.5*(ALPHA - 1.0)*xrange / dmax;
+			node->position[1] = (node->position[1] - ymin) / dmax + 0.5*(ALPHA - 1.0)*yrange / dmax;
+			node->position[2] = (node->position[2] - zmin) / dmax + 0.5*(ALPHA - 1.0)*zrange / dmax;
 		}
 
 		//----------Make supertetrahedron----------
@@ -54,49 +60,54 @@ namespace Rocket {
 
 		//----------Renormalize cordinate----------
 		for (auto& node : nodes) {
-			node.position[0] = node.position[0] * dmax - 0.5*(ALPHA - 1.0)*xrange + xmin;
-			node.position[1] = node.position[1] * dmax - 0.5*(ALPHA - 1.0)*yrange + ymin;
-			node.position[2] = node.position[2] * dmax - 0.5*(ALPHA - 1.0)*zrange + zmin;
+			node->position[0] = node->position[0] * dmax - 0.5*(ALPHA - 1.0)*xrange + xmin;
+			node->position[1] = node->position[1] * dmax - 0.5*(ALPHA - 1.0)*yrange + ymin;
+			node->position[2] = node->position[2] * dmax - 0.5*(ALPHA - 1.0)*zrange + zmin;
 		}
+
+		std::cout << "Final Element Count: " << elements.size() << std::endl;
     }
 
     void Delaunay3D::MakeSupertetrahedron(double xmax, double ymax, double zmax) {
         std::cout << "Make supertetraedron\n";
 		//----------Make nodes of supertetrahedron----------
-		nodes.emplace_back(0, 0, 0, -1);
-        Vertex& nst0 = nodes.back();
-		nodes.emplace_back(xmax, 0, 0, -1);
-        Vertex& nst1 = nodes.back();
-		nodes.emplace_back(xmax, ymax, 0, -1);
-		Vertex& nst2 = nodes.back();
-		nodes.emplace_back(0, ymax, 0, -1);
-		Vertex& nst3 = nodes.back();
-		nodes.emplace_back(0, 0, zmax, -1);
-		Vertex& nst4 = nodes.back();
-		nodes.emplace_back(xmax, 0, zmax, -1);
-		Vertex& nst5 = nodes.back();
-		nodes.emplace_back(xmax, ymax, zmax, -1);
-		Vertex& nst6 = nodes.back();
-		nodes.emplace_back(0, ymax, zmax, -1);
-		Vertex& nst7 = nodes.back();
+        VertexPtr nst0 = VertexPtr(new Vertex(0, 0, 0, -1));
+        VertexPtr nst1 = VertexPtr(new Vertex(xmax, 0, 0, -1));
+		VertexPtr nst2 = VertexPtr(new Vertex(xmax, ymax, 0, -1));
+		VertexPtr nst3 = VertexPtr(new Vertex(0, ymax, 0, -1));
+		VertexPtr nst4 = VertexPtr(new Vertex(0, 0, zmax, -1));
+		VertexPtr nst5 = VertexPtr(new Vertex(xmax, 0, zmax, -1));
+		VertexPtr nst6 = VertexPtr(new Vertex(xmax, ymax, zmax, -1));
+		VertexPtr nst7 = VertexPtr(new Vertex(0, ymax, zmax, -1));
+		nodes.push_back(nst0);
+		nodes.push_back(nst1);
+		nodes.push_back(nst2);
+		nodes.push_back(nst3);
+		nodes.push_back(nst4);
+		nodes.push_back(nst5);
+		nodes.push_back(nst6);
+		nodes.push_back(nst7);
 		
 		//----------Make elements of supertetrahedron----------
-		elements.emplace_back(std::make_shared<Tetrahedra>(nst1, nst3, nst0, nst7));
-		elements.emplace_back(std::make_shared<Tetrahedra>(nst2, nst1, nst6, nst7));
-		elements.emplace_back(std::make_shared<Tetrahedra>(nst2, nst3, nst1, nst7));
-		elements.emplace_back(std::make_shared<Tetrahedra>(nst1, nst5, nst6, nst7));
-		elements.emplace_back(std::make_shared<Tetrahedra>(nst1, nst0, nst5, nst7));
-		elements.emplace_back(std::make_shared<Tetrahedra>(nst4, nst5, nst0, nst7));
+		elements.push_back(std::make_shared<Tetrahedra>(nst1, nst3, nst0, nst7));
+		elements.push_back(std::make_shared<Tetrahedra>(nst2, nst1, nst6, nst7));
+		elements.push_back(std::make_shared<Tetrahedra>(nst2, nst3, nst1, nst7));
+		elements.push_back(std::make_shared<Tetrahedra>(nst1, nst5, nst6, nst7));
+		elements.push_back(std::make_shared<Tetrahedra>(nst1, nst0, nst5, nst7));
+		elements.push_back(std::make_shared<Tetrahedra>(nst4, nst5, nst0, nst7));
+
+		//std::copy(elements.begin(), elements.end(), std::back_inserter(temp_storage));
 
 		//----------Make connection of supertetrahedron----------
 		for (auto& pelement : elements) {
 			for (auto& psurface : pelement->faces) {
-				if (psurface.neighbor == nullptr) {
+				if (psurface->neighbor == nullptr) {
 					for (auto& pelement2 : elements) {
+						if(pelement2 == pelement) continue;
 						for (auto& psurface2 : pelement2->faces) {
-							if (psurface == psurface2) {
-								psurface.neighbor = pelement2;
-								psurface2.neighbor = pelement;
+							if (psurface->IsCoincidentWith(psurface2.get())) {
+								psurface->neighbor = pelement2.get();
+								psurface2->neighbor = pelement.get();
 								break;
 							}
 						}
@@ -106,14 +117,14 @@ namespace Rocket {
 		}
     }
 
-    void Delaunay3D::MeshLocal(Vertex* node, std::shared_ptr<Tetrahedra>& ethis) {
-        std::vector<std::shared_ptr<Tetrahedra>> stack, substack;
+    void Delaunay3D::MeshLocal(VertexPtr& node, Tetrahedra*& ethis) {
+        std::vector<Tetrahedra*> stack, substack;
 		std::vector<Triangle*> sstack;
 
 		//----------Get elements which node is in----------
 		substack.push_back(ethis);
 		while (substack.size()) {
-			std::shared_ptr<Tetrahedra> pend = substack.back();			
+			Tetrahedra* pend = substack.back();			
 			substack.pop_back();
 
 			if (pend->is_active) {
@@ -121,15 +132,18 @@ namespace Rocket {
 				pend->is_active = false;
 
 				for (auto& surface : pend->faces) {
-					std::shared_ptr<Tetrahedra> pneighbor = surface.neighbor;
-					if (pneighbor != nullptr && pneighbor->IsInSphere(*node)) {
+					Tetrahedra* pneighbor = surface->neighbor;
+					if (pneighbor != nullptr && pneighbor->IsInSphere(node)) {
 						substack.push_back(pneighbor);
 					} else {
-						sstack.push_back(&surface);
+						sstack.push_back(surface.get());
 					}
 				}
 			}
 		}
+		//std::cout << "Get elements stack Size : " << stack.size() << std::endl;
+		//std::cout << "Get elements substack Size : " << substack.size() << std::endl;
+		//std::cout << "Get elements sstack Size : " << sstack.size() << std::endl;
 
 		//----------Modify crevice of polyhedron----------
 		bool is_anysurface_invalid = true;
@@ -138,11 +152,11 @@ namespace Rocket {
 
 			for (int i = 0; i < sstack.size(); i++) {
 				if (sstack[i]->is_active) {
-					Tetrahedra D = Tetrahedra(sstack[i]->vertices[0], sstack[i]->vertices[1], sstack[i]->vertices[2], *node);
+					Tetrahedra D = Tetrahedra(sstack[i]->vertices[0], sstack[i]->vertices[1], sstack[i]->vertices[2], node);
 					
 					//----------if there are crevices----------
 					if (D.volume < EPS) {
-						std::shared_ptr<Tetrahedra> peadd = sstack[i]->neighbor;		
+						Tetrahedra* peadd = sstack[i]->neighbor;		
 
 						//----------if able to add elements----------
 						if (peadd != nullptr) {
@@ -153,11 +167,11 @@ namespace Rocket {
 								
 								//----------make surfaces isactive false----------
 								for (auto& surface : peadd->faces) {
-									std::shared_ptr<Tetrahedra>& pneighbor = surface.neighbor;
+									Tetrahedra* pneighbor = surface->neighbor;
 									if (pneighbor != nullptr && !pneighbor->is_active) {
 										pneighbor->GetAdjacentSurface(peadd)->is_active = false;
 									} else {
-										sstack.push_back(&surface);
+										sstack.push_back(surface.get());
 									}
 								}
 								break;
@@ -169,46 +183,55 @@ namespace Rocket {
 				}
 			}
 		}
+		//std::cout << "Modify crevice stack Size : " << stack.size() << std::endl;
+		//std::cout << "Modify crevice substack Size : " << substack.size() << std::endl;
+		//std::cout << "Modify crevice sstack Size : " << sstack.size() << std::endl;
 
 		//----------Make new elements----------
-		std::vector<std::shared_ptr<Tetrahedra>> penew;			
-		for (auto& surface : sstack) {
-			if (surface->is_active) {
-				auto& tmp = std::make_shared<Tetrahedra>(surface->vertices[0], surface->vertices[1], surface->vertices[2], *node);
-				tmp->faces[3].neighbor = surface->neighbor;
-				if (surface->neighbor != nullptr) {
-					surface->neighbor->GetAdjacentSurface(surface->parent)->neighbor = tmp;
+		//std::cout << "Before Insert Size : " << elements.size() << std::endl;
+		std::vector<TetrahedraPtr> penew;			
+		for (auto& psurface : sstack) {
+			if (psurface->is_active) {
+				TetrahedraPtr tmp = std::make_shared<Tetrahedra>(psurface->vertices[0], psurface->vertices[1], psurface->vertices[2], node);
+				tmp->faces[3]->neighbor = psurface->neighbor;
+				if (psurface->neighbor != nullptr) {
+					psurface->neighbor->GetAdjacentSurface(psurface->parent)->neighbor = tmp.get();
 				}
 				penew.push_back(elements.back());
                 elements.push_back(tmp);
+				//temp_storage.push_back(tmp);
 			}
 		}
+		//std::cout << "After Insert Size : " << elements.size() << std::endl;
 
 		//----------Make connection of new elements----------
 		for (auto& pelement : penew) {
 			for (auto& psurface : pelement->faces) {
-				OUT:
-				if (psurface.neighbor == nullptr) {
+				bool is_out = false;
+				if (psurface->neighbor == nullptr) {
 					for (auto& pelement2 : penew) {
 						for (auto& psurface2 : pelement2->faces) {
 							if (psurface == psurface2) {
 
 								//----------if invalid element is made----------
-								if (psurface2.neighbor != nullptr) {
+								if (psurface2->neighbor != nullptr) {
                                     std::cout << "!!\n";
 								}
 
-								psurface.neighbor = pelement2;
-								psurface2.neighbor = pelement;
-								goto OUT;
+								psurface->neighbor = pelement2.get();
+								psurface2->neighbor = pelement.get();
+								is_out = true;
+								break;
 							}
 						}
+						if(is_out) break;
 					}
 				}
 			}
 		}
 
 		//----------Delete needless elements in stack----------
+		//std::cout << "Before Delete Size : " << elements.size() << std::endl;
 		for (auto pelement = elements.begin(); pelement != elements.end(); ) {
 			if (!(*pelement)->is_active) {
 				pelement = elements.erase(pelement);
@@ -216,21 +239,22 @@ namespace Rocket {
 				++pelement;
 			}
 		}
+		//std::cout << "After Delete Size : " << elements.size() << std::endl;
     }
 
     void Delaunay3D::MakeRoughMesh() {
         std::cout << "Make rough mesh\n";
 
-        std::shared_ptr<Tetrahedra> pethis = elements[0];									
+        Tetrahedra* pethis = elements[0].get();									
 		for (auto& pnode : nodes) {
-			if (pnode.type != -1) {
+			if (pnode->type != -1) {
 				int count = 0;
 				while (1) {
-					std::shared_ptr<Tetrahedra> penext = pethis->GetLocateId(pnode);				
+					Tetrahedra* penext = pethis->GetLocateId(pnode);				
 					//----------if node is in the element----------
-					if (*penext.get() == *pethis.get() || penext.get() == pethis.get()) {
-						MeshLocal(&pnode, pethis);
-						pethis = elements.back();
+					if (penext == pethis) {
+						MeshLocal(pnode, pethis);
+						pethis = elements.back().get();
 						break;
 					} else {
 						pethis = penext;
@@ -244,13 +268,13 @@ namespace Rocket {
         std::cout << "Delete supertetraedron\n";
 		
 		for (auto pelement = elements.begin(); pelement != elements.end(); ) {
-			if ((*pelement)->nodes[0].type == -1 
-				|| (*pelement)->nodes[1].type == -1 
-				|| (*pelement)->nodes[2].type == -1 
-				|| (*pelement)->nodes[3].type == -1) {
+			if ((*pelement)->nodes[0]->type == -1 
+				|| (*pelement)->nodes[1]->type == -1 
+				|| (*pelement)->nodes[2]->type == -1 
+				|| (*pelement)->nodes[3]->type == -1) {
 				for (auto& psurface : (*pelement)->faces) {
-					if ((psurface).neighbor != nullptr) {
-						(psurface).neighbor->GetAdjacentSurface(psurface.parent)->neighbor = nullptr;
+					if ((psurface)->neighbor != nullptr) {
+						(psurface)->neighbor->GetAdjacentSurface(psurface->parent)->neighbor = nullptr;
 					}
 				}				
 				pelement = elements.erase(pelement);
@@ -258,18 +282,26 @@ namespace Rocket {
 				++pelement;
 			}
         }
+
+		for (auto pnode = nodes.begin(); pnode != nodes.end(); ) {
+			if((*pnode)->type == -1) {
+				nodes.erase(pnode);
+			} else {
+				++pnode;
+			}
+		}
     }
 
     void Delaunay3D::DeleteCreviceElement() {
         std::cout << "Delete Crevice Element\n";
 
 		for (auto pelement = elements.begin(); pelement != elements.end(); ) {
-			if ((*pelement)->nodes[0].type == (*pelement)->nodes[1].type
-				&& (*pelement)->nodes[1].type == (*pelement)->nodes[2].type
-				&& (*pelement)->nodes[2].type == (*pelement)->nodes[3].type) {
+			if ((*pelement)->nodes[0]->type == (*pelement)->nodes[1]->type
+				&& (*pelement)->nodes[1]->type == (*pelement)->nodes[2]->type
+				&& (*pelement)->nodes[2]->type == (*pelement)->nodes[3]->type) {
 				for (auto& psurface : (*pelement)->faces) {
-					if (psurface.neighbor != nullptr) {
-						psurface.neighbor->GetAdjacentSurface(psurface.parent)->neighbor = nullptr;
+					if (psurface->neighbor != nullptr) {
+						psurface->neighbor->GetAdjacentSurface(psurface->parent)->neighbor = nullptr;
 					}
 				}
 				pelement = elements.erase(pelement);
@@ -286,29 +318,31 @@ namespace Rocket {
 		for (int i = 0; i < addnodenum; i++) {
 			//----------Find element which has longest edge----------
 			double edgelengthmax = 0;
-			std::shared_ptr<Tetrahedra> pethis = nullptr;
-			Vertex* pnode0 = nullptr;
-			Vertex* pnode1 = nullptr;
+			Tetrahedra* pethis = nullptr;
+			VertexPtr pnode0 = nullptr;
+			VertexPtr pnode1 = nullptr;
 
 			for (auto& pelement : elements) {
 				for (int j = 0; j < 3; j++) {
 					for (int k = j + 1; k < 3; k++) {
-						double edgelength = (pelement->nodes[k].position - pelement->nodes[j].position).norm();
+						double edgelength = (pelement->nodes[k]->position - pelement->nodes[j]->position).norm();
 						if (edgelength > edgelengthmax) {
 							edgelengthmax = edgelength;
-							pethis = pelement;
-							pnode0 = &pelement.get()->nodes[j];
-							pnode1 = &pelement.get()->nodes[k];
+							pethis = pelement.get();
+							pnode0 = pelement->nodes[j];
+							pnode1 = pelement->nodes[k];
 						}
 					}
 				}
 			}
 
 			//----------Add Node----------
-			nodes.emplace_back(((*pnode0).position + (*pnode1).position) / 2.0);
-			Vertex& tmp = nodes.back();
-			tmp.type = 2;
-			MeshLocal(&tmp, pethis);
+			if(pnode0.get() != nullptr && pnode1.get() != nullptr) {
+				Eigen::Vector3d target = (pnode0->position + pnode1->position) / 2.0;
+				VertexPtr tmp = VertexPtr(new Vertex(target, 2));
+				nodes.push_back(tmp);
+				MeshLocal(tmp, pethis);
+			}
 		}
     }
 }

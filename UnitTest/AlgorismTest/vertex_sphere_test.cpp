@@ -63,32 +63,41 @@ double random(double a = 0.0, double b = 1.0) {
     return (double)std::rand() / (double)RAND_MAX * (b-a) + a;
 }
 
-Sphere sphere;
-Tetrahedra tetrahedra;
-Delaunay3D delaunay_3d;
+std::vector<VertexPtr> nodes;
+SpherePtr sphere;
+TetrahedraPtr tetrahedra;
+Delaunay3DPtr delaunay_3d;
 
 void VertexSphereTest() {
-    std::vector<Vertex> vertices;
-    for(int i = 0; i < 1000; i++) {
-        vertices.emplace_back(Eigen::Vector3d(random(), random(), random()));
+    int32_t count = 0;
+    while(count <= 0) {
+        std::cout << "Input node count:";
+        std::cin >> count;
     }
 
-    sphere.CreateBoundingSphere(vertices);
+    for(int i = 0; i < count; i++) {
+        nodes.push_back(std::make_shared<Vertex>(Eigen::Vector3d(random(-1,1), random(-1,1), random(-1,1))));
+    }
+
+    sphere = std::make_shared<Sphere>();
+    sphere->CreateBoundingSphere(nodes);
 
     std::cout << "Sphere Center: " 
-        << sphere.center[0] << "," 
-        << sphere.center[1] << "," 
-        << sphere.center[2] << std::endl;
-    std::cout << "Sphere Radius: " << sphere.radius << std::endl;
+        << sphere->center[0] << "," 
+        << sphere->center[1] << "," 
+        << sphere->center[2] << std::endl;
+    std::cout << "Sphere Radius: " << sphere->radius << std::endl;
 
-    tetrahedra.CreateBoundingTetrahedra(
+    tetrahedra = std::make_shared<Tetrahedra>();
+    tetrahedra->CreateBoundingTetrahedra(
         sphere,
         Eigen::Vector3d(0,0,1),
         Eigen::Vector3d(1,0,0),
         Eigen::Vector3d(0,1,0)
     );
 
-    delaunay_3d.Initialize(vertices);
+    delaunay_3d = std::make_shared<Delaunay3D>();
+    delaunay_3d->Initialize(nodes);
 }
 
 int main(int argc, char** argv) {
@@ -229,7 +238,7 @@ int main(int argc, char** argv) {
     glfwSetKeyCallback((GLFWwindow*)window.GetWindowHandle(), 
         [](GLFWwindow* window, int key, int scancode, int action, int mods){
         if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) { glfwSetWindowShouldClose(window, true); }
-        if (key == GLFW_KEY_SPACE && action == GLFW_PRESS) { delaunay_3d.Generate(); }
+        if (key == GLFW_KEY_SPACE && action == GLFW_PRESS) { delaunay_3d->Generate(); }
         if (key == GLFW_KEY_A && action == GLFW_PRESS) { global_angle_z += 5.0; }
         if (key == GLFW_KEY_D && action == GLFW_PRESS) { global_angle_z -= 5.0; }
         if (key == GLFW_KEY_Q && action == GLFW_PRESS) { global_angle_y += 5.0; }
@@ -272,20 +281,20 @@ int main(int argc, char** argv) {
         //rst.DrawLine3D({0.5,0.5,0}, {0.5,0.5,2}, {255,0,0}, {0,255,0});
         rst.DrawPoint3D({1,1,0}, {255,0,0});
 
-        for(auto vertex : delaunay_3d.GetNodes()) {
-            rst.DrawPoint3D(Eigen::Vector3f(vertex.position[0], vertex.position[1], vertex.position[2]));
+        for(auto& node : delaunay_3d->GetNodes()) {
+            rst.DrawPoint3D(Eigen::Vector3f(node->position[0], node->position[1], node->position[2]));
         }
 
-        std::vector<std::shared_ptr<Tetrahedra>>& meshs = delaunay_3d.GetResultTetrahedras();
-        for(std::shared_ptr<Tetrahedra>& mesh : meshs) {
+        std::vector<TetrahedraPtr>& meshs = delaunay_3d->GetResultTetrahedras();
+        for(TetrahedraPtr& mesh : meshs) {
             mesh->UpdateFaces();
-            std::array<Triangle, 4>& faces = mesh->faces;
-            for(Triangle& face : faces) {
-                std::array<Edge, 3>& edges = face.edges;
-                for(Edge& edge : edges) {
+            std::array<TrianglePtr, 4>& faces = mesh->faces;
+            for(TrianglePtr& face : faces) {
+                std::array<EdgePtr, 3>& edges = face->edges;
+                for(EdgePtr& edge : edges) {
                     rst.DrawLine3D(
-                        Eigen::Vector3f(edge.first.position[0], edge.first.position[1], edge.first.position[2]), 
-                        Eigen::Vector3f(edge.second.position[0], edge.second.position[1], edge.second.position[2]),
+                        Eigen::Vector3f(edge->start->position[0], edge->start->position[1], edge->start->position[2]), 
+                        Eigen::Vector3f(edge->end->position[0], edge->end->position[1], edge->end->position[2]),
                         Eigen::Vector3f(255,0,0),
                         Eigen::Vector3f(0,0,255)
                     );

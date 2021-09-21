@@ -17,23 +17,25 @@ namespace Rocket {
         Delaunay3D() = default;
         ~Delaunay3D() = default;
 
-        void Initialize(std::vector<Vertex>& dots);
+        void Initialize(std::vector<VertexPtr>& dots);
         void Generate();
-        std::vector<Vertex>& GetNodes() { return nodes; }
-        std::vector<Triangle>& GetResultSurfaces() { return surfaces; }
-        std::vector<std::shared_ptr<Tetrahedra>>& GetResultTetrahedras() { return elements; }
+        std::vector<VertexPtr>& GetNodes() { return nodes; }
+        std::vector<TrianglePtr>& GetResultSurfaces() { return surfaces; }
+        std::vector<TetrahedraPtr>& GetResultTetrahedras() { return elements; }
 
     private:
         void MakeMesh(int addnodenum, bool iscopynodeexist);
         void MakeSupertetrahedron(double xmax, double ymax, double zmax);
-        void MeshLocal(Vertex* node, std::shared_ptr<Tetrahedra>& ethis);
+        void MeshLocal(VertexPtr& node, Tetrahedra*& ethis);
         void MakeRoughMesh();
         void DeleteSupertetrahedron();
         void DeleteCreviceElement();
         void MakeFineMesh(int addnodenum);
     private:
-        std::vector<Vertex> nodes;
-        std::vector<Triangle> surfaces;
-        std::vector<std::shared_ptr<Tetrahedra>> elements;
+        std::vector<VertexPtr> nodes;
+        std::vector<TrianglePtr> surfaces;
+        std::vector<TetrahedraPtr> elements;
     };
+
+    using Delaunay3DPtr = std::shared_ptr<Delaunay3D>;
 }
