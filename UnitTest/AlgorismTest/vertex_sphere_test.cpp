@@ -70,13 +70,13 @@ Delaunay3DPtr delaunay_3d;
 
 void VertexSphereTest() {
     int32_t count = 0;
-    // while(count <= 0) {
-    //     std::cout << "Input node count:";
-    //     std::cin >> count;
-    // }
+    while(count <= 0) {
+        std::cout << "Input node count:";
+        std::cin >> count;
+    }
 
     double radius = 1.0;
-    for(int i = 0; i < 20; i++) {
+    for(int i = 0; i < count; i++) {
         double t1 = random(-3.14/2.0,3.14/2.0);
         double t2 = random(0,3.14*2.0);
         double x = radius * sin(t1) * sin(t2);

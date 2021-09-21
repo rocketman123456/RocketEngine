@@ -114,14 +114,6 @@ namespace Rocket {
 				}
 			}
 		}
-		// Check null neighbor
-		// for (auto& pelement : elements) {
-		// 	for (auto& psurface : pelement->faces) {
-		// 		if (psurface->neighbor == nullptr) {
-		// 			psurface->neighbor = pelement.get();
-		// 		}
-		// 	}
-		// }
     }
 
     void Delaunay3D::MeshLocal(VertexPtr& node, Tetrahedra*& ethis) {
@@ -255,6 +247,13 @@ namespace Rocket {
         Tetrahedra* pethis = elements[0].get();									
 		for (auto& pnode : nodes) {
 			if (pnode->type != -1) {
+				// for(auto& element : elements) {
+				// 	//----------if node is in the element----------
+				// 	if(element->IsInSphere(pnode)) {
+				// 		MeshLocal(pnode, pethis);
+				// 		break;
+				// 	}
+				// }
 				while (1) {
 					Tetrahedra* penext = pethis->GetLocateId(pnode);				
 					//----------if node is in the element----------
