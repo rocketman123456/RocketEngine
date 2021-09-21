@@ -97,7 +97,7 @@ namespace Rocket {
 
         void Resize(int32_t size) {
             if(size < current_)
-                throw std::bad_array_new_length();
+                throw std::runtime_error("error resize");
             T* temp = new T[size];
             int32_t length = current_;
             for(int32_t i = 0; i < length; ++i) {

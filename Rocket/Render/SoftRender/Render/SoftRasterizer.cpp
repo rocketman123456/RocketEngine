@@ -2,6 +2,8 @@
 #include "Physics/BasicElement/Parameter.h"
 #include "Log/Log.h"
 
+#include <cfloat>
+
 //#include <iostream>
 
 namespace Rocket {
