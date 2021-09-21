@@ -250,11 +250,11 @@ namespace Rocket {
 					bool find = false;
 					for(auto face_find = faces.begin(); face_find != faces.end();) {
 						if((*face_find).second->id == pface->id) {
-							faces.erase(face_find++);
+							face_find = faces.erase(face_find);
 							find = true;
 						}
 						else if((*face_find).second->IsCoincidentWith((pface).get())) {
-							faces.erase(face_find++);
+							face_find = faces.erase(face_find);
 							find = true;
 						}
 						else {
@@ -265,7 +265,7 @@ namespace Rocket {
 						faces[pface->id] = pface;
 					}
 				}
-				elements.erase(pelement);
+				pelement = elements.erase(pelement);
 			}
 			else {
 				pelement++;
@@ -279,8 +279,8 @@ namespace Rocket {
 		}
 	}
 
-	void Delaunay3D::FastMethod(VertexPtr& pnode, Tetrahedra* pethis) {
-		// Bug Method Fast
+	Tetrahedra* Delaunay3D::FastMethod(VertexPtr& pnode, Tetrahedra* pethis) {
+		// Unknown Method Fast
 		while (1) {
 			Tetrahedra* penext = pethis->GetLocateId(pnode);				
 			//----------if node is in the element----------
@@ -293,24 +293,22 @@ namespace Rocket {
 				pethis = penext;
 			}
 		}
+		return pethis;
 	}
 
     void Delaunay3D::MakeRoughMesh() {
         std::cout << "Make rough mesh\n";
 
-		bool method = true;
 		std::unordered_map<int32_t, TrianglePtr> faces;
         Tetrahedra* pethis = elements[0].get();								
 		for (auto& pnode : nodes) {
 			if (pnode->type != -1) {
-				if(method) {
+				if(method == 1) {
 					StandardMethod(pnode, faces);
 				}
-				else {
-					FastMethod(pnode, pethis);
+				else if(method == 2) {
+					pethis = FastMethod(pnode, pethis);
 				}
-
-				
 			}
 		}
     }

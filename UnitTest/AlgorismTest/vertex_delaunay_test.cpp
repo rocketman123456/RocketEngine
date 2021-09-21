@@ -106,6 +106,7 @@ void VertexSphereTest() {
     );
 
     delaunay_3d = Delaunay3DPtr(new Delaunay3D());
+    delaunay_3d->method = 1;
     delaunay_3d->Initialize(nodes);
 }
 
@@ -295,7 +296,7 @@ int main(int argc, char** argv) {
         }
 
         std::vector<TetrahedraPtr>& meshs = delaunay_3d->GetResultTetrahedras();
-        
+
         // for(TetrahedraPtr& mesh : meshs) {
         //     mesh->UpdateFaces();
         //     std::array<TrianglePtr, 4>& faces = mesh->faces;

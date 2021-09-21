@@ -29,7 +29,7 @@ namespace Rocket {
         void MakeSupertetrahedron(double xmax, double ymax, double zmax);
         void MeshLocal(VertexPtr& node, Tetrahedra*& ethis);
         void StandardMethod(VertexPtr& pnode, std::unordered_map<int32_t, TrianglePtr>& faces);
-        void FastMethod(VertexPtr& pnode, Tetrahedra* pethis);
+        Tetrahedra* FastMethod(VertexPtr& pnode, Tetrahedra* pethis);
         void MakeRoughMesh();
         void DeleteSupertetrahedron();
         void DeleteCreviceElement();
@@ -38,6 +38,9 @@ namespace Rocket {
         std::vector<VertexPtr> nodes;
         std::vector<TrianglePtr> surfaces;
         std::vector<TetrahedraPtr> elements;
+
+    public:
+        int32_t method = 2;
     };
 
     using Delaunay3DPtr = std::shared_ptr<Delaunay3D>;
