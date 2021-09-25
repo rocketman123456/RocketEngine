@@ -40,9 +40,9 @@ namespace Rocket {
         void UnloadIndices(const ind_buf_id& indices);
         void UnloadColors(const col_buf_id& colors);
 
-        void SetModel(const Eigen::Matrix4f& m) { model_ = m; }
-        void SetView(const Eigen::Matrix4f& v) { view_ = v; }
-        void SetProjection(const Eigen::Matrix4f& p) { projection_ = p; }
+        void SetModel(const Eigen::Matrix4f& m) { model_ = m; CalculateMVP(); }
+        void SetView(const Eigen::Matrix4f& v) { view_ = v; CalculateMVP(); }
+        void SetProjection(const Eigen::Matrix4f& p) { projection_ = p; CalculateMVP(); }
 
         inline void EnableMsaa() { msaa_ = true; }
         inline void DisableMsaa() { msaa_ = false; }
@@ -84,12 +84,14 @@ namespace Rocket {
         bool InsideTriangle(float x, float y, const Eigen::Vector3f* _v);
         std::tuple<float, float, float> ComputeBarycentric2D(float x, float y, const Eigen::Vector3f* v);
 
+        inline void CalculateMVP() { mvp_ = projection_ * view_ * model_; }
         inline int32_t GetNextId() { return next_id_++; }
         inline int32_t GetIndex(int32_t x, int32_t y) { return (height_-1-y)*width_ + x; }
     private:
         Eigen::Matrix4f model_;
         Eigen::Matrix4f view_;
         Eigen::Matrix4f projection_;
+        Eigen::Matrix4f mvp_;
 
         std::map<int32_t, std::vector<Eigen::Vector3f>> pos_buf_;
         std::map<int32_t, std::vector<Eigen::Vector3i>> ind_buf_;

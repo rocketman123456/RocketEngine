@@ -220,15 +220,13 @@ namespace Rocket {
     void SoftRasterizer::DrawLine3D(
         const Eigen::Vector3f& begin, const Eigen::Vector3f& end, 
         const Eigen::Vector3f& color_begin, const Eigen::Vector3f& color_end) {
-        
-        Eigen::Matrix4f mvp = projection_ * view_ * model_;
 
         float f1 = (100 - 0.1) / 2.0;
         float f2 = (100 + 0.1) / 2.0;
 
         Eigen::Vector4f v[] = {
-            mvp * to_vec4(begin, 1.0f),
-            mvp * to_vec4(end, 1.0f),
+            mvp_ * to_vec4(begin, 1.0f),
+            mvp_ * to_vec4(end, 1.0f),
         };
         // Homogeneous division
         for (auto &vec : v) {
@@ -258,13 +256,11 @@ namespace Rocket {
     }
     
     void SoftRasterizer::DrawPoint3D(const Eigen::Vector3f& point, const Eigen::Vector3f& color) {
-        Eigen::Matrix4f mvp = projection_ * view_ * model_;
-
         float f1 = (100 - 0.1) / 2.0;
         float f2 = (100 + 0.1) / 2.0;
 
         Eigen::Vector4f v[] = {
-            mvp * to_vec4(point, 1.0f),
+            mvp_ * to_vec4(point, 1.0f),
         };
         // Homogeneous division
         for (auto &vec : v) {
@@ -299,14 +295,13 @@ namespace Rocket {
         float f1 = (100 - 0.1) / 2.0;
         float f2 = (100 + 0.1) / 2.0;
 
-        Eigen::Matrix4f mvp = projection_ * view_ * model_;
         for (auto &i : ind) {
             SoftTriangle t;
 
             Eigen::Vector4f v[] = {
-                mvp * to_vec4(buf[i[0]], 1.0f),
-                mvp * to_vec4(buf[i[1]], 1.0f),
-                mvp * to_vec4(buf[i[2]], 1.0f)
+                mvp_ * to_vec4(buf[i[0]], 1.0f),
+                mvp_ * to_vec4(buf[i[1]], 1.0f),
+                mvp_ * to_vec4(buf[i[2]], 1.0f)
             };
             // Homogeneous division
             for (auto &vec : v) {
@@ -348,14 +343,13 @@ namespace Rocket {
         float f1 = (50 - 0.1) / 2.0;
         float f2 = (50 + 0.1) / 2.0;
 
-        Eigen::Matrix4f mvp = projection_ * view_ * model_;
         for (auto& i : ind)
         {
             SoftTriangle t;
             Eigen::Vector4f v[] = {
-                    mvp * to_vec4(buf[i[0]], 1.0f),
-                    mvp * to_vec4(buf[i[1]], 1.0f),
-                    mvp * to_vec4(buf[i[2]], 1.0f)
+                    mvp_ * to_vec4(buf[i[0]], 1.0f),
+                    mvp_ * to_vec4(buf[i[1]], 1.0f),
+                    mvp_ * to_vec4(buf[i[2]], 1.0f)
             };
             // Homogeneous division
             for (auto& vec : v) {
