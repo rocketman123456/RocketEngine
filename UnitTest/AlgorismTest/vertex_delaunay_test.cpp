@@ -18,7 +18,7 @@ using namespace Rocket;
 #include <iomanip>
 #include <random>
 
-#include "soft_render.h"
+#include "../Utils/soft_render.h"
 
 const char *vertexShaderSource = R"(
     #version 330 core

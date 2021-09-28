@@ -3,5 +3,6 @@ includes(
     "AlgorismTest",
     "ComponentTest",
     "CppTest",
-    "LibTest"
+    "LibTest",
+    "Utils"
 )

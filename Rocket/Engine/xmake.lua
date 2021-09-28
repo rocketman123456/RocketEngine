@@ -1,6 +1,7 @@
 target("RocketEngine")
     set_kind("static")
     add_files(
+        "Algorism/UnionFind/*.cpp",
         "AudioSystem/*.cpp",
         "Application/*.cpp",
         "Config/*.cpp",

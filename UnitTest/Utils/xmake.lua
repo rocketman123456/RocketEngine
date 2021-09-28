@@ -1,0 +1,7 @@
+target("soft_render_util")
+    set_kind("static")
+    add_files("soft_render.cpp")
+    add_packages("eigen", {public = true})
+    add_options("console_log")
+    add_options("memory_check")
+target_end()

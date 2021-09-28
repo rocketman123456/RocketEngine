@@ -11,7 +11,7 @@ using namespace Rocket;
 #include <iostream>
 #include <iomanip>
 
-#include "soft_render.h"
+#include "../Utils/soft_render.h"
 
 const char *vertexShaderSource = R"(
     #version 330 core
@@ -26,6 +26,7 @@ const char *vertexShaderSource = R"(
     {
         gl_Position = vec4(aPos, 1.0);
         ourColor = aColor;
+        // Invert Y coord for opengl corrent rendering
         TexCoord = vec2(aTexCoord.x, 1.0 - aTexCoord.y);
     }
 )";
