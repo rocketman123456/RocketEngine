@@ -29,8 +29,6 @@ namespace Rocket {
     using EventFunction = bool (*) (EventPtr&);
     //typedef bool(*EventFunction)(EventPtr&);
 
-    // TODO : reflect event data
-    // TODO : add event time stamp
     struct Event {
         explicit Event(const std::string& name);
         explicit Event(const std::string& name, EventType type);
@@ -92,7 +90,6 @@ namespace Rocket {
         // 0. use different channel to handle different event type
         // 1. update & check delay time, decide use event or not
         // 2. dispatch event to listener
-        // TODO : add timer to init event
         EventType type_;            //  8 bytes
         uint64_t size_ = 0;          //  8 bytes
         EventDataPtr variable_ = nullptr;   //  4 bytes
@@ -210,7 +207,6 @@ namespace Rocket {
 
 namespace Rocket {
     EventChannel::EventChannel() {
-        // TODO : auto generate name and hash-type
     }
 
     void EventChannel::RegisterEvent(const EventType& type, const EventDelegate& function) {
@@ -288,12 +284,10 @@ namespace Rocket {
 #include <memory>
 
 namespace Rocket {
-    // TODO : use custom data structure instead
     //using ChannelMap = std::unordered_map<std::string, ChannelPtr>;
     using ChannelMap = std::unordered_map<uint64_t, ChannelPtr>;
     using EventChannelMap = std::unordered_map<EventType, ChannelMap>;
 
-    // TODO : use hash string id to replace string, for better compare performance
     class EventManager : implements IRuntimeModule {
         RUNTIME_MODULE_TYPE(EventManager);
     public:
