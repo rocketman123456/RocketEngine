@@ -1,6 +1,7 @@
 #pragma once
 #include "Log/Log.h"
 #include "Render/RenderInfo.h"
+#include "Core/Declare.h"
 
 #include <cstdint>
 #include <memory>

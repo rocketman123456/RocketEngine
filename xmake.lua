@@ -34,6 +34,7 @@ add_requires("glfw 3.3.4", {system = false, shared = false, debug = true, glfw_i
 add_requires("libsdl 2.0.16", {system = false, shared = false, debug = true, configs = {cxflags = "-fPIC"}})
 add_requires("bullet3 3.09", {system = false, shared = false, debug = true, configs = {cxflags = "-fPIC"}})
 add_requires("tinygltf v2.5.0", {system = false, shared = false, debug = true, configs = {cxflags = "-fPIC"}})
+add_requires("gsl v3.1.0", {system = false, shared = false, debug = true, configs = {cxflags = "-fPIC"}})
 
 -- if is_plat("linux", "macosx", "windows") then
 --     add_requires("glfw 3.3.4", {system = false, shared = false, debug = true, glfw_include = "none", configs = {cxflags = "-fPIC"}})

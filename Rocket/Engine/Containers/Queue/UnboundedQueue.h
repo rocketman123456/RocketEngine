@@ -13,7 +13,7 @@ namespace Rocket {
         explicit UnboundedQueue(bool block = true)
             : m_block{block} {}
 
-        void push(const T &item) {
+        void push(const T& item) {
             {
                 std::scoped_lock guard(m_queue_lock);
                 m_queue.push(item);

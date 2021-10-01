@@ -1,7 +1,8 @@
 #pragma once
+#include "Core/Declare.h"
 
 namespace Rocket {
-    class RenderVertex {
+    Interface RenderVertex {
 
     };
 }

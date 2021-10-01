@@ -1,4 +1,5 @@
 #pragma once
+#include "Core/Declare.h"
 
 #include <memory>
 
