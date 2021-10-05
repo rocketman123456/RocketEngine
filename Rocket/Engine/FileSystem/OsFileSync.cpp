@@ -44,7 +44,7 @@ namespace Rocket {
         if(mode_ == FileOperateMode::READ_BINARY) {
             buffer.size = length;
             buffer.buffer = new uint8_t[length];
-            auto result = fread(buffer.buffer, length, 1, (FILE*)file_.file_pointer);
+            auto result = fread(buffer.buffer, buffer.size, 1, (FILE*)file_.file_pointer);
             if(result == 1)
                 return length;
             else
@@ -53,12 +53,12 @@ namespace Rocket {
         else if(mode_ == FileOperateMode::READ_TEXT) {
             buffer.size = length + 1;
             buffer.buffer = new uint8_t[length + 1];
-            auto result = fread(buffer.buffer, length, 1, (FILE*)file_.file_pointer);
+            auto result = fread(buffer.buffer, buffer.size, 1, (FILE*)file_.file_pointer);
             static_cast<char*>(buffer.buffer)[length] = '\0';
-            if(result == 1)
-                return 0;
+            if(result == 0)
+                return buffer.size;
             else
-                return length;
+                return 0;
         }
         else {
             return 0;

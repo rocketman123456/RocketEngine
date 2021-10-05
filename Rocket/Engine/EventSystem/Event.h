@@ -3,6 +3,7 @@
 #include "Utils/Delegate.h"
 #include "Utils/Hashing.h"
 #include "Utils/Timer.h"
+#include "Memory/MemoryDefine.h"
 #include "Log/Log.h"
 
 #include <vector>
@@ -27,6 +28,9 @@ namespace Rocket {
     // TODO : reflect event data
     // TODO : add event time stamp
     struct Event {
+    public:
+        ALIGNED_OPERATOR_NEW;
+    public:
         explicit Event(const std::string& name);
         explicit Event(const std::string& name, EventType type);
 		explicit Event(const std::string& name, EventDataPtr ptr, uint64_t size);
@@ -87,7 +91,6 @@ namespace Rocket {
         // 0. use different channel to handle different event type
         // 1. update & check delay time, decide use event or not
         // 2. dispatch event to listener
-        // TODO : add timer to init event
         EventType type_;            //  8 bytes
         uint64_t size_ = 0;          //  8 bytes
         EventDataPtr variable_ = nullptr;   //  4 bytes

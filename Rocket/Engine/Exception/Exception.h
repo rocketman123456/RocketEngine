@@ -8,7 +8,7 @@ namespace Rocket {
         virtual void what() const = 0;
     };
 
-    // TODO : replace std::execption s
+    // TODO : replace std::execption
     class OutOfRange : _implements_ Execption {
     public:
         OutOfRange(): flag_(1) {}

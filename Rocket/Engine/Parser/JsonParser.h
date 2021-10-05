@@ -1,14 +1,6 @@
 #pragma once
 #include "Memory/MemoryCheck.h"
 
-// #ifdef RK_MEMORY_CHECK
-// #ifdef new
-// #undef new
-// #endif
-// #endif
-
-// #include <nlohmann/json.hpp>
-
 #include <string>
 #include <memory>
 #include <cstdint>
@@ -83,7 +75,7 @@
     #endif
 #endif
 
-namespace json11 {
+namespace RocketJson {
 
     enum JsonParse {
         STANDARD, COMMENTS
@@ -258,18 +250,12 @@ namespace Rocket {
         void Serialize(const std::string& content);
         std::string Deserialize();
 
-        const json11::Json& GetRawJson() { return json_; }
+        const RocketJson::Json& GetRawJson() { return json_; }
 
     private:
         std::string content_;
-        json11::Json json_;
+        RocketJson::Json json_;
     };
 
     using JsonParserPtr = std::unique_ptr<JsonParser>;
 }
-
-// #ifdef RK_MEMORY_CHECK
-// #ifndef new
-// #define new new(__FILE__, __LINE__, __FUNCTION__)
-// #endif
-// #endif

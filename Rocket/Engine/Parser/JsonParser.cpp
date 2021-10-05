@@ -31,7 +31,7 @@
 #include <cstdio>
 #include <limits>
 
-namespace json11 {
+namespace RocketJson {
     static const int max_depth = 200;
 
     using std::string;
@@ -171,7 +171,7 @@ namespace json11 {
         }
 
         const T m_value;
-        void dump(string &out) const override { json11::dump(m_value, out); }
+        void dump(string &out) const override { RocketJson::dump(m_value, out); }
     };
 
     class JsonDouble final : public Value<Json::NUMBER, double> {
@@ -816,7 +816,7 @@ namespace Rocket {
 
     void JsonParser::Serialize(const std::string& content) {
         std::string err;
-        json_ = json11::Json::parse(content, err); 
+        json_ = RocketJson::Json::parse(content, err); 
     }
 
     std::string JsonParser::Deserialize() { 

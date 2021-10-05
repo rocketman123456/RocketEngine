@@ -1,6 +1,6 @@
 #pragma once
-#include "Physics/BasicElement/Sphere.h"
-#include "Physics/BasicElement/Triangle.h"
+#include "Physics/Basic/Sphere.h"
+#include "Physics/Basic/Triangle.h"
 
 #include <Eigen/Eigen>
 #include <vector>

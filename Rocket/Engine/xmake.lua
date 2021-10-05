@@ -12,9 +12,10 @@ target("RocketEngine")
         "Math/*.cpp", 
         "Parser/*.cpp",
         "Physics/*.cpp",
-        "Physics/BasicElement/*.cpp",
+        "Physics/Basic/*.cpp",
         "Physics/MeshOperation/*.cpp",
         "Memory/*.cpp",
+        "Scene/*.cpp",
         "Utils/*.cpp"
     )
     add_packages(

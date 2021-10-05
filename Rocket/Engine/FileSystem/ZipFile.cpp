@@ -84,8 +84,8 @@ namespace Rocket {
             RK_ERROR(File, "Error {} with ZipFile in unzGetGlobalInfo64", err);
         }
 #ifdef RK_CONSOLE_LOG
-        printf("  Length  Method     Size Ratio   Date    Time   CRC-32     Name");
-        printf("  ------  ------     ---- -----   ----    ----   ------     ----");
+        printf("  Length  Method     Size Ratio   Date    Time   CRC-32     Name\n");
+        printf("  ------  ------     ---- -----   ----    ----   ------     ----\n");
 #endif
         for (int32_t i = 0; i < unzip_info_.number_entry; i++) {
             // Iterate Through each File Info

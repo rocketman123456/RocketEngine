@@ -1,5 +1,5 @@
 #include "Render/SoftRasterizer.h"
-#include "Physics/BasicElement/Parameter.h"
+#include "Physics/Basic/Parameter.h"
 #include "Log/Log.h"
 
 #include <cfloat>

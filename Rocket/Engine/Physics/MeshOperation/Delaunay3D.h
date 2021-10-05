@@ -1,8 +1,8 @@
 #pragma once
-#include "Physics/BasicElement/Vertex.h"
-#include "Physics/BasicElement/Triangle.h"
-#include "Physics/BasicElement/Sphere.h"
-#include "Physics/BasicElement/Tetrahedra.h"
+#include "Physics/Basic/Vertex.h"
+#include "Physics/Basic/Triangle.h"
+#include "Physics/Basic/Sphere.h"
+#include "Physics/Basic/Tetrahedra.h"
 
 #include <vector>
 #include <memory>

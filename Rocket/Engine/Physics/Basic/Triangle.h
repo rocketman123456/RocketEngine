@@ -1,6 +1,6 @@
 #pragma once
-#include "Physics/BasicElement/Vertex.h"
-#include "Physics/BasicElement/Edge.h"
+#include "Physics/Basic/Vertex.h"
+#include "Physics/Basic/Edge.h"
 
 #include <Eigen/Eigen>
 #include <array>

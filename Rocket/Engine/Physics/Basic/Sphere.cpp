@@ -1,5 +1,5 @@
-#include "Physics/BasicElement/Sphere.h"
-#include "Physics/BasicElement/Parameter.h"
+#include "Physics/Basic/Sphere.h"
+#include "Physics/Basic/Parameter.h"
 #include "Log/Log.h"
 
 #include <algorithm>
