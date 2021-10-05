@@ -1,5 +1,5 @@
 target("RocketRenderCommon")
     set_kind("static")
-    add_files("Render/*.cpp")
+    add_files("RayTrace/*.cpp", "Render/*.cpp")
     add_packages("eigen", {public = true})
 target_end()
