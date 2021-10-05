@@ -9,6 +9,7 @@ target("RocketEngine")
         "Exception/*.cpp",
         "FileSystem/*.cpp",
         "Log/*.cpp", 
+        "Math/*.cpp", 
         "Parser/*.cpp",
         "Physics/*.cpp",
         "Physics/BasicElement/*.cpp",
@@ -19,11 +20,13 @@ target("RocketEngine")
     add_packages(
         "glfw", 
         "glad", 
+        "eigen", 
         "minizip", "zlib", 
         "yaml-cpp", 
         "spdlog", "fmt", 
         "openal-soft", "libsndfile",
         "nlohmann_json",
+        "tinygltf",
         {public = true}
     )
     add_options("console_log")

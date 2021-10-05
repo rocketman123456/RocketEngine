@@ -2,14 +2,14 @@
 #include "Core/Declare.h"
 
 namespace Rocket {
-    Interface Execption {
+    _Interface_ Execption {
     public:
         virtual ~Execption() = default;
         virtual void what() const = 0;
     };
 
     // TODO : replace std::execption s
-    class OutOfRange : implements Execption {
+    class OutOfRange : _implements_ Execption {
     public:
         OutOfRange(): flag_(1) {}
         OutOfRange(int len, int index): flag_(2), len_(len), index_(index) {}
@@ -24,7 +24,7 @@ namespace Rocket {
         const char* err_;
     };
 
-    class NewSizeError : implements Execption {
+    class NewSizeError : _implements_ Execption {
     public:
         NewSizeError(int flag, int size) : flag_(flag), size_(size) {} 
         void what() const final;

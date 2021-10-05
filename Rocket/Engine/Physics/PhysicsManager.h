@@ -2,7 +2,7 @@
 #include "Pattern/Singleton.h"
 #include "Pattern/IRuntimeModule.h"
 namespace Rocket {
-    class PhysicsManager : implements IRuntimeModule, implements AbstractSingleton<PhysicsManager> {
+    class PhysicsManager : _implements_ IRuntimeModule, _implements_ AbstractSingleton<PhysicsManager> {
         RUNTIME_MODULE_TYPE(PhysicsManager);
     public:
         PhysicsManager() = default;

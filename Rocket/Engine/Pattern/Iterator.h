@@ -3,7 +3,7 @@
 
 namespace Rocket {
     template<typename T>
-    Interface Iterator {
+    _Interface_ Iterator {
     public:
         virtual ~Iterator() = default;
         virtual bool HasNext() = 0;
@@ -11,7 +11,7 @@ namespace Rocket {
     };
 
     template<typename T, class I>
-    Interface Iterable {
+    _Interface_ Iterable {
     public:
         virtual ~Iterable() = default;
         virtual I GetIterator() = 0;

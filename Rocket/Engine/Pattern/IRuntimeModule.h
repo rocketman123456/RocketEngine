@@ -6,7 +6,7 @@
 #include <ostream>
 
 namespace Rocket {
-    Interface IRuntimeModule {
+    _Interface_ IRuntimeModule {
     public:
         virtual ~IRuntimeModule() = default;
 

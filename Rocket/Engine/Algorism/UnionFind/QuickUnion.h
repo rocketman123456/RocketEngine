@@ -2,7 +2,7 @@
 #include "Algorism/UnionFind/UnionFind.h"
 
 namespace Rocket {
-    class QuickUnion : implements UnionFind {
+    class QuickUnion : _implements_ UnionFind {
     public:
         QuickUnion(int32_t n);
         virtual ~QuickUnion();

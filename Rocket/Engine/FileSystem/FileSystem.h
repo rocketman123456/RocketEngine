@@ -1,5 +1,5 @@
 #pragma once
-#include "FileSystem/OsFile.h"
+#include "FileSystem/OsFileSync.h"
 #include "FileSystem/OsFileAsync.h"
 #include "FileSystem/ZipFile.h"
 #include "FileSystem/AudioFile.h"

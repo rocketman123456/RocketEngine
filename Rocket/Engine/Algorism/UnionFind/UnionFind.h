@@ -4,7 +4,7 @@
 #include <cstdint>
 
 namespace Rocket {
-    Interface UnionFind {
+    _Interface_ UnionFind {
     public:
         virtual ~UnionFind();
         virtual void Union(int32_t p, int32_t q) = 0;

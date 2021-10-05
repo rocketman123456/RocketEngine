@@ -1,23 +1,11 @@
 #pragma once
-#include "FileSystem/OsFile.h"
+#include "FileSystem/OsFileSync.h"
+
+#include <memory>
+#include <future>
 
 namespace Rocket {
-    // TODO : finish async file operation
-    class OsAsyncFileOperation : implements FileOperation {
-    public:
-        OsAsyncFileOperation(const FileHandle& file, size_t position);
-        OsAsyncFileOperation(const OsAsyncFileOperation& other);
-        OsAsyncFileOperation& operator=(const OsAsyncFileOperation& other);
-        ~OsAsyncFileOperation() = default;
-        /// Returns whether or not the asynchronous operation has finished
-        bool HasFinished() const final { return false; }
-        /// Waits until the asynchronous operation has finished. Returns the number of transferred bytes.
-        size_t WaitUntilFinished() const final { return 0; }
-        /// Cancels the asynchronous operation
-        void Cancel() final {}
-    };
-
-    class OsFileAsync : public OsFile {
+    class OsFileAsync : _implements_ OsFileSync {
     public:
         OsFileAsync() = default;
         virtual ~OsFileAsync() = default;
@@ -29,9 +17,11 @@ namespace Rocket {
         ////////////////////////////////////////////////////////////////////////
 
         /// Asynchronously reads from the file into a buffer
-        OsAsyncFileOperation ReadAsync(FileBuffer& buffer, std::size_t length);
+        std::future<std::size_t> ReadAsync(FileBuffer& buffer, std::size_t length);
+        std::future<std::size_t> ReadAllAsync(FileBuffer& buffer);
         /// Asynchronously writes from a buffer into the file
-        OsAsyncFileOperation WriteAsync(FileBuffer& buffer, std::size_t length);
+        std::future<std::size_t> WriteAsync(FileBuffer& buffer, std::size_t length);
+        std::future<std::size_t> WriteAllAsync(FileBuffer& buffer);
     protected:
         bool async_;
     };

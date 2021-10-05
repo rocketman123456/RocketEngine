@@ -7,7 +7,7 @@ namespace Rocket {
     template<typename T> class FixBag;
 
     template<typename T>
-    class FixBagIterator : implements Iterator<T> {
+    class FixBagIterator : _implements_ Iterator<T> {
     public:
         explicit FixBagIterator(FixBag<T>* bag) : bag_(bag), data_(bag->data_), size_(bag->current_) {}
         virtual ~FixBagIterator() = default;
@@ -22,7 +22,7 @@ namespace Rocket {
 
     // TODO : make it thread safe
     template<typename T>
-    class FixBag : implements Iterable<T, FixBagIterator<T>> {
+    class FixBag : _implements_ Iterable<T, FixBagIterator<T>> {
         friend class FixBagIterator<T>;
     public:
         explicit FixBag(int32_t size) : size_(size), data_(new T[size]) {}

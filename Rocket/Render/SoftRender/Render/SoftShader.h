@@ -8,7 +8,7 @@
 #include <unordered_map>
 
 namespace Rocket {
-    class SoftShader : implements RenderShader {
+    class SoftShader : _implements_ RenderShader {
     public:
         virtual ~SoftShader() = default;
 

@@ -3,6 +3,27 @@
 
 #include <exception>
 
+static int IsLargeFile(const char* filename) {
+    int largeFile = 0;
+    ZPOS64_T pos = 0;
+    FILE* pFile = fopen(filename, "rb");
+
+    if(pFile != NULL)
+    {
+        int n = fseeko(pFile, 0, SEEK_END);
+
+        pos = ftello(pFile);
+        printf("File : %s is %lld bytes\n", filename, pos);
+
+        if(pos >= 0xffffffff)
+            largeFile = 1;
+
+        fclose(pFile);
+    }
+
+    return largeFile;
+}
+
 static void Display64BitsSize(ZPOS64_T n, int size_char) {
     // to avoid compatibility problem , we do the conversion here
     char number[21];
@@ -29,23 +50,6 @@ static void Display64BitsSize(ZPOS64_T n, int size_char) {
 }
 
 namespace Rocket {
-    ZipAsyncFileOperation::ZipAsyncFileOperation(const ZipAsyncFileOperation& other) {
-        file_ = other.file_;
-        int32_t temp = other.overlapped_;
-        overlapped_ = temp;
-        overlapped_++; 
-    }
-
-    ZipAsyncFileOperation& ZipAsyncFileOperation::operator=(const ZipAsyncFileOperation& other) {
-        if (this != &other) {
-            file_ = other.file_;
-            int32_t temp = other.overlapped_;
-            overlapped_ = temp;
-            overlapped_++;
-        }
-        return *this;
-    }
-
     int32_t ZipFile::Initialize(const std::string& path, const std::string& file_name, FileOperateMode mode) {
         mode_ = mode;
         file_.file_path = path;
@@ -53,10 +57,14 @@ namespace Rocket {
         file_.full_name = path + file_name;
 
         int32_t result = 0;
-        if(mode_ == FileOperateMode::ReadBinary)
+        if(mode_ == FileOperateMode::READ_BINARY)
             result = UnzipInit();
-        else if(mode_ == FileOperateMode::WriteBinary)
+        else if(mode_ == FileOperateMode::WRITE_BINARY)
             result = ZipInit();
+        else {
+            initialized_ = false;
+            return -1;
+        }
         
         initialized_ = true;
         return result;
@@ -71,15 +79,15 @@ namespace Rocket {
         }
         // Get Zip Global Info
         int32_t err = 0;
-        err = unzGetGlobalInfo64(file_.file_pointer, &zip_info_);
+        err = unzGetGlobalInfo64(file_.file_pointer, &unzip_info_);
         if(err != UNZ_OK) {
             RK_ERROR(File, "Error {} with ZipFile in unzGetGlobalInfo64", err);
         }
 #ifdef RK_CONSOLE_LOG
-        printf("  Length  Method     Size Ratio   Date    Time   CRC-32     Name\n");
-        printf("  ------  ------     ---- -----   ----    ----   ------     ----\n");
+        printf("  Length  Method     Size Ratio   Date    Time   CRC-32     Name");
+        printf("  ------  ------     ---- -----   ----    ----   ------     ----");
 #endif
-        for (int32_t i = 0; i < zip_info_.number_entry; i++) {
+        for (int32_t i = 0; i < unzip_info_.number_entry; i++) {
             // Iterate Through each File Info
             char filename_inzip[256];
             unz_file_info64 file_info;
@@ -141,7 +149,7 @@ namespace Rocket {
             // Add Infos to content map
             content_[filename_inzip] = {file_pos, file_info};
             // Get Next File
-            if ((i + 1) < zip_info_.number_entry) {
+            if ((i + 1) < unzip_info_.number_entry) {
                 err = unzGoToNextFile(file_.file_pointer);
                 if (err != UNZ_OK) {
                     RK_ERROR(File, "Error {} with ZipFile in unzGoToNextFile", err);
@@ -153,11 +161,24 @@ namespace Rocket {
     }
 
     int32_t ZipFile::ZipInit() {
+        file_.file_pointer = zipOpen64(file_.full_name.c_str(), APPEND_STATUS_ADDINZIP);
+        //file_.file_pointer = zipOpen64(file_.full_name.c_str(), APPEND_STATUS_CREATE);
+        //file_.file_pointer = zipOpen64(file_.full_name.c_str(), APPEND_STATUS_CREATEAFTER);
+        if(file_.file_pointer == nullptr) {
+            RK_ERROR(File, "Open ZipFile {} Error", file_.full_name);
+            throw std::runtime_error("Open ZipFile Error");
+        }
+
+        // TODO : finish this
+
         return 0;
     }
 
     void ZipFile::Finalize() {
-        unzClose(file_.file_pointer);
+        if(mode_ == FileOperateMode::READ_BINARY)
+            unzClose(file_.file_pointer);
+        else if(mode_ == FileOperateMode::WRITE_BINARY)
+            zipClose(file_.file_pointer, nullptr);
         content_.clear();
     }
 
@@ -203,7 +224,49 @@ namespace Rocket {
     }
 
     std::size_t ZipFile::WriteFile(FileBuffer& buffer, const std::string& path) {
+        std::scoped_lock guard{ write_mutex };
+
+        zip_fileinfo zi;
+        unsigned long crcFile=0;
+        zi.tmz_date.tm_sec = zi.tmz_date.tm_min = zi.tmz_date.tm_hour =
+        zi.tmz_date.tm_mday = zi.tmz_date.tm_mon = zi.tmz_date.tm_year = 0;
+        zi.dosDate = 0;
+        zi.internal_fa = 0;
+        zi.external_fa = 0;
+
+        int zip64 = IsLargeFile(path.c_str());
+
         // TODO : implement this write file function
         return 0;
+    }
+
+    std::future<std::size_t> ZipFile::ReadAllAsync(std::vector<FileBuffer>& buffers) {
+        return std::async(std::launch::async, [&](){
+            for(auto content : content_) {
+                FileBuffer buffer;
+                this->ReadFile(buffer, content.first); 
+                buffers.push_back(buffer);
+            }
+            return std::size_t(0);
+        });
+    }
+
+    std::future<std::size_t> ZipFile::WriteAllAsync(std::vector<FileBuffer>& buffers, std::vector<std::string> paths) {
+        return std::async(std::launch::async, [&](){
+            for(int i = 0; i < paths.size(); ++i) {
+                FileBuffer buffer;
+                this->WriteFile(buffer, paths[i]);
+                buffers.push_back(buffer);
+            }
+            return std::size_t(0);
+        });
+    }
+
+    std::future<std::size_t> ZipFile::ReadAsync(FileBuffer& buffer, const std::string& path) {
+        return std::async(std::launch::async, [&](){ return this->ReadFile(buffer, path); });
+    }
+
+    std::future<std::size_t> ZipFile::WriteAsync(FileBuffer& buffer, const std::string& path) {
+        return std::async(std::launch::async, [&](){ return this->WriteFile(buffer, path); });
     }
 }

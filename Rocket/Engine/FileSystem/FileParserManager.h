@@ -3,7 +3,7 @@
 #include "Pattern/Singleton.h"
 
 namespace Rocket {
-    class FileParserManager: implements IRuntimeModule, implements AbstractSingleton<FileParserManager>  {
+    class FileParserManager: _implements_ IRuntimeModule, _implements_ AbstractSingleton<FileParserManager>  {
         RUNTIME_MODULE_TYPE(FileParserManager);
     public:
         FileParserManager() = default;

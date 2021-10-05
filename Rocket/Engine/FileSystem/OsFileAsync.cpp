@@ -1,27 +1,28 @@
 #include "FileSystem/OsFileAsync.h"
 
 namespace Rocket {
-    OsAsyncFileOperation::OsAsyncFileOperation(const OsAsyncFileOperation& other) {
-        file_ = other.file_;
-        int32_t temp = other.overlapped_;
-        overlapped_ = temp;
-        overlapped_++; 
-    }
-
-    OsAsyncFileOperation& OsAsyncFileOperation::operator=(const OsAsyncFileOperation& other) {
-        if (this != &other) {
-            file_ = other.file_;
-            int32_t temp = other.overlapped_;
-            overlapped_ = temp;
-            overlapped_++;
-        }
-        return *this;
-    }
-
     int32_t OsFileAsync::Initialize(const std::string& path, const std::string& file_name, FileOperateMode mode) {
+        OsFileSync::Initialize(path, file_name, mode);
         return 0;
     }
     
     void OsFileAsync::Finalize() {
+        OsFileSync::Finalize();
+    }
+
+    std::future<std::size_t> OsFileAsync::ReadAsync(FileBuffer& buffer, std::size_t length) {
+        return std::async(std::launch::async, [&](){ return this->Read(buffer, length); });
+    }
+
+    std::future<std::size_t> OsFileAsync::ReadAllAsync(FileBuffer& buffer) {
+        return std::async(std::launch::async, [&](){ return this->ReadAll(buffer); });
+    }
+
+    std::future<std::size_t> OsFileAsync::WriteAsync(FileBuffer& buffer, std::size_t length) {
+        return std::async(std::launch::async, [&](){ return this->Write(buffer, length); });
+    }
+
+    std::future<std::size_t> OsFileAsync::WriteAllAsync(FileBuffer& buffer) {
+        return std::async(std::launch::async, [&](){ return this->WriteAll(buffer); });
     }
 }

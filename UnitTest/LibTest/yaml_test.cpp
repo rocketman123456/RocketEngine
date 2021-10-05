@@ -12,7 +12,7 @@ int main() {
     Log::Init();
 
     auto root = Rocket::FindRootDir("_root_dir_");
-    auto file = FileSystem::OpenSync(root + "/Config/", "basic.yaml", FileOperateMode::ReadBinary);
+    auto file = FileSystem::OpenSync(root + "/Config/", "basic.yaml", FileOperateMode::READ_BINARY);
     FileBuffer buffer;
     file->ReadAll(buffer);
     printf((const char*)buffer.buffer);

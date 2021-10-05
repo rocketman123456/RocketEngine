@@ -10,14 +10,14 @@
 
 namespace Rocket {
     enum class FileOperateMode : int8_t {
-        NoOperation = 0,
-        ReadBinary,
-        WriteBinary,
-        ReadWriteBinary,
-        ReadText,
-        WriteText,
-        ReadWriteText,
-        //AllOperation
+        EMPTY_OPERATION = 0,
+        READ_BINARY,
+        WRITE_BINARY,
+        READWRITE_BINARY,
+        READ_TEXT,
+        WRITE_TEXT,
+        READWRITE_TEXT,
+        OPERATION_COUNT,
     };
 
     struct FileBuffer {
@@ -75,7 +75,7 @@ namespace Rocket {
         std::string full_name;
     };
 
-    Interface FileOperation {
+    _Interface_ FileOperation {
     public:
         virtual ~FileOperation() = default;
         /// Returns whether or not the asynchronous operation has finished

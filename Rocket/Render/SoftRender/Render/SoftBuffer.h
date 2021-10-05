@@ -8,7 +8,7 @@
 #include <vector>
 
 namespace Rocket {
-    class SoftBuffer : implements RenderBuffer {
+    class SoftBuffer : _implements_ RenderBuffer {
     public:
         virtual ~SoftBuffer() = default;
 

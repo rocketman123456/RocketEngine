@@ -2,7 +2,7 @@
 #include "Core/Declare.h"
 
 namespace Rocket {
-    Interface VerletIntegrator {
+    _Interface_ VerletIntegrator {
 
     };
 }

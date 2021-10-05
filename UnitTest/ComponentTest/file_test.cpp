@@ -17,7 +17,7 @@ int main() {
     {
         std::string name = "_root_dir_";
         //auto file = FileSystem::OpenSync(root, name, FileOperateMode::ReadBinary);
-        auto file = FileSystem::OpenSync(root, name, FileOperateMode::ReadText);
+        auto file = FileSystem::OpenSync(root, name, FileOperateMode::READ_TEXT);
         FileBuffer buffer;
         file->ReadAll(buffer);
 
@@ -29,7 +29,7 @@ int main() {
 
     {
         std::string name = "_root_dir_.zip";
-        auto file = FileSystem::OpenZip(root, name, FileOperateMode::ReadBinary);
+        auto file = FileSystem::OpenZip(root, name, FileOperateMode::READ_BINARY);
         FileBuffer buffer;
         file->ReadFile(buffer, "_root_dir_");
         printf("Read Data: ");

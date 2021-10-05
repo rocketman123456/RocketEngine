@@ -2,7 +2,7 @@
 #include "Core/Declare.h"
 
 namespace Rocket {
-    Interface Parser {
+    _Interface_ Parser {
 
     };
 }

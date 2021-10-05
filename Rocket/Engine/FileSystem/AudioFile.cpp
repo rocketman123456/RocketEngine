@@ -43,13 +43,13 @@ namespace Rocket {
         SNDFILE* file = nullptr;
         SF_INFO* file_info = new SF_INFO;
         switch(mode) {
-            case FileOperateMode::ReadBinary: 
+            case FileOperateMode::READ_BINARY: 
                 file = sf_open(file_.full_name.c_str(), SFM_READ, file_info);
                 break;
-            case FileOperateMode::WriteBinary: 
+            case FileOperateMode::WRITE_BINARY: 
                 file = sf_open(file_.full_name.c_str(), SFM_WRITE, file_info);
                 break;
-            case FileOperateMode::ReadWriteBinary: 
+            case FileOperateMode::READWRITE_BINARY: 
                 file = sf_open(file_.full_name.c_str(), SFM_RDWR, file_info);
                 break;
         }

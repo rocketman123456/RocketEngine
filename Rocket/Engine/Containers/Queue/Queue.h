@@ -9,7 +9,7 @@ namespace Rocket {
     template<typename T> class Queue;
 
     template<typename T>
-    class QueueIterator : implements Iterator<T> {
+    class QueueIterator : _implements_ Iterator<T> {
     public:
         // TODO : If Queue Changed After Get Iterator, this will cause error
         explicit QueueIterator(Queue<T>* queue) : queue_(queue), current_(queue->first_) {}

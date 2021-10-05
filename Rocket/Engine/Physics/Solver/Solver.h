@@ -2,7 +2,7 @@
 #include "Core/Declare.h"
 
 namespace Rocket {
-    Interface Solver {
+    _Interface_ Solver {
 
     };
 }

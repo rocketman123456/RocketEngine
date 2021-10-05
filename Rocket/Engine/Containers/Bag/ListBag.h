@@ -7,7 +7,7 @@
 namespace Rocket {
     template<typename T> class ListBag;
     template<typename T>
-    class ListBagIterator : implements Iterator<T> {
+    class ListBagIterator : _implements_ Iterator<T> {
     public:
         explicit ListBagIterator(ListBag<T>* bag) : bag_(bag), current_(bag->first_) {}
         virtual ~ListBagIterator() = default;
@@ -20,7 +20,7 @@ namespace Rocket {
 
     // TODO : make it thread safe
     template<typename T>
-    class ListBag : implements Iterable<T, ListBagIterator<T>> {
+    class ListBag : _implements_ Iterable<T, ListBagIterator<T>> {
         friend class ListBagIterator<T>;
         struct Node {
             Node* next = nullptr;

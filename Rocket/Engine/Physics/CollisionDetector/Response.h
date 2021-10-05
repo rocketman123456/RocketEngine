@@ -2,7 +2,7 @@
 #include "Core/Declare.h"
 
 namespace Rocket {
-    Interface Response {
+    _Interface_ Response {
 
     };
 }

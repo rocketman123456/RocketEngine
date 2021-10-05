@@ -8,7 +8,7 @@ namespace Rocket {
         const std::string& path, 
         const std::string& file_name, 
         FileOperateMode mode) {
-        std::unique_ptr<OsFile> file(new OsFile);
+        std::unique_ptr<OsFileSync> file(new OsFileSync);
         int32_t result = file->Initialize(path, file_name, mode);
         if(result != 0) {
             RK_ERROR(Core, "{},{}: File Open Error", path, file_name);
@@ -17,7 +17,7 @@ namespace Rocket {
         return file;
     }
 
-    void FileSystem::CloseSync(std::unique_ptr<OsFile>&& file) {
+    void FileSystem::CloseSync(std::unique_ptr<OsFileSync>&& file) {
         file->Finalize();
         file.reset();
     }

@@ -18,7 +18,7 @@
 #include <sndfile.h>
 
 namespace Rocket {
-    class AudioManager : implements IRuntimeModule, implements AbstractSingleton<AudioManager> {
+    class AudioManager : _implements_ IRuntimeModule, _implements_ AbstractSingleton<AudioManager> {
         RUNTIME_MODULE_TYPE(AudioManager);
     public:
         AudioManager() = default;

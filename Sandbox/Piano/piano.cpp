@@ -104,7 +104,7 @@ int main() {
         }
     }
 
-    auto file_select = FileSystem::OpenSync(root, "/Asset/Config/music_name.txt", FileOperateMode::ReadText);
+    auto file_select = FileSystem::OpenSync(root, "/Asset/Config/music_name.txt", FileOperateMode::READ_TEXT);
     FileBuffer buffer;
     file_select->ReadAll(buffer);
     std::string music_name = (char*)buffer.buffer;
@@ -130,7 +130,7 @@ int main() {
     }
 
     for(int i = 0; i < wav_files.size(); ++i) {
-        AudioFilePtr file_ptr = FileSystem::OpenAudio(root_path.string(), wav_file_names[i], FileOperateMode::ReadBinary);
+        AudioFilePtr file_ptr = FileSystem::OpenAudio(root_path.string(), wav_file_names[i], FileOperateMode::READ_BINARY);
         AudioManager::Instance()->InsertBuffer(file_ptr.get());
         FileSystem::CloseAudio(std::move(file_ptr));
     }

@@ -3,7 +3,7 @@
 #include "Window/WindowInstance.h"
 
 namespace Rocket {
-    class DesktopWindow : implements WindowInstance {
+    class DesktopWindow : _implements_ WindowInstance {
     public:
         DesktopWindow() = default;
         virtual ~DesktopWindow() = default;

@@ -1,6 +1,6 @@
 #include "Parser/JsonParser.h"
 #include "FileSystem/FileSystem.h"
-#include "FileSystem/OsFile.h"
+#include "FileSystem/OsFileSync.h"
 
 #include <stdlib.h>
 
@@ -795,7 +795,7 @@ namespace json11 {
 
 namespace Rocket {
     int32_t JsonParser::Initialize(const std::string& path, const std::string& file_name) {
-        auto file = FileSystem::OpenSync(path, file_name, FileOperateMode::ReadText);
+        auto file = FileSystem::OpenSync(path, file_name, FileOperateMode::READ_TEXT);
         FileBuffer buffer;
         file->ReadAll(buffer);
         content_ = std::string((char*)buffer.buffer);

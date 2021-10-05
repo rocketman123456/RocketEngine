@@ -4,7 +4,7 @@
 #include <cstdint>
 
 namespace Rocket {
-    class QuickFind : implements UnionFind {
+    class QuickFind : _implements_ UnionFind {
     public:
         QuickFind(int32_t n);
         virtual ~QuickFind();

@@ -7,7 +7,7 @@
 
 namespace Rocket {
     template<class T>
-    Interface Factory {
+    _Interface_ Factory {
     public:
         template<typename... Args>
         std::unique_ptr<T> Create(const std::string& name, const Args &... args) {

@@ -1,7 +1,7 @@
 #pragma once
 // TODO : finish resource cache
 #include "Parser/AudioPraser.h"
-#include "FileSystem/OsFile.h"
+#include "FileSystem/OsFileSync.h"
 #include "Utils/AudioChecker.h"
 
 #include <memory>
@@ -11,7 +11,7 @@
 namespace Rocket {
     using AudioBuffer = FileBuffer;
 
-    class AudioFile : implements OsFile {
+    class AudioFile : _implements_ OsFileSync {
     public:
         AudioFile() = default;
         virtual ~AudioFile() = default;

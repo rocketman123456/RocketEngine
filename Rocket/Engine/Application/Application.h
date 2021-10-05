@@ -5,7 +5,7 @@
 #include <vector>
 
 namespace Rocket {
-    class Application : implements IRuntimeModule, implements AbstractSingleton<Application> {
+    class Application : _implements_ IRuntimeModule, _implements_ AbstractSingleton<Application> {
         RUNTIME_MODULE_TYPE(Application);
     public:
         Application() = default;
