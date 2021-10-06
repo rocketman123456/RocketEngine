@@ -1,5 +1,5 @@
-#include "Physics/Basic/Tetrahedra.h"
-#include "Physics/Basic/Parameter.h"
+#include "Geometry/Tetrahedra.h"
+#include "Geometry/Parameter.h"
 
 #include <fenv.h>
 

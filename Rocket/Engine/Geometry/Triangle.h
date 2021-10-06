@@ -1,6 +1,6 @@
 #pragma once
-#include "Physics/Basic/Vertex.h"
-#include "Physics/Basic/Edge.h"
+#include "Geometry/Vertex.h"
+#include "Geometry/Edge.h"
 
 #include <Eigen/Eigen>
 #include <array>
@@ -10,14 +10,13 @@
 
 namespace Rocket {
     class Tetrahedra;
-    //using Edge = std::pair<std::shared_ptr<Vertex>, std::shared_ptr<Vertex>>;
 
     class Triangle {
     public:
         Triangle();
+        virtual ~Triangle() = default;
         Triangle(const std::vector<VertexPtr>& vertices);
         Triangle(const std::vector<VertexPtr>& vertices, Tetrahedra* parent, Tetrahedra* neighbor);
-        ~Triangle() = default;
 
         bool IsCoincidentWith(const VertexPtr& v);
         bool IsCoincidentWith(Triangle* t);
@@ -31,7 +30,6 @@ namespace Rocket {
         }
 
     public:
-        // TODO : remove copy when possible
         int32_t id = 0;
         std::array<VertexPtr, 3> vertices = {};
         std::array<EdgePtr, 3> edges = {};

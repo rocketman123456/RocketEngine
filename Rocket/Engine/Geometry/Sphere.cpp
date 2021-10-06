@@ -1,5 +1,5 @@
-#include "Physics/Basic/Sphere.h"
-#include "Physics/Basic/Parameter.h"
+#include "Geometry/Sphere.h"
+#include "Geometry/Parameter.h"
 #include "Log/Log.h"
 
 #include <algorithm>

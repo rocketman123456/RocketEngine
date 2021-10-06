@@ -3,11 +3,11 @@
 #include "Render/SoftRasterizer.h"
 #include "Render/SoftTriangle.h"
 
-#include "Physics/Basic/Vertex.h"
-#include "Physics/Basic/Triangle.h"
-#include "Physics/Basic/Sphere.h"
-#include "Physics/Basic/Tetrahedra.h"
-#include "Physics/MeshOperation/Delaunay3D.h"
+#include "Geometry/Vertex.h"
+#include "Geometry/Triangle.h"
+#include "Geometry/Sphere.h"
+#include "Geometry/Tetrahedra.h"
+#include "Geometry/MeshOperation/Delaunay3D.h"
 
 using namespace Rocket;
 

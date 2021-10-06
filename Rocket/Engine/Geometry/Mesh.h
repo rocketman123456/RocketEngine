@@ -1,6 +1,6 @@
 #pragma once
-#include "Physics/Basic/Triangle.h"
-#include "Physics/Basic/Vertex.h"
+#include "Geometry/Triangle.h"
+#include "Geometry/Vertex.h"
 
 #include <cstdint>
 #include <vector>

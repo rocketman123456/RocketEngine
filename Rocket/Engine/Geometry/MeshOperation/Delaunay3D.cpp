@@ -1,5 +1,5 @@
-#include "Physics/MeshOperation/Delaunay3D.h"
-#include "Physics/Basic/Parameter.h"
+#include "Geometry/MeshOperation/Delaunay3D.h"
+#include "Geometry/Parameter.h"
 
 #include <iostream>
 #include <algorithm>

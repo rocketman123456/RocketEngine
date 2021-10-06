@@ -1,5 +1,5 @@
-#include "Physics/Basic/Vertex.h"
-#include "Physics/Basic/Parameter.h"
+#include "Geometry/Vertex.h"
+#include "Geometry/Parameter.h"
 
 namespace Rocket {
     bool Vertex::IsCoincidentWith(const Vertex* v) {

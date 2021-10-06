@@ -1,5 +1,5 @@
 #pragma once
-#include "Physics/Basic/Vertex.h"
+#include "Geometry/Vertex.h"
 
 #include <Eigen/Eigen>
 #include <vector>

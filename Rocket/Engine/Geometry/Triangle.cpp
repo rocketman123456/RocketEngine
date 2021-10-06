@@ -1,5 +1,5 @@
-#include "Physics/Basic/Triangle.h"
-#include "Physics/Basic/Parameter.h"
+#include "Geometry/Triangle.h"
+#include "Geometry/Parameter.h"
 
 namespace Rocket {
     Triangle::Triangle() : id(GenerateId()) {
