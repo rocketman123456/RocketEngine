@@ -9,34 +9,36 @@
 #include <memory>
 
 namespace Rocket {
-    class Tetrahedra;
+    namespace Geometry {
+        class Tetrahedra;
 
-    class Triangle {
-    public:
-        Triangle();
-        virtual ~Triangle() = default;
-        Triangle(const std::vector<VertexPtr>& vertices);
-        Triangle(const std::vector<VertexPtr>& vertices, Tetrahedra* parent, Tetrahedra* neighbor);
+        class Triangle {
+        public:
+            Triangle();
+            virtual ~Triangle() = default;
+            Triangle(const std::vector<VertexPtr>& vertices);
+            Triangle(const std::vector<VertexPtr>& vertices, Tetrahedra* parent, Tetrahedra* neighbor);
 
-        bool IsCoincidentWith(const VertexPtr& v);
-        bool IsCoincidentWith(Triangle* t);
-        bool IsRayCross(VertexPtr& a, VertexPtr& b);
+            bool IsCoincidentWith(const VertexPtr& v);
+            bool IsCoincidentWith(Triangle* t);
+            bool IsRayCross(VertexPtr& a, VertexPtr& b);
 
-        void UpdateEdges();
-    private:
-        static int32_t GenerateId() {
-            static std::atomic<int32_t> id = 0;
-            return id++;
-        }
+            void UpdateEdges();
+        private:
+            static int32_t GenerateId() {
+                static std::atomic<int32_t> id = 0;
+                return id++;
+            }
 
-    public:
-        int32_t id = 0;
-        std::array<VertexPtr, 3> vertices = {};
-        std::array<EdgePtr, 3> edges = {};
-        Tetrahedra* parent = nullptr;
-        Tetrahedra* neighbor = nullptr;
-        bool is_active = false;
-    };
+        public:
+            int32_t id = 0;
+            std::array<VertexPtr, 3> vertices = {};
+            std::array<EdgePtr, 3> edges = {};
+            Tetrahedra* parent = nullptr;
+            Tetrahedra* neighbor = nullptr;
+            bool is_active = false;
+        };
 
-    using TrianglePtr = std::shared_ptr<Triangle>;
+        using TrianglePtr = std::shared_ptr<Triangle>;
+    }
 }

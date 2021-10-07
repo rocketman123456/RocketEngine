@@ -2,5 +2,6 @@ includes(
     "Engine",
     "EntryPoint",
     "Platform",
-    "Render"
+    "Render",
+    "Robotic"
 )

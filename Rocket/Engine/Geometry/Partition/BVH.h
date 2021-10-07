@@ -2,7 +2,6 @@
 
 namespace Rocket {
     class BVH {
-    public:
-    protected:
+        
     };
 }

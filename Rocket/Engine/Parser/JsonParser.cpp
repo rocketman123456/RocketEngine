@@ -812,6 +812,7 @@ namespace Rocket {
     }
 
     void JsonParser::Finalize() {
+        content_.clear();
     }
 
     void JsonParser::Serialize(const std::string& content) {

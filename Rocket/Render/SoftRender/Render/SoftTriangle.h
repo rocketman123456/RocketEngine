@@ -18,7 +18,7 @@ namespace Rocket {
     public:
         // Texture *tex;
         SoftTriangle();
-        SoftTriangle(TrianglePtr tri);
+        SoftTriangle(Geometry::TrianglePtr tri);
         virtual ~SoftTriangle() = default;
 
         Eigen::Vector3f a() const { return v[0]; }

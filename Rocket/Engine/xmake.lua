@@ -9,6 +9,7 @@ target("RocketEngine")
         "Exception/*.cpp",
         "FileSystem/*.cpp",
         "Geometry/*.cpp",
+        --"Geometry/Mesh/*.cpp",
         "Geometry/MeshOperation/*.cpp",
         "Log/*.cpp", 
         "Math/*.cpp", 

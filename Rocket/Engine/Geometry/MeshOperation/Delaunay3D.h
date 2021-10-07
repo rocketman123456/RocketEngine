@@ -18,26 +18,26 @@ namespace Rocket {
         Delaunay3D() = default;
         ~Delaunay3D() = default;
 
-        void Initialize(std::vector<VertexPtr>& dots);
+        void Initialize(std::vector<Geometry::VertexPtr>& dots);
         void Generate();
-        std::vector<VertexPtr>& GetNodes() { return nodes; }
-        std::vector<TrianglePtr>& GetResultSurfaces() { return surfaces; }
-        std::vector<TetrahedraPtr>& GetResultTetrahedras() { return elements; }
+        std::vector<Geometry::VertexPtr>& GetNodes() { return nodes; }
+        std::vector<Geometry::TrianglePtr>& GetResultSurfaces() { return surfaces; }
+        std::vector<Geometry::TetrahedraPtr>& GetResultTetrahedras() { return elements; }
 
     private:
         void MakeMesh(int addnodenum, bool iscopynodeexist);
         void MakeSupertetrahedron(double xmax, double ymax, double zmax);
-        void MeshLocal(VertexPtr& node, Tetrahedra*& ethis);
-        void StandardMethod(VertexPtr& pnode, std::unordered_map<int32_t, TrianglePtr>& faces);
-        Tetrahedra* FastMethod(VertexPtr& pnode, Tetrahedra* pethis);
+        void MeshLocal(Geometry::VertexPtr& node, Geometry::Tetrahedra*& ethis);
+        void StandardMethod(Geometry::VertexPtr& pnode, std::unordered_map<int32_t, Geometry::TrianglePtr>& faces);
+        Geometry::Tetrahedra* FastMethod(Geometry::VertexPtr& pnode, Geometry::Tetrahedra* pethis);
         void MakeRoughMesh();
         void DeleteSupertetrahedron();
         void DeleteCreviceElement();
         void MakeFineMesh(int addnodenum);
     private:
-        std::vector<VertexPtr> nodes;
-        std::vector<TrianglePtr> surfaces;
-        std::vector<TetrahedraPtr> elements;
+        std::vector<Geometry::VertexPtr> nodes;
+        std::vector<Geometry::TrianglePtr> surfaces;
+        std::vector<Geometry::TetrahedraPtr> elements;
 
     public:
         int32_t method = 2;

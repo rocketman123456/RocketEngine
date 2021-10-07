@@ -15,7 +15,7 @@ namespace Rocket {
         tex_coords[2] << 0.0, 0.0;
     }
 
-    SoftTriangle::SoftTriangle(TrianglePtr tri) {
+    SoftTriangle::SoftTriangle(Geometry::TrianglePtr tri) {
         auto tri_pos0 = tri->vertices[0]->position;
         auto tri_pos1 = tri->vertices[1]->position;
         auto tri_pos2 = tri->vertices[2]->position;

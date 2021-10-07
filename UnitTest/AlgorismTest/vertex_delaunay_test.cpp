@@ -61,9 +61,9 @@ static float global_angle_y = 0;
 static float global_angle_z = 0;
 static std::mt19937 generator(0);
 static std::uniform_real_distribution<> range_distribute(0.0, 1.0);
-static std::vector<VertexPtr> nodes;
-static SpherePtr sphere;
-static TetrahedraPtr tetrahedra;
+static std::vector<Geometry::VertexPtr> nodes;
+static Geometry::SpherePtr sphere;
+static Geometry::TetrahedraPtr tetrahedra;
 static Delaunay3DPtr delaunay_3d;
 
 double random(double a = 0.0, double b = 1.0) {
@@ -85,10 +85,10 @@ void VertexSphereTest() {
         double y = radius * sin(t1) * cos(t2);
         double z = radius * cos(t1);
         //nodes.push_back(VertexPtr(new Vertex(Eigen::Vector3d(x, y, z))));
-        nodes.push_back(VertexPtr(new Vertex(Eigen::Vector3d(random(-1,1), random(-1,1), random(-1,1)))));
+        nodes.push_back(Geometry::VertexPtr(new Geometry::Vertex(Eigen::Vector3d(random(-1,1), random(-1,1), random(-1,1)))));
     }
 
-    sphere = SpherePtr(new Sphere());
+    sphere = Geometry::SpherePtr(new Geometry::Sphere());
     sphere->CreateBoundingSphere(nodes);
 
     std::cout << "Sphere Center: " 
@@ -97,7 +97,7 @@ void VertexSphereTest() {
         << sphere->center[2] << std::endl;
     std::cout << "Sphere Radius: " << sphere->radius << std::endl;
 
-    tetrahedra = TetrahedraPtr(new Tetrahedra());
+    tetrahedra = Geometry::TetrahedraPtr(new Geometry::Tetrahedra());
     tetrahedra->CreateBoundingTetrahedra(
         sphere,
         Eigen::Vector3d(0,0,1),
@@ -295,7 +295,7 @@ int main(int argc, char** argv) {
             rst.DrawPoint3D(Eigen::Vector3f(node->position[0], node->position[1], node->position[2]));
         }
 
-        std::vector<TetrahedraPtr>& meshs = delaunay_3d->GetResultTetrahedras();
+        std::vector<Geometry::TetrahedraPtr>& meshs = delaunay_3d->GetResultTetrahedras();
 
         // for(TetrahedraPtr& mesh : meshs) {
         //     mesh->UpdateFaces();
@@ -319,10 +319,10 @@ int main(int argc, char** argv) {
             current = current % meshs.size();
             auto mesh = meshs[current];
             mesh->UpdateFaces();
-            std::array<TrianglePtr, 4>& faces = mesh->faces;
-            for(TrianglePtr& face : faces) {
-                std::array<EdgePtr, 3>& edges = face->edges;
-                for(EdgePtr& edge : edges) {
+            std::array<Geometry::TrianglePtr, 4>& faces = mesh->faces;
+            for(Geometry::TrianglePtr& face : faces) {
+                std::array<Geometry::EdgePtr, 3>& edges = face->edges;
+                for(Geometry::EdgePtr& edge : edges) {
                     rst.DrawLine3D(
                         Eigen::Vector3f(edge->start->position[0], edge->start->position[1], edge->start->position[2]), 
                         Eigen::Vector3f(edge->end->position[0], edge->end->position[1], edge->end->position[2]),
