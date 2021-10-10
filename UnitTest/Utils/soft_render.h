@@ -1,7 +1,6 @@
 #pragma once
+#include "Math/Parameter.h"
 #include <Eigen/Eigen>
-
-static constexpr double MY_PI = 3.1415926;
 
 Eigen::Matrix4f get_viewport_matrix(float width, float height);
 Eigen::Matrix4f get_view_matrix(Eigen::Vector3f eye_pos);

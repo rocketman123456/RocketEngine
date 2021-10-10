@@ -37,9 +37,9 @@ Eigen::Matrix4f get_model_matrix(float angle_x, float angle_y, float angle_z) {
     Eigen::Matrix4f rot_y = Eigen::Matrix4f::Zero();
     Eigen::Matrix4f rot_z = Eigen::Matrix4f::Zero();
 
-    float t1 = angle_x / 180.0 * MY_PI;
-    float t2 = angle_y / 180.0 * MY_PI;
-    float t3 = angle_z / 180.0 * MY_PI;
+    float t1 = angle_x / 180.0 * MATH_PI;
+    float t2 = angle_y / 180.0 * MATH_PI;
+    float t3 = angle_z / 180.0 * MATH_PI;
     rot_x <<
         1, 0, 0, 0,
         0, cos(t1), sin(t1), 0,
@@ -66,8 +66,8 @@ Eigen::Matrix4f get_model_matrix(float angle_y, float angle_z) {
     Eigen::Matrix4f rot_y = Eigen::Matrix4f::Zero();
     Eigen::Matrix4f rot_z = Eigen::Matrix4f::Zero();
 
-    float t1 = angle_y / 180.0 * MY_PI;
-    float t2 = angle_z / 180.0 * MY_PI;
+    float t1 = angle_y / 180.0 * MATH_PI;
+    float t2 = angle_z / 180.0 * MATH_PI;
     rot_y << 
         cos(t1), 0, -sin(t1), 0,
         0, 1, 0, 0,
@@ -87,7 +87,7 @@ Eigen::Matrix4f get_model_matrix(float angle_y, float angle_z) {
 Eigen::Matrix4f get_model_matrix(float rotation_angle) {
     Eigen::Matrix4f model = Eigen::Matrix4f::Identity();
 
-    float t = rotation_angle / 180.0 * MY_PI;
+    float t = rotation_angle / 180.0 * MATH_PI;
     model << 
         cos(t),-sin(t), 0, 0,
         sin(t), cos(t), 0, 0,
@@ -134,9 +134,9 @@ Eigen::Matrix4f get_perspective_matrix(float eye_fov, float aspect_ratio, float 
     Eigen::Matrix4f projection = Eigen::Matrix4f::Zero();
 
     const float zRange = (zFar - zNear);
-    const float tanHalfFOV = tanf((eye_fov / 2.0f / 180.0f * MY_PI));
+    const float tanHalfFOV = tanf((eye_fov / 2.0f / 180.0f * MATH_PI));
     const float A = zNear + zFar;
-    const float B = -zFar * zNear;
+    const float B =-zFar * zNear;
 
     // Eigen::Matrix4f perspect_to_ortho;
     // Eigen::Matrix4f ortho;
