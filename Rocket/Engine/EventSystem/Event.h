@@ -14,6 +14,8 @@
 #include <functional>
 #include <unordered_map>
 
+#include <Eigen/Eigen>
+
 namespace Rocket {
     // Forward Declariation
     struct Event;
@@ -27,16 +29,17 @@ namespace Rocket {
 
     // TODO : reflect event data
     // TODO : add event time stamp
-    struct Event {
-    public:
-        ALIGNED_OPERATOR_NEW;
+    struct alignas(16) Event {
     public:
         explicit Event(const std::string& name);
         explicit Event(const std::string& name, EventType type);
 		explicit Event(const std::string& name, EventDataPtr ptr, uint64_t size);
         explicit Event(const std::string& name, EventType type, EventDataPtr ptr, uint64_t size);
+
         Event(const Event& event) {
+#ifdef RK_DEBUG
             name_ = event.name_;
+#endif
             type_ = event.type_;
             size_ = event.size_;
             variable_ = new Variant[size_];
@@ -45,7 +48,9 @@ namespace Rocket {
             time_delay_ = event.time_delay_;
         }
         Event(Event&& event) {
+#ifdef RK_DEBUG
             name_ = event.name_;
+#endif
             type_ = event.type_;
             size_ = event.size_;
             variable_ = event.variable_;
@@ -69,7 +74,9 @@ namespace Rocket {
         std::string ToString();
 
         Event& operator = (const Event& other) {
+#ifdef RK_DEBUG
             name_ = other.name_;
+#endif
             type_ = other.type_;
             size_ = other.size_;
             variable_ = new Variant[size_];
@@ -79,7 +86,9 @@ namespace Rocket {
             return *this;
         }
         Event& operator = (Event&& other) {
+#ifdef RK_DEBUG
             name_ = other.name_;
+#endif
             type_ = other.type_;
             size_ = other.size_;
             variable_ = other.variable_;
@@ -92,12 +101,14 @@ namespace Rocket {
         // 1. update & check delay time, decide use event or not
         // 2. dispatch event to listener
         EventType type_;            //  8 bytes
-        uint64_t size_ = 0;          //  8 bytes
+        uint64_t size_ = 0;         //  8 bytes
         EventDataPtr variable_ = nullptr;   //  4 bytes
 		double time_stamp_ = 0.0f;  //  ms  4 bytes
         double time_delay_ = 0.0f;  //  ms  4 bytes
         bool handled_ = false;      //  1 byte
+#ifdef RK_DEBUG
         std::string name_;          //  event name
+#endif
 
         static ElapseTimer timer_s;
     };

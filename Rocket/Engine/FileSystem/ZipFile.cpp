@@ -3,26 +3,26 @@
 
 #include <exception>
 
-static int IsLargeFile(const char* filename) {
-    int largeFile = 0;
-    ZPOS64_T pos = 0;
-    FILE* pFile = fopen(filename, "rb");
+// static int IsLargeFile(const char* filename) {
+//     int largeFile = 0;
+//     ZPOS64_T pos = 0;
+//     FILE* pFile = fopen(filename, "rb");
 
-    if(pFile != NULL)
-    {
-        int n = fseeko(pFile, 0, SEEK_END);
+//     if(pFile != NULL)
+//     {
+//         int n = fseeko(pFile, 0, SEEK_END);
 
-        pos = ftello(pFile);
-        printf("File : %s is %lld bytes\n", filename, pos);
+//         pos = ftello(pFile);
+//         printf("File : %s is %lld bytes\n", filename, pos);
 
-        if(pos >= 0xffffffff)
-            largeFile = 1;
+//         if(pos >= 0xffffffff)
+//             largeFile = 1;
 
-        fclose(pFile);
-    }
+//         fclose(pFile);
+//     }
 
-    return largeFile;
-}
+//     return largeFile;
+// }
 
 static void Display64BitsSize(ZPOS64_T n, int size_char) {
     // to avoid compatibility problem , we do the conversion here
@@ -55,6 +55,13 @@ namespace Rocket {
         file_.file_path = path;
         file_.file_name = file_name;
         file_.full_name = path + file_name;
+
+        return Initialize(file_.full_name, mode_);
+    }
+
+    int32_t ZipFile::Initialize(const std::string& path, FileOperateMode mode) {
+        mode_ = mode;
+        file_.full_name = path;
 
         int32_t result = 0;
         if(mode_ == FileOperateMode::READ_BINARY)
@@ -234,7 +241,7 @@ namespace Rocket {
         zi.internal_fa = 0;
         zi.external_fa = 0;
 
-        int zip64 = IsLargeFile(path.c_str());
+        //int zip64 = IsLargeFile(path.c_str());
 
         // TODO : implement this write file function
         return 0;

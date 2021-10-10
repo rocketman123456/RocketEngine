@@ -6,11 +6,14 @@
 
 namespace Rocket {
     class OsFileAsync : _implements_ OsFileSync {
+    // public:
+    //     ALIGNED_OPERATOR_NEW;
     public:
         OsFileAsync() = default;
         virtual ~OsFileAsync() = default;
 
         virtual int32_t Initialize(const std::string& path, const std::string& file_name, FileOperateMode mode) final;
+        virtual int32_t Initialize(const std::string& path, FileOperateMode mode) final;
         virtual void Finalize() final;
         ////////////////////////////////////////////////////////////////////////
         // Asynchronous API

@@ -4,6 +4,6 @@
 namespace Rocket {
     _Interface_ Parser {
     public:
-        virtual void Parse() = 0;
+        virtual bool Parse() = 0;
     };
 }

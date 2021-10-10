@@ -10,6 +10,13 @@ namespace Rocket {
         file_.file_name = file_name;
         file_.full_name = path + file_name;
 
+        return Initialize(file_.full_name, mode_);
+    }
+
+    int32_t OsFileSync::Initialize(const std::string& path, FileOperateMode mode) {
+        mode_ = mode;
+        file_.full_name = path;
+
         switch(mode_) {
             case FileOperateMode::READ_BINARY: file_.file_pointer = (void*)fopen(file_.full_name.c_str(), "rb"); break;
             case FileOperateMode::WRITE_BINARY: file_.file_pointer = (void*)fopen(file_.full_name.c_str(), "wb"); break;

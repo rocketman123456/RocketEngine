@@ -9,11 +9,14 @@
 
 namespace Rocket {
     class OsFileSync : _implements_ OsFile {
+    // public:
+    //     ALIGNED_OPERATOR_NEW;
     public:
         OsFileSync() = default;
         virtual ~OsFileSync() = default;
 
         virtual int32_t Initialize(const std::string& path, const std::string& file_name, FileOperateMode mode);
+        virtual int32_t Initialize(const std::string& path, FileOperateMode mode);
         virtual void Finalize();
         ////////////////////////////////////////////////////////////////////////
         // Synchronous API
@@ -35,5 +38,5 @@ namespace Rocket {
         virtual std::size_t Tell(void) const;
     };
 
-    using OsFilePtr = std::unique_ptr<OsFileSync>;
+    using OsFileSyncPtr = std::unique_ptr<OsFileSync>;
 }

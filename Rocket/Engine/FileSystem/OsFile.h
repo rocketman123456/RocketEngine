@@ -3,12 +3,13 @@
 #include "FileSystem/FileBasic.h"
 #include "Memory/MemoryDefine.h"
 
+#include <string>
+
 namespace Rocket {
     _Interface_ OsFile {
     public:
-        ALIGNED_OPERATOR_NEW;
-    public:
         virtual int32_t Initialize(const std::string& path, const std::string& file_name, FileOperateMode mode) = 0;
+        virtual int32_t Initialize(const std::string& path, FileOperateMode mode) = 0;
         virtual void Finalize() = 0;
 
         inline FileOperateMode GetFileOperateMode() const { return mode_; }

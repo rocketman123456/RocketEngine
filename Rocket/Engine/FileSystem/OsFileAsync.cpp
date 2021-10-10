@@ -2,8 +2,11 @@
 
 namespace Rocket {
     int32_t OsFileAsync::Initialize(const std::string& path, const std::string& file_name, FileOperateMode mode) {
-        OsFileSync::Initialize(path, file_name, mode);
-        return 0;
+        return OsFileSync::Initialize(path, file_name, mode);
+    }
+
+    int32_t OsFileAsync::Initialize(const std::string& path, FileOperateMode mode) {
+        return OsFileSync::Initialize(path, mode);
     }
     
     void OsFileAsync::Finalize() {

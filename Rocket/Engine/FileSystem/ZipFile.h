@@ -24,11 +24,14 @@ namespace Rocket {
     using ZipContentsMap = std::unordered_map<std::string, ZipFileInfo>;
 
     class ZipFile : public OsFile {
+    // public:
+    //     ALIGNED_OPERATOR_NEW;
     public:
         ZipFile() = default;
         virtual ~ZipFile() = default;
 
         virtual int32_t Initialize(const std::string& path, const std::string& file_name, FileOperateMode mode) final;
+        virtual int32_t Initialize(const std::string& path, FileOperateMode mode) final;
         virtual void Finalize() final;
 
         int64_t GetNumFiles() const { return unzip_info_.number_entry; }

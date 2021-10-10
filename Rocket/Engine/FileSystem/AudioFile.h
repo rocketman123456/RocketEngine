@@ -17,6 +17,7 @@ namespace Rocket {
         virtual ~AudioFile() = default;
 
         virtual int32_t Initialize(const std::string& path, const std::string& file_name, FileOperateMode mode) final;
+        virtual int32_t Initialize(const std::string& path, FileOperateMode mode) final;
         virtual void Finalize() final;
 
         virtual std::size_t Read(AudioBuffer& buffer, std::size_t length) final;
