@@ -5,6 +5,7 @@
 
 #include <cstdint>
 #include <array>
+#include <memory>
 
 namespace Rocket {
     class SoftTriangle {
@@ -35,4 +36,6 @@ namespace Rocket {
         std::array<Eigen::Vector3f, 3> ToVector3() const;
         std::array<Eigen::Vector4f, 3> ToVector4() const;
     };
+
+    using SoftTrianglePtr = std::shared_ptr<SoftTriangle>;
 }

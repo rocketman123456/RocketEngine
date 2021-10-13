@@ -2,6 +2,7 @@
 #include "FileSystem/FileSystem.h"
 
 #include <fstream>
+#include <iostream>
 
 #define OBJL_CONSOLE_OUTPUT
 

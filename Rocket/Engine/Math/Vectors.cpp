@@ -18,7 +18,7 @@ namespace Rocket {
 
     namespace Algorithm {
         // A test to see if P1 is on the same side as P2 of a line segment ab
-        static bool SameSide(Vector3f p1, Vector3f p2, Vector3f a, Vector3f b) {
+        bool SameSide(Vector3f p1, Vector3f p2, Vector3f a, Vector3f b) {
             Vector3f cp1 = (b - a).cross(p1 - a);
             Vector3f cp2 = (b - a).cross(p2 - a);
 
@@ -29,7 +29,7 @@ namespace Rocket {
         }
 
         // Generate a cross produect normal for a triangle
-        static Vector3f GenTriNormal(Vector3f t1, Vector3f t2, Vector3f t3) {
+        Vector3f GenTriNormal(Vector3f t1, Vector3f t2, Vector3f t3) {
             Vector3f u = t2 - t1;
             Vector3f v = t3 - t1;
 
