@@ -29,6 +29,13 @@ namespace Rocket {
         return {id};
     }
 
+    col_buf_id SoftRasterizer::LoadNormals(const std::vector<Eigen::Vector3f>& normals) {
+        auto id = GetNextId();
+        nor_buf_.emplace(id, normals);
+        normal_id_ = id;
+        return {id};
+    }
+
     void SoftRasterizer::UnloadPositions(const pos_buf_id& positions) {
         pos_buf_.erase(pos_buf_.find(positions.pos_id));
     }
@@ -39,6 +46,10 @@ namespace Rocket {
 
     void SoftRasterizer::UnloadColors(const col_buf_id& colors) {
         col_buf_.erase(col_buf_.find(colors.col_id));
+    }
+
+    void SoftRasterizer::UnloadNormals(const col_buf_id& normals) {
+        nor_buf_.erase(nor_buf_.find(normals.col_id));
     }
 
     bool SoftRasterizer::InsideTriangle(float x, float y, const Eigen::Vector3f* _v) {
@@ -284,6 +295,10 @@ namespace Rocket {
         }
     }
 
+    void SoftRasterizer::Draw(std::vector<SoftTrianglePtr>& TriangleList) {
+        
+    }
+
     void SoftRasterizer::Draw(pos_buf_id pos_buffer, ind_buf_id ind_buffer, RenderPrimitive type) {
         if (type != RenderPrimitive::TRIANGLE) {
             throw std::runtime_error("Drawing primitives other than triangle is not implemented yet!");
@@ -491,11 +506,18 @@ namespace Rocket {
         }
     }
 
-    void SoftRasterizer::SetPixel(const Eigen::Vector3f &point, const Eigen::Vector3f &color) {
+    void SoftRasterizer::SetPixel(const Eigen::Vector3f& point, const Eigen::Vector3f& color) {
         //old index: auto ind = point.y() + point.x() * width;
-        if (point.x() < 0 || point.x() >= width_ || point.y() < 0 || point.y() >= height_)
+        if (point[0] < 0 || point[0] >= width_ || point[1] < 0 || point[1] >= height_)
             return;
-        auto ind = (height_ - 1 - point.y()) * width_ + point.x();
+        auto ind = (height_ - 1 - point[1]) * width_ + point[0];
+        frame_buf_[current_frame_][ind] = color / 255.0;
+    }
+
+    void SoftRasterizer::SetPixel(const Eigen::Vector2i& point, const Eigen::Vector3f& color) {
+        if (point[0] < 0 || point[0] >= width_ || point[1] < 0 || point[1] >= height_)
+            return;
+        auto ind = (height_ - 1 - point[1]) * width_ + point[0];
         frame_buf_[current_frame_][ind] = color / 255.0;
     }
 }

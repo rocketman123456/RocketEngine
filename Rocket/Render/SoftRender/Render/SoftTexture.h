@@ -3,6 +3,7 @@
 
 #include <algorithm>
 #include <vector>
+#include <memory>
 
 namespace Rocket {
     class SoftTexture : _implements_ RenderTexture {
@@ -17,4 +18,6 @@ namespace Rocket {
     private:
         std::vector<Eigen::Vector4f> image_data = {};
     };
+
+    using SoftTexturePtr = std::shared_ptr<SoftTexture>;
 }
