@@ -1,11 +1,11 @@
 #pragma once
 #include "Geometry/Vertex.h"
+#include "Geometry/Triangle.h"
 
 #include <Eigen/Eigen>
-#include <vector>
-#include <atomic>
-#include <list>
 #include <memory>
+#include <vector>
+#include <list>
 
 namespace Rocket {
     namespace Geometry {
@@ -19,7 +19,9 @@ namespace Rocket {
             ~Sphere() = default;
 
             void CreateBoundingSphere(const std::vector<VertexPtr>& vertices);
-            void GenerateMesh();
+            void GenerateUVMesh(int parallels, int meridians);
+            void GenerateIcosahedronMesh(int recursionLevel);
+            void GenerateStandardMesh();
 
         private:
             void CreateSphere(const std::vector<VertexPtr>& vertices, int32_t nsp);
@@ -42,6 +44,7 @@ namespace Rocket {
             Eigen::Vector3d center = Eigen::Vector3d::Zero();
             double radius = 0.0;
             bool is_active = false;
+            std::vector<TrianglePtr> mesh;
         };
 
         using SpherePtr = std::shared_ptr<Sphere>;

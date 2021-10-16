@@ -220,8 +220,8 @@ int main(int argc, char** argv) {
         if (key == GLFW_KEY_D && action == GLFW_PRESS) { global_angle_z -= 5.0; }
     });
 
-    rst.DisableWireFram();
-    //rst.EnableWireFram();
+    rst.DisableWireFrame();
+    //rst.EnableWireFrame();
     rst.EnableMsaa();
     rst.SetMsaaLevel(0);
     

@@ -16,6 +16,7 @@ namespace Rocket {
         public:
             Triangle();
             virtual ~Triangle() = default;
+            Triangle(VertexPtr v1, VertexPtr v2, VertexPtr v3);
             Triangle(const std::vector<VertexPtr>& vertices);
             Triangle(const std::vector<VertexPtr>& vertices, Tetrahedra* parent, Tetrahedra* neighbor);
 

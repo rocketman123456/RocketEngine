@@ -12,6 +12,13 @@ namespace Rocket {
             UpdateEdges();
         }
 
+        Triangle::Triangle(VertexPtr v1, VertexPtr v2, VertexPtr v3) {
+            vertices = {
+                v1, v2, v3
+            };
+            UpdateEdges();
+        }
+
         Triangle::Triangle(const std::vector<std::shared_ptr<Vertex>>& vertices_) : id(GenerateId()) {
             assert(vertices.size() >= 3);
 

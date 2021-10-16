@@ -48,8 +48,8 @@ namespace Rocket {
 
         inline void EnableMsaa() { msaa_ = true; }
         inline void DisableMsaa() { msaa_ = false; }
-        inline void EnableWireFram() { wireframe_ = true; }
-        inline void DisableWireFram() { wireframe_ = false; }
+        inline void EnableWireFrame() { wireframe_ = true; }
+        inline void DisableWireFrame() { wireframe_ = false; }
         inline void SetMsaaLevel(int32_t level = 0) { msaa_level_ = level; }
 
         //void SetVertexShader(std::function<Eigen::Vector3f(vertex_shader_payload)> vert_shader);
