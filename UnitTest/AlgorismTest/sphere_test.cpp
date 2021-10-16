@@ -206,8 +206,8 @@ int main(int argc, char** argv) {
     //rst.SetMsaaLevel(0);
 
     Geometry::Sphere sphere(Eigen::Vector3d::Zero(), 1.0);
-    //sphere.GenerateIcosahedronMesh(1);
-    sphere.GenerateUVMesh(10, 12);
+    sphere.GenerateIcosahedronMesh(2);
+    //sphere.GenerateUVMesh(10, 12);
     
     while(!window.GetShouldClose()) {
         window.Tick(10);

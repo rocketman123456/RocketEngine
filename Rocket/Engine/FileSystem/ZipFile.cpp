@@ -56,7 +56,7 @@ namespace Rocket {
         file_.file_name = file_name;
         file_.full_name = path + file_name;
 
-        return Initialize(file_.full_name, mode_);
+        return Initialize(file_.full_name.data(), mode_);
     }
 
     int32_t ZipFile::Initialize(const std::string& path, FileOperateMode mode) {
@@ -79,7 +79,7 @@ namespace Rocket {
 
     int32_t ZipFile::UnzipInit() {
         // Open File
-        file_.file_pointer = unzOpen64(file_.full_name.c_str());
+        file_.file_pointer = unzOpen64(file_.full_name.data());
         if(file_.file_pointer == nullptr) {
             RK_ERROR(File, "Open ZipFile {} Error", file_.full_name);
             throw std::runtime_error("Open ZipFile Error");
@@ -168,9 +168,9 @@ namespace Rocket {
     }
 
     int32_t ZipFile::ZipInit() {
-        file_.file_pointer = zipOpen64(file_.full_name.c_str(), APPEND_STATUS_ADDINZIP);
-        //file_.file_pointer = zipOpen64(file_.full_name.c_str(), APPEND_STATUS_CREATE);
-        //file_.file_pointer = zipOpen64(file_.full_name.c_str(), APPEND_STATUS_CREATEAFTER);
+        file_.file_pointer = zipOpen64(file_.full_name.data(), APPEND_STATUS_ADDINZIP);
+        //file_.file_pointer = zipOpen64(file_.full_name.data(), APPEND_STATUS_CREATE);
+        //file_.file_pointer = zipOpen64(file_.full_name.data(), APPEND_STATUS_CREATEAFTER);
         if(file_.file_pointer == nullptr) {
             RK_ERROR(File, "Open ZipFile {} Error", file_.full_name);
             throw std::runtime_error("Open ZipFile Error");

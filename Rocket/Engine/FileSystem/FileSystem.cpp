@@ -4,6 +4,50 @@
 #include <exception>
 
 namespace Rocket {
+    void FileSystem::LoadSync(const std::string& path, const std::string& file_name, FileOperateMode mode, FileBuffer& buffer) {
+        auto file = FileSystem::OpenSync(path, file_name, mode);
+        file->ReadAll(buffer);
+        FileSystem::CloseSync(std::move(file));
+    }
+    
+    // void FileSystem::LoadAsync(const std::string& path, const std::string& file_name, FileOperateMode mode, FileBuffer& buffer) {
+    // 
+    // }
+    
+    void FileSystem::LoadZip(const std::string& path, const std::string& file_name, FileOperateMode mode, FileBuffer& buffer) {
+        auto file = FileSystem::OpenZip(path, file_name, mode);
+        // TODO 
+        FileSystem::CloseZip(std::move(file));
+    }
+    
+    void FileSystem::LoadAudio(const std::string& path, const std::string& file_name, FileOperateMode mode, FileBuffer& buffer) {
+        auto file = FileSystem::OpenAudio(path, file_name, mode);
+        file->ReadAll(buffer);
+        FileSystem::CloseAudio(std::move(file));
+    }
+
+    void FileSystem::LoadSync(const std::string& path, FileOperateMode mode, FileBuffer& buffer) {
+        auto file = FileSystem::OpenSync(path, mode);
+        file->ReadAll(buffer);
+        FileSystem::CloseSync(std::move(file));
+    }
+    
+    // void FileSystem::LoadAsync(const std::string& path, FileOperateMode mode) {
+    //
+    // }
+    
+    void FileSystem::LoadZip(const std::string& path, FileOperateMode mode, FileBuffer& buffer) {
+        auto file = FileSystem::OpenZip(path, mode);
+        // TODO
+        FileSystem::CloseZip(std::move(file));
+    }
+    
+    void FileSystem::LoadAudio(const std::string& path, FileOperateMode mode, FileBuffer& buffer) {
+        auto file = FileSystem::OpenAudio(path, mode);
+        file->ReadAll(buffer);
+        FileSystem::CloseAudio(std::move(file));
+    }
+
     OsFileSyncPtr FileSystem::OpenSync(const std::string& path, FileOperateMode mode) {
         OsFileSyncPtr file(new OsFileSync);
         int32_t result = file->Initialize(path, mode);

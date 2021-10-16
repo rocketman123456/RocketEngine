@@ -40,7 +40,7 @@ namespace Rocket {
         file_.file_name = file_name;
         file_.full_name = path + file_name;
 
-        return Initialize(file_.full_name, mode_);
+        return Initialize(file_.full_name.data(), mode_);
     }
 
     int32_t AudioFile::Initialize(const std::string& path, FileOperateMode mode) {
@@ -51,13 +51,13 @@ namespace Rocket {
         SF_INFO* file_info = new SF_INFO;
         switch(mode) {
             case FileOperateMode::READ_BINARY: 
-                file = sf_open(file_.full_name.c_str(), SFM_READ, file_info);
+                file = sf_open(file_.full_name.data(), SFM_READ, file_info);
                 break;
             case FileOperateMode::WRITE_BINARY: 
-                file = sf_open(file_.full_name.c_str(), SFM_WRITE, file_info);
+                file = sf_open(file_.full_name.data(), SFM_WRITE, file_info);
                 break;
             case FileOperateMode::READWRITE_BINARY: 
-                file = sf_open(file_.full_name.c_str(), SFM_RDWR, file_info);
+                file = sf_open(file_.full_name.data(), SFM_RDWR, file_info);
                 break;
         }
 
@@ -82,7 +82,7 @@ namespace Rocket {
                 format = AL_FORMAT_BFORMAT3D_16;
         }
 
-        RK_TRACE(Audio, "Opened file '{}'", file_.full_name.c_str());
+        RK_TRACE(Audio, "Opened file '{}'", file_.full_name.data());
         RK_TRACE(Audio, "    Sample rate : {}", file_info->samplerate);
         RK_TRACE(Audio, "    Channels    : {}", file_info->channels);
         RK_TRACE(Audio, "    Format      : {}", file_info->format);

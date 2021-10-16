@@ -30,6 +30,7 @@ target("RocketEngine")
         "openal-soft", "libsndfile",
         "nlohmann_json",
         "tinygltf",
+        "stb",
         {public = true}
     )
     add_options("console_log")

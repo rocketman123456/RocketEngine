@@ -6,7 +6,9 @@
 #include <atomic>
 #include <cstdint>
 #include <string>
+#include <string_view>
 #include <cstring>    // std::memcpy
+#include <memory>
 
 namespace Rocket {
     enum class FileOperateMode : int8_t {
@@ -66,13 +68,15 @@ namespace Rocket {
         }
     };
 
+    using FileBufferPtr = std::shared_ptr<FileBuffer>;
+
     struct FileHandle {
         void* file_pointer = nullptr;
         void* extra_file_info = nullptr;
         int64_t total_size;
-        std::string file_path;
-        std::string file_name;
-        std::string full_name;
+        std::string_view file_path;
+        std::string_view file_name;
+        std::string_view full_name;
     };
 
     _Interface_ FileOperation {

@@ -16,25 +16,13 @@ int main() {
 
     {
         std::string name = "_root_dir_";
-        auto file = FileSystem::OpenSync(root, name, FileOperateMode::READ_TEXT);
-        //auto file = FileSystem::OpenSync(root, name, FileOperateMode::READ_TEXT);
-        auto file_as = FileSystem::OpenAsync(root, name, FileOperateMode::READ_TEXT);
         FileBuffer buffer;
-        file->ReadAll(buffer);
-
         FileBuffer buffer_as;
-        auto result = file_as->ReadAllAsync(buffer_as);
+        FileSystem::LoadSync(root, name, FileOperateMode::READ_TEXT, buffer);
+        //auto file = FileSystem::LoadSync(root, name, FileOperateMode::READ_TEXT);
 
         std::cout << "Read Data[0]: " << ((char*)buffer.buffer)[0] << std::endl;
         std::cout << "Read Data: " << (char*)buffer.buffer << std::endl;
-
-        //result.wait();
-        auto file_size = result.get();
-        std::cout << "Read Async Size: " << file_size << std::endl;
-        std::cout << "Read Async Data: " << (char*)buffer_as.buffer << std::endl;
-
-        FileSystem::CloseSync(std::move(file));
-        FileSystem::CloseSync(std::move(file_as));
     }
 
     {

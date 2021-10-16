@@ -40,7 +40,7 @@ namespace Rocket {
     }
 
     void AudioManager::InsertBuffer(AudioFile* file) {
-        std::string name = file->GetFileHandle()->file_name;
+        std::string name = file->GetFileHandle()->file_name.data();
         auto hash_name = hash(name);
 
         auto result = buffers_.find(hash_name);

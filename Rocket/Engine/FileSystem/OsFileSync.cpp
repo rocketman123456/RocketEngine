@@ -10,7 +10,7 @@ namespace Rocket {
         file_.file_name = file_name;
         file_.full_name = path + file_name;
 
-        return Initialize(file_.full_name, mode_);
+        return Initialize(file_.full_name.data(), mode_);
     }
 
     int32_t OsFileSync::Initialize(const std::string& path, FileOperateMode mode) {
@@ -18,10 +18,10 @@ namespace Rocket {
         file_.full_name = path;
 
         switch(mode_) {
-            case FileOperateMode::READ_BINARY: file_.file_pointer = (void*)fopen(file_.full_name.c_str(), "rb"); break;
-            case FileOperateMode::WRITE_BINARY: file_.file_pointer = (void*)fopen(file_.full_name.c_str(), "wb"); break;
-            case FileOperateMode::READ_TEXT: file_.file_pointer = (void*)fopen(file_.full_name.c_str(), "r"); break;
-            case FileOperateMode::WRITE_TEXT: file_.file_pointer = (void*)fopen(file_.full_name.c_str(), "w"); break;
+            case FileOperateMode::READ_BINARY: file_.file_pointer = (void*)fopen(file_.full_name.data(), "rb"); break;
+            case FileOperateMode::WRITE_BINARY: file_.file_pointer = (void*)fopen(file_.full_name.data(), "wb"); break;
+            case FileOperateMode::READ_TEXT: file_.file_pointer = (void*)fopen(file_.full_name.data(), "r"); break;
+            case FileOperateMode::WRITE_TEXT: file_.file_pointer = (void*)fopen(file_.full_name.data(), "w"); break;
             default: break;
         };
 

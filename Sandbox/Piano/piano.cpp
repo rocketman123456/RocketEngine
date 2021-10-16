@@ -104,9 +104,8 @@ int main() {
         }
     }
 
-    auto file_select = FileSystem::OpenSync(root, "/Asset/Config/music_name.txt", FileOperateMode::READ_TEXT);
     FileBuffer buffer;
-    file_select->ReadAll(buffer);
+    FileSystem::LoadSync(root, "/Asset/Config/music_name.txt", FileOperateMode::READ_TEXT, buffer);
     std::string music_name = (char*)buffer.buffer;
 
     JsonParserPtr parser = JsonParserPtr(new JsonParser);

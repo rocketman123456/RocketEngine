@@ -10,6 +10,16 @@ namespace Rocket {
     // TODO : Finish Async File Operation
     class FileSystem {
     public:
+        static void LoadSync(const std::string& path, const std::string& file_name, FileOperateMode mode, FileBuffer& buffer);
+        //static void LoadAsync(const std::string& path, const std::string& file_name, FileOperateMode mode, FileBuffer& buffer);
+        static void LoadZip(const std::string& path, const std::string& file_name, FileOperateMode mode, FileBuffer& buffer);
+        static void LoadAudio(const std::string& path, const std::string& file_name, FileOperateMode mode, FileBuffer& buffer);
+
+        static void LoadSync(const std::string& path, FileOperateMode mode, FileBuffer& buffer);
+        //static void LoadAsync(const std::string& path, FileOperateMode mode, FileBuffer& buffer);
+        static void LoadZip(const std::string& path, FileOperateMode mode, FileBuffer& buffer);
+        static void LoadAudio(const std::string& path, FileOperateMode mode, FileBuffer& buffer);
+
         static OsFileSyncPtr OpenSync(const std::string& path, const std::string& file_name, FileOperateMode mode);
         static OsFileAsyncPtr OpenAsync(const std::string& path, const std::string& file_name, FileOperateMode mode);
         static ZipFilePtr OpenZip(const std::string& path, const std::string& file_name, FileOperateMode mode);
