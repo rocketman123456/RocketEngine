@@ -74,9 +74,9 @@ namespace Rocket {
         void* file_pointer = nullptr;
         void* extra_file_info = nullptr;
         int64_t total_size;
-        std::string_view file_path;
-        std::string_view file_name;
-        std::string_view full_name;
+        std::string file_path;
+        std::string file_name;
+        std::string full_name;
     };
 
     _Interface_ FileOperation {

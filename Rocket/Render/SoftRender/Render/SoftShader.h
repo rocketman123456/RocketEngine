@@ -29,9 +29,9 @@ namespace Rocket {
         std::unordered_map<int32_t, std::vector<Eigen::Vector3i>> ind_buf_;
     };
 
-    struct fragment_shader_payload {
-        fragment_shader_payload() = default;
-        fragment_shader_payload(const Eigen::Vector3f& col, const Eigen::Vector3f& nor,const Eigen::Vector2f& tc, SoftTexture* tex) :
+    struct FragmentShaderPayload {
+        FragmentShaderPayload() = default;
+        FragmentShaderPayload(const Eigen::Vector3f& col, const Eigen::Vector3f& nor,const Eigen::Vector2f& tc, SoftTexture* tex) :
             color(col), normal(nor), tex_coords(tc), texture(tex) {}
 
 
@@ -39,10 +39,10 @@ namespace Rocket {
         Eigen::Vector3f color = Eigen::Vector3f::Zero();
         Eigen::Vector3f normal = Eigen::Vector3f::Zero();
         Eigen::Vector2f tex_coords = Eigen::Vector2f::Zero();
-        SoftTexture* texture = nullptr;
+        SoftTexturePtr texture = nullptr;
     };
 
-    struct vertex_shader_payload {
+    struct VertexShaderPayload {
         Eigen::Vector3f position = Eigen::Vector3f::Zero();
     };
 

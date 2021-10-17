@@ -18,10 +18,10 @@ namespace Rocket {
             Sphere(const std::vector<VertexPtr>& vertices);
             ~Sphere() = default;
 
+            // TODO : https://www.redblobgames.com/x/1938-square-tiling-of-sphere/
             void CreateBoundingSphere(const std::vector<VertexPtr>& vertices);
             void GenerateUVMesh(int parallels, int meridians);
             void GenerateIcosahedronMesh(int recursionLevel);
-            void GenerateStandardMesh();
 
         private:
             void CreateSphere(const std::vector<VertexPtr>& vertices, int32_t nsp);

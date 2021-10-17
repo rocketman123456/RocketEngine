@@ -17,7 +17,7 @@ namespace Rocket {
         Eigen::Vector2f tex_coords[3]; // texture u,v
         Eigen::Vector3f normal[3];     // normal vector for each vertex
 
-        SoftTexture* texture = nullptr;
+        SoftTexturePtr texture = nullptr;
 
     public:
         SoftTriangle();

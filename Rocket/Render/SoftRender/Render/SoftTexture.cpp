@@ -1,6 +1,17 @@
 #include "Render/SoftTexture.h"
+#include "Parser/ImageParser.h"
 
 namespace Rocket {
+    SoftTexture::SoftTexture(const std::string& path, const std::string& name) {
+        ImageParser parser(path, name);
+        parser.Parse(image_data);
+    }
+
+    SoftTexture::SoftTexture(const std::string& full_path) {
+        ImageParser parser(full_path);
+        parser.Parse(image_data);
+    }
+
     Eigen::Vector4f SoftTexture::GetColorRGBA(float u, float v) {
         u = std::clamp(u, 0.0f, 1.0f);
         v = std::clamp(v, 0.0f, 1.0f);

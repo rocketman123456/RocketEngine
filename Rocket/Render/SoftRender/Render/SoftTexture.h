@@ -8,6 +8,8 @@
 namespace Rocket {
     class SoftTexture : _implements_ RenderTexture {
     public:
+        SoftTexture(const std::string& path, const std::string& name);
+        SoftTexture(const std::string& full_path);
         virtual ~SoftTexture() = default;
 
         virtual Eigen::Vector4f GetColorRGBA(float u, float v) final;

@@ -14,11 +14,11 @@ namespace Rocket {
     // 
     // }
     
-    void FileSystem::LoadZip(const std::string& path, const std::string& file_name, FileOperateMode mode, FileBuffer& buffer) {
-        auto file = FileSystem::OpenZip(path, file_name, mode);
-        // TODO 
-        FileSystem::CloseZip(std::move(file));
-    }
+    // void FileSystem::LoadZip(const std::string& path, const std::string& file_name, FileOperateMode mode, FileBuffer& buffer) {
+    //     auto file = FileSystem::OpenZip(path, file_name, mode);
+    //     // TODO 
+    //     FileSystem::CloseZip(std::move(file));
+    // }
     
     void FileSystem::LoadAudio(const std::string& path, const std::string& file_name, FileOperateMode mode, FileBuffer& buffer) {
         auto file = FileSystem::OpenAudio(path, file_name, mode);
@@ -36,11 +36,11 @@ namespace Rocket {
     //
     // }
     
-    void FileSystem::LoadZip(const std::string& path, FileOperateMode mode, FileBuffer& buffer) {
-        auto file = FileSystem::OpenZip(path, mode);
-        // TODO
-        FileSystem::CloseZip(std::move(file));
-    }
+    // void FileSystem::LoadZip(const std::string& path, FileOperateMode mode, FileBuffer& buffer) {
+    //     auto file = FileSystem::OpenZip(path, mode);
+    //     // TODO
+    //     FileSystem::CloseZip(std::move(file));
+    // }
     
     void FileSystem::LoadAudio(const std::string& path, FileOperateMode mode, FileBuffer& buffer) {
         auto file = FileSystem::OpenAudio(path, mode);

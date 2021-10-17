@@ -257,5 +257,5 @@ namespace Rocket {
             }
         }
         
-    }// namespace Geometry
-}// namespace Rocket
+    } // namespace Geometry
+} // namespace Rocket

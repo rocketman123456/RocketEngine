@@ -1,11 +1,10 @@
 #pragma once
 
-#include <stb_image.h>
-#include <stb_image_resize.h>
-#include <stb_image_write.h>
+#include <Eigen/Eigen>
 
 #include <string>
 #include <string_view>
+#include <vector>
 
 namespace Rocket {
     class ImageParser {
@@ -16,10 +15,12 @@ namespace Rocket {
         ~ImageParser() = default;
 
         void Parse();
+        void Parse(std::vector<Eigen::Vector4f>& data);
+        void Parse(std::vector<Eigen::Vector3f>& data);
 
     private:
-        std::string_view path_;
-        std::string_view name_;
-        std::string_view full_path_;
+        std::string path_;
+        std::string name_;
+        std::string full_path_;
     };
 }

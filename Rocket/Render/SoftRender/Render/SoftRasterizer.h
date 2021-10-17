@@ -1,6 +1,7 @@
 #pragma once
 #include "Render/RenderInfo.h"
 #include "Render/SoftTriangle.h"
+#include "Render/SoftShader.h"
 
 #include <Eigen/Eigen>
 
@@ -52,8 +53,8 @@ namespace Rocket {
         inline void DisableWireFrame() { wireframe_ = false; }
         inline void SetMsaaLevel(int32_t level = 0) { msaa_level_ = level; }
 
-        //void SetVertexShader(std::function<Eigen::Vector3f(vertex_shader_payload)> vert_shader);
-        //void SetFragmentShader(std::function<Eigen::Vector3f(fragment_shader_payload)> frag_shader);
+        void SetVertexShader(std::function<Eigen::Vector3f(VertexShaderPayload)> vert_shader);
+        void SetFragmentShader(std::function<Eigen::Vector3f(FragmentShaderPayload)> frag_shader);
 
         void SetPixel(const Eigen::Vector3f& point, const Eigen::Vector3f& color);
         void SetPixel(const Eigen::Vector2i& point, const Eigen::Vector3f& color);
@@ -112,11 +113,12 @@ namespace Rocket {
         int32_t last_frame_ = 0;
         // For Multi-Thread Get Framebuffer
         std::atomic<bool> has_finish_ = false;
-
+        
+        SoftTexturePtr texture;
         //std::optional<Texture> texture;
 
-        //std::function<Eigen::Vector3f(fragment_shader_payload)> fragment_shader;
-        //std::function<Eigen::Vector3f(vertex_shader_payload)> vertex_shader;
+        std::function<Eigen::Vector3f(FragmentShaderPayload)> fragment_shader;
+        std::function<Eigen::Vector3f(VertexShaderPayload)> vertex_shader;
 
         std::vector<Eigen::Vector3f> frame_buf_[FRAME_COUNT];
         std::vector<float> depth_buf_[FRAME_COUNT];
