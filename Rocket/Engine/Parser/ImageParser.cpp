@@ -1,4 +1,5 @@
 #include "Parser/ImageParser.h"
+#include "Memory/MemoryCheck.h"
 #include "FileSystem/FileSystem.h"
 #include "Log/Log.h"
 
@@ -20,6 +21,7 @@ namespace Rocket {
         int32_t x, y, ch;
         float* data_ = stbi_loadf_from_memory((const unsigned char *)buffer.buffer, buffer.size, &x, &y, &ch, 0);
         RK_INFO(File, "Load Image {}:{},{},{}", full_path_, x, y, ch);
+        stbi_image_free(data_);
     }
 
     void ImageParser::Parse(std::vector<Eigen::Vector4f>& data) {
@@ -45,6 +47,7 @@ namespace Rocket {
                 }
             }
         }
+        stbi_image_free(data_);
     }
 
     void ImageParser::Parse(std::vector<Eigen::Vector3f>& data) {
@@ -70,5 +73,6 @@ namespace Rocket {
                 }
             }
         }
+        stbi_image_free(data_);
     }
 }

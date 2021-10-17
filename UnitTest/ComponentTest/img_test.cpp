@@ -1,3 +1,4 @@
+#include "Memory/MemoryCheck.h"
 #include "Config/ConfigSetting.h"
 #include "Parser/ImageParser.h"
 #include "Utils/FindRootDir.h"
