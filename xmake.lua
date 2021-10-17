@@ -36,9 +36,9 @@ add_requires("bullet3 3.09", {system = false, shared = false, debug = true, conf
 add_requires("tinygltf v2.5.0", {system = false, shared = false, debug = true, configs = {cxflags = "-fPIC"}})
 add_requires("gsl v3.1.0", {system = false, shared = false, debug = true, configs = {cxflags = "-fPIC"}})
 
-if is_plat("macosx", "linux", "windows") then
-    add_requires("libtorch v1.8.1", {system = false, shared = false, debug = true, configs = {cxflags = "-fPIC"}})
-end
+-- if is_plat("macosx", "linux", "windows") then
+--     add_requires("libtorch v1.8.1", {system = false, shared = false, debug = true, configs = {cxflags = "-fPIC"}})
+-- end
 
 -- if is_plat("linux", "macosx", "windows") then
 --     add_requires("glfw 3.3.4", {system = false, shared = false, debug = true, glfw_include = "none", configs = {cxflags = "-fPIC"}})
