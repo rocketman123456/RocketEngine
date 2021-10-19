@@ -18,7 +18,7 @@ namespace Rocket {
         [[nodiscard]] virtual Eigen::Vector4f GetPixelRGBA(int32_t x, int32_t y) = 0;
         [[nodiscard]] virtual Eigen::Vector3f GetPixelRGB(int32_t x, int32_t y) = 0;
 
-        virtual void BilinearSample() = 0;
-        virtual void TrilinearSample() = 0;
+        //virtual void BilinearSample() = 0;
+        //virtual void TrilinearSample() = 0;
     };
 }

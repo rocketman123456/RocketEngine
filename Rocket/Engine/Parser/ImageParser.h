@@ -14,6 +14,9 @@ namespace Rocket {
         ImageParser(const std::string& path, const std::string& name) : path_(path), name_(name), full_path_(path + name) {}
         ~ImageParser() = default;
 
+        inline void Reset(const std::string& full) { full_path_ = full; }
+        inline void Reset(const std::string& path, const std::string& name) { path_ = path; name_ = name; full_path_ = path + name; }
+
         void Parse();
         void Parse(std::vector<Eigen::Vector4f>& data);
         void Parse(std::vector<Eigen::Vector3f>& data);

@@ -2,9 +2,9 @@
 
 namespace Rocket {
     SoftTriangle::SoftTriangle() {
-        v[0] << 0.0, 0.0, 0.0;
-        v[1] << 0.0, 0.0, 0.0;
-        v[2] << 0.0, 0.0, 0.0;
+        v[0] << 0.0, 0.0, 0.0, 1.0;
+        v[1] << 0.0, 0.0, 0.0, 1.0;
+        v[2] << 0.0, 0.0, 0.0, 1.0;
 
         color[0] << 0.0, 0.0, 0.0;
         color[1] << 0.0, 0.0, 0.0;
@@ -19,9 +19,9 @@ namespace Rocket {
         auto tri_pos0 = tri->vertices[0]->position;
         auto tri_pos1 = tri->vertices[1]->position;
         auto tri_pos2 = tri->vertices[2]->position;
-        v[0] = Eigen::Vector3f(tri_pos0[0], tri_pos0[1], tri_pos0[2]);
-        v[1] = Eigen::Vector3f(tri_pos1[0], tri_pos1[1], tri_pos1[2]);
-        v[2] = Eigen::Vector3f(tri_pos2[0], tri_pos2[1], tri_pos2[2]);
+        v[0] = Eigen::Vector4f(tri_pos0[0], tri_pos0[1], tri_pos0[2], 1.0f);
+        v[1] = Eigen::Vector4f(tri_pos1[0], tri_pos1[1], tri_pos1[2], 1.0f);
+        v[2] = Eigen::Vector4f(tri_pos2[0], tri_pos2[1], tri_pos2[2], 1.0f);
 
         color[0] << 0.0, 0.0, 0.0;
         color[1] << 0.0, 0.0, 0.0;
@@ -41,8 +41,17 @@ namespace Rocket {
         return;
     }
 
-    void SoftTriangle::SetTexCoord(int32_t ind, float s, float t) {
-        tex_coords[ind] = Eigen::Vector2f(s, t);
+    void SoftTriangle::SetNormals(const std::array<Eigen::Vector3f, 3>& normals) {
+        normal[0] = normals[0];
+        normal[1] = normals[1];
+        normal[2] = normals[2];
+    }
+
+    void SoftTriangle::SetColors(const std::array<Eigen::Vector3f, 3>& colors) {
+        auto first_color = colors[0];
+        SetColor(0, colors[0][0], colors[0][1], colors[0][2]);
+        SetColor(1, colors[1][0], colors[1][1], colors[1][2]);
+        SetColor(2, colors[2][0], colors[2][1], colors[2][2]);
     }
 
     std::array<Eigen::Vector3f, 3> SoftTriangle::ToVector3() const {

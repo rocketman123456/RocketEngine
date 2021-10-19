@@ -21,6 +21,7 @@ namespace Rocket {
         int32_t x, y, ch;
         float* data_ = stbi_loadf_from_memory((const unsigned char *)buffer.buffer, buffer.size, &x, &y, &ch, 0);
         RK_INFO(File, "Load Image {}:{},{},{}", full_path_, x, y, ch);
+        // Do Nothing
         stbi_image_free(data_);
     }
 
@@ -33,6 +34,7 @@ namespace Rocket {
         RK_INFO(File, "Load Image {}:{},{},{}", full_path_, x, y, ch);
         data.clear();
         data.resize(x * y);
+        // Copy Data
         for(int i = 0; i < x; ++i) {
             for(int j = 0; j < y; ++j) {
                 if(ch == 3) {
@@ -59,6 +61,7 @@ namespace Rocket {
         RK_INFO(File, "Load Image {}:{},{},{}", full_path_, x, y, ch);
         data.clear();
         data.resize(x * y);
+        // Copy Data
         for(int i = 0; i < x; ++i) {
             for(int j = 0; j < y; ++j) {
                 if(ch == 3) {

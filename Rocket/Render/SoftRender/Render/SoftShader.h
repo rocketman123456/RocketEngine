@@ -31,15 +31,14 @@ namespace Rocket {
 
     struct FragmentShaderPayload {
         FragmentShaderPayload() = default;
-        FragmentShaderPayload(const Eigen::Vector3f& col, const Eigen::Vector3f& nor,const Eigen::Vector2f& tc, SoftTexture* tex) :
+        FragmentShaderPayload(const Eigen::Vector3f& col, const Eigen::Vector3f& nor,const Eigen::Vector2f& tc, SoftTexturePtr tex) :
             color(col), normal(nor), tex_coords(tc), texture(tex) {}
-
 
         Eigen::Vector3f view_pos = Eigen::Vector3f::Zero();
         Eigen::Vector3f color = Eigen::Vector3f::Zero();
         Eigen::Vector3f normal = Eigen::Vector3f::Zero();
         Eigen::Vector2f tex_coords = Eigen::Vector2f::Zero();
-        SoftTexturePtr texture = nullptr;
+        SoftTexturePtr texture;
     };
 
     struct VertexShaderPayload {
@@ -47,4 +46,6 @@ namespace Rocket {
     };
 
     using SoftShaderPtr = std::unique_ptr<SoftShader>;
+    using VertexShaderFunc = std::function<Eigen::Vector3f(VertexShaderPayload)>;
+    using FragmentShaderFunc = std::function<Eigen::Vector3f(FragmentShaderPayload)>;
 }

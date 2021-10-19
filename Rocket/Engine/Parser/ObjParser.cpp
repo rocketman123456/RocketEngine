@@ -4,7 +4,7 @@
 #include <fstream>
 #include <iostream>
 
-#define OBJL_CONSOLE_OUTPUT
+//#define OBJL_CONSOLE_OUTPUT
 
 namespace Rocket {
     int32_t ObjParser::Initialize() {
@@ -16,11 +16,9 @@ namespace Rocket {
         loaded_indices.clear();
         loaded_materials.clear();
 
-        auto file = FileSystem::OpenSync(path_, name_, FileOperateMode::READ_TEXT);
         FileBuffer buffer;
-        file->ReadAll(buffer);
+        FileSystem::LoadSync(path_, name_, FileOperateMode::READ_TEXT, buffer);
         content_ = std::string((char*)buffer.buffer);
-        FileSystem::CloseSync(std::move(file));
 
         return 0;
     }
@@ -252,6 +250,10 @@ namespace Rocket {
                 }
             }
         }
+
+        std::cout << "Mesh Size: " << loaded_meshes.size() << std::endl;
+        std::cout << "Vertices Size: " << loaded_vertices.size() << std::endl;
+        std::cout << "Indices Size: " << loaded_indices.size() << std::endl;
 
         if (loaded_meshes.empty() && loaded_vertices.empty() && loaded_indices.empty())
             return false;

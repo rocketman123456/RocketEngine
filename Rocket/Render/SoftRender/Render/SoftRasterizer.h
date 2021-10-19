@@ -53,11 +53,13 @@ namespace Rocket {
         inline void DisableWireFrame() { wireframe_ = false; }
         inline void SetMsaaLevel(int32_t level = 0) { msaa_level_ = level; }
 
-        void SetVertexShader(std::function<Eigen::Vector3f(VertexShaderPayload)> vert_shader);
-        void SetFragmentShader(std::function<Eigen::Vector3f(FragmentShaderPayload)> frag_shader);
+        inline void SetVertexShader(VertexShaderFunc vert_shader) { vertex_shader_ = vert_shader; }
+        inline void SetFragmentShader(FragmentShaderFunc frag_shader) { fragment_shader_ = frag_shader; }
 
         void SetPixel(const Eigen::Vector3f& point, const Eigen::Vector3f& color);
         void SetPixel(const Eigen::Vector2i& point, const Eigen::Vector3f& color);
+
+        void SetTexture(SoftTexturePtr tex) { texture = tex; }
 
         void NextFrame();
         void Clear(BufferType buff);
@@ -84,6 +86,7 @@ namespace Rocket {
     private:
         void RasterizeWireframe(const SoftTriangle& t);
         void RasterizeTriangle(const SoftTriangle& t);
+        void RasterizeTriangleWithShader(const SoftTriangle& t, const std::array<Eigen::Vector3f, 3>& view_pos);
 
         void DrawLine(const Eigen::Vector3f& begin, const Eigen::Vector3f& end);
         void DrawLine(const Eigen::Vector3f& begin, const Eigen::Vector3f& end, const Eigen::Vector3f& color_begin, const Eigen::Vector3f& color_end);
@@ -91,11 +94,14 @@ namespace Rocket {
         // Using Cross-Product Count to Check
         // Must Input 3 vector array
         bool InsideTriangle(float x, float y, const Eigen::Vector3f* _v);
+        bool InsideTriangle(float x, float y, const Eigen::Vector4f* _v);
         std::tuple<float, float, float> ComputeBarycentric2D(float x, float y, const Eigen::Vector3f* v);
+        std::tuple<float, float, float> ComputeBarycentric2D(float x, float y, const Eigen::Vector4f* v);
 
         inline void CalculateMVP() { mvp_ = projection_ * view_ * model_; }
         inline int32_t GetNextId() { return next_id_++; }
-        inline int32_t GetIndex(int32_t x, int32_t y) { return (height_-1-y)*width_ + x; }
+        inline int32_t GetIndex(int32_t x, int32_t y) { return (height_-y)*width_ + x; }
+
     private:
         Eigen::Matrix4f model_;
         Eigen::Matrix4f view_;
@@ -117,8 +123,8 @@ namespace Rocket {
         SoftTexturePtr texture;
         //std::optional<Texture> texture;
 
-        std::function<Eigen::Vector3f(FragmentShaderPayload)> fragment_shader;
-        std::function<Eigen::Vector3f(VertexShaderPayload)> vertex_shader;
+        FragmentShaderFunc fragment_shader_;
+        VertexShaderFunc vertex_shader_;
 
         std::vector<Eigen::Vector3f> frame_buf_[FRAME_COUNT];
         std::vector<float> depth_buf_[FRAME_COUNT];

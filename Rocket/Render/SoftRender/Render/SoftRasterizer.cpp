@@ -1,5 +1,6 @@
 #include "Render/SoftRasterizer.h"
 #include "Math/Parameter.h"
+#include "Math/ComonMath.h"
 #include "Log/Log.h"
 
 #include <cfloat>
@@ -7,8 +8,15 @@
 //#include <iostream>
 
 namespace Rocket {
-    static auto to_vec4(const Eigen::Vector3f &v3, float w = 1.0f) {
+    static Eigen::Vector4f to_vec4(const Eigen::Vector3f &v3, float w = 1.0f) {
         return Eigen::Vector4f(v3.x(), v3.y(), v3.z(), w);
+    }
+
+    SoftRasterizer::SoftRasterizer(int w, int h) : width_(w), height_(h) {
+        for(int i = 0; i < FRAME_COUNT; ++i) {
+            frame_buf_[i].resize(w * h);
+            depth_buf_[i].resize(w * h);
+        }
     }
 
     pos_buf_id SoftRasterizer::LoadPositions(const std::vector<Eigen::Vector3f> &positions) {
@@ -79,7 +87,44 @@ namespace Rocket {
         return count == 3 || count == -3;
     }
 
+    bool SoftRasterizer::InsideTriangle(float x, float y, const Eigen::Vector4f* _v) {
+        Eigen::Vector2f screen_point = Eigen::Vector2f(x, y);
+
+        Eigen::Vector2f v[3];
+        v[0] = _v[1].head(2) - _v[0].head(2);
+        v[1] = _v[2].head(2) - _v[1].head(2);
+        v[2] = _v[0].head(2) - _v[2].head(2);
+
+        Eigen::Vector2f dir[3];
+        dir[0] = screen_point - _v[0].head(2);
+        dir[1] = screen_point - _v[1].head(2);
+        dir[2] = screen_point - _v[2].head(2);
+
+        int count = 0;
+        for(int i = 0; i < 3; ++i) {
+            float result = v[i][0] * dir[i][1] - v[i][1] * dir[i][0];
+            if(result > 0) {
+                count++;
+            }
+            else if(result < 0) {
+                count--;
+            }
+        }
+
+        return count == 3 || count == -3;
+    }
+
     std::tuple<float, float, float> SoftRasterizer::ComputeBarycentric2D(float x, float y, const Eigen::Vector3f* v) {
+        float c1 = (x*(v[1].y() - v[2].y()) + (v[2].x() - v[1].x())*y + v[1].x()*v[2].y() - v[2].x()*v[1].y()) / 
+            (v[0].x()*(v[1].y() - v[2].y()) + (v[2].x() - v[1].x())*v[0].y() + v[1].x()*v[2].y() - v[2].x()*v[1].y());
+        float c2 = (x*(v[2].y() - v[0].y()) + (v[0].x() - v[2].x())*y + v[2].x()*v[0].y() - v[0].x()*v[2].y()) / 
+            (v[1].x()*(v[2].y() - v[0].y()) + (v[0].x() - v[2].x())*v[1].y() + v[2].x()*v[0].y() - v[0].x()*v[2].y());
+        float c3 = (x*(v[0].y() - v[1].y()) + (v[1].x() - v[0].x())*y + v[0].x()*v[1].y() - v[1].x()*v[0].y()) / 
+            (v[2].x()*(v[0].y() - v[1].y()) + (v[1].x() - v[0].x())*v[2].y() + v[0].x()*v[1].y() - v[1].x()*v[0].y());
+        return {c1,c2,c3};
+    }
+
+    std::tuple<float, float, float> SoftRasterizer::ComputeBarycentric2D(float x, float y, const Eigen::Vector4f* v) {
         float c1 = (x*(v[1].y() - v[2].y()) + (v[2].x() - v[1].x())*y + v[1].x()*v[2].y() - v[2].x()*v[1].y()) / 
             (v[0].x()*(v[1].y() - v[2].y()) + (v[2].x() - v[1].x())*v[0].y() + v[1].x()*v[2].y() - v[2].x()*v[1].y());
         float c2 = (x*(v[2].y() - v[0].y()) + (v[0].x() - v[2].x())*y + v[2].x()*v[0].y() - v[0].x()*v[2].y()) / 
@@ -145,7 +190,7 @@ namespace Rocket {
                     }
                     px = px + 2 * (dy1 - dx1);
                 }
-                Eigen::Vector3f point = Eigen::Vector3f(x, y, 1.0f);
+                Eigen::Vector2i point(x, y);
                 line_color += color_delta;
                 SetPixel(point, line_color);
             }
@@ -169,7 +214,7 @@ namespace Rocket {
             if(length > 1e-6) {
                 color_delta = color_delta / length;
             }
-            Eigen::Vector3f point = Eigen::Vector3f(x, y, 1.0f);
+            Eigen::Vector2i point(x, y);
             SetPixel(point, line_color);
             for (i = 0; y < ye; i++) {
                 y = y + 1;
@@ -185,7 +230,7 @@ namespace Rocket {
                     }
                     py = py + 2 * (dx1 - dy1);
                 }
-                Eigen::Vector3f point = Eigen::Vector3f(x, y, 1.0f);
+                Eigen::Vector2i point(x, y);
                 line_color += color_delta;
                 SetPixel(point, line_color);
             }
@@ -296,7 +341,76 @@ namespace Rocket {
     }
 
     void SoftRasterizer::Draw(std::vector<SoftTrianglePtr>& TriangleList) {
+        float f1 = (50 - 0.1) / 2.0;
+        float f2 = (50 + 0.1) / 2.0;
         
+        int32_t count = 0;
+        for (const auto& t:TriangleList) {
+            RK_INFO(Render, "Render {} Triangle", count);
+            count++;
+
+            SoftTriangle& newtri = *t.get();
+
+            std::array<Eigen::Vector4f, 3> mm {
+                (view_ * model_ * t->v[0]),
+                (view_ * model_ * t->v[1]),
+                (view_ * model_ * t->v[2])
+            };
+
+            std::array<Eigen::Vector3f, 3> viewspace_pos;
+
+            std::transform(mm.begin(), mm.end(), viewspace_pos.begin(), [](auto& v) {
+                return v.template head<3>();
+            });
+
+            Eigen::Vector4f v[] = {
+                mvp_ * t->v[0],
+                mvp_ * t->v[1],
+                mvp_ * t->v[2]
+            };
+
+            //Homogeneous division
+            for (auto& vec : v) {
+                vec.x()/=vec.w();
+                vec.y()/=vec.w();
+                vec.z()/=vec.w();
+            }
+
+            Eigen::Matrix4f inv_trans = (view_ * model_).inverse().transpose();
+            Eigen::Vector4f n[] = {
+                    inv_trans * to_vec4(t->normal[0], 0.0f),
+                    inv_trans * to_vec4(t->normal[1], 0.0f),
+                    inv_trans * to_vec4(t->normal[2], 0.0f)
+            };
+
+            //Viewport transformation
+            for (auto & vert : v)
+            {
+                vert.x() = 0.5 * width_ * (vert.x() + 1.0);
+                vert.y() = 0.5 * height_ * (vert.y() + 1.0);
+                vert.z() = vert.z() * f1 + f2;
+            }
+
+            for (int i = 0; i < 3; ++i)
+            {
+                //screen space coordinates
+                newtri.SetVertex(i, v[i]);
+            }
+
+            for (int i = 0; i < 3; ++i)
+            {
+                //view space normal
+                newtri.SetNormal(i, n[i].head<3>());
+            }
+
+            newtri.SetColor(0, 148,121.0,92.0);
+            newtri.SetColor(1, 148,121.0,92.0);
+            newtri.SetColor(2, 148,121.0,92.0);
+
+            // Also pass view space vertice position
+            RasterizeTriangleWithShader(newtri, viewspace_pos);
+            //rasterize_triangle(newtri, viewspace_pos);
+        }
     }
 
     void SoftRasterizer::Draw(pos_buf_id pos_buffer, ind_buf_id ind_buffer, RenderPrimitive type) {
@@ -318,6 +432,7 @@ namespace Rocket {
                 mvp_ * to_vec4(buf[i[1]], 1.0f),
                 mvp_ * to_vec4(buf[i[2]], 1.0f)
             };
+
             // Homogeneous division
             for (auto &vec : v) {
                 vec /= vec.w();
@@ -330,7 +445,7 @@ namespace Rocket {
             }
 
             for (int i = 0; i < 3; ++i) {
-                t.SetVertex(i, v[i].head<3>());
+                t.SetVertex(i, v[i]);
             }
 
             t.SetColor(0, 255.0, 0.0, 0.0);
@@ -378,7 +493,7 @@ namespace Rocket {
             }
 
             for (int i = 0; i < 3; ++i) {
-                t.SetVertex(i, v[i].head<3>());
+                t.SetVertex(i, v[i]);
             }
 
             auto col_x = col[i[0]];
@@ -399,9 +514,9 @@ namespace Rocket {
     }
 
     void SoftRasterizer::RasterizeWireframe(const SoftTriangle &t) {
-        DrawLine(t.c(), t.a());
-        DrawLine(t.c(), t.b());
-        DrawLine(t.b(), t.a());
+        DrawLine(t.c3f(), t.a3f());
+        DrawLine(t.c3f(), t.b3f());
+        DrawLine(t.b3f(), t.a3f());
     }
 
     void SoftRasterizer::RasterizeTriangle(const SoftTriangle &t) {
@@ -465,8 +580,98 @@ namespace Rocket {
                 if (count != 0) {
                     if (depth_buf_[current_frame_][GetIndex(x, y)] > minDepth) {
                         Eigen::Vector3f color = t.GetColor() * count / (float)pos.size();
-                        Eigen::Vector3f point(3);
-                        point << (float)x, (float)y, minDepth;
+                        Eigen::Vector2i point(x, y);
+                        // Update Depth
+                        depth_buf_[current_frame_][GetIndex(x, y)] = minDepth;
+                        // Set Pixel Color
+                        SetPixel(point, color);
+                    }
+                }
+            }
+        }
+    }
+
+    void SoftRasterizer::RasterizeTriangleWithShader(const SoftTriangle& t, const std::array<Eigen::Vector3f, 3>& view_pos) {
+        auto v = t.ToVector4();
+    
+        // Find out the bounding box of current triangle.
+        // iterate through the pixel and find if the current pixel is inside the triangle
+        Eigen::Vector2i minAabb; // left bottom
+        Eigen::Vector2i maxAabb; // right up
+
+        minAabb[0] = std::min(v[0][0],std::min(v[1][0], v[2][0]));
+        maxAabb[0] = std::max(v[0][0],std::max(v[1][0], v[2][0]));
+        minAabb[1] = std::min(v[0][1],std::min(v[1][1], v[2][1]));
+        maxAabb[1] = std::max(v[0][1],std::max(v[1][1], v[2][1]));
+
+        if(minAabb[0] > 0)
+            minAabb[0] -= 1;
+        if(minAabb[1] > 0)
+            minAabb[1] -= 1;
+        if(maxAabb[0] < width_ - 1)
+            maxAabb[0] += 1;
+        if(maxAabb[1] < height_ - 1)
+            maxAabb[1] += 1;
+
+        std::vector<Eigen::Vector2f> pos;
+
+        if(msaa_) {
+            msaa_count_ = 1 << msaa_level_;
+            float step = 1.0 / (msaa_count_ * 2);
+            //std::cout << "msaa_count: " << msaa_count_ << std::endl;
+            for(int i = 0; i < msaa_count_; ++i) {
+                for(int j = 0; j < msaa_count_; ++j) {
+                    pos.push_back({step + i * step * 2, step + j * step * 2});
+                }
+            }
+        }
+        else {
+            pos.push_back({0.5, 0.5});
+        }
+
+        for(int x = minAabb[0]; x < maxAabb[0]; ++x) {
+            for(int y = minAabb[1]; y < maxAabb[1]; ++y) {
+                // Color Result
+                Eigen::Vector3f color_result(0, 0, 0);
+                // store min depth
+                float minDepth = FLT_MAX;
+                // color sample point count
+                int count = 0;
+                // check sample point
+                for (int i = 0; i < pos.size(); i++) {
+                    // check point in triangle
+                    if (InsideTriangle((float)x + pos[i][0], (float)y + pos[i][1], t.v)) {
+                        // Interpolate Z Buffer
+                        auto [alpha, beta, gamma] = ComputeBarycentric2D((float)x + pos[i][0], (float)y + pos[i][1], t.v);
+                        float w_reciprocal = 1.0 / (alpha / v[0].w() + beta / v[1].w() + gamma / v[2].w());
+                        float z_interpolated = alpha * v[0].z() / v[0].w() + beta * v[1].z() / v[1].w() + gamma * v[2].z() / v[2].w();
+                        z_interpolated *= w_reciprocal;
+                        z_interpolated *= -1;   // invert z
+                        minDepth = std::min(minDepth, z_interpolated);
+                        count++;
+
+                        float Z = 1.0 / (alpha / v[0].w() + beta / v[1].w() + gamma / v[2].w());
+                        float zp = alpha * v[0].z() / v[0].w() + beta * v[1].z() / v[1].w() + gamma * v[2].z() / v[2].w();
+                        zp *= Z;
+                        minDepth = std::min(zp, minDepth);
+
+                        auto interpolated_color = Interpolate<Eigen::Vector3f>(Eigen::Vector3f(alpha, beta, gamma), {t.color[0], t.color[1], t.color[2]});
+                        auto interpolated_normal = Interpolate<Eigen::Vector3f>(Eigen::Vector3f(alpha, beta, gamma), {t.normal[0], t.normal[1], t.normal[2]});
+                        auto interpolated_texcoords = Interpolate<Eigen::Vector2f>(Eigen::Vector3f(alpha, beta, gamma), {t.tex_coords[0], t.tex_coords[1], t.tex_coords[2]});
+                        auto interpolated_shadingcoords = Interpolate<Eigen::Vector3f>(Eigen::Vector3f(alpha, beta, gamma), view_pos);
+
+                        auto payload = FragmentShaderPayload(interpolated_color, interpolated_normal.normalized(), interpolated_texcoords, texture ? texture : nullptr);
+                        payload.view_pos = interpolated_shadingcoords;
+                        auto pixel_color = fragment_shader_(payload);
+                        color_result += pixel_color;
+
+                        count++;
+                    }
+                }
+                if (count != 0) {
+                    if (depth_buf_[current_frame_][GetIndex(x, y)] > minDepth) {
+                        Eigen::Vector3f color = color_result / (float)pos.size(); //t.GetColor() * count / (float)pos.size();
+                        Eigen::Vector2i point(x, y);
                         // Update Depth
                         depth_buf_[current_frame_][GetIndex(x, y)] = minDepth;
                         // Set Pixel Color
@@ -496,13 +701,6 @@ namespace Rocket {
             for(int i = 0; i < FRAME_COUNT; ++i) {
                 std::fill(depth_buf_[i].begin(), depth_buf_[i].end(), std::numeric_limits<float>::infinity());
             }
-        }
-    }
-
-    SoftRasterizer::SoftRasterizer(int w, int h) : width_(w), height_(h) {
-        for(int i = 0; i < FRAME_COUNT; ++i) {
-            frame_buf_[i].resize(w * h);
-            depth_buf_[i].resize(w * h);
         }
     }
 
