@@ -4,8 +4,7 @@
 #include "Log/Log.h"
 
 #include <cfloat>
-
-//#include <iostream>
+#include <iostream>
 
 namespace Rocket {
     static Eigen::Vector4f to_vec4(const Eigen::Vector3f &v3, float w = 1.0f) {
@@ -346,8 +345,8 @@ namespace Rocket {
         
         int32_t count = 0;
         for (const auto& t:TriangleList) {
-            RK_INFO(Render, "Render {} Triangle", count);
-            count++;
+            //RK_INFO(Render, "Render {} Triangle", count);
+            std::cout << "Render Tirangle: " << count++ << std::endl;
 
             SoftTriangle& newtri = *t.get();
 
@@ -409,7 +408,6 @@ namespace Rocket {
 
             // Also pass view space vertice position
             RasterizeTriangleWithShader(newtri, viewspace_pos);
-            //rasterize_triangle(newtri, viewspace_pos);
         }
     }
 

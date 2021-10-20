@@ -1,5 +1,5 @@
 target("RocketRenderSoft")
     set_kind("static")
     add_files("Render/*.cpp")
-    add_packages("eigen", {public = true})
+    add_packages("eigen", "spdlog", {public = true})
 target_end()
