@@ -71,8 +71,8 @@ int main(int argc, char** argv) {
     rst.SetTexture(texture);
     rst.SetVertexShader(vertex_shader);
     rst.SetFragmentShader(fragment_shader);
-    rst.DisableWireFrame();
-    //rst.EnableWireFrame();
+    //rst.DisableWireFrame();
+    rst.EnableWireFrame();
     //rst.EnableMsaa();
     //rst.SetMsaaLevel(0);
 
@@ -94,26 +94,26 @@ int main(int argc, char** argv) {
         rst.DrawLine3D({0,0,0}, {0,1,0}, {0,255,0}, {0,255,0}); // y
         rst.DrawLine3D({0,0,0}, {0,0,1}, {0,0,255}, {0,0,255}); // z
 
-        for(SoftTrianglePtr& face : triangle_list) {
-            rst.DrawLine3D(
-                Eigen::Vector3f(face->v[0][0], face->v[0][1], face->v[0][2]), 
-                Eigen::Vector3f(face->v[1][0], face->v[1][1], face->v[1][2]),
-                Eigen::Vector3f(255,0,0),
-                Eigen::Vector3f(0,0,255)
-            );
-            rst.DrawLine3D(
-                Eigen::Vector3f(face->v[1][0], face->v[1][1], face->v[1][2]), 
-                Eigen::Vector3f(face->v[2][0], face->v[2][1], face->v[2][2]),
-                Eigen::Vector3f(255,0,0),
-                Eigen::Vector3f(0,0,255)
-            );
-            rst.DrawLine3D(
-                Eigen::Vector3f(face->v[2][0], face->v[2][1], face->v[2][2]), 
-                Eigen::Vector3f(face->v[0][0], face->v[0][1], face->v[0][2]),
-                Eigen::Vector3f(255,0,0),
-                Eigen::Vector3f(0,0,255)
-            );
-        }
+        // for(SoftTrianglePtr& face : triangle_list) {
+        //     rst.DrawLine3D(
+        //         Eigen::Vector3f(face->v[0][0], face->v[0][1], face->v[0][2]), 
+        //         Eigen::Vector3f(face->v[1][0], face->v[1][1], face->v[1][2]),
+        //         Eigen::Vector3f(255,0,0),
+        //         Eigen::Vector3f(0,0,255)
+        //     );
+        //     rst.DrawLine3D(
+        //         Eigen::Vector3f(face->v[1][0], face->v[1][1], face->v[1][2]), 
+        //         Eigen::Vector3f(face->v[2][0], face->v[2][1], face->v[2][2]),
+        //         Eigen::Vector3f(255,0,0),
+        //         Eigen::Vector3f(0,0,255)
+        //     );
+        //     rst.DrawLine3D(
+        //         Eigen::Vector3f(face->v[2][0], face->v[2][1], face->v[2][2]), 
+        //         Eigen::Vector3f(face->v[0][0], face->v[0][1], face->v[0][2]),
+        //         Eigen::Vector3f(255,0,0),
+        //         Eigen::Vector3f(0,0,255)
+        //     );
+        // }
 
         RK_INFO(App, "Begin Render");
         rst.Draw(triangle_list);

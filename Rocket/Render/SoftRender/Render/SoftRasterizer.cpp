@@ -1,16 +1,13 @@
 #include "Render/SoftRasterizer.h"
 #include "Math/Parameter.h"
 #include "Math/ComonMath.h"
+#include "Math/Vectors.h"
 #include "Log/Log.h"
 
 #include <cfloat>
 #include <iostream>
 
 namespace Rocket {
-    static Eigen::Vector4f to_vec4(const Eigen::Vector3f &v3, float w = 1.0f) {
-        return Eigen::Vector4f(v3.x(), v3.y(), v3.z(), w);
-    }
-
     SoftRasterizer::SoftRasterizer(int w, int h) : width_(w), height_(h) {
         for(int i = 0; i < FRAME_COUNT; ++i) {
             frame_buf_[i].resize(w * h);
@@ -280,8 +277,8 @@ namespace Rocket {
         float f2 = (100 + 0.1) / 2.0;
 
         Eigen::Vector4f v[] = {
-            mvp_ * to_vec4(begin, 1.0f),
-            mvp_ * to_vec4(end, 1.0f),
+            mvp_ * Math::to_vec4(begin, 1.0f),
+            mvp_ * Math::to_vec4(end, 1.0f),
         };
         // Homogeneous division
         for (auto &vec : v) {
@@ -315,7 +312,7 @@ namespace Rocket {
         float f2 = (100 + 0.1) / 2.0;
 
         Eigen::Vector4f v[] = {
-            mvp_ * to_vec4(point, 1.0f),
+            mvp_ * Math::to_vec4(point, 1.0f),
         };
         // Homogeneous division
         for (auto &vec : v) {
@@ -377,9 +374,9 @@ namespace Rocket {
 
             Eigen::Matrix4f inv_trans = (view_ * model_).inverse().transpose();
             Eigen::Vector4f n[] = {
-                    inv_trans * to_vec4(t->normal[0], 0.0f),
-                    inv_trans * to_vec4(t->normal[1], 0.0f),
-                    inv_trans * to_vec4(t->normal[2], 0.0f)
+                    inv_trans * Math::to_vec4(t->normal[0], 0.0f),
+                    inv_trans * Math::to_vec4(t->normal[1], 0.0f),
+                    inv_trans * Math::to_vec4(t->normal[2], 0.0f)
             };
 
             //Viewport transformation
@@ -407,7 +404,10 @@ namespace Rocket {
             newtri.SetColor(2, 148,121.0,92.0);
 
             // Also pass view space vertice position
-            RasterizeTriangleWithShader(newtri, viewspace_pos);
+            if(wireframe_)
+                RasterizeWireframe(newtri);
+            else
+                RasterizeTriangleWithShader(newtri, viewspace_pos);
         }
     }
 
@@ -426,9 +426,9 @@ namespace Rocket {
             SoftTriangle t;
 
             Eigen::Vector4f v[] = {
-                mvp_ * to_vec4(buf[i[0]], 1.0f),
-                mvp_ * to_vec4(buf[i[1]], 1.0f),
-                mvp_ * to_vec4(buf[i[2]], 1.0f)
+                mvp_ * Math::to_vec4(buf[i[0]], 1.0f),
+                mvp_ * Math::to_vec4(buf[i[1]], 1.0f),
+                mvp_ * Math::to_vec4(buf[i[2]], 1.0f)
             };
 
             // Homogeneous division
@@ -450,12 +450,10 @@ namespace Rocket {
             t.SetColor(1, 0.0, 255.0, 0.0);
             t.SetColor(2, 0.0, 0.0, 255.0);
 
-            if(wireframe_) {
+            if(wireframe_)
                 RasterizeWireframe(t);
-            }
-            else {
+            else
                 RasterizeTriangle(t);
-            }
         }
     }
 
@@ -475,9 +473,9 @@ namespace Rocket {
         {
             SoftTriangle t;
             Eigen::Vector4f v[] = {
-                    mvp_ * to_vec4(buf[i[0]], 1.0f),
-                    mvp_ * to_vec4(buf[i[1]], 1.0f),
-                    mvp_ * to_vec4(buf[i[2]], 1.0f)
+                    mvp_ * Math::to_vec4(buf[i[0]], 1.0f),
+                    mvp_ * Math::to_vec4(buf[i[1]], 1.0f),
+                    mvp_ * Math::to_vec4(buf[i[2]], 1.0f)
             };
             // Homogeneous division
             for (auto& vec : v) {

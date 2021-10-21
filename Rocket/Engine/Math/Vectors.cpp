@@ -14,6 +14,10 @@ namespace Rocket {
             Vector3f bn = b.normalized();
             return bn * a.dot(bn);
         }
+
+        Eigen::Vector4f to_vec4(const Eigen::Vector3f &v3, float w) {
+            return Eigen::Vector4f(v3.x(), v3.y(), v3.z(), w);
+        }
     }
 
     namespace Algorithm {

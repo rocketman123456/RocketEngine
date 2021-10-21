@@ -18,6 +18,8 @@ namespace Rocket {
 
         // Projection Calculation of a onto b
         Vector3f ProjV3(const Vector3f a, const Vector3f b);
+
+        Eigen::Vector4f to_vec4(const Eigen::Vector3f &v3, float w = 1.0f);
     }
 
     namespace Algorithm {
