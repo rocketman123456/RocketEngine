@@ -11,7 +11,11 @@ using namespace Rocket;
 
 #include "../Utils/soft_render.h"
 
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include "stb_image_write.h"
+
 #include <iostream>
+#include <string>
 
 int main(int argc, char** argv) {
     Log::Init();
@@ -61,7 +65,8 @@ int main(int argc, char** argv) {
 
     std::cout << "Tirangle Count: " << triangle_list.size() << std::endl;
 
-    std::function<Eigen::Vector3f(FragmentShaderPayload)> fragment_shader = phong_fragment_shader;
+    std::function<Eigen::Vector3f(VertexShaderPayload)> vertex_shader = ::vertex_shader;
+    std::function<Eigen::Vector3f(FragmentShaderPayload)> fragment_shader = ::texture_fragment_shader;
 
     rst.SetTexture(texture);
     rst.SetVertexShader(vertex_shader);
@@ -71,6 +76,7 @@ int main(int argc, char** argv) {
     //rst.EnableMsaa();
     //rst.SetMsaaLevel(0);
 
+    int32_t count = 0;
     std::cout << "Initialize Finished" << std::endl;
     
     while(!app.ShouldClose()) {
@@ -88,9 +94,47 @@ int main(int argc, char** argv) {
         rst.DrawLine3D({0,0,0}, {0,1,0}, {0,255,0}, {0,255,0}); // y
         rst.DrawLine3D({0,0,0}, {0,0,1}, {0,0,255}, {0,0,255}); // z
 
+        for(SoftTrianglePtr& face : triangle_list) {
+            rst.DrawLine3D(
+                Eigen::Vector3f(face->v[0][0], face->v[0][1], face->v[0][2]), 
+                Eigen::Vector3f(face->v[1][0], face->v[1][1], face->v[1][2]),
+                Eigen::Vector3f(255,0,0),
+                Eigen::Vector3f(0,0,255)
+            );
+            rst.DrawLine3D(
+                Eigen::Vector3f(face->v[1][0], face->v[1][1], face->v[1][2]), 
+                Eigen::Vector3f(face->v[2][0], face->v[2][1], face->v[2][2]),
+                Eigen::Vector3f(255,0,0),
+                Eigen::Vector3f(0,0,255)
+            );
+            rst.DrawLine3D(
+                Eigen::Vector3f(face->v[2][0], face->v[2][1], face->v[2][2]), 
+                Eigen::Vector3f(face->v[0][0], face->v[0][1], face->v[0][2]),
+                Eigen::Vector3f(255,0,0),
+                Eigen::Vector3f(0,0,255)
+            );
+        }
+
         RK_INFO(App, "Begin Render");
         rst.Draw(triangle_list);
         RK_INFO(App, "End Render");
+
+        // Save Image
+        std::string output_path = root + "Asset/" + std::to_string(count++) + ".png";
+        std::cout << output_path << std::endl;
+
+        // Convert Data
+        std::vector<char> img_data;
+        img_data.resize(rst.GetWidth() * rst.GetHeight() * 3);
+        for(int i = 0; i < rst.GetWidth(); ++i) {
+            for(int j = 0; j < rst.GetHeight(); ++j) {
+                for(int k = 0; k < 3; ++k) {
+                    img_data[(i + j * rst.GetWidth()) * 3 + k] = rst.FrameBuffer()[i + j * rst.GetWidth()][k] * 255;
+                }
+            }
+        }
+
+        stbi_write_png(output_path.c_str(), rst.GetWidth(), rst.GetHeight(), 3, img_data.data(), 0);
 
         auto data = rst.FrameBuffer().data();
         app.Render(data);

@@ -52,6 +52,8 @@ namespace Rocket {
         inline void EnableWireFrame() { wireframe_ = true; }
         inline void DisableWireFrame() { wireframe_ = false; }
         inline void SetMsaaLevel(int32_t level = 0) { msaa_level_ = level; }
+        inline int32_t GetWidth() { return width_; }
+        inline int32_t GetHeight() { return height_; }
 
         inline void SetVertexShader(VertexShaderFunc vert_shader) { vertex_shader_ = vert_shader; }
         inline void SetFragmentShader(FragmentShaderFunc frag_shader) { fragment_shader_ = frag_shader; }
@@ -101,6 +103,7 @@ namespace Rocket {
         inline void CalculateMVP() { mvp_ = projection_ * view_ * model_; }
         inline int32_t GetNextId() { return next_id_++; }
         inline int32_t GetIndex(int32_t x, int32_t y) { return (height_-y)*width_ + x; }
+        float FindDepth(int32_t x, int32_t y);
 
     private:
         Eigen::Matrix4f model_;

@@ -14,7 +14,6 @@ target_end()
 --     set_kind("binary")
 --     add_files("torch_test.cpp")
 --     add_packages("libtorch", "protobuf-cpp", "protobuf-c", {public = true})
---     --add_links("/usr/local/lib/libkineto.a")
 -- target_end()
 
 target("yaml_test")

@@ -42,11 +42,6 @@ add_requires("gsl v3.1.0", {system = false, shared = false, debug = true, config
 --     add_requires("protobuf-c", {system = false, shared = false, debug = true, configs = {cxflags = "-fPIC"}})
 -- end
 
--- if is_plat("linux", "macosx", "windows") then
---     add_requires("glfw 3.3.4", {system = false, shared = false, debug = true, glfw_include = "none", configs = {cxflags = "-fPIC"}})
---     add_requires("libsdl 2.0.16", {system = false, shared = false, debug = true, configs = {cxflags = "-fPIC"}})
--- end
-
 --
 -- Set Render Options
 --

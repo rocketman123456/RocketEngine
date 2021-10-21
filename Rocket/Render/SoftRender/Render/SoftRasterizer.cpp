@@ -419,8 +419,8 @@ namespace Rocket {
         auto &buf = pos_buf_[pos_buffer.pos_id];
         auto &ind = ind_buf_[ind_buffer.ind_id];
 
-        float f1 = (100 - 0.1) / 2.0;
-        float f2 = (100 + 0.1) / 2.0;
+        float f1 = (50 - 0.1) / 2.0;
+        float f2 = (50 + 0.1) / 2.0;
 
         for (auto &i : ind) {
             SoftTriangle t;
@@ -557,6 +557,8 @@ namespace Rocket {
 
         for(int x = minAabb[0]; x < maxAabb[0]; ++x) {
             for(int y = minAabb[1]; y < maxAabb[1]; ++y) {
+                // Color Result
+                Eigen::Vector3f color_result(0, 0, 0);
                 // store min depth
                 float minDepth = FLT_MAX;
                 // color sample point count
@@ -572,15 +574,19 @@ namespace Rocket {
                         z_interpolated *= w_reciprocal;
                         z_interpolated *= -1;   // invert z
                         minDepth = std::min(minDepth, z_interpolated);
+                        color_result += t.GetColor();
                         count++;
                     }
                 }
                 if (count != 0) {
-                    if (depth_buf_[current_frame_][GetIndex(x, y)] > minDepth) {
-                        Eigen::Vector3f color = t.GetColor() * count / (float)pos.size();
+                    int32_t index = GetIndex(x, y);
+                    if(index >= width_ * height_)
+                        continue;
+                    if (depth_buf_[current_frame_][index] > minDepth) {
+                        Eigen::Vector3f color = color_result / (float)pos.size(); //t.GetColor() * count / (float)pos.size();
                         Eigen::Vector2i point(x, y);
                         // Update Depth
-                        depth_buf_[current_frame_][GetIndex(x, y)] = minDepth;
+                        depth_buf_[current_frame_][index] = minDepth;
                         // Set Pixel Color
                         SetPixel(point, color);
                     }
@@ -667,11 +673,14 @@ namespace Rocket {
                     }
                 }
                 if (count != 0) {
-                    if (depth_buf_[current_frame_][GetIndex(x, y)] > minDepth) {
+                    int32_t index = GetIndex(x, y);
+                    if(index >= width_ * height_)
+                        continue;
+                    if (depth_buf_[current_frame_][index] > minDepth) {
                         Eigen::Vector3f color = color_result / (float)pos.size(); //t.GetColor() * count / (float)pos.size();
                         Eigen::Vector2i point(x, y);
                         // Update Depth
-                        depth_buf_[current_frame_][GetIndex(x, y)] = minDepth;
+                        depth_buf_[current_frame_][index] = minDepth;
                         // Set Pixel Color
                         SetPixel(point, color);
                     }
@@ -700,6 +709,14 @@ namespace Rocket {
                 std::fill(depth_buf_[i].begin(), depth_buf_[i].end(), std::numeric_limits<float>::infinity());
             }
         }
+    }
+
+    float SoftRasterizer::FindDepth(int32_t x, int32_t y) {
+        int32_t index = GetIndex(x, y);
+        if(index >= width_ * height_)
+            return FLT_MAX;
+        else 
+            return depth_buf_[current_frame_][index];
     }
 
     void SoftRasterizer::SetPixel(const Eigen::Vector3f& point, const Eigen::Vector3f& color) {
