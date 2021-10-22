@@ -40,11 +40,11 @@ int main(int argc, char** argv) {
     auto root = FindRootDir(name);
     root += "/";
 
-    //std::string model_path = "Asset/Model/rock/rock.obj";
-    //std::string texture_path = "Asset/Model/rock/rock.png";
+    std::string model_path = "Asset/Model/rock/rock.obj";
+    std::string texture_path = "Asset/Model/rock/rock.png";
 
-    std::string model_path = "Asset/Model/spot/spot_triangulated_good.obj";
-    std::string texture_path = "Asset/Model/spot/spot_texture.png";
+    //std::string model_path = "Asset/Model/spot/spot_triangulated_good.obj";
+    //std::string texture_path = "Asset/Model/spot/hmap.jpg";
 
     ObjParser parser(root, model_path);
     parser.Initialize();
@@ -93,7 +93,7 @@ int main(int argc, char** argv) {
     rst.EnableShader();
 
     int32_t count = 0;
-    std::cout << "Initialize Finished" << std::endl;
+    //std::cout << "Initialize Finished" << std::endl;
     
     while(!app.ShouldClose()) {
         app.Tick();
@@ -104,7 +104,7 @@ int main(int argc, char** argv) {
         rst.SetView(get_view_matrix(eye_pos));
         rst.SetProjection(get_perspective_matrix(45, ((float)width/(float)height), 0.1, 50));
         //rst.SetProjection(get_orthographic_matrix(-6.4, 6.4, -50, 50, 3.6, -3.6));
-        RK_INFO(App, "Set MVP");
+        //RK_INFO(App, "Set MVP");
 
         rst.DrawLine3D({0,0,0}, {1,0,0}, {255,0,0}, {255,0,0}); // x
         rst.DrawLine3D({0,0,0}, {0,1,0}, {0,255,0}, {0,255,0}); // y
@@ -131,14 +131,14 @@ int main(int argc, char** argv) {
         //     );
         // }
 
-        RK_INFO(App, "Begin Render");
+        //RK_INFO(App, "Begin Render");
         //rst.Draw(tri);
         rst.Draw(triangle_list);
-        RK_INFO(App, "End Render");
+        //RK_INFO(App, "End Render");
 
         // Save Image
         std::string output_path = root + "Data/" + std::to_string(count++) + ".png";
-        std::cout << output_path << std::endl;
+        RK_INFO(App, "{}", output_path);
 
         // Convert Data
         std::vector<char> img_data;
@@ -155,7 +155,7 @@ int main(int argc, char** argv) {
 
         auto data = rst.FrameBuffer().data();
         app.Render(data);
-        RK_INFO(App, "Show");
+        //RK_INFO(App, "Show");
     }
 
     app.Finalize();

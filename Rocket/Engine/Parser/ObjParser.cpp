@@ -1,10 +1,11 @@
 #include "Parser/ObjParser.h"
 #include "FileSystem/FileSystem.h"
+#include "Log/Log.h"
 
 #include <fstream>
 #include <iostream>
 
-//#define OBJL_CONSOLE_OUTPUT
+// #define OBJL_CONSOLE_OUTPUT
 
 namespace Rocket {
     int32_t ObjParser::Initialize() {
@@ -251,9 +252,9 @@ namespace Rocket {
             }
         }
 
-        std::cout << "Mesh Size: " << loaded_meshes.size() << std::endl;
-        std::cout << "Vertices Size: " << loaded_vertices.size() << std::endl;
-        std::cout << "Indices Size: " << loaded_indices.size() << std::endl;
+        RK_INFO(File, "Mesh Size: {}", loaded_meshes.size());
+        RK_INFO(File, "Vertices Size: {}", loaded_vertices.size());
+        RK_INFO(File, "Indices Size: {}", loaded_indices.size());
 
         if (loaded_meshes.empty() && loaded_vertices.empty() && loaded_indices.empty())
             return false;

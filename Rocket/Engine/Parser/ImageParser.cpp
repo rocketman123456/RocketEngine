@@ -14,7 +14,7 @@
 // #include <stb_image_write.h>
 
 namespace Rocket {
-    void ImageParser::Parse() {
+    std::pair<int32_t, int32_t> ImageParser::Parse() {
         // Just For Test
         FileBuffer buffer;
         FileSystem::LoadSync(full_path_, FileOperateMode::READ_BINARY, buffer);
@@ -23,9 +23,10 @@ namespace Rocket {
         RK_INFO(File, "Load Image {}:{},{},{}", full_path_, x, y, ch);
         // Do Nothing
         stbi_image_free(data_);
+        return { x, y };
     }
 
-    void ImageParser::Parse(std::vector<Eigen::Vector4f>& data) {
+    std::pair<int32_t, int32_t> ImageParser::Parse(std::vector<Eigen::Vector4f>& data) {
         FileBuffer buffer;
         FileSystem::LoadSync(full_path_, FileOperateMode::READ_BINARY, buffer);
         int32_t x, y, ch;
@@ -50,9 +51,10 @@ namespace Rocket {
             }
         }
         stbi_image_free(data_);
+        return { x, y };
     }
 
-    void ImageParser::Parse(std::vector<Eigen::Vector3f>& data) {
+    std::pair<int32_t, int32_t> ImageParser::Parse(std::vector<Eigen::Vector3f>& data) {
         FileBuffer buffer;
         FileSystem::LoadSync(full_path_, FileOperateMode::READ_BINARY, buffer);
         int32_t x, y, ch;
@@ -77,5 +79,6 @@ namespace Rocket {
             }
         }
         stbi_image_free(data_);
+        return { x, y };
     }
 }

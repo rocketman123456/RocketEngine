@@ -331,7 +331,7 @@ namespace Rocket {
     void SoftRasterizer::Draw(const std::vector<SoftTrianglePtr>& TriangleList) {
         int32_t count = 0;
         for (auto& t : TriangleList) {
-            RK_INFO(Render, "Render {} Triangle", count++);
+            //RK_INFO(Render, "Render {} Triangle", count++);
             Draw(t);
         }
     }
@@ -386,8 +386,7 @@ namespace Rocket {
             newtri.SetVertex(i, v[i]);
         }
 
-        for (int i = 0; i < 3; ++i)
-        {
+        for (int i = 0; i < 3; ++i) {
             //view space normal
             newtri.SetNormal(i, n[i].head<3>());
         }

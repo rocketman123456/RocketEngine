@@ -1,15 +1,22 @@
 #include "Render/SoftTexture.h"
 #include "Parser/ImageParser.h"
+#include "Log/Log.h"
 
 namespace Rocket {
     SoftTexture::SoftTexture(const std::string& path, const std::string& name) {
         ImageParser parser(path, name);
-        parser.Parse(image_data);
+        auto [width, height] = parser.Parse(image_data_);
+        this->width = width;
+        this->height = height;
+        RK_INFO(Render, "{} Image W:{}, H:{}", name, width, height);
     }
 
     SoftTexture::SoftTexture(const std::string& full_path) {
         ImageParser parser(full_path);
-        parser.Parse(image_data);
+        parser.Parse(image_data_);
+        this->width = width;
+        this->height = height;
+        RK_INFO(Render, "{} Image W:{}, H:{}", full_path, width, height);
     }
 
     Eigen::Vector4f SoftTexture::GetColorRGBA(float u, float v) {
@@ -29,12 +36,12 @@ namespace Rocket {
     }
 
     Eigen::Vector4f SoftTexture::GetPixelRGBA(int32_t x, int32_t y) {
-        auto color = image_data[y * width + x];
+        auto color = image_data_[y * width + x];
         return color * 255.f;
     }
 
     Eigen::Vector3f SoftTexture::GetPixelRGB(int32_t x, int32_t y) {
-        auto color = image_data[y * width + x];
+        auto color = image_data_[y * width + x];
         return color.head<3>() * 255.f;
     }
 }
