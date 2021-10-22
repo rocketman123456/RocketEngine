@@ -41,9 +41,10 @@ build_cmake/
 .DS_Store
 
 # Ignore 3rdParty build
-#External/
+External/
 Target/
 ThirdParty/build/
+Data/
 
 # Ignore Large Asset File
 *.wav

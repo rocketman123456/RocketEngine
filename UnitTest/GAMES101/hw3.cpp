@@ -137,7 +137,7 @@ int main(int argc, char** argv) {
         RK_INFO(App, "End Render");
 
         // Save Image
-        std::string output_path = root + "Asset/" + std::to_string(count++) + ".png";
+        std::string output_path = root + "Data/" + std::to_string(count++) + ".png";
         std::cout << output_path << std::endl;
 
         // Convert Data
