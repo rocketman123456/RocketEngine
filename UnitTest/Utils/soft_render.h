@@ -43,9 +43,10 @@ struct light {
     Eigen::Vector3f intensity;
 };
 
+Eigen::Vector3f reflect(const Eigen::Vector3f& vec, const Eigen::Vector3f& axis);
+
 Eigen::Vector3f vertex_shader(const Rocket::VertexShaderPayload& payload);
 Eigen::Vector3f normal_fragment_shader(const Rocket::FragmentShaderPayload& payload);
-Eigen::Vector3f reflect(const Eigen::Vector3f& vec, const Eigen::Vector3f& axis);
 Eigen::Vector3f texture_fragment_shader(const Rocket::FragmentShaderPayload& payload);
 Eigen::Vector3f phong_fragment_shader(const Rocket::FragmentShaderPayload& payload);
 Eigen::Vector3f displacement_fragment_shader(const Rocket::FragmentShaderPayload& payload);

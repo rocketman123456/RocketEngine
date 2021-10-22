@@ -30,11 +30,11 @@ namespace Rocket {
 
     Eigen::Vector4f SoftTexture::GetPixelRGBA(int32_t x, int32_t y) {
         auto color = image_data[y * width + x];
-        return color;
+        return color * 255.f;
     }
 
     Eigen::Vector3f SoftTexture::GetPixelRGB(int32_t x, int32_t y) {
         auto color = image_data[y * width + x];
-        return Eigen::Vector3f(color[0], color[1], color[2]);;
+        return color.head<3>() * 255.f;
     }
 }

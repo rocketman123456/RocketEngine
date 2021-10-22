@@ -24,9 +24,9 @@ namespace Rocket {
         SoftTriangle(Geometry::TrianglePtr tri);
         virtual ~SoftTriangle() = default;
 
-        Eigen::Vector3f a3f() const { return Eigen::Vector3f(v[0][0], v[0][1], v[0][2]); }
-        Eigen::Vector3f b3f() const { return Eigen::Vector3f(v[1][0], v[1][1], v[1][2]); }
-        Eigen::Vector3f c3f() const { return Eigen::Vector3f(v[2][0], v[2][1], v[2][2]); }
+        Eigen::Vector3f a3f() const { return v[0].head<3>(); }
+        Eigen::Vector3f b3f() const { return v[1].head<3>(); }
+        Eigen::Vector3f c3f() const { return v[2].head<3>(); }
         Eigen::Vector4f a4f() const { return v[0]; }
         Eigen::Vector4f b4f() const { return v[1]; }
         Eigen::Vector4f c4f() const { return v[2]; }

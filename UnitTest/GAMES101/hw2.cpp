@@ -40,39 +40,38 @@ int main(int argc, char** argv) {
     auto root = FindRootDir(name);
     root += "/";
 
-    std::string model_path = "Asset/Model/rock/rock.obj";
-    std::string texture_path = "Asset/Model/rock/rock.png";
+    std::vector<Eigen::Vector3f> pos
+        {
+            {2, 0, -2},
+            {0, 2, -2},
+            {-2, 0, -2},
+            {3.5, -1, -5},
+            {2.5, 1.5, -5},
+            {-1, 0.5, -5}
+        };
 
-    ObjParser parser(root, model_path);
-    parser.Initialize();
-    parser.Parse();
+    std::vector<Eigen::Vector3i> ind
+        {
+            {0, 1, 2},
+            {3, 4, 5}
+        };
 
-    SoftTexturePtr texture = SoftTexturePtr(new SoftTexture(root, texture_path));
+    std::vector<Eigen::Vector3f> cols
+        {
+            {217.0, 238.0, 185.0},
+            {217.0, 238.0, 185.0},
+            {217.0, 238.0, 185.0},
+            {185.0, 217.0, 238.0},
+            {185.0, 217.0, 238.0},
+            {185.0, 217.0, 238.0}
+        };
 
-    std::vector<SoftTrianglePtr> triangle_list;
+    auto pos_id = rst.LoadPositions(pos);
+    auto ind_id = rst.LoadIndices(ind);
+    auto col_id = rst.LoadColors(cols);
 
-    for(auto mesh : parser.loaded_meshes) {
-        for(int i=0;i<mesh.vertices.size();i+=3) {
-            SoftTrianglePtr t(new SoftTriangle());
-            for(int j=0;j<3;j++) {
-                t->SetVertex(j, Eigen::Vector4f(mesh.vertices[i+j].position[0], mesh.vertices[i+j].position[1], mesh.vertices[i+j].position[2], 1.0));
-                t->SetNormal(j, Eigen::Vector3f(mesh.vertices[i+j].normal[0], mesh.vertices[i+j].normal[1], mesh.vertices[i+j].normal[2]));
-                t->SetTexCoord(j, Eigen::Vector2f(mesh.vertices[i+j].texture_coordinate[0], mesh.vertices[i+j].texture_coordinate[1]));
-            }
-            triangle_list.push_back(t);
-        }
-    }
-
-    std::cout << "Tirangle Count: " << triangle_list.size() << std::endl;
-
-    std::function<Eigen::Vector3f(VertexShaderPayload)> vertex_shader = ::vertex_shader;
-    std::function<Eigen::Vector3f(FragmentShaderPayload)> fragment_shader = ::texture_fragment_shader;
-
-    rst.SetTexture(texture);
-    rst.SetVertexShader(vertex_shader);
-    rst.SetFragmentShader(fragment_shader);
-    //rst.DisableWireFrame();
-    rst.EnableWireFrame();
+    rst.DisableWireFrame();
+    //rst.EnableWireFrame();
     //rst.EnableMsaa();
     //rst.SetMsaaLevel(0);
 
@@ -94,47 +93,8 @@ int main(int argc, char** argv) {
         rst.DrawLine3D({0,0,0}, {0,1,0}, {0,255,0}, {0,255,0}); // y
         rst.DrawLine3D({0,0,0}, {0,0,1}, {0,0,255}, {0,0,255}); // z
 
-        // for(SoftTrianglePtr& face : triangle_list) {
-        //     rst.DrawLine3D(
-        //         Eigen::Vector3f(face->v[0][0], face->v[0][1], face->v[0][2]), 
-        //         Eigen::Vector3f(face->v[1][0], face->v[1][1], face->v[1][2]),
-        //         Eigen::Vector3f(255,0,0),
-        //         Eigen::Vector3f(0,0,255)
-        //     );
-        //     rst.DrawLine3D(
-        //         Eigen::Vector3f(face->v[1][0], face->v[1][1], face->v[1][2]), 
-        //         Eigen::Vector3f(face->v[2][0], face->v[2][1], face->v[2][2]),
-        //         Eigen::Vector3f(255,0,0),
-        //         Eigen::Vector3f(0,0,255)
-        //     );
-        //     rst.DrawLine3D(
-        //         Eigen::Vector3f(face->v[2][0], face->v[2][1], face->v[2][2]), 
-        //         Eigen::Vector3f(face->v[0][0], face->v[0][1], face->v[0][2]),
-        //         Eigen::Vector3f(255,0,0),
-        //         Eigen::Vector3f(0,0,255)
-        //     );
-        // }
-
-        RK_INFO(App, "Begin Render");
-        rst.Draw(triangle_list);
-        RK_INFO(App, "End Render");
-
-        // Save Image
-        std::string output_path = root + "Asset/" + std::to_string(count++) + ".png";
-        std::cout << output_path << std::endl;
-
-        // Convert Data
-        std::vector<char> img_data;
-        img_data.resize(rst.GetWidth() * rst.GetHeight() * 3);
-        for(int i = 0; i < rst.GetWidth(); ++i) {
-            for(int j = 0; j < rst.GetHeight(); ++j) {
-                for(int k = 0; k < 3; ++k) {
-                    img_data[(i + j * rst.GetWidth()) * 3 + k] = rst.FrameBuffer()[i + j * rst.GetWidth()][k] * 255;
-                }
-            }
-        }
-
-        stbi_write_png(output_path.c_str(), rst.GetWidth(), rst.GetHeight(), 3, img_data.data(), 0);
+        rst.Draw(pos_id, ind_id, col_id, RenderPrimitive::TRIANGLE);
+        //rst.Draw(pos_id, ind_id, RenderPrimitive::TRIANGLE);
 
         auto data = rst.FrameBuffer().data();
         app.Render(data);

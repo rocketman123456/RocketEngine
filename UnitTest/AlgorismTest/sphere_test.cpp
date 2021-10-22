@@ -62,8 +62,8 @@ int main(int argc, char** argv) {
                 rst.DrawLine3D(
                     Eigen::Vector3f(edge->start->position[0], edge->start->position[1], edge->start->position[2]), 
                     Eigen::Vector3f(edge->end->position[0], edge->end->position[1], edge->end->position[2]),
-                    Eigen::Vector3f(255,0,0),
-                    Eigen::Vector3f(0,0,255)
+                    Eigen::Vector3f(255,255,0),
+                    Eigen::Vector3f(0,255,255)
                 );
             }
         }
