@@ -41,6 +41,8 @@ namespace Rocket {
     }
 
     Eigen::Vector3f SoftTexture::GetPixelRGB(int32_t x, int32_t y) {
+        //x = x % width;
+        //y = y % height;
         auto color = image_data_[y * width + x];
         return color.head<3>();
     }

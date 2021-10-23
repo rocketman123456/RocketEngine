@@ -66,7 +66,7 @@ int main(int argc, char** argv) {
         }
     }
 
-    std::cout << "Tirangle Count: " << triangle_list.size() << std::endl;
+    RK_INFO(App, "Tirangle Count: {}", triangle_list.size());
 
     VertexShaderFunc vertex_shader = ::vertex_shader;
     FragmentShaderFunc fragment_shader = ::texture_fragment_shader;
@@ -89,12 +89,13 @@ int main(int argc, char** argv) {
     //rst.EnableWireFrame();
     rst.DisableMsaa();
     //rst.EnableMsaa();
-    //rst.SetMsaaLevel(0);
+    rst.SetMsaaLevel(0);
     rst.EnableShader();
 
     int32_t count = 0;
-    //std::cout << "Initialize Finished" << std::endl;
-    
+    global_angle_y = 135;
+
+    RK_INFO(App, "Initialize Finished");
     while(!app.ShouldClose()) {
         app.Tick();
 
@@ -104,37 +105,21 @@ int main(int argc, char** argv) {
         rst.SetView(get_view_matrix(eye_pos));
         rst.SetProjection(get_perspective_matrix(45, ((float)width/(float)height), 0.1, 50));
         //rst.SetProjection(get_orthographic_matrix(-6.4, 6.4, -50, 50, 3.6, -3.6));
-        //RK_INFO(App, "Set MVP");
 
-        rst.DrawLine3D({0,0,0}, {1,0,0}, {255,0,0}, {255,0,0}); // x
-        rst.DrawLine3D({0,0,0}, {0,1,0}, {0,255,0}, {0,255,0}); // y
-        rst.DrawLine3D({0,0,0}, {0,0,1}, {0,0,255}, {0,0,255}); // z
+        // rst.DrawLine3D({0,0,0}, {1,0,0}, {255,0,0}, {255,0,0}); // x
+        // rst.DrawLine3D({0,0,0}, {0,1,0}, {0,255,0}, {0,255,0}); // y
+        // rst.DrawLine3D({0,0,0}, {0,0,1}, {0,0,255}, {0,0,255}); // z
 
         // for(SoftTrianglePtr& face : triangle_list) {
-        //     rst.DrawLine3D(
-        //         Eigen::Vector3f(face->v[0][0], face->v[0][1], face->v[0][2]), 
-        //         Eigen::Vector3f(face->v[1][0], face->v[1][1], face->v[1][2]),
-        //         Eigen::Vector3f(255,0,0),
-        //         Eigen::Vector3f(0,255,0)
-        //     );
-        //     rst.DrawLine3D(
-        //         Eigen::Vector3f(face->v[1][0], face->v[1][1], face->v[1][2]), 
-        //         Eigen::Vector3f(face->v[2][0], face->v[2][1], face->v[2][2]),
-        //         Eigen::Vector3f(255,0,0),
-        //         Eigen::Vector3f(0,255,0)
-        //     );
-        //     rst.DrawLine3D(
-        //         Eigen::Vector3f(face->v[2][0], face->v[2][1], face->v[2][2]), 
-        //         Eigen::Vector3f(face->v[0][0], face->v[0][1], face->v[0][2]),
-        //         Eigen::Vector3f(255,0,0),
-        //         Eigen::Vector3f(0,255,0)
-        //     );
+        //     rst.DrawLine3D(face->v[0].head<3>(), face->v[1].head<3>(), {255,0,0}, {0,255,0});
+        //     rst.DrawLine3D(face->v[1].head<3>(), face->v[2].head<3>(), {255,0,0}, {0,255,0});
+        //     rst.DrawLine3D(face->v[2].head<3>(), face->v[0].head<3>(), {255,0,0}, {0,255,0});
         // }
 
-        //RK_INFO(App, "Begin Render");
+        RK_INFO(App, "Begin Render");
         //rst.Draw(tri);
         rst.Draw(triangle_list);
-        //RK_INFO(App, "End Render");
+        RK_INFO(App, "End Render");
 
         // Save Image
         std::string output_path = root + "Data/" + std::to_string(count++) + ".png";
@@ -148,8 +133,6 @@ int main(int argc, char** argv) {
             for(int j = 0; j < rst.GetHeight(); ++j) {
                 for(int k = 0; k < 3; ++k) {
                     float data = rst.FrameBuffer()[i + j * rst.GetWidth()][k];
-                    // data = data > 1.0f-EPS ? 1.0f : data;
-                    // data = data < 0.0f+EPS ? 0.0f : data;
                     img_data[(i + j * rst.GetWidth()) * 3 + k] = data * 255.0f;
                 }
             }
