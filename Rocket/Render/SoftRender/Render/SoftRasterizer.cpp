@@ -57,6 +57,26 @@ namespace Rocket {
         else if((p.dot(f0)*f0.dot(v[2])<0) && (p.dot(f1)*f1.dot(v[0])<0) && (p.dot(f2)*f2.dot(v[1])<0))
             return true;
         return false;
+
+        // Vector2f screen_point = Vector2f(x, y);
+        // Vector2f v[3];
+        // v[0] = _v[1].head(2) - _v[0].head(2);
+        // v[1] = _v[2].head(2) - _v[1].head(2);
+        // v[2] = _v[0].head(2) - _v[2].head(2);
+        // Vector2f dir[3];
+        // dir[0] = screen_point - _v[0].head(2);
+        // dir[1] = screen_point - _v[1].head(2);
+        // dir[2] = screen_point - _v[2].head(2);
+        // int count = 0;
+        // for(int i = 0; i < 3; ++i) {
+        //     float result = v[i][0] * dir[i][1] - v[i][1] * dir[i][0];
+        //     if(result > 0) {
+        //         count++;
+        //     } else if(result < 0) {
+        //         count--;
+        //     }
+        // }
+        // return count == 3 || count == -3;
     }
 
     std::tuple<float, float, float> SoftRasterizer::ComputeBarycentric2D(float x, float y, const Eigen::Vector4f v[]) {
@@ -84,6 +104,13 @@ namespace Rocket {
         frame_buf_[current_frame_][ind] = color_ / 255.0;
     }
 
+    float SoftRasterizer::GetDepth(int32_t x, int32_t y) {
+        if (x < 0 || x >= width_ || y < 0 || y >= height_)
+            return FLT_MAX;
+        auto ind = (height_ - y) * width_ + x;
+        return depth_buf_[current_frame_][ind];
+    }
+
     void SoftRasterizer::SetDepth(const Eigen::Vector2i& point, const double depth) {
         if (point[0] < 0 || point[0] >= width_ || point[1] < 0 || point[1] >= height_)
             return;
@@ -99,7 +126,6 @@ namespace Rocket {
 
     void SoftRasterizer::DrawLines3D(const Vector3fVec& begin, const Vector3fVec& end) {
         assert(begin.size() == end.size());
-
         for(int32_t i = 0; i < begin.size(); ++i) {
             DrawLine3D(begin[i], end[i], {255, 255, 255}, {255, 255, 255});
         }
@@ -132,11 +158,11 @@ namespace Rocket {
     void SoftRasterizer::DrawLines3D(
         const Vector3fVec& begin, const Vector3fVec& end, 
         const Vector3fVec& color_begin, const Vector3fVec& color_end) {
-#ifdef RK_DEBUG
+
         assert(begin.size() == end.size());
         assert(color_begin.size() == color_end.size());
         assert(begin.size() == color_begin.size());
-#endif
+
         for(int32_t i = 0; i < begin.size(); ++i) {
             DrawLine3D(begin[i], end[i], color_begin[i], color_end[i]);
         }
@@ -496,8 +522,6 @@ namespace Rocket {
 
         for(int x = minAabb[0]; x < maxAabb[0]; ++x) {
             for(int y = minAabb[1]; y < maxAabb[1]; ++y) {
-                // Color Result
-                Eigen::Vector3f color_result(0, 0, 0);
                 // store min depth
                 float min_depth = FLT_MAX;
                 // color sample point count
@@ -510,17 +534,39 @@ namespace Rocket {
                     bool inside = InsideTriangle(fx, fy, t.v);
                     if(inside) {
                         // Interpolate Z Buffer
+                        auto[alpha, beta, gamma] = ComputeBarycentric2D((float)x + msaa_pos[i][0], (float)y + msaa_pos[i][1], t.v);
+                        float w_reciprocal = 1.0 / (alpha / v[0].w() + beta / v[1].w() + gamma / v[2].w());
+                        float z_interpolated = alpha * v[0].z() / v[0].w() + beta * v[1].z() / v[1].w() + gamma * v[2].z() / v[2].w();
+                        z_interpolated *= w_reciprocal;
+                        z_interpolated *= -1;
+                        min_depth = std::min(min_depth, z_interpolated);
                         count++;
                     }
                 }
                 if(count != 0) {
+                    // if(GetIndex(x, y) >= width_ * height_)
+                    //     continue;
                     if(GetDepth(x, y) > min_depth) {
                         float fx = (float)x + 0.5;
                         float fy = (float)y + 0.5;
+                        // Color Result
+                        Eigen::Vector3f color_result(0, 0, 0);
+                        auto [alpha, beta, gamma] = ComputeBarycentric2D(fx, fy, t.v);
                         if(with_shader_) {
-                            color_result = CalculateColorWithShader(t, fx, fy, min_depth, v, view_pos);
+                            auto interpolated_color = Interpolate<Eigen::Vector3f>(Eigen::Vector3f(alpha, beta, gamma), {t.color[0], t.color[1], t.color[2]});
+                            auto interpolated_normal = Interpolate<Eigen::Vector3f>(Eigen::Vector3f(alpha, beta, gamma), {t.normal[0], t.normal[1], t.normal[2]});
+                            auto interpolated_texcoords = Interpolate<Eigen::Vector2f>(Eigen::Vector3f(alpha, beta, gamma), {t.tex_coords[0], t.tex_coords[1], t.tex_coords[2]});
+                            auto interpolated_shadingcoords = Interpolate<Eigen::Vector3f>(Eigen::Vector3f(alpha, beta, gamma), view_pos);
+
+                            auto payload = FragmentShaderPayload(
+                                interpolated_color, 
+                                interpolated_normal.normalized(), 
+                                interpolated_texcoords, 
+                                texture_ ? texture_.value() : nullptr);
+                            payload.view_pos = interpolated_shadingcoords;
+                            color_result = fragment_shader_(payload);
                         } else {
-                            color_result = CalculateColor(t, fx + 0.5, fy, min_depth, v);
+                            color_result = t.GetColor();
                         }
                         Eigen::Vector3f color = color_result * (float)count / (float)msaa_pos.size();
                         Eigen::Vector2i point(x, y);
@@ -532,50 +578,6 @@ namespace Rocket {
                 }
             }
         }
-    }
-
-    Eigen::Vector3f SoftRasterizer::CalculateColor(
-        const SoftTriangle& t, float x, float y, float& min_depth, 
-        const std::array<Eigen::Vector4f, 3>& v) {
-
-        // Interpolate Z Buffer
-        auto [alpha, beta, gamma] = ComputeBarycentric2D(x, y, t.v);
-        float w_reciprocal = 1.0 / (alpha / v[0].w() + beta / v[1].w() + gamma / v[2].w());
-        float z_interpolated = alpha * v[0].z() / v[0].w() + beta * v[1].z() / v[1].w() + gamma * v[2].z() / v[2].w();
-        z_interpolated *= w_reciprocal;
-        z_interpolated *= -1;   // invert z
-        min_depth = std::min(min_depth, z_interpolated);
-        auto pixel_color = t.GetColor();
-        return pixel_color;
-    }
-
-    Eigen::Vector3f SoftRasterizer::CalculateColorWithShader(
-        const SoftTriangle& t, float x, float y, float& min_depth, 
-        const std::array<Eigen::Vector4f, 3>& v, 
-        const std::array<Eigen::Vector3f, 3>& view_pos) {
-        
-        // Interpolate Z Buffer
-        auto [alpha, beta, gamma] = ComputeBarycentric2D(x, y, t.v);
-        float w_reciprocal = 1.0 / (alpha / v[0].w() + beta / v[1].w() + gamma / v[2].w());
-        float z_interpolated = alpha * v[0].z() / v[0].w() + beta * v[1].z() / v[1].w() + gamma * v[2].z() / v[2].w();
-        z_interpolated *= w_reciprocal;
-        z_interpolated *= -1;   // invert z
-        min_depth = std::min(min_depth, z_interpolated);
-
-        auto interpolated_color = Interpolate<Eigen::Vector3f>(Eigen::Vector3f(alpha, beta, gamma), {t.color[0], t.color[1], t.color[2]});
-        auto interpolated_normal = Interpolate<Eigen::Vector3f>(Eigen::Vector3f(alpha, beta, gamma), {t.normal[0], t.normal[1], t.normal[2]});
-        auto interpolated_texcoords = Interpolate<Eigen::Vector2f>(Eigen::Vector3f(alpha, beta, gamma), {t.tex_coords[0], t.tex_coords[1], t.tex_coords[2]});
-        auto interpolated_shadingcoords = Interpolate<Eigen::Vector3f>(Eigen::Vector3f(alpha, beta, gamma), view_pos);
-
-        auto payload = FragmentShaderPayload(
-            interpolated_color, 
-            interpolated_normal.normalized(), 
-            interpolated_texcoords, 
-            texture_ ? texture_.value() : nullptr);
-        payload.view_pos = interpolated_shadingcoords;
-        auto pixel_color = fragment_shader_(payload);
-
-        return pixel_color;
     }
 
     void SoftRasterizer::Clear(BufferType buff) {
@@ -598,13 +600,5 @@ namespace Rocket {
                 std::fill(depth_buf_[i].begin(), depth_buf_[i].end(), std::numeric_limits<float>::infinity());
             }
         }
-    }
-
-    float SoftRasterizer::GetDepth(int32_t x, int32_t y) {
-        int32_t index = GetIndex(x, y);
-        if(index >= width_ * height_)
-            return FLT_MAX;
-        else 
-            return depth_buf_[current_frame_][index];
     }
 }

@@ -88,12 +88,12 @@ int main(int argc, char** argv) {
     rst.DisableWireFrame();
     //rst.EnableWireFrame();
     rst.DisableMsaa();
-    //rst.EnableMsaa();
-    rst.SetMsaaLevel(0);
+    rst.EnableMsaa();
+    rst.SetMsaaLevel(1);
     rst.EnableShader();
 
     int32_t count = 0;
-    global_angle_y = 135;
+    global_angle_y = 130;
 
     RK_INFO(App, "Initialize Finished");
     while(!app.ShouldClose()) {

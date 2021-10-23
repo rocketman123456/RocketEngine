@@ -116,13 +116,13 @@ namespace Rocket {
         void RasterizeWireframe(const SoftTriangle& t);
         void RasterizeTriangle(const SoftTriangle& t, const std::array<Eigen::Vector3f, 3>& view_pos = {});
 
-        Eigen::Vector3f CalculateColor(
-            const SoftTriangle& t, float x, float y, float& minDepth, 
-            const std::array<Eigen::Vector4f, 3>& v);
-        Eigen::Vector3f CalculateColorWithShader(
-            const SoftTriangle& t, float x, float y, float& minDepth, 
-            const std::array<Eigen::Vector4f, 3>& v, 
-            const std::array<Eigen::Vector3f, 3>& view_pos);
+        // Eigen::Vector3f CalculateColor(
+        //     const SoftTriangle& t, float x, float y, float& minDepth, 
+        //     const std::array<Eigen::Vector4f, 3>& v);
+        // Eigen::Vector3f CalculateColorWithShader(
+        //     const SoftTriangle& t, float x, float y, float& minDepth, 
+        //     const std::array<Eigen::Vector4f, 3>& v, 
+        //     const std::array<Eigen::Vector3f, 3>& view_pos);
 
         inline int32_t GetNextId() { return next_id_++; }
         inline int32_t GetIndex(int32_t x, int32_t y) { return (height_-y)*width_ + x; }
