@@ -41,19 +41,19 @@ namespace Rocket {
         return {id};
     }
 
-    void SoftRasterizer::SetPixel(const Eigen::Vector3f& point, const Eigen::Vector3f& color) {
-        //old index: auto ind = point.y() + point.x() * width;
-        if (point[0] < 0 || point[0] >= width_ || point[1] < 0 || point[1] >= height_)
-            return;
-        auto ind = (height_ - 1 - point[1]) * width_ + point[0];
-        frame_buf_[current_frame_][ind] = color / 255.0;
-    }
-
     void SoftRasterizer::SetPixel(const Eigen::Vector2i& point, const Eigen::Vector3f& color) {
         if (point[0] < 0 || point[0] >= width_ || point[1] < 0 || point[1] >= height_)
             return;
         auto ind = (height_ - 1 - point[1]) * width_ + point[0];
-        frame_buf_[current_frame_][ind] = color / 255.0;
+        // TODO : Check whether to use this clamp function
+        auto color_ = color;
+        for(int i = 0; i < 3; ++i) {
+            float data = color_[i];
+            data = data > 255.0f-EPS ? 255.0f : data;
+            data = data < 0.0f+EPS ? 0.0f : data;
+            color_[i] = data;
+        }
+        frame_buf_[current_frame_][ind] = color_ / 255.0;
     }
 
     void SoftRasterizer::DrawLine3D(const Eigen::Vector3f& begin, const Eigen::Vector3f& end) {
@@ -292,9 +292,9 @@ namespace Rocket {
         for (auto& i : ind) {
             SoftTriangle t;
             Eigen::Vector4f v[] = {
-                    mvp_ * Math::to_vec4(buf[i[0]], 1.0f),
-                    mvp_ * Math::to_vec4(buf[i[1]], 1.0f),
-                    mvp_ * Math::to_vec4(buf[i[2]], 1.0f)
+                mvp_ * Math::to_vec4(buf[i[0]], 1.0f),
+                mvp_ * Math::to_vec4(buf[i[1]], 1.0f),
+                mvp_ * Math::to_vec4(buf[i[2]], 1.0f)
             };
             // Homogeneous division
             for (auto& vec : v) {

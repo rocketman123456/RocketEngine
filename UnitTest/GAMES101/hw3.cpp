@@ -40,11 +40,11 @@ int main(int argc, char** argv) {
     auto root = FindRootDir(name);
     root += "/";
 
-    std::string model_path = "Asset/Model/rock/rock.obj";
-    std::string texture_path = "Asset/Model/rock/rock.png";
+    //std::string model_path = "Asset/Model/rock/rock.obj";
+    //std::string texture_path = "Asset/Model/rock/rock.png";
 
-    //std::string model_path = "Asset/Model/spot/spot_triangulated_good.obj";
-    //std::string texture_path = "Asset/Model/spot/hmap.jpg";
+    std::string model_path = "Asset/Model/spot/spot_triangulated_good.obj";
+    std::string texture_path = "Asset/Model/spot/spot_texture.png";
 
     ObjParser parser(root, model_path);
     parser.Initialize();
@@ -141,17 +141,20 @@ int main(int argc, char** argv) {
         RK_INFO(App, "{}", output_path);
 
         // Convert Data
-        std::vector<char> img_data;
-        img_data.resize(rst.GetWidth() * rst.GetHeight() * 3);
+        int ch = 3;
+        std::vector<unsigned char> img_data;
+        img_data.resize(rst.GetWidth() * rst.GetHeight() * ch);
         for(int i = 0; i < rst.GetWidth(); ++i) {
             for(int j = 0; j < rst.GetHeight(); ++j) {
                 for(int k = 0; k < 3; ++k) {
-                    img_data[(i + j * rst.GetWidth()) * 3 + k] = rst.FrameBuffer()[i + j * rst.GetWidth()][k] * 254;
+                    float data = rst.FrameBuffer()[i + j * rst.GetWidth()][k];
+                    // data = data > 1.0f-EPS ? 1.0f : data;
+                    // data = data < 0.0f+EPS ? 0.0f : data;
+                    img_data[(i + j * rst.GetWidth()) * 3 + k] = data * 255.0f;
                 }
             }
         }
-
-        stbi_write_png(output_path.c_str(), rst.GetWidth(), rst.GetHeight(), 3, img_data.data(), 0);
+        stbi_write_png(output_path.c_str(), rst.GetWidth(), rst.GetHeight(), ch, img_data.data(), rst.GetWidth() * ch);
 
         auto data = rst.FrameBuffer().data();
         app.Render(data);

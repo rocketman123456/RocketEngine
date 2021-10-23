@@ -66,7 +66,6 @@ namespace Rocket {
 
         inline void NextFrame() { last_frame_ = current_frame_++; current_frame_ = current_frame_%FRAME_COUNT; }
 
-        void SetPixel(const Eigen::Vector3f& point, const Eigen::Vector3f& color);
         void SetPixel(const Eigen::Vector2i& point, const Eigen::Vector3f& color);
 
         void Clear(BufferType buff);
