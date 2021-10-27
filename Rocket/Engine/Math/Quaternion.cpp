@@ -8,9 +8,9 @@ namespace Rocket {
         auto q = q_.quaternion.block<3,1>(1, 0);
 
         double result_1 = p0 * q0 - p.dot(q);
-        Vector3d result_2 = p0 * q + q0 * p + p.cross(q);
+        Eigen::Vector3d result_2 = p0 * q + q0 * p + p.cross(q);
 
-        return { Vector4d(result_1, result_2[0], result_2[1], result_2[2]) };
+        return { {result_1, result_2[0], result_2[1], result_2[2]} };
     }
 
     double Quaternion::InnerProduct(const Quaternion& q_) {
@@ -25,6 +25,6 @@ namespace Rocket {
     Quaternion Quaternion::Conjugation() {
         auto p0 = quaternion[0];
         auto p = quaternion.block<3,1>(1, 0);
-        return { Vector4d(p0, -p[0], -p[1], -p[2]) };
+        return { {p0, -p[0], -p[1], -p[2]} };
     }
 }

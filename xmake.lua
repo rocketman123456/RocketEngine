@@ -38,8 +38,8 @@ add_requires("gsl v3.1.0", {system = false, configs = {shared = false, debug = t
 
 if is_plat("macosx", "linux", "windows") then
     add_requires("libtorch v1.8.1", {system = false, configs = {shared = true, debug = true, cxflags = "-fPIC"}})
-    add_requires("protobuf-cpp", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
-    add_requires("protobuf-c", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
+    --add_requires("protobuf-cpp", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
+    --add_requires("protobuf-c", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
 end
 
 --

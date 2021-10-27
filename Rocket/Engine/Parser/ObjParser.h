@@ -9,11 +9,11 @@ namespace Rocket {
     // TODO : combine this into Geometry::Vertex
     struct Vertex {
         // Position Vector
-        Vector3f position = Vector3f::Zero();
+        Eigen::Vector3f position = Eigen::Vector3f::Zero();
         // Normal Vector
-        Vector3f normal = Vector3f::Zero();
+        Eigen::Vector3f normal = Eigen::Vector3f::Zero();
         // Texture Coordinate Vector
-        Vector2f texture_coordinate = Vector2f::Zero();
+        Eigen::Vector2f texture_coordinate = Eigen::Vector2f::Zero();
     };
 
     // TODO : combine this into Geometry::Material
@@ -21,11 +21,11 @@ namespace Rocket {
         // Material Name
         std::string name = "";
         // Ambient Color
-        Vector3f ka = Vector3f::Zero();
+        Eigen::Vector3f ka = Eigen::Vector3f::Zero();
         // Diffuse Color
-        Vector3f kd = Vector3f::Zero();
+        Eigen::Vector3f kd = Eigen::Vector3f::Zero();
         // Specular Color
-        Vector3f ks = Vector3f::Zero();
+        Eigen::Vector3f ks = Eigen::Vector3f::Zero();
         // Specular Exponent
         float ns = 0.0f;
         // Optical Density
@@ -82,9 +82,9 @@ namespace Rocket {
     private:
         void GenVerticesFromRawOBJ(
             std::vector<Vertex>& oVerts,
-            const std::vector<Vector3f>& iPositions,
-            const std::vector<Vector2f>& iTCoords,
-            const std::vector<Vector3f>& iNormals,
+            const std::vector<Eigen::Vector3f>& iPositions,
+            const std::vector<Eigen::Vector2f>& iTCoords,
+            const std::vector<Eigen::Vector3f>& iNormals,
             std::string icurline);
         bool LoadMaterials(std::string path);
         void VertexTriangluation(std::vector<unsigned int>& oIndices, const std::vector<Vertex>& iVerts);

@@ -13,7 +13,9 @@ target_end()
 target("torch_test")
     set_kind("binary")
     add_files("torch_test.cpp")
-    add_packages("libtorch", "protobuf-cpp", "protobuf-c", {public = true})
+    add_packages("libtorch", 
+        --"protobuf-cpp", "protobuf-c", 
+        {public = true})
 target_end()
 
 target("yaml_test")

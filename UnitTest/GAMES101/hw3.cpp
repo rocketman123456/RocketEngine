@@ -44,7 +44,8 @@ int main(int argc, char** argv) {
     //std::string texture_path = "Asset/Model/rock/rock.png";
 
     std::string model_path = "Asset/Model/spot/spot_triangulated_good.obj";
-    std::string texture_path = "Asset/Model/spot/spot_texture.png";
+    //std::string texture_path = "Asset/Model/spot/spot_texture.png";
+    std::string texture_path = "Asset/Model/spot/hmap.jpg";
 
     ObjParser parser(root, model_path);
     parser.Initialize();
@@ -69,7 +70,7 @@ int main(int argc, char** argv) {
     RK_INFO(App, "Tirangle Count: {}", triangle_list.size());
 
     VertexShaderFunc vertex_shader = ::vertex_shader;
-    FragmentShaderFunc fragment_shader = ::texture_fragment_shader;
+    FragmentShaderFunc fragment_shader = ::displacement_fragment_shader;
 
     SoftTrianglePtr tri = SoftTrianglePtr(new SoftTriangle());
     tri->SetVertex(0, Eigen::Vector3f(2, 0, -2));
@@ -85,11 +86,11 @@ int main(int argc, char** argv) {
     rst.SetTexture(texture);
     rst.SetVertexShader(vertex_shader);
     rst.SetFragmentShader(fragment_shader);
-    rst.DisableWireFrame();
+    //rst.DisableWireFrame();
     //rst.EnableWireFrame();
     rst.DisableMsaa();
-    rst.EnableMsaa();
-    rst.SetMsaaLevel(1);
+    //rst.EnableMsaa();
+    //rst.SetMsaaLevel(1);
     rst.EnableShader();
 
     int32_t count = 0;
@@ -106,9 +107,9 @@ int main(int argc, char** argv) {
         rst.SetProjection(get_perspective_matrix(45, ((float)width/(float)height), 0.1, 50));
         //rst.SetProjection(get_orthographic_matrix(-6.4, 6.4, -50, 50, 3.6, -3.6));
 
-        // rst.DrawLine3D({0,0,0}, {1,0,0}, {255,0,0}, {255,0,0}); // x
-        // rst.DrawLine3D({0,0,0}, {0,1,0}, {0,255,0}, {0,255,0}); // y
-        // rst.DrawLine3D({0,0,0}, {0,0,1}, {0,0,255}, {0,0,255}); // z
+        rst.DrawLine3D({0,0,0}, {1,0,0}, {255,0,0}, {255,0,0}); // x
+        rst.DrawLine3D({0,0,0}, {0,1,0}, {0,255,0}, {0,255,0}); // y
+        rst.DrawLine3D({0,0,0}, {0,0,1}, {0,0,255}, {0,0,255}); // z
 
         // for(SoftTrianglePtr& face : triangle_list) {
         //     rst.DrawLine3D(face->v[0].head<3>(), face->v[1].head<3>(), {255,0,0}, {0,255,0});

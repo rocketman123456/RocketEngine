@@ -32,9 +32,9 @@ namespace Rocket {
     }
 
     bool ObjParser::Parse() {
-        std::vector<Vector3f> positions;
-        std::vector<Vector2f> tcoords;
-        std::vector<Vector3f> normals;
+        std::vector<Eigen::Vector3f> positions;
+        std::vector<Eigen::Vector2f> tcoords;
+        std::vector<Eigen::Vector3f> normals;
 
         std::vector<Vertex> vertices;
         std::vector<unsigned int> indices;
@@ -109,7 +109,7 @@ namespace Rocket {
             // Generate a Vertex Position
             if (Algorithm::FirstToken(curline) == "v") {
                 std::vector<std::string> spos;
-                Vector3f vpos;
+                Eigen::Vector3f vpos;
                 Algorithm::Split(Algorithm::Tail(curline), spos, " ");
 
                 vpos[0] = std::stof(spos[0]);
@@ -121,7 +121,7 @@ namespace Rocket {
             // Generate a Vertex Texture Coordinate
             if (Algorithm::FirstToken(curline) == "vt") {
                 std::vector<std::string> stex;
-                Vector2f vtex;
+                Eigen::Vector2f vtex;
                 Algorithm::Split(Algorithm::Tail(curline), stex, " ");
 
                 vtex[0] = std::stof(stex[0]);
@@ -132,7 +132,7 @@ namespace Rocket {
             // Generate a Vertex Normal;
             if (Algorithm::FirstToken(curline) == "vn") {
                 std::vector<std::string> snor;
-                Vector3f vnor;
+                Eigen::Vector3f vnor;
                 Algorithm::Split(Algorithm::Tail(curline), snor, " ");
 
                 vnor[0] = std::stof(snor[0]);
@@ -264,9 +264,9 @@ namespace Rocket {
 
     void ObjParser::GenVerticesFromRawOBJ(
         std::vector<Vertex>& oVerts,
-        const std::vector<Vector3f>& iPositions,
-        const std::vector<Vector2f>& iTCoords,
-        const std::vector<Vector3f>& iNormals,
+        const std::vector<Eigen::Vector3f>& iPositions,
+        const std::vector<Eigen::Vector2f>& iTCoords,
+        const std::vector<Eigen::Vector3f>& iNormals,
         std::string icurline) {
         // Init variables
         std::vector<std::string> sface, svert;
@@ -310,7 +310,7 @@ namespace Rocket {
             switch (vtype) {
                 case 1: { // P
                     vVert.position = Algorithm::GetElement(iPositions, svert[0]);
-                    vVert.texture_coordinate = Vector2f(0, 0);
+                    vVert.texture_coordinate = Eigen::Vector2f(0, 0);
                     noNormal = true;
                     oVerts.push_back(vVert);
                     break;
@@ -324,7 +324,7 @@ namespace Rocket {
                 }
                 case 3: { // P//N
                     vVert.position = Algorithm::GetElement(iPositions, svert[0]);
-                    vVert.texture_coordinate = Vector2f(0, 0);
+                    vVert.texture_coordinate = Eigen::Vector2f(0, 0);
                     vVert.normal = Algorithm::GetElement(iNormals, svert[2]);
                     oVerts.push_back(vVert);
                     break;
@@ -346,9 +346,9 @@ namespace Rocket {
         // these may not be truly acurate but it is the
         // best they get for not compiling a mesh with normals
         if (noNormal) {
-            Vector3f A = oVerts[0].position - oVerts[1].position;
-            Vector3f B = oVerts[2].position - oVerts[1].position;
-            Vector3f normal = A.cross(B);
+            Eigen::Vector3f A = oVerts[0].position - oVerts[1].position;
+            Eigen::Vector3f B = oVerts[2].position - oVerts[1].position;
+            Eigen::Vector3f normal = A.cross(B);
 
             for (int i = 0; i < int(oVerts.size()); i++) {
                 oVerts[i].normal = normal;
@@ -423,7 +423,7 @@ namespace Rocket {
                             oIndices.push_back(j);
                     }
 
-                    Vector3f tempVec;
+                    Eigen::Vector3f tempVec;
                     for (int j = 0; j < int(tVerts.size()); j++) {
                         if (tVerts[j].position != pCur.position
                             && tVerts[j].position != pPrev.position
