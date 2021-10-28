@@ -494,9 +494,9 @@ namespace Rocket {
     void SoftRasterizer::RasterizeWireframe(const SoftTriangle& t) {
         Eigen::Vector3f color_begin = { 255, 255, 255 };
         Eigen::Vector3f color_end = { 0, 255, 0 };
-        DrawLine(t.c3f(), t.a3f(), color_begin, color_end);
-        DrawLine(t.c3f(), t.b3f(), color_begin, color_end);
-        DrawLine(t.b3f(), t.a3f(), color_begin, color_end);
+        DrawLine(t.c3f(), t.a3f(), t.GetColor(2), t.GetColor(0));
+        DrawLine(t.c3f(), t.b3f(), t.GetColor(1), t.GetColor(2));
+        DrawLine(t.b3f(), t.a3f(), t.GetColor(0), t.GetColor(1));
     }
 
     void SoftRasterizer::RasterizeTriangle(const SoftTriangle& t, const std::array<Eigen::Vector3f, 3>& view_pos) {

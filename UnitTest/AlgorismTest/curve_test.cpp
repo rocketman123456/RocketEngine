@@ -61,17 +61,24 @@ int main(int argc, char** argv) {
     cp[3][2] << 0.75, 1, 0.75;
     cp[3][3] << 1, 0, 0.75;
 
-    Geometry::BezierCurve curve1(cp[0][0], cp[0][1], cp[0][2], cp[0][3]);
-    Geometry::BezierCurve curve2(cp[1][0], cp[1][1], cp[1][2], cp[1][3]);
-    Geometry::BezierCurve curve3(cp[2][0], cp[2][1], cp[2][2], cp[2][3]);
-    Geometry::BezierCurve curve4(cp[3][0], cp[3][1], cp[3][2], cp[3][3]);
+    Geometry::BezierCurve curve1({cp[0][0], cp[0][1], cp[0][2], cp[0][3]});
+    Geometry::BezierCurve curve2({cp[1][0], cp[1][1], cp[1][2], cp[1][3]});
+    Geometry::BezierCurve curve3({cp[2][0], cp[2][1], cp[2][2], cp[2][3]});
+    Geometry::BezierCurve curve4({cp[3][0], cp[3][1], cp[3][2], cp[3][3]});
 
-    Geometry::BezierSurface surface(curve1, curve2, curve3, curve4);
-    surface.Compute(50);
+    Geometry::BezierSurface surface({curve1, curve2, curve3, curve4});
+    surface.Compute(40);
+    surface.GenerateMesh();
     auto& result = surface.GetResult();
 
+    auto& vertices = surface.GetVertices();
+    auto& indices = surface.GetIndices();
+
+    auto pos = rst.LoadPositions(vertices);
+    auto ind = rst.LoadIndices(indices);
+
     //rst.DisableWireFrame();
-    //rst.EnableWireFrame();
+    rst.EnableWireFrame();
     rst.DisableMsaa();
     //rst.EnableMsaa();
     //rst.SetMsaaLevel(1);
@@ -95,7 +102,18 @@ int main(int argc, char** argv) {
 
         auto& points = result[k++];
         k = k % result.size();
-        rst.DrawPoints3D(points);
+        for(int i = 0; i < points.size() - 1; ++i) {
+            rst.DrawLine3D(points[i], points[i+1], {255, 0, 0}, {255, 0, 0});
+        }
+
+        // for(int i = 0; i < indices.size(); ++i) {
+        //     rst.DrawLine3D(vertices[indices[i][0]], vertices[indices[i][1]], {255, 0, 255}, {255, 255, 0});
+        //     rst.DrawLine3D(vertices[indices[i][1]], vertices[indices[i][2]], {255, 0, 255}, {255, 255, 0});
+        //     rst.DrawLine3D(vertices[indices[i][2]], vertices[indices[i][0]], {255, 0, 255}, {255, 255, 0});
+        // }
+
+        rst.Draw(pos, ind, RenderPrimitive::TRIANGLE);
+        //rst.DrawPoints3D(points);
 
         auto data = rst.FrameBuffer().data();
         app.Render(data);

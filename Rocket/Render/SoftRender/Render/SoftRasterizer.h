@@ -105,9 +105,8 @@ namespace Rocket {
         void DrawPoint3D(const Eigen::Vector3f& point, const Eigen::Vector3f& color);
         void DrawPoints3D(const Vector3fVec& point, const Vector3fVec& color);
 
-        void DrawLine(const Eigen::Vector3f& begin, const Eigen::Vector3f& end, const Eigen::Vector3f& color_begin, const Eigen::Vector3f& color_end);
-
     private:
+        void DrawLine(const Eigen::Vector3f& begin, const Eigen::Vector3f& end, const Eigen::Vector3f& color_begin, const Eigen::Vector3f& color_end);
         // Using Cross-Product Count to Check
         // Must Input 3 vector array
         bool InsideTriangle(float x, float y, const Eigen::Vector4f* _v);

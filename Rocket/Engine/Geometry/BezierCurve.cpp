@@ -4,32 +4,34 @@ namespace Rocket {
     namespace Geometry {
         void BezierCurve::Compute(int32_t count) {
             const float dt = 1.0 / (float)count;
-            auto& p_0 = control_point_[0];
-            auto& p_1 = control_point_[1];
-            auto& p_2 = control_point_[2];
-            auto& p_3 = control_point_[3];
+            // auto& p_0 = control_point_[0];
+            // auto& p_1 = control_point_[1];
+            // auto& p_2 = control_point_[2];
+            // auto& p_3 = control_point_[3];
 
             for (float t = 0.0; t <= 1.0; t += dt)  {
-                auto point = 
-                    std::pow(1 - t, 3) * p_0 + 
-                    3 * t * std::pow(1 - t, 2) * p_1 +
-                    3 * std::pow(t, 2) * (1 - t) * p_2 + 
-                    std::pow(t, 3) * p_3;
+                // auto point = 
+                //     std::pow(1 - t, 3) * p_0 + 
+                //     3 * t * std::pow(1 - t, 2) * p_1 +
+                //     3 * std::pow(t, 2) * (1 - t) * p_2 + 
+                //     std::pow(t, 3) * p_3;
+                auto point = CalculateReCursive(control_point_, t);
                 result_.push_back(point);
             }
         }
 
         Eigen::Vector3f BezierCurve::Calculate(float t) {
-            auto& p_0 = control_point_[0];
-            auto& p_1 = control_point_[1];
-            auto& p_2 = control_point_[2];
-            auto& p_3 = control_point_[3];
+            // auto& p_0 = control_point_[0];
+            // auto& p_1 = control_point_[1];
+            // auto& p_2 = control_point_[2];
+            // auto& p_3 = control_point_[3];
 
-            auto point = 
-                std::pow(1 - t, 3) * p_0 + 
-                3 * t * std::pow(1 - t, 2) * p_1 +
-                3 * std::pow(t, 2) * (1 - t) * p_2 + 
-                std::pow(t, 3) * p_3;
+            // auto point = 
+            //     std::pow(1 - t, 3) * p_0 + 
+            //     3 * t * std::pow(1 - t, 2) * p_1 +
+            //     3 * std::pow(t, 2) * (1 - t) * p_2 + 
+            //     std::pow(t, 3) * p_3;
+            auto point = CalculateReCursive(control_point_, t);
             return point;
         }
 
