@@ -14,22 +14,24 @@ namespace Rocket {
 
     namespace Math {
         // Angle between 2 Vector3 Objects
-        float AngleBetweenV3(const Eigen::Vector3f a, const Eigen::Vector3f b);
+        float AngleBetweenV3(const Eigen::Vector3f& a, const Eigen::Vector3f& b);
 
         // Projection Calculation of a onto b
-        Eigen::Vector3f ProjV3(const Eigen::Vector3f a, const Eigen::Vector3f b);
+        Eigen::Vector3f ProjV3(const Eigen::Vector3f& a, const Eigen::Vector3f& b);
 
-        Eigen::Vector4f to_vec4(const Eigen::Vector3f &v3, float w = 1.0f);
+        Eigen::Vector4f to_vec4(const Eigen::Vector3f& v3, float w = 1.0f);
+
+        double PointLineDistance(const Eigen::Vector3f& point, const Eigen::Vector3f& line_start, const Eigen::Vector3f& len_end);
     }
 
     namespace Algorithm {
         // A test to see if P1 is on the same side as P2 of a line segment ab
-        bool SameSide(Eigen::Vector3f p1, Eigen::Vector3f p2, Eigen::Vector3f a, Eigen::Vector3f b);
+        bool SameSide(const Eigen::Vector3f& p1, const Eigen::Vector3f& p2, const Eigen::Vector3f& a, const Eigen::Vector3f& b);
 
         // Generate a cross produect normal for a triangle
-        Eigen::Vector3f GenTriNormal(Eigen::Vector3f t1, Eigen::Vector3f t2, Eigen::Vector3f t3);
+        Eigen::Vector3f GenTriNormal(const Eigen::Vector3f& t1, const Eigen::Vector3f& t2, const Eigen::Vector3f& t3);
 
         // Check to see if a Vector3 Point is within a 3 Vector3 Triangle
-        bool InTriangle(Eigen::Vector3f point, Eigen::Vector3f tri1, Eigen::Vector3f tri2, Eigen::Vector3f tri3);
+        bool InTriangle(const Eigen::Vector3f& point, const Eigen::Vector3f& tri1, const Eigen::Vector3f& tri2, const Eigen::Vector3f& tri3);
     }
 }

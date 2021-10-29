@@ -5,17 +5,9 @@
 
 namespace Rocket {
     namespace Geometry {
-        class BezierCurve {
-        public:
-            BezierCurve(const std::vector<Eigen::Vector3f>& cp) : control_point_(cp) {}
-
-            void Compute(int32_t count);
-            const std::vector<Eigen::Vector3f>& GetResult() const { return result_; }
-            Eigen::Vector3f Calculate(float t);
-            Eigen::Vector3f CalculateReCursive(const std::vector<Eigen::Vector3f>& control_points, float t);
-        private:
-            std::vector<Eigen::Vector3f> control_point_;
-            std::vector<Eigen::Vector3f> result_;
-        };
+        Eigen::Vector3f CalculateBezierCurve(const std::vector<Eigen::Vector3f>& cp, float t);
+        Eigen::Vector3f CalculateBezierCurveReCursive(const std::vector<Eigen::Vector3f>& cp, float t);
+        void SubdividingBezierCurve(const std::vector<Eigen::Vector3f>& cp, double u, std::vector<Eigen::Vector3f>& cp_left, std::vector<Eigen::Vector3f>& cp_right);
+        void UpgradeBezierCurve(const std::vector<Eigen::Vector3f>& cp, std::vector<Eigen::Vector3f>& cp_new);
     }
 }

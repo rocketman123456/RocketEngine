@@ -2,38 +2,34 @@
 
 namespace Rocket {
     namespace Geometry {
-        void BezierSurface::Compute(int32_t count) {
-            count_ = count;
-            result_.clear();
-            result_.resize(count);
-            for(int j = 0; j < 4; ++j) {
-                control_curve_[j].Compute(count);
+        Eigen::Vector3f CalculateBezierSurface(const std::vector<std::vector<Eigen::Vector3f>>& cps, float tx, float ty) {
+            std::vector<Eigen::Vector3f> cp_mid;
+            for(int32_t i = 0; i < cps.size(); ++i) {
+                cp_mid.push_back(CalculateBezierCurve(cps[i], tx));
             }
-            for(int i = 0; i < count; ++i) {
-                std::vector<Eigen::Vector3f> cp;
-                for(int j = 0; j < control_curve_.size(); ++j) {
-                    cp.push_back(control_curve_[j].GetResult()[i]);
-                }
-                result_[i].clear();
-                result_[i].resize(count);
-                BezierCurve curve(cp);
-                curve.Compute(count);
-                for(int32_t k = 0; k < count; k++) {
-                    result_[i][k] = curve.GetResult()[k];
-                    vertices_.push_back(curve.GetResult()[k]);
-                }
-            }
+            return CalculateBezierCurve(cp_mid, ty);
         }
 
-        void BezierSurface::GenerateMesh() {
-            for(int32_t i = 0; i < count_ - 1; ++i) {
-                for(int32_t j = 0; j < count_ - 1; ++j) {
-                    int32_t i0 = i + j * count_;
-                    int32_t i1 = i + j * count_ + 1;
-                    int32_t i2 = i + (j+1) * count_;
-                    int32_t i3 = i + (j+1) * count_ + 1;
-                    indices_.push_back({i0, i1, i2});
-                    indices_.push_back({i1, i3, i2});
+        Eigen::Vector3f CalculateBezierSurfaceRecursice(const std::vector<std::vector<Eigen::Vector3f>>& cps, float tx, float ty) {
+            std::vector<Eigen::Vector3f> cp_mid;
+            for(int32_t i = 0; i < cps.size(); ++i) {
+                cp_mid.push_back(CalculateBezierCurveReCursive(cps[i], tx));
+            }
+            return CalculateBezierCurveReCursive(cp_mid, ty);
+        }
+
+        void GenerateBezierSurface(const std::vector<Eigen::Vector3f>& vertices, int32_t count_x, int32_t count_y, std::vector<Eigen::Vector3i>& indices) {
+            assert(vertices.size() == count_x * count_y);
+
+            indices.clear();
+            for(int32_t i = 0; i < count_x - 1; ++i) {
+                for(int32_t j = 0; j < count_y - 1; ++j) {
+                    int32_t i0 = i + j * count_x;
+                    int32_t i1 = i + j * count_x + 1;
+                    int32_t i2 = i + (j+1) * count_x;
+                    int32_t i3 = i + (j+1) * count_x + 1;
+                    indices.push_back({i0, i1, i2});
+                    indices.push_back({i1, i3, i2});
                 }
             }
         }

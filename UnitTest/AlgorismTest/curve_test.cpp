@@ -41,41 +41,13 @@ int main(int argc, char** argv) {
 
     Eigen::Vector3f cp[4][4];
 
-    cp[0][0] << 0, 0, 0;
-    cp[0][1] << 0.25, 1, 0;
-    cp[0][2] << 0.75, -1, 0;
-    cp[0][3] << 1, 0, 0;
+    int32_t count = 20;
+    double dt = 1.0 / (double)count;
+    std::vector<Eigen::Vector3f> vertices;
+    std::vector<Eigen::Vector3i> indices;
 
-    cp[1][0] << 0, 0, 0.25;
-    cp[1][1] << 0.25, -1, 0.25;
-    cp[1][2] << 0.75, 1, 0.25;
-    cp[1][3] << 1, 0, 0.25;
-
-    cp[2][0] << 0, 0, 0.5;
-    cp[2][1] << 0.25, 1, 0.5;
-    cp[2][2] << 0.75, -1, 0.5;
-    cp[2][3] << 1, 0, 1;
-
-    cp[3][0] << 0, 0, 0.75;
-    cp[3][1] << 0.25, -1, 0.75;
-    cp[3][2] << 0.75, 1, 0.75;
-    cp[3][3] << 1, 0, 0.75;
-
-    Geometry::BezierCurve curve1({cp[0][0], cp[0][1], cp[0][2], cp[0][3]});
-    Geometry::BezierCurve curve2({cp[1][0], cp[1][1], cp[1][2], cp[1][3]});
-    Geometry::BezierCurve curve3({cp[2][0], cp[2][1], cp[2][2], cp[2][3]});
-    Geometry::BezierCurve curve4({cp[3][0], cp[3][1], cp[3][2], cp[3][3]});
-
-    Geometry::BezierSurface surface({curve1, curve2, curve3, curve4});
-    surface.Compute(40);
-    surface.GenerateMesh();
-    auto& result = surface.GetResult();
-
-    auto& vertices = surface.GetVertices();
-    auto& indices = surface.GetIndices();
-
-    auto pos = rst.LoadPositions(vertices);
-    auto ind = rst.LoadIndices(indices);
+    pos_buf_id pos;
+    ind_buf_id ind;
 
     //rst.DisableWireFrame();
     rst.EnableWireFrame();
@@ -86,6 +58,8 @@ int main(int argc, char** argv) {
 
     int32_t k = 0;
     RK_INFO(App, "Initialize Finished");
+
+    double time = 0.0;
     while(!app.ShouldClose()) {
         app.Tick();
 
@@ -100,20 +74,52 @@ int main(int argc, char** argv) {
         rst.DrawLine3D({0,0,0}, {0,1,0}, {0,255,0}, {0,255,0}); // y
         rst.DrawLine3D({0,0,0}, {0,0,1}, {0,0,255}, {0,0,255}); // z
 
-        auto& points = result[k++];
-        k = k % result.size();
-        for(int i = 0; i < points.size() - 1; ++i) {
-            rst.DrawLine3D(points[i], points[i+1], {255, 0, 0}, {255, 0, 0});
-        }
+        cp[0][0] << 0.2 * sin(time),      0,              0;
+        cp[0][1] << 0.2 * sin(time) + 0.25,   sin(time),     0;
+        cp[0][2] << 0.2 * sin(time) + 0.75,   cos(time),     0;
+        cp[0][3] << 0.2 * sin(time) + 1.0,      0,              0;
 
-        // for(int i = 0; i < indices.size(); ++i) {
-        //     rst.DrawLine3D(vertices[indices[i][0]], vertices[indices[i][1]], {255, 0, 255}, {255, 255, 0});
-        //     rst.DrawLine3D(vertices[indices[i][1]], vertices[indices[i][2]], {255, 0, 255}, {255, 255, 0});
-        //     rst.DrawLine3D(vertices[indices[i][2]], vertices[indices[i][0]], {255, 0, 255}, {255, 255, 0});
-        // }
+        cp[1][0] << 0.2 * sin(time + MATH_PI_4),      0,              0.25;
+        cp[1][1] << 0.2 * sin(time + MATH_PI_4) + 0.25,   sin(time + MATH_PI_4),     0.25;
+        cp[1][2] << 0.2 * sin(time + MATH_PI_4) + 0.75,   cos(time + MATH_PI_4),     0.25;
+        cp[1][3] << 0.2 * sin(time + MATH_PI_4) + 1.0,      0,              0.25;
+
+        cp[2][0] << 0.2 * sin(time + MATH_PI_4 * 1.5),      0,              0.5;
+        cp[2][1] << 0.2 * sin(time + MATH_PI_4 * 1.5) + 0.25,   sin(time + MATH_PI_4 * 2.0),     0.5;
+        cp[2][2] << 0.2 * sin(time + MATH_PI_4 * 1.5) + 0.75,   cos(time + MATH_PI_4 * 2.0),     0.5;
+        cp[2][3] << 0.2 * sin(time + MATH_PI_4 * 1.5) + 1.0,      0,              1;
+
+        cp[3][0] << 0.2 * sin(time + MATH_PI_4 * 2.0),      0,              0.75;
+        cp[3][1] << 0.2 * sin(time + MATH_PI_4 * 2.0) + 0.25,   sin(time + MATH_PI_4 * 3.0),     0.75;
+        cp[3][2] << 0.2 * sin(time + MATH_PI_4 * 2.0) + 0.75,   cos(time + MATH_PI_4 * 3.0),     0.75;
+        cp[3][3] << 0.2 * sin(time + MATH_PI_4 * 2.0) + 1.0,      0,              0.75;
+
+        time += 0.1;
+
+        std::vector<std::vector<Eigen::Vector3f>> cps(
+            {{cp[0][0], cp[0][1], cp[0][2], cp[0][3]},
+            {cp[1][0], cp[1][1], cp[1][2], cp[1][3]},
+            {cp[2][0], cp[2][1], cp[2][2], cp[2][3]},
+            {cp[2][0], cp[2][1], cp[2][2], cp[2][3]}}
+        );
+
+        vertices.clear();
+        for(int32_t i = 0; i < count; ++i) {
+            for(int32_t j = 0; j < count; ++j) {
+                double x = (double)i * dt;
+                double y = (double)j * dt;
+                vertices.push_back(Geometry::CalculateBezierSurface(cps, x, y));
+            }
+        }
+        Geometry::GenerateBezierSurface(vertices, count, count, indices);
+
+        pos = rst.LoadPositions(vertices);
+        ind = rst.LoadIndices(indices);
 
         rst.Draw(pos, ind, RenderPrimitive::TRIANGLE);
-        //rst.DrawPoints3D(points);
+        
+        rst.UnloadPositions(pos);
+        rst.UnloadIndices(ind);
 
         auto data = rst.FrameBuffer().data();
         app.Render(data);

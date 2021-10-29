@@ -6,23 +6,8 @@
 
 namespace Rocket {
     namespace Geometry {
-        class BezierSurface {
-        public:
-            BezierSurface(const std::vector<BezierCurve>& curves) : control_curve_(curves) {}
-
-            void Compute(int32_t count);
-            void GenerateMesh();
-
-            const std::vector<std::vector<Eigen::Vector3f>>& GetResult() const { return result_; }
-            const std::vector<Eigen::Vector3f>& GetVertices() { return vertices_; }
-            const std::vector<Eigen::Vector3i>& GetIndices() { return indices_; }
-        private:
-            std::vector<BezierCurve> control_curve_;
-            std::vector<std::vector<Eigen::Vector3f>> result_;
-            std::vector<Eigen::Vector3f> vertices_;
-            std::vector<Eigen::Vector3i> indices_;
-
-            int32_t count_ = 0;
-        };
+        Eigen::Vector3f CalculateBezierSurface(const std::vector<std::vector<Eigen::Vector3f>>& cps, float tx, float ty);
+        Eigen::Vector3f CalculateBezierSurfaceRecursice(const std::vector<std::vector<Eigen::Vector3f>>& cps, float tx, float ty);
+        void GenerateBezierSurface(const std::vector<Eigen::Vector3f>& vertices, int32_t count_x, int32_t count_y, std::vector<Eigen::Vector3i>& indices);
     }
 }
