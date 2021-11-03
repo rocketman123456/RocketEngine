@@ -21,7 +21,7 @@ namespace Rocket {
 
         Eigen::Vector4f to_vec4(const Eigen::Vector3f& v3, float w = 1.0f);
 
-        double PointLineDistance(const Eigen::Vector3f& point, const Eigen::Vector3f& line_start, const Eigen::Vector3f& len_end);
+        double PointLineDistance(const Eigen::Vector3f& point, const Eigen::Vector3f& line_start, const Eigen::Vector3f& line_end);
     }
 
     namespace Algorithm {

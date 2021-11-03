@@ -19,8 +19,10 @@ namespace Rocket {
             return Eigen::Vector4f(v3.x(), v3.y(), v3.z(), w);
         }
 
-        double PointLineDistance(const Eigen::Vector3f& point, const Eigen::Vector3f& line_start, const Eigen::Vector3f& len_end) {
-            return 0.0;
+        double PointLineDistance(const Eigen::Vector3f& point, const Eigen::Vector3f& line_start, const Eigen::Vector3f& line_end) {
+            Eigen::Vector3f ab = line_end - line_start;
+            Eigen::Vector3f ac = line_end - point;
+            return (ab.cross(ac)).norm() / ab.norm();
         }
     }
 
