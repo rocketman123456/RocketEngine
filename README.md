@@ -20,3 +20,4 @@
 [article 16 物理引擎](Document/article_16/article_16.md)<br>
 [article 17 OBJ Parser](Document/article_17/article_17.md)<br>
 [article 18 渲染分支-GAMES101课程笔记-2](Document/article_18/article_18.md)<br>
+[article 19 渲染分支-GAMES101课程笔记-3](Document/article_19/article_19.md)<br>
