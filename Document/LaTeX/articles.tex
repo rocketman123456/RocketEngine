@@ -1,0 +1,37 @@
+\documentclass[
+    UTF8,       % 编码格式
+    b5paper,    % 纸张大小
+    10pt,       % 字号
+    oneside,    % 书页排版 「 twoside, oneside 」
+    openany,    % 新章节开始位置 「 openright, openany 」
+    final]      % 草稿还是终稿 「 draft, final 」
+    {ctexbook}
+% 这里是导言区, 可以设置格式
+% I like b5
+
+\include{packages.tex}
+\include{code_style.tex}
+
+% 标题作者
+\title{3D引擎开发笔记}
+\author{Zhang Yf}
+\date{\today}
+
+\begin{document}
+    \maketitle
+    \tableofcontents
+
+    \maketitle
+    \part{序言}
+
+    \input{chapter00/chapter00.tex}
+
+    \maketitle
+    \part{基础模块}
+
+    \input{chapter01/chapter01.tex}
+
+\end{document}
+% Local Variables:
+% TeX-engine: xetex
+% End:

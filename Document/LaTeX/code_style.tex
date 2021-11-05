@@ -1,0 +1,95 @@
+% 代码排版
+\usepackage{listingsutf8}
+% \usepackage{listings}
+\usepackage{xcolor}
+\usepackage{fontspec}
+\usepackage{color}
+
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+
+% \lstset{
+%     basicstyle          =   \sffamily,          % 基本代码风格
+%     keywordstyle        =   \bfseries,          % 关键字风格
+%     commentstyle        =   \rmfamily\itshape,  % 注释的风格，斜体
+%     stringstyle         =   \ttfamily,  % 字符串风格
+%     flexiblecolumns,                % 别问为什么，加上这个
+%     numbers             =   left,   % 行号的位置在左边
+%     showspaces          =   false,  % 是否显示空格，显示了有点乱，所以不现实了
+%     numberstyle         =   \zihao{-5}\ttfamily,    % 行号的样式，小五号，tt等宽字体
+%     showstringspaces    =   false,
+%     captionpos          =   t,      % 这段代码的名字所呈现的位置，t指的是top上面
+%     frame               =   lrtb,   % 显示边框
+% }
+
+\lstset{ %
+    backgroundcolor =   \color{white},    % choose the background color
+    basicstyle      =   \footnotesize\ttfamily, % size of fonts used for the code
+    columns         =   fullflexible,
+    tabsize         =   4,
+    breaklines      =   true,             % automatic line breaking only at whitespace
+    captionpos      =   b,                % sets the caption-position to bottom
+    commentstyle    =   \color{mygreen},  % comment style
+    escapeinside    =   {\%*}{*)},        % if you want to add LaTeX within your code
+    keywordstyle    =   \color{blue},     % keyword style
+    stringstyle     =   \color{mymauve}\ttfamily, % string literal style
+    frame           =   single,
+    rulesepcolor    =   \color{red!20!green!20!blue!20},
+    identifierstyle =   \color{red},
+    language        =   c++,
+}
+
+\lstdefinestyle{myPython}{
+	frame               =   l,
+	language            =   Python,
+	aboveskip           =   3mm,
+	belowskip           =   3mm,
+	showstringspaces    =   false,
+	columns             =   flexible,
+	numberstyle         =   \small\color{red},
+	basicstyle          =   {\small\ttfamily},
+	keywordstyle        =   \color{blue},
+	commentstyle        =   \color{dkgreen},
+	stringstyle         =   \color{mauve},
+	breaklines          =   true,
+	breakatwhitespace   =   true,
+    columns         =   fixed,
+	tabsize             =   3
+}
+
+\lstdefinestyle{C++}{
+    language        =   C, % 语言选C
+    basicstyle      =   \zihao{-5}\ttfamily,
+    numberstyle     =   \zihao{-5}\ttfamily,
+    keywordstyle    =   \bfseries\color{green!40!black},
+	commentstyle    =   \itshape\color{purple!40!black},
+	identifierstyle =   \color{blue},
+	stringstyle     =   \color{orange},
+    xleftmargin     =   \parindent,
+    belowcaptionskip=   1\baselineskip,
+    breaklines      =   true,   % 自动换行，建议不要写太长的行
+    columns         =   fixed,  % 如果不加这一句，字间距就不固定，很丑，必须加
+    basewidth       =   0.5em,
+}
+
+\lstdefinestyle{Lua}{
+    language        =   C, % 语言选C++
+    basicstyle      =   \zihao{-5}\ttfamily,
+    numberstyle     =   \zihao{-5}\ttfamily,
+    keywordstyle    =   \bfseries\color{green!40!black},
+	commentstyle    =   \itshape\color{purple!40!black},
+	identifierstyle =   \color{blue},
+	stringstyle     =   \color{orange},
+    xleftmargin     =   \parindent,
+    belowcaptionskip=   1\baselineskip,
+    breaklines      =   true,   % 自动换行，建议不要写太长的行
+    columns         =   fixed,  % 如果不加这一句，字间距就不固定，很丑，必须加
+    basewidth       =   0.5em,
+}
+
+% \lstinputlisting[
+%     style       =   C,
+%     caption     =   {\bf ff.py},
+%     label       =   {ff.py}
+% ]{../ff.py}

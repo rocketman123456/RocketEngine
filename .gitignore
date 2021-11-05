@@ -49,3 +49,10 @@ Data/
 # Ignore Large Asset File
 *.wav
 *.ogg
+
+# Ignore LaTeX outputs
+Document/Latex/*.toc
+Document/Latex/*.aux
+Document/Latex/*.xwm
+Document/Latex/*.log
+Document/Latex/*.gz
