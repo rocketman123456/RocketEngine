@@ -1,0 +1,147 @@
+\section{日志输出}
+
+\subsection{为什么需要日志输出}
+在程序运行过程中，除了编译器带给我们的单步调试功能，开发过程中也需要额外的信息输出方式，
+用于快速检查程序输出内容是否正常以及快速定位可能存在bug的代码位置。
+为了达到这个目的，本节主要介绍日志输出的部分。
+
+\subsection{对spdlog进行封装}
+日志输出模块需要快速，可以按照不同的日志等级输出信息，保证多线程安全，
+能够输出到日志文件等功能。经过挑选，本项目采用了spdlog作为日志输出的底层，
+对其进行了简单的封装。主要包括$Log.h^{\ref{Engine/Log/Log.h}}$与$Log.cpp^{\ref{Engine/Log/Log.cpp}}$两个文件。
+在程序运行开始需要初始化Log，在项目终止时需要终止日志输出（虽然可以依靠自动析构，但是显式调用可以使流程更加清晰）。
+利用宏定义，可以快速添加新的日志分类。
+
+\begin{lstlisting}[style=C++,title={Engine/Log/Log.h} \label{Engine/Log/Log.h}]
+#pragma once
+#ifdef RK_CONSOLE_LOG
+#include <memory>
+#include <unordered_map>
+#include <spdlog/spdlog.h>
+
+#define INIT_LOG_CHANNEL(x) s_##x##_logger_ = spdlog::stdout_color_mt(#x);\
+    SetLevel(level, s_##x##_logger_.get());
+#define END_LOG_CHANNEL(x) s_##x##_logger_.reset();
+#define DECLARE_LOG_CHANNEL(x) \
+    public:\
+        inline static spdlog::logger* Get##x##Logger() { \
+            return s_##x##_logger_.get(); } \
+    private:\
+        static std::shared_ptr<spdlog::logger> s_##x##_logger_;
+#define IMPLEMENT_LOG_CHANNEL(x) std::shared_ptr<spdlog::logger>\
+    Rocket::Log::s_##x##_logger_;
+#endif
+
+namespace Rocket {
+    enum class LogLevel {
+        TRACE = 0, INFO, WARN, ERR, CRITICAL,
+    };
+
+    class Log {
+    public:
+        static void Init(LogLevel level = LogLevel::TRACE);
+        static void End();
+#ifdef RK_CONSOLE_LOG
+        // 声明Log输出频道
+        DECLARE_LOG_CHANNEL(Core);
+        DECLARE_LOG_CHANNEL(Window);
+        DECLARE_LOG_CHANNEL(Render);
+        DECLARE_LOG_CHANNEL(Event);
+        DECLARE_LOG_CHANNEL(File);
+        DECLARE_LOG_CHANNEL(Audio);
+        DECLARE_LOG_CHANNEL(App);
+#endif
+    };
+} // namespace Rocket
+
+#ifdef RK_CONSOLE_LOG
+
+#define RK_CRITICAL(x, ...) \
+    do{::Rocket::Log::Get##x##Logger()->critical(__VA_ARGS__);}while(0);
+#define RK_ERROR(x, ...) \
+    do{::Rocket::Log::Get##x##Logger()->error(__VA_ARGS__);}while(0);
+#define RK_WARN(x, ...) \
+    do{::Rocket::Log::Get##x##Logger()->warn(__VA_ARGS__);}while(0);
+#define RK_INFO(x, ...) \ 
+    do{::Rocket::Log::Get##x##Logger()->info(__VA_ARGS__);}while(0);
+#define RK_TRACE(x, ...) \ 
+    do{::Rocket::Log::Get##x##Logger()->trace(__VA_ARGS__);}while(0);
+
+#else
+
+#define RK_CRITICAL(x, ...)
+#define RK_ERROR(x, ...)
+#define RK_WARN(x, ...)
+#define RK_INFO(x, ...)
+#define RK_TRACE(x, ...)
+
+#endif
+\end{lstlisting}
+
+\begin{lstlisting}[style=C++,title={Engine/Log/Log.cpp} \label{Engine/Log/Log.cpp}]
+#include "Log/Log.h"
+
+#ifdef RK_CONSOLE_LOG
+
+#define SPDLOG_FMT_EXTERNAL
+#include <spdlog/spdlog.h>
+#include <spdlog/async.h>
+#include <spdlog/sinks/stdout_color_sinks.h>
+#include <spdlog/sinks/basic_file_sink.h>
+#include <spdlog/fmt/ostr.h>
+#include <spdlog/fmt/bin_to_hex.h>
+#include <spdlog/fmt/chrono.h>
+#include <spdlog/fmt/fmt.h>
+
+IMPLEMENT_LOG_CHANNEL(Core);
+IMPLEMENT_LOG_CHANNEL(Window);
+IMPLEMENT_LOG_CHANNEL(Render);
+IMPLEMENT_LOG_CHANNEL(Event);
+IMPLEMENT_LOG_CHANNEL(File);
+IMPLEMENT_LOG_CHANNEL(Audio);
+IMPLEMENT_LOG_CHANNEL(App);
+#endif
+
+namespace Rocket {
+#ifdef RK_CONSOLE_LOG
+    static void SetLevel(LogLevel level, spdlog::logger* logger) {
+        switch(level) {
+        case LogLevel::TRACE:
+            logger->set_level(spdlog::level::trace); break;
+        case LogLevel::INFO:
+            logger->set_level(spdlog::level::info); break;
+        case LogLevel::WARN:
+            logger->set_level(spdlog::level::warn); break;
+        case LogLevel::ERR:
+            logger->set_level(spdlog::level::err); break;
+        case LogLevel::CRITICAL:
+            logger->set_level(spdlog::level::critical); break;
+        }
+    }
+
+    void Log::Init(LogLevel level) {
+        spdlog::set_pattern("%^[%l%$][%T][%n] %v%$");
+        INIT_LOG_CHANNEL(Core);
+        INIT_LOG_CHANNEL(Window);
+        INIT_LOG_CHANNEL(Render);
+        INIT_LOG_CHANNEL(Event);
+        INIT_LOG_CHANNEL(File);
+        INIT_LOG_CHANNEL(Audio);
+        INIT_LOG_CHANNEL(App);
+    }
+
+    void Log::End() {
+        END_LOG_CHANNEL(Core);
+        END_LOG_CHANNEL(Window);
+        END_LOG_CHANNEL(Render);
+        END_LOG_CHANNEL(Event);
+        END_LOG_CHANNEL(File);
+        END_LOG_CHANNEL(Audio);
+        END_LOG_CHANNEL(App);
+    }
+#else
+    void Log::Init(LogLevel level) {}
+    void Log::End() {}
+#endif
+} // namespace Rocket
+\end{lstlisting}

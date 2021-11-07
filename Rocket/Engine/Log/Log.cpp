@@ -39,7 +39,7 @@ namespace Rocket {
     }
 
     void Log::Init(LogLevel level) {
-        spdlog::set_pattern("%^[%T] %n: %v%$");
+        spdlog::set_pattern("%^[%l%$][%T][%n] %v%$");
         INIT_LOG_CHANNEL(Core);
         INIT_LOG_CHANNEL(Window);
         INIT_LOG_CHANNEL(Render);

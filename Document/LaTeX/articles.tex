@@ -1,35 +1,93 @@
 \documentclass[
     UTF8,       % 编码格式
-    b5paper,    % 纸张大小
+    b5paper,    % 纸张大小, I like b5
     10pt,       % 字号
     oneside,    % 书页排版 「 twoside, oneside 」
     openany,    % 新章节开始位置 「 openright, openany 」
     final]      % 草稿还是终稿 「 draft, final 」
     {ctexbook}
 % 这里是导言区, 可以设置格式
-% I like b5
 
 \include{packages.tex}
 \include{code_style.tex}
 
+\geometry{left=2.5cm,right=2.5cm,top=2.5cm,bottom=2.5cm}
+\hypersetup{hidelinks} 
+
 % 标题作者
 \title{3D引擎开发笔记}
-\author{Zhang Yf}
+\author{Zhang Yf\thanks{Email: 759094438@qq.com}}
 \date{\today}
 
 \begin{document}
     \maketitle
     \tableofcontents
 
+    \frontmatter
     \maketitle
     \part{序言}
 
+    \maketitle
+    \chapter{序言}
     \input{chapter00/chapter00.tex}
+
+    \mainmatter
 
     \maketitle
     \part{基础模块}
 
-    \input{chapter01/chapter01.tex}
+    \maketitle
+    \chapter{从零开始}
+    \input{chapter01/chapter01-01.tex}
+    \input{chapter01/chapter01-02.tex}
+    \input{chapter01/chapter01-03.tex}
+    \input{chapter01/chapter01-04.tex}
+    \input{chapter01/chapter01-05.tex}
+
+    \maketitle
+    \chapter{基本算法}
+
+    \input{chapter02/chapter02-intro.tex}
+
+    \input{chapter02/chapter02-01.tex}
+    \input{chapter02/chapter02-02.tex}
+    \input{chapter02/chapter02-03.tex}
+
+    \maketitle
+    \chapter{设计模式}
+
+    \input{chapter03/chapter03-intro.tex}
+
+    \input{chapter03/chapter03-01.tex}
+    \input{chapter03/chapter03-02.tex}
+    \input{chapter03/chapter03-03.tex}
+    \input{chapter03/chapter03-04.tex}
+    \input{chapter03/chapter03-05.tex}
+    \input{chapter03/chapter03-06.tex}
+    \input{chapter03/chapter03-07.tex}
+    \input{chapter03/chapter03-08.tex}
+    \input{chapter03/chapter03-09.tex}
+    \input{chapter03/chapter03-10.tex}
+    \input{chapter03/chapter03-11.tex}
+    \input{chapter03/chapter03-12.tex}
+    \input{chapter03/chapter03-13.tex}
+    \input{chapter03/chapter03-14.tex}
+    \input{chapter03/chapter03-15.tex}
+    \input{chapter03/chapter03-16.tex}
+    \input{chapter03/chapter03-17.tex}
+    \input{chapter03/chapter03-18.tex}
+    \input{chapter03/chapter03-19.tex}
+    \input{chapter03/chapter03-20.tex}
+    \input{chapter03/chapter03-21.tex}
+    \input{chapter03/chapter03-22.tex}
+    \input{chapter03/chapter03-23.tex}
+
+    \appendix
+    \maketitle
+    \chapter{附录}
+
+    \backmatter
+    \chapter{后记}
 
 \end{document}
 % Local Variables:

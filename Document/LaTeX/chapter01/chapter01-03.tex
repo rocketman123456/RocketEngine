@@ -1,0 +1,66 @@
+\section{打开第一个窗口}
+当然作为一个3D程序，需要通过显示器才能展示我们的工作成果，
+而在现代操作系统中，必须打开窗口才能开始展示东西，就和其他软件一样。
+为了保证本项目的跨平台能力，需要尽可能一致的为不同平台提供相同的封装，
+在这里本项目选择了常用的GLFW库\footnote{\nolinkurl{https://www.glfw.org/}}。\\
+
+暂时本项目只使用OpenGL进行渲染，根据官网的教程，可以很容易写出第一个窗口程序：
+
+\begin{lstlisting}[style=C++,title={Engine/glfw.cpp}]
+#include "Memory/MemoryCheck.h"
+
+#define GLFW_INCLUDE_NONE
+#include <GLFW/glfw3.h>
+#include <glad/glad.h>
+
+#include <iostream>
+
+void processInput(GLFWwindow *window);
+
+int main() {
+	glfwInit();
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	glfwWindowHint(GLFW_RESIZABLE, false);
+#if defined(RK_MACOS)
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+#endif
+
+	GLFWwindow* window = glfwCreateWindow(1280, 720, "Rocket", NULL, NULL);
+	if (window == NULL) {
+		std::cout << "Failed to create GLFW window" << std::endl;
+		glfwTerminate();
+		return -1;
+	}
+	glfwMakeContextCurrent(window);
+
+	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+        std::cout << "Failed to initialize GLAD" << std::endl;
+        return -1;
+    }
+
+	while (!glfwWindowShouldClose(window)) {
+        processInput(window);
+
+        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        glfwSwapBuffers(window);
+        glfwPollEvents();
+    }
+
+	glfwDestroyWindow(window);
+	glfwTerminate();
+
+    return 0;
+}
+
+void processInput(GLFWwindow *window)
+{
+    if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+        glfwSetWindowShouldClose(window, true);
+}
+\end{lstlisting}
+
+之后开展的渲染学习项目，将从这段程序开始扩展，并接入软渲染器来实现场景初步渲染的能力。

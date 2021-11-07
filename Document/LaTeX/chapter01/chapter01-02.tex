@@ -1,0 +1,71 @@
+\section{内存检测模块}
+
+作为第一个编写的模块，我选择了内存检测的模块。该模块的目的是提供一个跨平台，线程安全的内存泄漏检测器。
+参考了Vorbrodt的Blog\footnote{\nolinkurl{https://vorbrodt.blog/2021/05/27/how-to-detect-memory-leaks/}}，
+对其添加了线程安全锁后，实现了一个小型的内存检测器。
+由于通过宏定义完成了内存检测器的行数输出，所以该检测器只能用于普通的new和delete，
+对于placement new就无力处理了。若想要不用宏定义也可以获取代码调用位置，
+可能就只能等待C++20的std::source\_location的功能了。\\
+
+该内存检测模块主要通过检测new与delete的配对问题来检测内存泄漏。
+一次new对应一次delete，一次new[]对应delete[]，避免错配。
+该模块使用了set来存储信息，在new的过程中插入信息，delete的过程中检测并删除对应new的信息，达到匹配的效果。
+为了能够在程序退出时自动输出内存泄漏检查信息，
+定义了一个$dump\_all$的全局变量，当程序退出时，该变量自动析构，执行最后的内存泄漏检测，并输出结果。\\
+
+由于实际的代码太长，仅在此记录主要的算法流程，包括初始化函数$^{\ref{initialize function}}$，
+new函数$^{\ref{new function}}$，delete函数$^{\ref{delete function}}$，退出检查函数$^{\ref{exit check}}$。
+
+\begin{breakablealgorithm}
+\caption{Init Records} \label{initialize function}
+\begin{algorithmic}
+    \Procedure{Init Records}{$size$}
+        \State Initialize Static \emph{Memory Record Set}
+        \State Initialize Static \emph{Delete Type Mismatch List}
+        \State Initialize Static \emph{Delete Too Much List}
+\EndProcedure
+\end{algorithmic}
+\end{breakablealgorithm}
+
+\begin{breakablealgorithm}
+\caption{New} \label{new function}
+\begin{algorithmic}
+\Procedure{new}{$size$}                  \Comment{new function}
+    \State malloc a Memory Block
+    \State Insert a Memory Block Info in \emph{Memory Record Set}
+    \State return Memory Block Pointer
+\EndProcedure
+\end{algorithmic}
+\end{breakablealgorithm}
+
+\begin{breakablealgorithm}
+\caption{Delete} \label{delete function}
+\begin{algorithmic}                     \Comment{delete function}
+\Procedure{delete}{$ptr$}
+    \State result = Find $ptr$ in \emph{Memory Record Set}
+    \If{$result = True$}
+        \If{$delete type match$}
+            \State Remove Pointer Info in \emph{Memory Record Set}
+        \Else
+            \State Record Info in \emph{Delete Type Mismatch List}
+        \EndIf
+    \Else
+        \State Record Info in \emph{Delete Too Much List}
+    \EndIf
+\EndProcedure
+\end{algorithmic}
+\end{breakablealgorithm}
+
+\begin{breakablealgorithm}
+\caption{ExitCheck} \label{exit check}
+\begin{algorithmic}
+\Procedure{ExitCheck}{$ptr$}
+        \State Find Leak in \emph{Memory Record Set} and Dump Info
+        \State Find Mismatch in \emph{Delete Type Mismatch List} and Dump Info
+        \State Find Mismatch in \emph{Delete Too Much List} and Dump Info
+\EndProcedure
+\end{algorithmic}
+\end{breakablealgorithm}
+
+关于内存检测模块，后续仍有很多改进空间，首先需要的就是移除宏定义对new和delete的限制，
+使其能够运行调用placement的new与delete版本，以及可以在此添加自定义的内存管理器，进行自定义内存分配策略。

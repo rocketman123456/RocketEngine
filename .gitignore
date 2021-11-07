@@ -51,8 +51,8 @@ Data/
 *.ogg
 
 # Ignore LaTeX outputs
-Document/Latex/*.toc
-Document/Latex/*.aux
-Document/Latex/*.xwm
-Document/Latex/*.log
-Document/Latex/*.gz
+Document/LaTeX/*.toc
+Document/LaTeX/*.aux
+Document/LaTeX/*.xwm
+Document/LaTeX/*.log
+Document/LaTeX/*.gz

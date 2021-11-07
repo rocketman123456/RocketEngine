@@ -114,21 +114,21 @@ namespace Rocket {
             m_allocated_blocks.push_back(block);
 
             chunk_ptr_t chunk = block;
-#ifdef RK_MEMORY_CHECK
-#ifdef new  // For Placement New
-#undef new
-#endif
-#endif
+// #ifdef RK_MEMORY_CHECK
+// #ifdef new  // For Placement New
+// #undef new
+// #endif
+// #endif
             for(std::size_t i = 0; i < ChunksPerBlock - 1; ++i) {
                 new (chunk) chunk_t{ chunk + 1 };
                 chunk = chunk->m_next;
             }
             new (chunk) chunk_t{ tail };
-#ifdef RK_MEMORY_CHECK
-#ifndef new
-#define new new(__FILE__, __LINE__, __FUNCTION__)
-#endif
-#endif
+// #ifdef RK_MEMORY_CHECK
+// #ifndef new
+// #define new new(__FILE__, __LINE__, __FUNCTION__)
+// #endif
+// #endif
             return block;
         }
 

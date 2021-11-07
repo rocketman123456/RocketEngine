@@ -4,13 +4,9 @@
 #include <thread>
 #include <mutex>
 
-#ifdef new
-#undef new
-#endif
-
-// namespace {
-// 	static inline std::mutex memory_allocate_mutex_s;
-// }
+// #ifdef new
+// #undef new
+// #endif
 
 namespace Rocket::Memory::detail {
 	template<typename T>
@@ -24,8 +20,6 @@ namespace Rocket::Memory::detail {
 
 		void deallocate(T* ptr, std::size_t) { std::free(ptr); }
 	};
-
-	
 
 	struct alignas(8) new_entry_t {
 		new_entry_t(void* p = nullptr, bool a = false, std::size_t b = 0,
@@ -147,6 +141,16 @@ namespace Rocket::Memory {
 // create global dump variable, when program exit, it will use ~__dump_all__() automatically and dump all info
 namespace { inline const struct __dump_all__ { ~__dump_all__() { Rocket::Memory::dump_all(); } } __dump_all_on_exit__; }
 
+void* operator new (std::size_t n) {
+	void* ptr = std::malloc(n);
+	if(!ptr) throw std::bad_alloc();
+	return ptr;
+}
+
+void* operator new [] (std::size_t n) {
+	return ::operator new(n, Rocket::Memory::detail::new_entry_t{ nullptr, true, n, nullptr, 0, nullptr });
+}
+
 void* operator new (std::size_t n, Rocket::Memory::detail::string_t file, int line, Rocket::Memory::detail::string_t func) {
 	return ::operator new(n, Rocket::Memory::detail::new_entry_t{ nullptr, false, n, file, line, func });
 }
@@ -155,14 +159,10 @@ void* operator new [] (std::size_t n, Rocket::Memory::detail::string_t file, int
 	return ::operator new(n, Rocket::Memory::detail::new_entry_t{ nullptr, true, n, file, line, func });
 }
 
-void* operator new (std::size_t n) {
+void* operator new (std::size_t n, Rocket::Memory::detail::new_entry_t&& entry) {
 	void* ptr = std::malloc(n);
 	if(!ptr) throw std::bad_alloc();
-	return ptr;
-}
-
-void* operator new (std::size_t n, Rocket::Memory::detail::new_entry_t&& entry) {
-	void* ptr = ::operator new(n);
+	//void* ptr = ::operator new(n);
 	entry.ptr = ptr;
 	try {
 		static std::recursive_mutex operator_new_lock;
@@ -193,9 +193,9 @@ void operator delete [] (void* ptr, Rocket::Memory::detail::string_t, int, Rocke
 // Otherwise comment these warnings out and hope we get 'std::source_location' soon! \
 // https://en.cppreference.com/w/cpp/utility/source_location/
 
-#ifndef new
-// #define new new(__FILE__, __LINE__, __FUNCTION__)
-#define new new(__FILE__, __LINE__, __proc__)
-// #define new new(__FILE__, __LINE__, __PRETTY_FUNCTION__)
-#endif
+// #ifndef new
+// // #define new new(__FILE__, __LINE__, __FUNCTION__)
+// #define new new(__FILE__, __LINE__, __proc__)
+// // #define new new(__FILE__, __LINE__, __PRETTY_FUNCTION__)
+// #endif
 #endif

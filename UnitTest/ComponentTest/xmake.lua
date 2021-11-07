@@ -1,8 +1,8 @@
 target("memory_test")
     set_kind("binary")
     add_files("memory_test.cpp")
-    add_deps("RocketEngine")
-    add_options("memory_check")
+    --add_options("console_log")
+    --add_options("memory_check")
 target_end()
 
 target("hash_test")

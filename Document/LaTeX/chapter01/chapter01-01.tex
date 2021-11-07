@@ -1,12 +1,9 @@
-\maketitle
-\chapter{从零开始}
-
 \section{第一个简单项目}
 作为笔记的第一部分，本节主要介绍从零开始搭建一个小型项目的过程。
 大部分的C++项目都需要选择（虽然其他项目也是，但是没有C++这么多的选项）一个基本的开发环境，而CMake是其中一个流行的选择。
 从github看去，很多国内外大型的开源项目都选择了CMake进行项目的配置和管理。前几年我也是CMake的推荐者，
 但学习过CMake的我仍然觉得CMake过于死板，需要学习额外的DSL（Domain Specific Language），无法轻易更改编译过程。
-经过查找，我发现了一个国产的开源项目xmake[]，可以用Lua编写项目配置文件，符合C++编译过程的直觉，且可以通过xmake避免复杂繁琐的外部库安装配置过程，让人感觉很舒心。
+经过查找，我发现了一个国产的开源项目xmake\footnote{\nolinkurl{https://xmake.io}}，可以用Lua编写项目配置文件，符合C++编译过程的直觉，且可以通过xmake避免复杂繁琐的外部库安装配置过程，让人感觉很舒心。
 最终本项目决定使用xmake作为项目配置软件。\\
 
 当然，本项目从熟悉的Hello World开始，一步步搭建起项目框架。首先是函数主体：\\
@@ -22,10 +19,13 @@ int main() {
 \end{lstlisting}
 % \FloatBarrier
 
+% Error
 % \lstinputlisting[style=C++,title={main.cpp}]{chapter01/code/main.cpp}
 % \lstinputlisting[style=Lua,title={xmake.lua}]{chapter01/code/xmake.lua}
 
 这个就是简单的标准的Hello World，通过xmake可以简单的配置项目：\\
+
+%\marginpar{\footnotesize https\://xmake.io}
 
 % \FloatBarrier
 \begin{lstlisting}[style=Lua,title={xmake.lua}]
@@ -35,4 +35,8 @@ target("hello_world")
 \end{lstlisting}
 % \FloatBarrier
 
-在命令行输入
+在命令行输入\emph{xmake}后，就可以自动编译项目，输入\emph{xmake r name}后，
+就可以运行对应项目，可以进行快速的项目编译与运行测试。\\
+
+在后续章节中，若是对应的模块代码过于冗长，我将使用伪代码的形式提供运行的主要流程，
+代码可以在仓库中查看。

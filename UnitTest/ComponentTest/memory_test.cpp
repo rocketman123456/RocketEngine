@@ -1,7 +1,10 @@
-//#define ENABLE_NEW_DELETE_TRACE_DUMP
+#define RK_MEMORY_CHECK
 #include "Memory/MemoryCheck.h"
+#include "Memory/MemoryCheck.cpp"
 
-#include <iostream>
+#ifndef new
+#define new new(__FILE__, __LINE__, __FUNCTION__)
+#endif
 
 template<typename T, int N> void good() {
 	delete (new T);
@@ -27,8 +30,6 @@ int main() {
     good<char, 100>();
 	mismatch<char, 100>();
 	leak<char, 100>();
-
-    new int32_t[100];
 
     return 0;
 }
