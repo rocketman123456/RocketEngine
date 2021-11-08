@@ -1,8 +1,20 @@
-#include "Algorism/UnionFind/QuickFind.h"
+#pragma once
+#include "Algorithm/UnionFind/UnionFind.h"
 
 #include <cassert>
+#include <cstdint>
 
 namespace Rocket {
+    class QuickFind : _implements_ UnionFind {
+    public:
+        QuickFind(int32_t n);
+        virtual ~QuickFind();
+        virtual void Union(int32_t p, int32_t q) final;
+        virtual int32_t Find(int32_t p) final;
+    private:
+        int32_t* id_ = nullptr;
+    };
+
     QuickFind::QuickFind(int32_t n) {
         size_ = n;
         id_ = new int32_t[n];

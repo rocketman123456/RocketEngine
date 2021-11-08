@@ -15,6 +15,7 @@ namespace Rocket {
         int32_t id_ = 0;
     };
 
+    // TODO : add command for do/redo
     _Interface_ CommandStatic : _implements_ Command { // , implements AbstractSingleton<CommandStatic>
     public:
         virtual ~CommandStatic() = default;

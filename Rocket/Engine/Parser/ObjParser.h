@@ -1,6 +1,6 @@
 #pragma once
 #include "Math/Vectors.h"
-#include "Algorism/StringOperation.h"
+#include "Algorithm/StringOperation.h"
 
 #include <string>
 #include <string_view>

@@ -34,15 +34,13 @@ add_requires("glfw 3.3.4", {system = false, glfw_include = "none", configs = {sh
 add_requires("libsdl 2.0.16", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
 add_requires("bullet3 3.09", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
 add_requires("tinygltf v2.5.0", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
---add_requires("gsl v3.1.0", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
+add_requires("gsl v3.1.0", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
 add_requires("mimalloc 2.0.2", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
 add_requires("lua v5.4.2", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
 add_requires("luajit", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
 
 if is_plat("macosx", "linux", "windows") then
     add_requires("libtorch v1.8.1", {system = false, configs = {shared = true, debug = true, cxflags = "-fPIC"}})
-    --add_requires("protobuf-cpp", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
-    --add_requires("protobuf-c", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
 end
 
 --
@@ -88,6 +86,13 @@ option_end()
 --
 -- Set Profile Options
 --
+option("profile_settings")
+    set_default(false)
+    set_showmenu(true)
+    set_values(false, true)
+    set_description("Profile Settings")
+    add_defines("RK_PROFILE_SETTINGS")
+option_end()
 
 --
 -- Set memory_check Options

@@ -1,4 +1,4 @@
-#include "Algorism/StringOperation.h"
+#include "Algorithm/StringOperation.h"
 
 namespace Rocket {
     namespace Algorithm {

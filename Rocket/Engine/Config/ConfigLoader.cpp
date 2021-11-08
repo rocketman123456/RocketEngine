@@ -1,4 +1,5 @@
 #include "Config/ConfigLoader.h"
+#include "FileSystem/FileSystem.h"
 #include "Utils/FindRootDir.h"
 #include "Log/Log.h"
 
