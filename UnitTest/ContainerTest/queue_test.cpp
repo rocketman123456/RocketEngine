@@ -11,15 +11,14 @@ int main() {
     int count = 1000;
 
     for(int i = 0; i < count; ++i) {
-        queue.Enqueue(std::rand());
+        queue.enqueue(std::rand());
     }
 
     for(int i = 0; i < count; ++i) {
-        queue.Dequeue();
-        //std::cout << "Current Data: " << i << " , " << stack.Pop() << std::endl;
+        queue.dequeue();
     }
 
-    std::cout << "Is Empty: " << queue.IsEmpty() << std::endl;
+    std::cout << "Is Empty: " << queue.empty() << std::endl;
 
     return 0;
 }

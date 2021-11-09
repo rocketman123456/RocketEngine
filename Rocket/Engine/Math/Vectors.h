@@ -22,9 +22,7 @@ namespace Rocket {
         Eigen::Vector4f to_vec4(const Eigen::Vector3f& v3, float w = 1.0f);
 
         double PointLineDistance(const Eigen::Vector3f& point, const Eigen::Vector3f& line_start, const Eigen::Vector3f& line_end);
-    }
 
-    namespace Algorithm {
         // A test to see if P1 is on the same side as P2 of a line segment ab
         bool SameSide(const Eigen::Vector3f& p1, const Eigen::Vector3f& p2, const Eigen::Vector3f& a, const Eigen::Vector3f& b);
 

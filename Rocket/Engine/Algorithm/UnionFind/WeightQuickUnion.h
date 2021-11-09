@@ -41,8 +41,7 @@ namespace Rocket {
         if(sz_[p_root] < sz_[q_root]) {
             id_[p_root] = q_root;
             sz_[q_root] += sz_[p_root];
-        }
-        else {
+        } else {
             id_[q_root] = p_root;
             sz_[q_root] += sz_[p_root];
         }

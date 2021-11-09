@@ -24,9 +24,7 @@ namespace Rocket {
             Eigen::Vector3f ac = line_end - point;
             return (ab.cross(ac)).norm() / ab.norm();
         }
-    }
 
-    namespace Algorithm {
         // A test to see if P1 is on the same side as P2 of a line segment ab
         bool SameSide(const Eigen::Vector3f& p1, const Eigen::Vector3f& p2, const Eigen::Vector3f& a, const Eigen::Vector3f& b) {
             Eigen::Vector3f cp1 = (b - a).cross(p1 - a);

@@ -455,7 +455,7 @@ namespace Rocket {
                 // If any vertices are within this triangle
                 bool inTri = false;
                 for (int j = 0; j < int(iVerts.size()); j++) {
-                    if (Algorithm::InTriangle(iVerts[j].position, pPrev.position, pCur.position, pNext.position)
+                    if (Math::InTriangle(iVerts[j].position, pPrev.position, pCur.position, pNext.position)
                         && iVerts[j].position != pPrev.position
                         && iVerts[j].position != pCur.position
                         && iVerts[j].position != pNext.position) {

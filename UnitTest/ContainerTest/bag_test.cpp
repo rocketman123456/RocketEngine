@@ -1,7 +1,7 @@
 #include "Memory/MemoryCheck.h"
 #include "Containers/Bag/Bag.h"
-#include "Containers/Bag/FixBag.h"
-#include "Containers/Bag/ListBag.h"
+#include "Containers/Bag/FixedBag.h"
+#include "Containers/Bag/ConcurrentBag.h"
 
 #include <random>
 #include <iostream>
@@ -12,45 +12,41 @@ int main() {
     {
         int count = 10000;
         Bag<double> bag;
-        for(int i = 0; i < count; ++i) {
-            bag.Add(std::rand());
+        for(int i = 0; i < count * 2; ++i) {
+            bag.add(std::rand());
         }
-        auto iterator = bag.GetIterator();
-        int iter_count = 0;
-        while(iterator.HasNext()) {
-            [[maybe_unused]] double temp = iterator.Next();
+        auto iterator = bag.begin();
+        for(auto iterator = bag.begin(); iterator != bag.end(); ++iterator) {
+            double temp = *iterator;
             //std::cout << "Iterator Get: " << temp << std::endl;
-            iter_count++;
         }
-        std::cout << "Bag Current Size: " << bag.CurrentSize() << std::endl;
-        std::cout << "Bag Iterator Count: " << iter_count << std::endl;
+        std::cout << "Bag Current Size: " << bag.size() << std::endl;
     }
     {
-        FixBag<double> bag_f(1000);
-        for(int i = 0; i < 1000; ++i) {
-            bag_f.Add(std::rand());
+        const int count = 10000;
+        FixedBag<double, count> bag;
+        for(int i = 0; i < count * 2; ++i) {
+            bag.add(std::rand());
         }
-        auto iterator_f = bag_f.GetIterator();
-        int iter_count = 0;
-        while(iterator_f.HasNext()) {
-            [[maybe_unused]] double temp = iterator_f.Next();
-            iter_count++;
+        auto iterator = bag.begin();
+        for(auto iterator = bag.begin(); iterator != bag.end(); ++iterator) {
+            double temp = *iterator;
+            //std::cout << "Iterator Get: " << temp << std::endl;
         }
-        std::cout << "FixBag Current Size: " << bag_f.CurrentSize() << std::endl;
-        std::cout << "FixBag Iterator Count: " << iter_count << std::endl;
+        std::cout << "Bag Current Size: " << bag.size() << std::endl;
     }
     {
-        ListBag<double> bag_l;
-        for(int i = 0; i < 1000; ++i) {
-            bag_l.Add(std::rand());
+        const int count = 10000;
+        ConcurrentBag<double> bag;
+        for(int i = 0; i < count * 2; ++i) {
+            bag.add(std::rand());
         }
-        auto iterator_f = bag_l.GetIterator();
-        int iter_count = 0;
-        while(iterator_f.HasNext()) {
-            [[maybe_unused]] double temp = iterator_f.Next();
-            iter_count++;
+        auto iterator = bag.begin();
+        for(auto iterator = bag.begin(); iterator != bag.end(); ++iterator) {
+            double temp = *iterator;
+            //std::cout << "Iterator Get: " << temp << std::endl;
         }
-        std::cout << "ListBag Current Size: " << bag_l.CurrentSize() << std::endl;
+        std::cout << "Bag Current Size: " << bag.size() << std::endl;
     }
     return 0;
 }

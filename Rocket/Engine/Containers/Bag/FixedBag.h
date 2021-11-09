@@ -1,10 +1,12 @@
 #pragma once
 #include <forward_list>
 #include <cstdint>
+#include <exception>
+#include <stdexcept>
 
 namespace Rocket {
-    template<typename Item>
-    class Bag
+    template<typename Item, int32_t _N_>
+    class FixedBag
     {
     public:
         typedef std::forward_list<Item> List;
@@ -14,21 +16,21 @@ namespace Rocket {
         List list;
         int32_t N;
     public:
-        Bag() : list(List()), N(0) {}
+        FixedBag() : list(List()), N(0) {}
         bool empty() const{ return list.empty(); }
         int32_t size() const{ return N; }
 
-        Bag(const Bag& list) = delete;
-        Bag& operator = (const Bag& other) = delete;
+        FixedBag(const FixedBag& list) = delete;
+        FixedBag& operator = (const FixedBag& other) = delete;
 
-        Bag(Bag&& bag) {
+        FixedBag(FixedBag&& bag) {
             list = bag.list;
             N = bag.N;
             bag.list.clear();
             bag.N = 0;
         }
 
-        Bag& operator = (Bag&& other) {
+        FixedBag& operator = (FixedBag&& other) {
             list = other.list;
             N = other.N;
             other.list.clear();
@@ -36,11 +38,15 @@ namespace Rocket {
         }
 
         void add(const Item &item) {
+            if(N >= _N_) 
+                throw std::overflow_error("FixedBag overflow");
             list.push_front(item);
             ++N;
         }
 
         void add(Item &&item) {
+            if(N >= _N_) 
+                throw std::overflow_error("FixedBag overflow");
             list.push_front(std::forward<Item>(item));
             ++N;
         }

@@ -252,7 +252,7 @@ namespace Rocket {
             for(auto content : content_) {
                 FileBuffer buffer;
                 this->ReadFile(buffer, content.first); 
-                buffers.push_back(buffer);
+                buffers.push_back(std::move(buffer));
             }
             return std::size_t(0);
         });
@@ -263,7 +263,7 @@ namespace Rocket {
             for(int i = 0; i < paths.size(); ++i) {
                 FileBuffer buffer;
                 this->WriteFile(buffer, paths[i]);
-                buffers.push_back(buffer);
+                buffers.push_back(std::move(buffer));
             }
             return std::size_t(0);
         });

@@ -30,12 +30,16 @@ namespace Rocket {
         FileBuffer() = default;
         ~FileBuffer() { if(buffer) delete[] buffer; } // Auto Delete
 
+        FileBuffer(const FileBuffer& buffer) = delete;
+        FileBuffer& operator = (const FileBuffer& buffer) = delete;
+
         // Always Deep Copy
-        FileBuffer(const FileBuffer& buffer) {
-            this->buffer = new int8_t[buffer.size];
-            this->size = buffer.size;
-            std::memcpy(this->buffer, buffer.buffer, size);
-        }
+        // FileBuffer(const FileBuffer& buffer) {
+        //     this->buffer = new int8_t[buffer.size];
+        //     this->size = buffer.size;
+        //     std::memcpy(this->buffer, buffer.buffer, size);
+        // }
+        // Move
         FileBuffer(FileBuffer&& buffer) {
             this->uuid = buffer.uuid;
             this->size = buffer.size;
@@ -44,16 +48,16 @@ namespace Rocket {
         }
 
         // Copy
-        FileBuffer& operator = (const FileBuffer& buffer) {
-            if (this == &buffer)
-                return *this;
-            if(this->buffer)
-                delete [] this->buffer;
-            this->buffer = new int8_t[buffer.size];
-            this->size = buffer.size;
-            std::memcpy(this->buffer, buffer.buffer, size);
-            return *this;
-        }
+        // FileBuffer& operator = (const FileBuffer& buffer) {
+        //     if (this == &buffer)
+        //         return *this;
+        //     if(this->buffer)
+        //         delete [] this->buffer;
+        //     this->buffer = new int8_t[buffer.size];
+        //     this->size = buffer.size;
+        //     std::memcpy(this->buffer, buffer.buffer, size);
+        //     return *this;
+        // }
         // Move
         FileBuffer& operator = (FileBuffer&& buffer) {
             if (this == &buffer)

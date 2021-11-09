@@ -10,8 +10,7 @@ namespace Rocket {
     template <typename T>
     class UnboundedQueue {
     public:
-        explicit UnboundedQueue(bool block = true)
-            : m_block{block} {}
+        explicit UnboundedQueue(bool block = true) : m_block{block} {}
 
         void push(const T& item) {
             {

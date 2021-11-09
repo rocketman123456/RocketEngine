@@ -10,8 +10,7 @@ namespace Rocket {
     template <typename T>
     class BoundedQueue {
     public:
-        explicit BoundedQueue(std::size_t max_size, bool block = true)
-            : m_block{block}, m_max_size{max_size} {
+        explicit BoundedQueue(std::size_t max_size, bool block = true) : m_block{block}, m_max_size{max_size} {
             if (!m_max_size)
                 throw std::invalid_argument("bad queue max-size! must be non-zero!");
         }

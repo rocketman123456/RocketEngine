@@ -1,6 +1,6 @@
 #include "Memory/MemoryCheck.h"
 #include "Containers/Stack/Stack.h"
-#include "Containers/Stack/FixStack.h"
+#include "Containers/Stack/FixedStack.h"
 #include "Containers/Stack/ListStack.h"
 
 #include <random>
@@ -13,23 +13,22 @@ int main() {
     int count = 5;
 
     for(int i = 0; i < count; ++i) {
-        stack.Push(std::rand());
+        stack.push(std::rand());
     }
 
     for(int i = 0; i < count; ++i) {
-        stack.Pop();
-        //std::cout << "Current Data: " << i << " , " << stack.Pop() << std::endl;
+        stack.pop();
     }
 
-    std::cout << "Is Empty: " << stack.IsEmpty() << std::endl;
+    std::cout << "Is Empty: " << stack.empty() << std::endl;
 
-    FixStack<int32_t> stack_f(150);
+    const int32_t count_2 = 100;
+    FixedStack<int32_t, count_2> stack_f;
     ListStack<int32_t> stack_l;
-    int32_t count_2 = 100;
 
     for(int i = 0; i < count_2; ++i) {
-        stack_f.Push(std::rand());
-        stack_l.Push(std::rand());
+        stack_f.push(std::rand());
+        stack_l.push(std::rand());
     }
 
     return 0;

@@ -1,6 +1,6 @@
 #pragma once
+#include <vector>
 #include <cstdint>
-//#include <iostream>
 #include <exception>
 #include <stdexcept>
 
@@ -8,105 +8,53 @@
 namespace Rocket {
     // TODO : make it thread safe
     // TODO : make stack implements iterator
-    template<typename T>
+    template<typename Item>
     class Stack {
     public:
-        explicit Stack() {
-            this->data_ = new T[2];
-            this->size_ = 2;
-        }
-        Stack(const Stack& stack) {
-            this->data_ = new T[stack.size_];
-            this->size_ = stack.size_;
-            for(int32_t i = 0; i < size_; ++i) {
-                this->data_[i] = stack.data_[i];
-            }
-        }
-        Stack(Stack&& stack) {
-            this->data_ = stack.data_;
-            this->size_ = stack.size_;
-            stack.data_ = nullptr;
-            stack.size_ = 0;
-        }
-        virtual ~Stack() {
-            if(data_) {
-                delete [] data_;
-            }
-            size_ = 0;
-        }
-
-        Stack* operator & () { return this; }
-        const Stack* operator & () const { return this; }
-
-        // Copy
-        Stack& operator = (const Stack& other) {
-            if (this == &other)
-                return *this;
-            if(data_)
-                delete [] data_;
-            this->data_ = new T[other.size_];
-            this->size_ = other.size_;
-            for(int32_t i = 0; i < size_; ++i) {
-                this->data_[i] = other.data_[i];
-            }
-            return *this;
-        }
-        // Move
-        Stack& operator = (Stack&& other) {
-            if (this == &other)
-                return *this;
-            if(data_)
-                delete [] data_;
-            this->data_ = other.data_;
-            this->size_ = other.size_;
-            other.data_ = nullptr;
-            other.size_ = 0;
-            return *this;
-        }
-
-        void Push(const T& item) {
-            // Auto Resize
-            if(current_ == size_) {
-                Resize(size_ * 2);
-            }
-            data_[current_] = item;
-            current_++;
-        }
-        T Pop() {
-            if(current_ == 0) {
-                throw std::runtime_error("Pop Empty Stack");
-            }
-            else {
-                current_--;
-                // Auto Resize
-                if(current_ > 0 && current_ == size_ / 4) {
-                    Resize(size_ / 2);
-                }
-                return data_[current_];
-            }
-        }
-
-        inline bool IsEmpty() { return current_ == 0; }
-        inline int32_t TotalSize() { return size_; }
-        inline int32_t CurrentSize() { return current_; }
-        inline T* GetData() { return data_; }
-
-        void Resize(int32_t size) {
-            if(size < current_)
-                throw std::runtime_error("error resize");
-            T* temp = new T[size];
-            int32_t len = current_;
-            for(int32_t i = 0; i < len; ++i) {
-                temp[i] = data_[i];
-            }
-            delete [] data_;
-            data_ = temp;
-            size_ = size;
-        }
-        
+        typedef std::vector<Item> Vector;
+        typedef typename Vector::iterator Iterator;
+        typedef typename Vector::const_iterator CIterator;
     private:
-        int32_t current_ = 0;
-        int32_t size_ = 0;
-        T*      data_ = nullptr;
+        Vector vector;
+    public:
+        Stack() : vector(Vector()) {}
+
+        bool empty() const { return vector.empty(); }
+        int size() const { return vector.size(); }
+        void push(const Item &item) { vector.push_back(item); }
+        void push(Item &&item) { vector.push_back(std::forward<Item>(item)); }
+
+        Stack(const Stack& list) = delete;
+        Stack& operator = (const Stack& other) = delete;
+
+        Stack(Stack&& stack) {
+            vector = stack.vector;
+            stack.vector.clear();
+        }
+
+        Stack& operator = (Stack&& other) {
+            vector = other.vector;
+            other.vector.clear();
+        }
+
+        Item pop() {
+            if (empty())
+                throw std::underflow_error("Stack underflow");
+            Item item = vector.back();
+            vector.erase(vector.end()-1);
+            return item;
+        }
+
+        Item peek() const {
+            if (empty())
+                throw std::underflow_error("Stack underflow");
+            return vector.back();
+        }
+
+        Iterator begin() { return vector.begin(); }
+        CIterator begin() const { return vector.begin(); }
+
+        Iterator end() { return vector.end(); }
+        CIterator end() const { return vector.end(); }
     };
 }
