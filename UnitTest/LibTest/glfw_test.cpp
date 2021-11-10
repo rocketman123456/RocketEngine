@@ -1,10 +1,17 @@
 #include "Memory/MemoryCheck.h"
+#include "Utils/FindRootDir.h"
+#include "Log/Log.h"
 
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
 
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb_image.h>
+
 #include <iostream>
 #include <cmath>
+
+using namespace Rocket;
 
 // settings
 const unsigned int SCR_WIDTH = 1280;
@@ -31,8 +38,8 @@ const char *fragmentShaderSource = R"(
         FragColor = ourColor;
     })";
 
-int main()
-{
+int main() {
+    Log::Init();
     // glfw: initialize and configure
     // ------------------------------
     glfwInit();
@@ -155,11 +162,23 @@ int main()
 
     // You can unbind the VAO afterwards so other VAO calls won't accidentally modify this VAO, but this rarely happens. Modifying other
     // VAOs requires a call to glBindVertexArray anyways so we generally don't unbind VAOs (nor VBOs) when it's not directly necessary.
-    glBindVertexArray(0); 
+    glBindVertexArray(0);
+
+    std::string root = Rocket::FindRootDir("_root_dir_");
+    std::string file_name = root + "/Logo/LOGO-ICON.png";
+
+    int x,y,n;
+    unsigned char* data = stbi_load(file_name.c_str(), &x, &y, &n, 4);
+    GLFWimage image = {x, y, data};
+    glfwSetWindowIcon(window, 1, &image);
 
     // render loop
     // -----------
+    int64_t count = 0;
+    char title[128] = {};
     while (!glfwWindowShouldClose(window)) {
+        sprintf(title, "Rocket Title: %lld", count++);
+        glfwSetWindowTitle(window, title);
         // render
         // ------
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
@@ -193,5 +212,8 @@ int main()
     // glfw: terminate, clearing all previously allocated GLFW resources.
     // ------------------------------------------------------------------
     glfwTerminate();
+
+    stbi_image_free(data);
+    Log::End();
     return 0;
 }
