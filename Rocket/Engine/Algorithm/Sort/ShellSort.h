@@ -46,4 +46,44 @@ namespace Rocket {
             gap /= 2;
         }
     }
+
+    template<typename RandomAcessIt>
+    void ShellSortSF(RandomAcessIt first, RandomAcessIt last) {
+        int N = (last - first);
+        int h = 1;
+        //1, 4, 13, 40, 121, 364, 1093, ...
+        while (h < N / 3) h = 3 * h + 1;
+        while (h >= 1) { 
+            //将数组变成h有序
+            for (int i = h; i < N; ++i) {
+                //将a[i]插入到a[i-h..i-2*h..]之中
+                auto t = *(first + i);
+                auto j = first + i;
+                for (; j>=(first+h) && t < *(j - h); j-=h)
+                    *j = std::move(*(j - h));
+                *j = std::move(t);
+            }
+            h = h / 3;
+        }
+    }
+
+    template<typename RandomAcessIt>
+    void ShellSortBF(RandomAcessIt first, RandomAcessIt last) {
+        int N = (last - first);
+        int h = 1;
+        //1, 4, 13, 40, 121, 364, 1093, ...
+        while (h < N / 3) h = 3 * h + 1;
+        while (h >= 1) { 
+            //将数组变成h有序
+            for (int i = h; i < N; ++i) {
+                //将a[i]插入到a[i-h..i-2*h..]之中
+                auto t = *(first + i);
+                auto j = first + i;
+                for (; j>=(first+h) && t > *(j - h); j-=h)
+                    *j = std::move(*(j - h));
+                *j = std::move(t);
+            }
+            h = h / 3;
+        }
+    }
 }

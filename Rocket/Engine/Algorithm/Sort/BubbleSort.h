@@ -29,4 +29,32 @@ namespace Rocket
             }
         }
     }
+
+    // In-place Sort Big First
+    // should have > < operator
+    template<typename RandomAcessedIt>
+    void BubbleSortBF(RandomAcessedIt beg, RandomAcessedIt end) {
+        if ((end - beg) < 2) return;
+        for (auto i = beg; i < end; i++) {
+            for (auto j = end - 1; j > i; j--) {
+                if (*(j+1) > *j) {
+                    std::swap(*(j+1), *j);
+                }
+            }
+        }
+    }
+
+    // In-place Sort Small First
+    // should have > < operator
+    template<typename RandomAcessedIt>
+    void BubbleSortSF(RandomAcessedIt beg, RandomAcessedIt end) {
+        if ((end - beg) < 2) return;
+        for (auto i = beg; i < end; i++) {
+            for (auto j = end - 1; j > i; j--) {
+                if (*(j+1) < *j) {
+                    std::swap(*(j+1), *j);
+                }
+            }
+        }
+    }
 }

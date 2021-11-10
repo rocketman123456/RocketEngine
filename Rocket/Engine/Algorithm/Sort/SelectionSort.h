@@ -30,4 +30,32 @@ namespace Rocket {
             std::swap(data[i], data[minIndex]);
         }
     }
+
+    template<typename BidirectionalIt>
+    void SelectionSortSF(BidirectionalIt first, BidirectionalIt last) {
+        typedef typename std::iterator_traits<BidirectionalIt>::value_type value_type;
+        if (first == last) return;
+        for (auto i = first; i != last; ++i) {
+            //将a[i]与a[i+1..N)中的最小元素交换
+            auto min = i;
+            for (auto j = i + 1; j != last; ++j) {
+                if (*j < *min) min = j;
+            }
+            std::swap(*i, *min);
+        }
+    }
+
+    template<typename BidirectionalIt>
+    void SelectionSortBF(BidirectionalIt first, BidirectionalIt last) {
+        typedef typename std::iterator_traits<BidirectionalIt>::value_type value_type;
+        if (first == last) return;
+        for (auto i = first; i != last; ++i) {
+            //将a[i]与a[i+1..N)中的最小元素交换
+            auto max = i;
+            for (auto j = i + 1; j != last; ++j) {
+                if (*j > *max) max = j;
+            }
+            std::swap(*i, *max);
+        }
+    }
 }
