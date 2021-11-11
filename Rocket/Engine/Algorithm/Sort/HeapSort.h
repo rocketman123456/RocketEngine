@@ -2,17 +2,19 @@
 #include <functional> // std::function<bool(T&, T&)>
 #include <utility>    // std::swap
 
+#include "Containers/Queue/PriorityQueue.h"
+
 namespace Rocket {
     template <typename T>
     void AdjustHeapBF(T* array, std::size_t size, int64_t i, std::function<int64_t(const T&,const T&)> compare) {
         int64_t maxIndex = i;
-        //Èç¹ûÓĞ×ó×ÓÊ÷£¬ÇÒ×ó×ÓÊ÷´óÓÚ¸¸½Úµã£¬Ôò½«×î´óÖ¸ÕëÖ¸Ïò×ó×ÓÊ÷
+        //å¦‚æœæœ‰å·¦å­æ ‘ï¼Œä¸”å·¦å­æ ‘å¤§äºçˆ¶èŠ‚ç‚¹ï¼Œåˆ™å°†æœ€å¤§æŒ‡é’ˆæŒ‡å‘å·¦å­æ ‘
         if (i * 2 < size && (compare(array[i * 2], array[maxIndex]) < 0))
             maxIndex = i * 2;
-        //Èç¹ûÓĞÓÒ×ÓÊ÷£¬ÇÒÓÒ×ÓÊ÷´óÓÚ¸¸½Úµã£¬Ôò½«×î´óÖ¸ÕëÖ¸ÏòÓÒ×ÓÊ÷
+        //å¦‚æœæœ‰å³å­æ ‘ï¼Œä¸”å³å­æ ‘å¤§äºçˆ¶èŠ‚ç‚¹ï¼Œåˆ™å°†æœ€å¤§æŒ‡é’ˆæŒ‡å‘å³å­æ ‘
         if (i * 2 + 1 < size && (compare(array[i * 2 + 1], array[maxIndex]) < 0))
             maxIndex = i * 2 + 1;
-        //Èç¹û¸¸½Úµã²»ÊÇ×î´óÖµ£¬Ôò½«¸¸½ÚµãÓë×î´óÖµ½»»»£¬²¢ÇÒµİ¹éµ÷ÕûÓë¸¸½Úµã½»»»µÄÎ»ÖÃ¡£
+        //å¦‚æœçˆ¶èŠ‚ç‚¹ä¸æ˜¯æœ€å¤§å€¼ï¼Œåˆ™å°†çˆ¶èŠ‚ç‚¹ä¸æœ€å¤§å€¼äº¤æ¢ï¼Œå¹¶ä¸”é€’å½’è°ƒæ•´ä¸çˆ¶èŠ‚ç‚¹äº¤æ¢çš„ä½ç½®ã€‚
         if (maxIndex != i) {
             std::swap(array[maxIndex], array[i]);
             AdjustHeapBF(array, size, maxIndex, compare);
@@ -42,13 +44,13 @@ namespace Rocket {
     template <typename T>
     void AdjustHeapSF(T* array, std::size_t size, int64_t i, std::function<int64_t(const T&,const T&)> compare) {
         int64_t maxIndex = i;
-        //Èç¹ûÓĞ×ó×ÓÊ÷£¬ÇÒ×ó×ÓÊ÷´óÓÚ¸¸½Úµã£¬Ôò½«×î´óÖ¸ÕëÖ¸Ïò×ó×ÓÊ÷
+        //å¦‚æœæœ‰å·¦å­æ ‘ï¼Œä¸”å·¦å­æ ‘å¤§äºçˆ¶èŠ‚ç‚¹ï¼Œåˆ™å°†æœ€å¤§æŒ‡é’ˆæŒ‡å‘å·¦å­æ ‘
         if (i * 2 < size && (compare(array[i * 2], array[maxIndex]) > 0))
             maxIndex = i * 2;
-        //Èç¹ûÓĞÓÒ×ÓÊ÷£¬ÇÒÓÒ×ÓÊ÷´óÓÚ¸¸½Úµã£¬Ôò½«×î´óÖ¸ÕëÖ¸ÏòÓÒ×ÓÊ÷
+        //å¦‚æœæœ‰å³å­æ ‘ï¼Œä¸”å³å­æ ‘å¤§äºçˆ¶èŠ‚ç‚¹ï¼Œåˆ™å°†æœ€å¤§æŒ‡é’ˆæŒ‡å‘å³å­æ ‘
         if (i * 2 + 1 < size && (compare(array[i * 2 + 1], array[maxIndex]) > 0))
             maxIndex = i * 2 + 1;
-        //Èç¹û¸¸½Úµã²»ÊÇ×î´óÖµ£¬Ôò½«¸¸½ÚµãÓë×î´óÖµ½»»»£¬²¢ÇÒµİ¹éµ÷ÕûÓë¸¸½Úµã½»»»µÄÎ»ÖÃ¡£
+        //å¦‚æœçˆ¶èŠ‚ç‚¹ä¸æ˜¯æœ€å¤§å€¼ï¼Œåˆ™å°†çˆ¶èŠ‚ç‚¹ä¸æœ€å¤§å€¼äº¤æ¢ï¼Œå¹¶ä¸”é€’å½’è°ƒæ•´ä¸çˆ¶èŠ‚ç‚¹äº¤æ¢çš„ä½ç½®ã€‚
         if (maxIndex != i) {
             std::swap(array[maxIndex], array[i]);
             AdjustHeapSF(array, size, maxIndex, compare);
@@ -72,6 +74,26 @@ namespace Rocket {
             std::swap(array[0], array[len-1]);
             len--;
             AdjustHeapSF(array, len, 0, compare);
+        }
+    }
+
+    template<typename InputIt>
+    void HeapSortSF(InputIt beg, InputIt end) {
+        typedef typename std::iterator_traits<InputIt>::value_type value_type;
+        PriorityQueue<value_type, std::greater<value_type>> pq(beg,end);
+        auto i = beg;
+        while (!pq.empty()) {
+            *i++ = pq.pop();
+        }
+    }
+
+    template<typename InputIt>
+    void HeapSortBF(InputIt beg, InputIt end) {
+        typedef typename std::iterator_traits<InputIt>::value_type value_type;
+        PriorityQueue<value_type, std::less<value_type>> pq(beg,end);
+        auto i = beg;
+        while (!pq.empty()) {
+            *i++ = pq.pop();
         }
     }
 }
