@@ -30,13 +30,12 @@ namespace Rocket {
 
     void EventChannel::Tick(TimeStep step) {
         {
-            std::scoped_lock guard{ event_queue_mutex_[current_queue_] };
-
-            int32_t current = current_queue_;
-            int32_t previous = current_queue_;
-            current = (current + 1) % EVENT_BUFFER_NUM;
-            handling_queue_ = previous;
-            current_queue_ = current;
+            std::scoped_lock guard{ 
+                event_queue_mutex_[current_queue_]
+                //event_queue_mutex_[handling_queue_] 
+            };
+            handling_queue_ = current_queue_;
+            current_queue_ = (current_queue_ + 1) % EVENT_BUFFER_NUM;
         }
 
         if(this->IsEmpty()) {
@@ -47,36 +46,30 @@ namespace Rocket {
                 int32_t queue_end = waiting_queue_end_[handling_queue_];
                 double dt = step;
                 for(int i = 0; i < queue_end; ++i) {
-                    auto event = event_storage_[handling_queue_][i];
-                    if(event == nullptr) continue;
+                    auto event = waiting_event_storage_[handling_queue_][i];
+                    //RK_TRACE(Event, "Waiting Event: {}, {}", event->time_delay_, dt);
+                    //if(event == nullptr) continue;
                     event->time_delay_ -= dt;
-                }
-
-                for(int i = 0; i < queue_end; ++i) {
-                    auto event = event_storage_[handling_queue_][i];
-                    if(event == nullptr) continue;
-                    if(event_storage_[handling_queue_][i]->time_delay_ > EPS) {
-                        RK_INFO(Event, "Requeue Event: {}", event->GetEventType());
+                    //RK_INFO(Event, "Update Waiting Event: {}, {}", event->time_delay_, dt);
+                    if(waiting_event_storage_[handling_queue_][i]->time_delay_ > EPS) {
+                        //RK_INFO(Event, "Requeue Event: {}", event->GetEventType());
                         QueueEvent(event);
                     } else {
                         event_storage_[handling_queue_][event_queue_end_[handling_queue_]] = event;
                         event_queue_end_[handling_queue_]++;
                     }
                 }
-
-                if(queue_end)
-                    RK_INFO(Event, "Waiting Event: {}", queue_end);
             }
 
             {
                 int32_t queue_end = event_queue_end_[handling_queue_];
+                if(queue_end)
+                    RK_INFO(Event, "Dispatch Event Count: {}", queue_end);
+
                 for(int i = 0; i < queue_end; ++i) {
                     auto event = event_storage_[handling_queue_][i];
                     DispatchEvent(event);
                 }
-
-                if(queue_end)
-                    RK_INFO(Event, "Dispatch Event: {}", queue_end);
             }
 
             event_queue_end_[handling_queue_] = 0;
@@ -101,7 +94,7 @@ namespace Rocket {
     }
 
     void EventChannel::DispatchEvent(EventPtr& event) {
-        RK_INFO(Event, "Dispatch Event: {}", event->GetEventType());
+        //RK_INFO(Event, "Dispatch Event: {}", event->GetEventType());
         auto delegates = event_listener_.find(event->GetEventType())->second;
         for(auto delegate : delegates) {
             delegate.Invoke(event);

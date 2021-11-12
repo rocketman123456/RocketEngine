@@ -38,9 +38,7 @@ namespace Rocket {
         explicit Event(const std::string& name, EventType type, EventDataPtr ptr, uint64_t size);
 
         Event(const Event& event) {
-#ifdef RK_DEBUG
             name_ = event.name_;
-#endif
             type_ = event.type_;
             size_ = event.size_;
             variable_ = new Variant[size_];
@@ -49,9 +47,7 @@ namespace Rocket {
             time_delay_ = event.time_delay_;
         }
         Event(Event&& event) {
-#ifdef RK_DEBUG
             name_ = event.name_;
-#endif
             type_ = event.type_;
             size_ = event.size_;
             variable_ = event.variable_;
@@ -75,9 +71,7 @@ namespace Rocket {
         std::string ToString();
 
         Event& operator = (const Event& other) {
-#ifdef RK_DEBUG
             name_ = other.name_;
-#endif
             type_ = other.type_;
             size_ = other.size_;
             variable_ = new Variant[size_];
@@ -87,9 +81,7 @@ namespace Rocket {
             return *this;
         }
         Event& operator = (Event&& other) {
-#ifdef RK_DEBUG
             name_ = other.name_;
-#endif
             type_ = other.type_;
             size_ = other.size_;
             variable_ = other.variable_;
@@ -107,9 +99,7 @@ namespace Rocket {
 		double time_stamp_ = 0.0f;  //  ms  4 bytes
         double time_delay_ = 0.0f;  //  ms  4 bytes
         bool handled_ = false;      //  1 byte
-#ifdef RK_DEBUG
         std::string name_;          //  event name
-#endif
 
         static ElapseTimer timer_s;
     };

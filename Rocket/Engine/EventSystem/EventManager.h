@@ -14,7 +14,6 @@ namespace Rocket {
     using ChannelMap = std::unordered_map<uint64_t, ChannelPtr>;
     using EventChannelMap = std::unordered_map<EventType, ChannelMap>;
 
-    // TODO : use hash string id to replace string, for better compare performance
     class EventManager : _implements_ IRuntimeModule, _implements_ AbstractSingleton<EventManager> {
         RUNTIME_MODULE_TYPE(EventManager);
     public:

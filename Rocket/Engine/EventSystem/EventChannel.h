@@ -44,11 +44,11 @@ namespace Rocket {
         EventListener event_listener_;
         std::array<EventPtr, MAX_EVENT_NUM> event_storage_[EVENT_BUFFER_NUM] = {};
         std::array<EventPtr, MAX_EVENT_NUM> waiting_event_storage_[EVENT_BUFFER_NUM] = {};
-        std::atomic<int32_t> current_queue_ = 0;
-        std::atomic<int32_t> handling_queue_ = 0;
-        //std::atomic<int32_t> event_queue_start_[EVENT_BUFFER_NUM];
-        std::atomic<int32_t> event_queue_end_[EVENT_BUFFER_NUM] = {0};
-        //std::atomic<int32_t> waiting_queue_start_[EVENT_BUFFER_NUM];
-        std::atomic<int32_t> waiting_queue_end_[EVENT_BUFFER_NUM] = {0};
+        int32_t current_queue_ = 0;
+        int32_t handling_queue_ = 0;
+        //int32_t event_queue_start_[EVENT_BUFFER_NUM];
+        int32_t event_queue_end_[EVENT_BUFFER_NUM] = {0};
+        //int32_t waiting_queue_start_[EVENT_BUFFER_NUM];
+        int32_t waiting_queue_end_[EVENT_BUFFER_NUM] = {0};
     };
 }
