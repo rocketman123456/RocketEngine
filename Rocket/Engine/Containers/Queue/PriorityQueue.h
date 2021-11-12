@@ -35,6 +35,9 @@ namespace Rocket {
         T top() const { return pq[0]; }
         bool empty() { return pq.empty(); }
         int size() { return pq.size(); }
+
+        auto begin() { return pq.begin(); }
+        auto end() { return pq.end(); }
     private:
         void swim(int k) {
             auto key = pq[k];
@@ -65,7 +68,6 @@ namespace Rocket {
         void exch(int i, int j) {
             std::swap(pq[i], pq[j]);
         }
-
     private:
         std::vector<T> pq;
 	    Compare compare;

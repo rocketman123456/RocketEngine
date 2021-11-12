@@ -1,22 +1,28 @@
 #pragma once
 #include "EventSystem/Event.h"
-#include "Containers/Queue/UnboundedQueue.h"
-#include "Containers/Queue/BoundedQueue.h"
+//#include "Containers/Queue/UnboundedQueue.h"
+//#include "Containers/Queue/BoundedQueue.h"
+//#include "Containers/Queue/PriorityQueue.h"
 #include "Utils/TimeStep.h"
 
 #include <vector>
+#include <array>
+#include <list>
 #include <mutex>
 #include <thread>
 
 namespace Rocket {
+    constexpr int32_t EVENT_BUFFER_NUM = 2;
+    constexpr int32_t MAX_EVENT_NUM = 10'0000;
     class EventChannel;
     using ChannelPtr = std::shared_ptr<EventChannel>;
     using EventListener = std::unordered_map<EventType, std::vector<EventDelegate>>;
-    using EventStorage = std::unordered_map<EventType, UnboundedQueue<EventPtr>>;
+    //using EventStorage = std::unordered_map<EventType, std::array<EventPtr, MAX_EVENT_NUM>>;
+    //using WaitingEventStorage = std::unordered_map<EventType, std::array<EventPtr, MAX_EVENT_NUM>>;
 
     class EventChannel {
     public:
-        explicit EventChannel() {}                                       // Auto Generate Name
+        explicit EventChannel() = default;                               // Auto Generate Name
         explicit EventChannel(const std::string& name): name_(name) {}   // Custom Name
         virtual ~EventChannel() = default;
 
@@ -33,10 +39,16 @@ namespace Rocket {
         inline bool IsEmpty() const { return event_listener_.empty(); }
     private:
         std::string name_;
-        std::mutex normal_mutex_;
-        std::mutex waiting_mutex_;
+        std::mutex register_mutex_;
+        std::mutex event_queue_mutex_[EVENT_BUFFER_NUM];
         EventListener event_listener_;
-        EventStorage event_storage_;
-        EventStorage waiting_event_storage_;
+        std::array<EventPtr, MAX_EVENT_NUM> event_storage_[EVENT_BUFFER_NUM] = {};
+        std::array<EventPtr, MAX_EVENT_NUM> waiting_event_storage_[EVENT_BUFFER_NUM] = {};
+        std::atomic<int32_t> current_queue_ = 0;
+        std::atomic<int32_t> handling_queue_ = 0;
+        //std::atomic<int32_t> event_queue_start_[EVENT_BUFFER_NUM];
+        std::atomic<int32_t> event_queue_end_[EVENT_BUFFER_NUM] = {0};
+        //std::atomic<int32_t> waiting_queue_start_[EVENT_BUFFER_NUM];
+        std::atomic<int32_t> waiting_queue_end_[EVENT_BUFFER_NUM] = {0};
     };
 }

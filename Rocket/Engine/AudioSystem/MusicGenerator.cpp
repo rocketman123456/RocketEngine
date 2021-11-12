@@ -26,13 +26,13 @@ namespace Rocket {
 
         auto music = (raw)["music"].array_items();
         for(auto note = music.begin(); note != music.end(); ++note) {
-            std::cout << "{" << std::endl;
-            std::cout << "  id : " << (*note)["id"].string_value() << "\n";
-            std::cout << "  note : " << (*note)["note"].string_value() << "\n";
-            std::cout << "  begin : " << (*note)["begin"].number_value() << "\n";
-            std::cout << "  delay : " << (*note)["delay"].number_value() << "\n";
-            std::cout << "  last : " << (*note)["last"].number_value() << "\n";
-            std::cout << "}" << std::endl;
+            // std::cout << "{" << std::endl;
+            // std::cout << "  id : " << (*note)["id"].string_value() << "\n";
+            // std::cout << "  note : " << (*note)["note"].string_value() << "\n";
+            // std::cout << "  begin : " << (*note)["begin"].number_value() << "\n";
+            // std::cout << "  delay : " << (*note)["delay"].number_value() << "\n";
+            // std::cout << "  last : " << (*note)["last"].number_value() << "\n";
+            // std::cout << "}" << std::endl;
 
             double start_time = 0;
             if(!(*note)["begin"].is_null()) {

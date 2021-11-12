@@ -1,9 +1,10 @@
 #pragma once
+#include "Memory/MemoryDefine.h"
 #include "Utils/Variant.h"
 #include "Utils/Delegate.h"
 #include "Utils/Hashing.h"
 #include "Utils/Timer.h"
-#include "Memory/MemoryDefine.h"
+#include "Containers/Queue/PriorityQueue.h"
 #include "Log/Log.h"
 
 #include <vector>
@@ -111,5 +112,14 @@ namespace Rocket {
 #endif
 
         static ElapseTimer timer_s;
+    };
+
+    struct EventDelayCompare {
+        bool operator() (const Rocket::EventPtr& x, const Rocket::EventPtr& y) const {
+            return x->time_delay_ < y->time_delay_;
+        }
+        typedef Rocket::EventPtr first_argument_type;
+        typedef Rocket::EventPtr second_argument_type;
+        typedef bool result_type;
     };
 }

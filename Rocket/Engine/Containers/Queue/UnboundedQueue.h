@@ -2,6 +2,7 @@
 
 #include <mutex>
 #include <queue>
+#include <list>
 #include <utility>
 #include <stdexcept>
 #include <condition_variable>
@@ -15,7 +16,7 @@ namespace Rocket {
         void push(const T& item) {
             {
                 std::scoped_lock guard(m_queue_lock);
-                m_queue.push(item);
+                m_queue.push_back(item);
             }
             m_condition.notify_one();
         }
@@ -23,7 +24,7 @@ namespace Rocket {
         void push(T &&item) {
             {
                 std::scoped_lock guard(m_queue_lock);
-                m_queue.push(std::move(item));
+                m_queue.push_back(std::move(item));
             }
             m_condition.notify_one();
         }
@@ -32,7 +33,7 @@ namespace Rocket {
         void emplace(Args &&...args) {
             {
                 std::scoped_lock guard(m_queue_lock);
-                m_queue.emplace(std::forward<Args>(args)...);
+                m_queue.emplace_back(std::forward<Args>(args)...);
             }
             m_condition.notify_one();
         }
@@ -42,7 +43,7 @@ namespace Rocket {
                 std::unique_lock lock(m_queue_lock, std::try_to_lock);
                 if (!lock)
                     return false;
-                m_queue.push(item);
+                m_queue.push_back(item);
             }
             m_condition.notify_one();
             return true;
@@ -53,7 +54,7 @@ namespace Rocket {
                 std::unique_lock lock(m_queue_lock, std::try_to_lock);
                 if (!lock)
                     return false;
-                m_queue.push(std::move(item));
+                m_queue.push_back(std::move(item));
             }
             m_condition.notify_one();
             return true;
@@ -65,7 +66,7 @@ namespace Rocket {
             if (m_queue.empty())
                 return false;
             item = std::move(m_queue.front());
-            m_queue.pop();
+            m_queue.pop_front();
             return true;
         }
 
@@ -74,7 +75,7 @@ namespace Rocket {
             if (!lock || m_queue.empty())
                 return false;
             item = std::move(m_queue.front());
-            m_queue.pop();
+            m_queue.pop_front();
             return true;
         }
 
@@ -106,12 +107,14 @@ namespace Rocket {
             return m_block;
         }
 
+        // Not Thread Safe
+        auto begin() { m_queue.begin(); }
+        auto end() { m_queue.end(); }
+
     private:
-        using queue_t = std::queue<T>;
+        using queue_t = std::list<T>;
         queue_t m_queue;
-
         bool m_block;
-
         mutable std::mutex m_queue_lock;
         std::condition_variable m_condition;
     };

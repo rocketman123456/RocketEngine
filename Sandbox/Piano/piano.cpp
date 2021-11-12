@@ -167,6 +167,7 @@ int main() {
         if (key == GLFW_KEY_SPACE && action == GLFW_PRESS) { 
             std::vector<EventPtr> events;
             generator_g.GetMusicNotes(events);
+            RK_INFO(App, "Event Count: {}", events.size());
             InsertEvents(events); 
         }
     });
