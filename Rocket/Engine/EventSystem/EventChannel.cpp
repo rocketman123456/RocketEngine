@@ -1,6 +1,7 @@
 #include "EventSystem/EventChannel.h"
 #include "Math/Parameter.h"
 
+// TODO : make a better event channel
 namespace Rocket {
     void EventChannel::RegisterEvent(const EventType& type, const EventDelegate& function) {
         std::scoped_lock guard{ register_mutex_ };
@@ -31,8 +32,7 @@ namespace Rocket {
     void EventChannel::Tick(TimeStep step) {
         {
             std::scoped_lock guard{ 
-                event_queue_mutex_[current_queue_]
-                //event_queue_mutex_[handling_queue_] 
+                event_queue_mutex_single_
             };
             handling_queue_ = current_queue_;
             current_queue_ = (current_queue_ + 1) % EVENT_BUFFER_NUM;
@@ -41,31 +41,26 @@ namespace Rocket {
         if(this->IsEmpty()) {
             return;
         } else {
-            std::scoped_lock guard{ event_queue_mutex_[handling_queue_] };
-            {
-                int32_t queue_end = waiting_queue_end_[handling_queue_];
-                double dt = step;
-                for(int i = 0; i < queue_end; ++i) {
-                    auto event = waiting_event_storage_[handling_queue_][i];
-                    //RK_TRACE(Event, "Waiting Event: {}, {}", event->time_delay_, dt);
-                    //if(event == nullptr) continue;
-                    event->time_delay_ -= dt;
-                    //RK_INFO(Event, "Update Waiting Event: {}, {}", event->time_delay_, dt);
-                    if(waiting_event_storage_[handling_queue_][i]->time_delay_ > EPS) {
-                        //RK_INFO(Event, "Requeue Event: {}", event->GetEventType());
-                        QueueEvent(event);
-                    } else {
-                        event_storage_[handling_queue_][event_queue_end_[handling_queue_]] = event;
-                        event_queue_end_[handling_queue_]++;
-                    }
+            // Handle Waiting Event / Delayed Event
+            int32_t queue_end = waiting_queue_end_[handling_queue_];
+            double dt = step;
+            for(int i = 0; i < queue_end; ++i) {
+                auto event = waiting_event_storage_[handling_queue_][i];
+                //if(event == nullptr) continue;
+                event->time_delay_ -= dt;
+                if(waiting_event_storage_[handling_queue_][i]->time_delay_ > EPS) {
+                    QueueEvent(event);
+                } else {
+                    event_storage_[handling_queue_][event_queue_end_[handling_queue_]] = event;
+                    event_queue_end_[handling_queue_]++;
                 }
             }
 
             {
+                // Handle Normal Event
                 int32_t queue_end = event_queue_end_[handling_queue_];
                 if(queue_end)
-                    RK_INFO(Event, "Dispatch Event Count: {}", queue_end);
-
+                    RK_TRACE(Event, "Dispatch Event Count: {}", queue_end);
                 for(int i = 0; i < queue_end; ++i) {
                     auto event = event_storage_[handling_queue_][i];
                     DispatchEvent(event);
@@ -78,12 +73,16 @@ namespace Rocket {
     }
 
     void EventChannel::QueueEvent(EventPtr& event) {
-        if(event->time_delay_ > 1e-6) {
-            std::scoped_lock guard{ event_queue_mutex_[current_queue_] };
+        if(event->time_delay_ > EPS) {
+            std::scoped_lock guard{ event_queue_mutex_single_ };
+            if(waiting_queue_end_[current_queue_] >= MAX_EVENT_NUM)
+                RK_ERROR(Event, "Too Much Events At This Moment");
             waiting_event_storage_[current_queue_][waiting_queue_end_[current_queue_]] = event;
             waiting_queue_end_[current_queue_]++;
         } else {
-            std::scoped_lock guard{ event_queue_mutex_[current_queue_] };
+            std::scoped_lock guard{ event_queue_mutex_single_ };
+            if(waiting_queue_end_[current_queue_] >= MAX_EVENT_NUM)
+                RK_ERROR(Event, "Too Much Events At This Moment");
             event_storage_[current_queue_][event_queue_end_[current_queue_]] = event;
             event_queue_end_[current_queue_]++;
         }
@@ -94,9 +93,10 @@ namespace Rocket {
     }
 
     void EventChannel::DispatchEvent(EventPtr& event) {
-        //RK_INFO(Event, "Dispatch Event: {}", event->GetEventType());
+        RK_TRACE(Event, "Dispatch Event: {}", event->GetEventType());
         auto delegates = event_listener_.find(event->GetEventType())->second;
         for(auto delegate : delegates) {
+            // TODO : use Task Manager
             delegate.Invoke(event);
         }
     }

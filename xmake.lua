@@ -30,7 +30,7 @@ add_requires("libsndfile 1.0.30", {system = false, configs = {shared = false, de
 add_requires("stb", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
 add_requires("taskflow v3.2.0", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
 add_requires("eigen 3.4.0", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
-add_requires("glfw 3.3.4", {system = false, glfw_include = "none", configs = {shared = false, debug = true, cxflags = "-fPIC"}})
+add_requires("glfw 3.3.4", {system = false, configs = {glfw_include = "none", shared = false, debug = true, cxflags = "-fPIC"}})
 add_requires("libsdl 2.0.16", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
 add_requires("bullet3 3.09", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
 add_requires("tinygltf v2.5.0", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})

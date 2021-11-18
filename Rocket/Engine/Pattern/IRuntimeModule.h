@@ -10,6 +10,7 @@ namespace Rocket {
     public:
         virtual ~IRuntimeModule() = default;
 
+        // TODO : maybe use exception to handle Errors 
         // Return == 0 : everything OK
         // Return != 0 : something wrong
         [[nodiscard]] virtual int32_t Initialize() = 0;
