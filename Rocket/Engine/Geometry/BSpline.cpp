@@ -42,25 +42,25 @@ namespace Rocket {
             cp.resize(cp_pld.size());
             std::copy(cp_pld.begin(), cp_pld.end(), cp.begin());
 
-            //æŸ¥æ‰¾ u æ‰€åœ¨åŒºé—´
+            //²éÕÒ u ËùÔÚÇø¼ä
             int k = std::distance(knots.begin(),std::upper_bound(knots.begin(), knots.end(), u))-1;
 
             std::vector<Eigen::Vector3f> array;
             array.resize(p);
             //i \in [k,k-p+1]
-            //jä¸ºæ•°ç»„pArrayä½ç½®
+            //jÎªÊı×épArrayÎ»ÖÃ
             for (int32_t i = k, j = p-1; i > k-p; --i,--j) {
                 double alpha = (u - knots[i]);
                 double dev =  (knots[i + p] - knots[i]);
                 alpha = (std::abs(dev) < EPS) ? alpha / dev : 0;
                 array[j] = cp[i-1] * (1 - alpha) + cp[i] * alpha;
             }
-            //å°†cv [k-p+1,k-1]æ›¿æ¢ä¸ºpArrayï¼Œå¹¶ä¸”åœ¨cv[k]ä¹‹å‰æ’å…¥ pArray[p-1]
+            //½«cv [k-p+1,k-1]Ìæ»»ÎªpArray£¬²¢ÇÒÔÚcv[k]Ö®Ç°²åÈë pArray[p-1]
             for (int i = k-p+1, j = 0; i < k; ++i, ++j) {
                 cp[i] = array[j];
             }
             cp.insert(cp.begin() + k, array[p-1]);
-            //knots æ’å…¥u
+            //knots ²åÈëu
             knots.insert(knots.begin() + k + 1, u);
         }
 
@@ -71,17 +71,17 @@ namespace Rocket {
             std::vector<Eigen::Vector3f>& cp_left, 
             std::vector<Eigen::Vector3f>& cp_right) {
             
-            //ä¿å­˜de boor ç®—æ³•è¿­ä»£è¿‡ç¨‹ä¸­ç”Ÿæˆçš„æ§åˆ¶ç‚¹
+            //±£´æde boor Ëã·¨µü´ú¹ı³ÌÖĞÉú³ÉµÄ¿ØÖÆµã
             cp_left.resize(p+1);
             cp_right.resize(p+1);
         
-            //å°† P_k-p,...,P_kæ‹·è´åˆ°cv_leftä¸Šé¢
+            //½« P_k-p,...,P_k¿½±´µ½cv_leftÉÏÃæ
             std::copy(cp.begin() + k - p, cp.begin() + k + 1, cp_left.begin());
             cp_right[p] = cp_left[p];
         
-            //de-boor è¿­ä»£pæ¬¡
+            //de-boor µü´úp´Î
             for (int r = 1; r <= p; ++r) {
-                //i ä» k åˆ° k-p+1
+                //i ´Ó k µ½ k-p+1
                 for (int i = k,j = p; i >= k-p+r; --i,--j) {
                     double alpha = u - knots[i];
                     double dev =  (knots[i + p + 1 - r] - knots[i]);
@@ -105,15 +105,15 @@ namespace Rocket {
             int32_t n = cp.size();
             assert((m-n-p-1) == 0);
         
-            //æŸ¥æ‰¾ u æ‰€åœ¨åŒºé—´
+            //²éÕÒ u ËùÔÚÇø¼ä
             int k = std::distance(knots.begin(),std::upper_bound(knots.begin(), knots.end(), u))-1;
         
-            //ä¿å­˜de boor ç®—æ³•è¿­ä»£è¿‡ç¨‹ä¸­ç”Ÿæˆçš„æ§åˆ¶ç‚¹
+            //±£´æde boor Ëã·¨µü´ú¹ı³ÌÖĞÉú³ÉµÄ¿ØÖÆµã
             std::vector<Eigen::Vector3f> cv_left, cv_right;
             SubdividingBSpline(cp, knots, p, u, k, cv_left, cv_right);
         
-            //æ›²çº¿åœ¨uå¤„æ‰“æ–­ï¼Œç”Ÿæˆæ–°çš„æ§åˆ¶ç‚¹åºåˆ— å‡è®¾åŸæ›²çº¿çš„æ§åˆ¶ç‚¹åºåˆ—ä¸º P_0,...,P_k-p-1,P_k-p,...,P_k,P_k+1,...,P_n
-            //æ‰“æ–­åçš„æ–°æ§åˆ¶ç‚¹åºåˆ—ä¸ºï¼šå·¦ä¾§ï¼šP_0,....,P_k-p-1,cv_left[...]ï¼Œå³ä¾§ cv_right[...],P_k+1,...,P_nã€‚
+            //ÇúÏßÔÚu´¦´ò¶Ï£¬Éú³ÉĞÂµÄ¿ØÖÆµãĞòÁĞ ¼ÙÉèÔ­ÇúÏßµÄ¿ØÖÆµãĞòÁĞÎª P_0,...,P_k-p-1,P_k-p,...,P_k,P_k+1,...,P_n
+            //´ò¶ÏºóµÄĞÂ¿ØÖÆµãĞòÁĞÎª£º×ó²à£ºP_0,....,P_k-p-1,cv_left[...]£¬ÓÒ²à cv_right[...],P_k+1,...,P_n¡£
             //sub_left
             //knots
             knots_left.resize(k+p+2);
@@ -150,44 +150,32 @@ namespace Rocket {
             std::vector<Eigen::Vector3f>& points) {
         
             bool stright_enough = true;
-            //è®¡ç®—å¼¦é«˜æ˜¯å¦è¶…è¿‡å®¹å·®
             for (int i = c_s + 1; i < c_e; ++i) {
-                //ç‚¹åˆ°ç›´çº¿è·ç¦»å…¬å¼ï¼Œä¸ç»™å‡ºå®ç°äº†
                 if (Math::PointLineDistance(cp[i], cp[c_s], cp[c_e]) > tol) {
                     stright_enough = false;
                     break;
                 }
             }
         
-            //æ»¡è¶³è¦æ±‚ï¼Œä¸è¿›ä¸€æ­¥ç»†åˆ†äº†
             if (stright_enough) {
-                //ä¸ºäº†ä¿è¯æ§åˆ¶ç‚¹ä¸é‡å¤ï¼Œè®¾è®¡çš„è§„åˆ™ä¸º[),ä½†æ˜¯å¯¹æœ€åä¸€ä¸ªç‚¹ä¾‹å¤–ã€‚
-                //æŒ‰ç…§é€’å½’é¡ºåºï¼Œæœ€åä¸€æ®µé¦–å…ˆåŠ å…¥points
                 int c_end = points.empty() ? c_e+1 : c_e;
                 points.insert(points.begin(), cp.begin()+c_s, cp.begin()+c_end);
                 return;
             }
         
-            //ä»èŠ‚ç‚¹ä¸­é—´æ‰“æ–­
             double u_mid = knots[k_s] + (knots[k_e] - knots[k_s]) / 2.0;
-            //æŸ¥æ‰¾ u æ‰€åœ¨åŒºé—´
             int k = std::distance(knots.begin(), std::upper_bound(knots.begin(), knots.end(), u_mid)) - 1;
         
             std::vector<Eigen::Vector3f> cv_left, cv_right;
             SubdividingBSpline(cp, knots, p, u_mid, k, cv_left, cv_right);
             
-            //èŠ‚ç‚¹åŒºé—´æ–°å¢pä¸ªu_mid
             knots.insert(knots.begin()+k+1, p, u_mid);
-            //æ§åˆ¶ç‚¹æ›¿æ¢
             cp.insert(cp.begin() + k, p, Eigen::Vector3f::Zero());
             for (int i = k - p, j = 0; j <p; ++j, ++i)
                 cp[i] = cv_left[j];
             for (int i = k, j = 0; j <= p; ++j, ++i)
                 cp[i] = cv_right[j];
         
-            //ä¸¤éƒ¨åˆ†åˆ†åˆ«é€’å½’
-            //Note:ååŠéƒ¨åˆ†åœ¨å‰åŠéƒ¨åˆ†ä¹‹å‰æ‰§è¡Œï¼Œ
-            //å› ä¸ºå¦‚æœå‰åŠéƒ¨åˆ†é¦–å…ˆæ‰§è¡Œçš„åŒ–ï¼ŒååŠéƒ¨åˆ†çš„ç´¢å¼•å°±å‘ç”Ÿæ”¹å˜äº†
             TesselationBSpline(cp, knots, p, tol, k+1, k_e+p, k, c_e+p , points);
             TesselationBSpline(cp, knots, p, tol, k_s, k+1, c_s, k, points);
         }

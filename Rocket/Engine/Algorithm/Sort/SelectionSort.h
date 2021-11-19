@@ -36,12 +36,11 @@ namespace Rocket {
         typedef typename std::iterator_traits<BidirectionalIt>::value_type value_type;
         if (first == last) return;
         for (auto i = first; i != last; ++i) {
-            //将a[i]与a[i+1..N)中的最小元素交换
-            auto min = i;
+            auto _min_ = i;
             for (auto j = i + 1; j != last; ++j) {
-                if (*j < *min) min = j;
+                if (*j < *_min_) _min_ = j;
             }
-            std::swap(*i, *min);
+            std::swap(*i, *_min_);
         }
     }
 
@@ -50,12 +49,11 @@ namespace Rocket {
         typedef typename std::iterator_traits<BidirectionalIt>::value_type value_type;
         if (first == last) return;
         for (auto i = first; i != last; ++i) {
-            //将a[i]与a[i+1..N)中的最小元素交换
-            auto max = i;
+            auto _max_ = i;
             for (auto j = i + 1; j != last; ++j) {
-                if (*j > *max) max = j;
+                if (*j > *_max_) _max_ = j;
             }
-            std::swap(*i, *max);
+            std::swap(*i, *_max_);
         }
     }
 }

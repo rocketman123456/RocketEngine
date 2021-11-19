@@ -5,7 +5,6 @@
 namespace Rocket {
     // MaxPQ -> Compare = less<T>
     // MinPQ -> Compare = greater<T>
-    // 二叉堆
     template<typename T, typename Compare = std::less<T>>
     class PriorityQueue {
     public:
@@ -44,7 +43,6 @@ namespace Rocket {
             while (k > 0 && compare(pq[(k-1) >> 1], key)) {
                 //exch((k-1) >> 1, k);
                 //k = (k - 1) >> 1;
-                //使用2.4.26 借鉴插入排序，减少交换次数
                 pq[k] = std::move(pq[(k - 1) >> 1]);
                 k = (k - 1) >> 1;
             }

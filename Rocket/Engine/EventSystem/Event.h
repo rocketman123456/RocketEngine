@@ -4,7 +4,6 @@
 #include "Utils/Delegate.h"
 #include "Utils/Hashing.h"
 #include "Utils/Timer.h"
-//#include "Containers/Queue/PriorityQueue.h"
 #include "Log/Log.h"
 
 #include <vector>
@@ -15,17 +14,12 @@
 #include <functional>
 #include <unordered_map>
 
-//#include <Eigen/Eigen>
-
 namespace Rocket {
     // Forward Declariation
     struct Event;
 
 	using EventType = uint64_t;
     using EventDataPtr = Variant*;
-    using EventPtr = std::shared_ptr<Event>;
-    using EventDelegate = Delegate<bool(EventPtr&)>;
-    using EventFunction = bool (*) (EventPtr&);
     //typedef bool(*EventFunction)(EventPtr&);
 
     // TODO : reflect event data
@@ -103,6 +97,10 @@ namespace Rocket {
 
         static ElapseTimer timer_s;
     };
+
+    using EventPtr = std::shared_ptr<Event>;
+    using EventDelegate = Delegate<bool(EventPtr&)>;
+    using EventFunction = bool (*) (EventPtr&);
 
     struct EventDelayCompare {
         bool operator() (const Rocket::EventPtr& x, const Rocket::EventPtr& y) const {

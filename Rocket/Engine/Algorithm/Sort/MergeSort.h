@@ -185,12 +185,12 @@ namespace Rocket {
     public:
         _MergeBUSF_(RandomAcessedIt beg, RandomAcessedIt end) : aux(beg, end) {
             int N = end - beg;
-            for (int sz = 1; sz < N; sz = sz + sz)//sz是子数组的大小
+            for (int sz = 1; sz < N; sz = sz + sz)
                 for (int lo = 0; lo < N - sz; lo += sz + sz)
                     Merge(beg + lo, beg + lo + sz - 1, beg + std::min(lo + sz + sz - 1, N - 1));
         }
     private:
-        void Merge(RandomAcessedIt lo, RandomAcessedIt mid, RandomAcessedIt hi);//使用2.2.10的快速归并
+        void Merge(RandomAcessedIt lo, RandomAcessedIt mid, RandomAcessedIt hi);
     };
 
     template<typename RandomAcessedIt>
@@ -216,8 +216,6 @@ namespace Rocket {
         _MergeBUSF_<RandomAcessedIt>(beg, end);
     }
 
-    // 改进归并排序的算法,
-    // 1.加快小数组的排序速度；2.检测数组是否已经有序；3.通过在递归中交换参数来避免数组复制
     template<typename RandomAcessedIt>
     class _MergeXSF_ {
         typedef typename std::iterator_traits<RandomAcessedIt>::value_type value_type;
@@ -230,8 +228,6 @@ namespace Rocket {
         }
     private:
         void Sort(RandomAcessedIt srclo, RandomAcessedIt srchi, RandomAcessedIt destlo, RandomAcessedIt desthi) {
-            //将数组[srclo,srchi]排序到[destlo,desthi],其中必须开始时，两个区间对应元素相等
-            //小数组用插入排序提高速度
             if ((srchi - srclo) <= CUTOFF) {
                 InsertionSortXSF(destlo, desthi + 1);
                 return;
@@ -244,7 +240,6 @@ namespace Rocket {
             Sort(destlo, destmid, srclo, srcmid);
             Sort(destmid + 1, desthi, srcmid + 1, srchi);
 
-            //检测是否已经有序
             if (*srcmid <= *(srcmid + 1)) {
                 std::copy(srclo, srchi, destlo);
                 return;
@@ -254,7 +249,6 @@ namespace Rocket {
         }
 
         void Merge(RandomAcessedIt srclo, RandomAcessedIt srcmid, RandomAcessedIt srchi, RandomAcessedIt destlo, RandomAcessedIt desthi) {
-            //将[srclo, srcmid,srchi]归并到[destlo,desthi],其中source已经有序
             auto i = srclo, j = srcmid + 1;
             auto dest = destlo;
             for (int k = 0; k <= (srchi - srclo); ++k, ++dest) {
@@ -280,12 +274,12 @@ namespace Rocket {
     public:
         _MergeBUBF_(RandomAcessedIt beg, RandomAcessedIt end) : aux(beg, end) {
             int N = end - beg;
-            for (int sz = 1; sz < N; sz = sz + sz)//sz是子数组的大小
+            for (int sz = 1; sz < N; sz = sz + sz)
                 for (int lo = 0; lo < N - sz; lo += sz + sz)
                     Merge(beg + lo, beg + lo + sz - 1, beg + std::min(lo + sz + sz - 1, N - 1));
         }
     private:
-        void Merge(RandomAcessedIt lo, RandomAcessedIt mid, RandomAcessedIt hi);//使用2.2.10的快速归并
+        void Merge(RandomAcessedIt lo, RandomAcessedIt mid, RandomAcessedIt hi);
     };
 
     template<typename RandomAcessedIt>
@@ -311,8 +305,6 @@ namespace Rocket {
         _MergeBUBF_<RandomAcessedIt>(beg, end);
     }
 
-    // 改进归并排序的算法,
-    // 1.加快小数组的排序速度；2.检测数组是否已经有序；3.通过在递归中交换参数来避免数组复制
     template<typename RandomAcessedIt>
     class _MergeXBF_ {
         typedef typename std::iterator_traits<RandomAcessedIt>::value_type value_type;
@@ -325,8 +317,6 @@ namespace Rocket {
         }
     private:
         void Sort(RandomAcessedIt srclo, RandomAcessedIt srchi, RandomAcessedIt destlo, RandomAcessedIt desthi) {
-            //将数组[srclo,srchi]排序到[destlo,desthi],其中必须开始时，两个区间对应元素相等
-            //小数组用插入排序提高速度
             if ((srchi - srclo) <= CUTOFF) {
                 InsertionSortXSF(destlo, desthi + 1);
                 return;
@@ -339,7 +329,6 @@ namespace Rocket {
             Sort(destlo, destmid, srclo, srcmid);
             Sort(destmid + 1, desthi, srcmid + 1, srchi);
 
-            //检测是否已经有序
             if (*srcmid >= *(srcmid + 1)) {
                 std::copy(srclo, srchi, destlo);
                 return;
@@ -349,7 +338,6 @@ namespace Rocket {
         }
 
         void Merge(RandomAcessedIt srclo, RandomAcessedIt srcmid, RandomAcessedIt srchi, RandomAcessedIt destlo, RandomAcessedIt desthi) {
-            //将[srclo, srcmid,srchi]归并到[destlo,desthi],其中source已经有序
             auto i = srclo, j = srcmid + 1;
             auto dest = destlo;
             for (int k = 0; k <= (srchi - srclo); ++k, ++dest) {

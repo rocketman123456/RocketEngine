@@ -30,16 +30,16 @@ namespace Rocket {
             cp_right.resize(cp.size());
 
             int p = cp.size()-1;
-            //å°† cv æ‹·è´åˆ° cv_right,å› ä¸ºæ¯æ¬¡è¿­ä»£è®¡ç®—çš„ç‚¹æ•°ä¾æ¬¡å°‘1ï¼Œ
-            //å› æ­¤å¯ä»¥ç›´æŽ¥ç”¨cv_rightè®°å½•ï¼Œå…¨éƒ¨ç®—å®ŒåŽå°±æ˜¯æ‰€æœ‰çš„å°¾ç‚¹é›†åˆ
+            //½« cv ¿½±´µ½ cv_right,ÒòÎªÃ¿´Îµü´ú¼ÆËãµÄµãÊýÒÀ´ÎÉÙ1£¬
+            //Òò´Ë¿ÉÒÔÖ±½ÓÓÃcv_right¼ÇÂ¼£¬È«²¿ËãÍêºó¾ÍÊÇËùÓÐµÄÎ²µã¼¯ºÏ
             std::copy(cp.begin(), cp.end(), cp_right.begin());
             cp_left[0] = cp_right[0];
         
-            //pæ¬¡è¿­ä»£
+            //p´Îµü´ú
             for (int i = 0; i<p; ++i) {
                 for (int j = 0; j < p-i; ++j)
                     cp_right[j] = (1.0 - u) * cp_right[j] + u * cp_right[j+1];
-                //å·¦ä¾§æŽ§åˆ¶ç‚¹ä¸ºæ¯æ¬¡è¿­ä»£çš„é¦–ç‚¹
+                //×ó²à¿ØÖÆµãÎªÃ¿´Îµü´úµÄÊ×µã
                 cp_left[i + 1] = cp_right[0];
             }
         }
