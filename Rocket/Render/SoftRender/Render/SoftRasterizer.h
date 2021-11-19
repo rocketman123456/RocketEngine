@@ -13,6 +13,7 @@
 #include <thread>
 #include <atomic>
 #include <tuple>
+#include <optional>
 
 namespace Rocket {
     struct pos_buf_id { int pos_id = 0; };
