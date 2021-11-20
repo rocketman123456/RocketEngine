@@ -1,0 +1,39 @@
+name: xmake-windows
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+env:
+  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
+  BUILD_TYPE: Release Debug
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@master
+
+    - name: Install xmake
+      uses: xmake-io/github-action-setup-xmake@v1
+      with:
+        xmake-version: latest
+    
+    - name: Goto WorkDir
+      run: cd ${{github.workspace}}
+    
+    - name: Change to Release
+      run: xmake f -y -m release
+
+    - name: Build Project
+      run: xmake -y
+
+    - name: Change to Debug
+      run: xmake f -y -m debug
+
+    - name: Build Project
+      run: xmake -y
