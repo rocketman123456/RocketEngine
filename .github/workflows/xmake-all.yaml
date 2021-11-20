@@ -10,14 +10,14 @@ jobs:
   build:
     strategy:
       matrix:
-        #os: [ubuntu-latest, macos-latest, windows-latest]
-        os: [macos-latest, windows-latest]
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        #os: [macos-latest, windows-latest]
         type: [release, debug]
     runs-on: ${{ matrix.os }}
 
     steps:
     - name: Checkout
-      uses: actions/checkout@master
+      uses: actions/checkout@v2
 
     - name: Install xmake
       uses: xmake-io/github-action-setup-xmake@v1
@@ -26,6 +26,10 @@ jobs:
     
     - name: Goto WorkDir
       run: cd ${{github.workspace}}
+
+    - name: Install Dependencies (Linux)
+      run: sudo apt install libogg libogg-devel 
+      if: matrix.os == 'ubuntu-latest'
     
     - name: Change to ${{ matrix.type }}
       run: xmake f -y -m ${{ matrix.type }}
