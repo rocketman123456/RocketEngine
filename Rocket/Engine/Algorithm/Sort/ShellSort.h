@@ -1,6 +1,7 @@
 #pragma once
 #include <functional> // std::function<bool(T&, T&)>
 #include <utility>    // std::swap
+#include <cstring>    // std::memcpy
 
 namespace Rocket {
     // In-place Sort Big First
