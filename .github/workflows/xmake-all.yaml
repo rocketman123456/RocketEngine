@@ -28,7 +28,7 @@ jobs:
       run: cd ${{github.workspace}}
 
     - name: Install Dependencies (Linux)
-      run: sudo apt install libogg libogg-devel 
+      run: sudo apt-get install libogg libogg-devel 
       if: matrix.os == 'ubuntu-latest'
     
     - name: Change to ${{ matrix.type }}
