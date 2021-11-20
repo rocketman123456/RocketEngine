@@ -11,6 +11,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
+        type: [release, debug]
     runs-on: ${{ matrix.os }}
 
     steps:
@@ -25,14 +26,8 @@ jobs:
     - name: Goto WorkDir
       run: cd ${{github.workspace}}
     
-    - name: Change to Release
-      run: xmake f -y -m release
-
-    - name: Build Project
-      run: xmake -y
-
-    - name: Change to Debug
-      run: xmake f -y -m debug
+    - name: Change to ${{ matrix.type }}
+      run: xmake f -y -m ${{ matrix.type }}
 
     - name: Build Project
       run: xmake -y
