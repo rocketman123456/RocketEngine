@@ -1,5 +1,6 @@
 #pragma once
-#include<random>
+#include <random>
+#include <climits>
 
 namespace Rocket {
     namespace Algorithm {
