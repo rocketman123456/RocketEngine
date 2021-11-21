@@ -22,9 +22,12 @@ target("thread_pool_test")
     set_kind("binary")
     add_files("thread_pool_test.cpp")
     add_deps("RocketEngineLog")
-    add_deps("RocketEngineMultiThread")
+    --add_deps("RocketEngineMultiThread")
     add_options("console_log")
     add_options("memory_check")
+    if is_plat("linux") then
+        add_syslinks("pthread", "dl", "m", "c")
+    end
 target_end()
 
 target("window_test")
