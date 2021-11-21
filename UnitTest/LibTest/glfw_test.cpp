@@ -165,7 +165,7 @@ int main() {
     glBindVertexArray(0);
 
     std::string root = Rocket::FindRootDir("_root_dir_");
-    std::string file_name = root + "/Logo/LOGO-ICON.png";
+    std::string file_name = root + "/Logo/LOGO-ICON-02.png";
 
     int x,y,n;
     unsigned char* data = stbi_load(file_name.c_str(), &x, &y, &n, 4);
