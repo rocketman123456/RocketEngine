@@ -48,8 +48,8 @@ namespace Rocket {
                 //queue.block();
                 while(queue.pop(event)) {
                     double dt = step;
-                    event->time_delay_ -= dt;
-                    if(event->time_delay_ < 1e-6) {
+                    event->time_delay -= dt;
+                    if(event->time_delay < 1e-6) {
                         QueueEvent(event);
                     } else {
                         delay_queue.push_back(event);
@@ -77,7 +77,7 @@ namespace Rocket {
     }
 
     void EventChannel::QueueEvent(EventPtr& event) {
-        if(event->time_delay_ > 1e-6) {
+        if(event->time_delay > 1e-6) {
             auto event_queue = waiting_event_storage_.find(event->GetEventType());
             event_queue->second.push(event);
             //while(!event_queue->second.try_push(event));

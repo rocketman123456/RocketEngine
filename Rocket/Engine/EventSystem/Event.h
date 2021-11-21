@@ -6,13 +6,16 @@
 #include "Utils/Timer.h"
 #include "Log/Log.h"
 
-#include <vector>
+// #include <vector>
 #include <memory>
 #include <cstdint>
 #include <string>
 #include <cassert>
-#include <functional>
-#include <unordered_map>
+// #include <functional>
+// #include <unordered_map>
+#include <mutex>
+#include <chrono>
+#include <condition_variable>
 
 namespace Rocket {
     // Forward Declariation
@@ -32,68 +35,73 @@ namespace Rocket {
         explicit Event(const std::string& name, EventType type, EventDataPtr ptr, uint64_t size);
 
         Event(const Event& event) {
-            name_ = event.name_;
-            type_ = event.type_;
-            size_ = event.size_;
-            variable_ = new Variant[size_];
-            std::memcpy(variable_, event.variable_, sizeof(Variant) * size_);
-            time_stamp_ = event.time_stamp_;
-            time_delay_ = event.time_delay_;
+            name = event.name;
+            type = event.type;
+            size = event.size;
+            variable = new Variant[size];
+            std::memcpy(variable, event.variable, sizeof(Variant) * size);
+            time_stamp = event.time_stamp;
+            time_delay = event.time_delay;
         }
         Event(Event&& event) {
-            name_ = event.name_;
-            type_ = event.type_;
-            size_ = event.size_;
-            variable_ = event.variable_;
-            time_stamp_ = event.time_stamp_;
-            time_delay_ = event.time_delay_;
+            name = event.name;
+            type = event.type;
+            size = event.size;
+            variable = event.variable;
+            time_stamp = event.time_stamp;
+            time_delay = event.time_delay;
         }
-        virtual ~Event() { if(variable_ != nullptr) delete[] variable_; }
+        virtual ~Event() { if(variable != nullptr) delete[] variable; }
 
-        void Tick(double dt) { time_delay_ -= dt; }
-        bool Ready() { return time_delay_ <= 1e-3; }
+        void Tick(double dt) { time_delay -= dt; }
+        bool Ready() { return time_delay <= 1e-3; }
 
-        EventType GetEventType() const { return type_; }
-        int32_t GetInt32(uint64_t index) { assert(index < size_ && "event index error"); return variable_[index].as_int32; }
-		uint32_t GetUInt32(uint64_t index) { assert(index < size_ && "event index error"); return variable_[index].as_uint32; }
-		float GetFloat(uint64_t index) { assert(index < size_ && "event index error"); return variable_[index].as_float; }
-		double GetDouble(uint64_t index) { assert(index < size_ && "event index error"); return variable_[index].as_double; }
-		bool GetBool(uint64_t index) { assert(index < size_ && "event index error"); return variable_[index].as_bool; }
-		void* GetPointer(uint64_t index) { assert(index < size_ && "event index error"); return variable_[index].as_pointer; }
-		string_id GetStringId(uint64_t index) { assert(index < size_ && "event index error"); return variable_[index].as_string_id; }
-        const EventDataPtr GetRawData() const { return variable_; }
+        EventType GetEventType() const { return type; }
+        int32_t GetInt32(uint64_t index) { assert(index < size && "event index error"); return variable[index].as_int32; }
+		uint32_t GetUInt32(uint64_t index) { assert(index < size && "event index error"); return variable[index].as_uint32; }
+		float GetFloat(uint64_t index) { assert(index < size && "event index error"); return variable[index].as_float; }
+		double GetDouble(uint64_t index) { assert(index < size && "event index error"); return variable[index].as_double; }
+		bool GetBool(uint64_t index) { assert(index < size && "event index error"); return variable[index].as_bool; }
+		void* GetPointer(uint64_t index) { assert(index < size && "event index error"); return variable[index].as_pointer; }
+		string_id GetStringId(uint64_t index) { assert(index < size && "event index error"); return variable[index].as_string_id; }
+        const EventDataPtr GetRawData() const { return variable; }
         std::string ToString();
 
         Event& operator = (const Event& other) {
-            name_ = other.name_;
-            type_ = other.type_;
-            size_ = other.size_;
-            variable_ = new Variant[size_];
-            std::memcpy(variable_, other.variable_, sizeof(Variant) * size_);
-            time_stamp_ = other.time_stamp_;
-            time_delay_ = other.time_delay_;
+            if(size > 0 && variable != nullptr)
+                delete variable;
+            name = other.name;
+            type = other.type;
+            size = other.size;
+            if(other.size > 0 && other.variable != nullptr) {
+                variable = new Variant[size];
+                std::memcpy(variable, other.variable, sizeof(Variant) * size);
+            }
+            time_stamp = other.time_stamp;
+            time_delay = other.time_delay;
             return *this;
         }
+
         Event& operator = (Event&& other) {
-            name_ = other.name_;
-            type_ = other.type_;
-            size_ = other.size_;
-            variable_ = other.variable_;
-            time_stamp_ = other.time_stamp_;
-            time_delay_ = other.time_delay_;
+            name = other.name;
+            type = other.type;
+            size = other.size;
+            variable = other.variable;
+            time_stamp = other.time_stamp;
+            time_delay = other.time_delay;
             return *this;
         }
         
         // 0. use different channel to handle different event type
-        // 1. update & check delay time, decide use event or not
+        // 1. update & check delay time
         // 2. dispatch event to listener
-        EventType type_;            //  8 bytes
-        uint64_t size_ = 0;         //  8 bytes
-        EventDataPtr variable_ = nullptr;   //  4 bytes
-		double time_stamp_ = 0.0f;  //  ms  4 bytes
-        double time_delay_ = 0.0f;  //  ms  4 bytes
-        bool handled_ = false;      //  1 byte
-        std::string name_;          //  event name
+        EventType type;            //  8 bytes
+        uint64_t size = 0;         //  8 bytes, Event Data Size
+        EventDataPtr variable = nullptr;   //  4 bytes
+		double time_stamp = 0.0f;  //  ms  4 bytes
+        double time_delay = 0.0f;  //  ms  4 bytes
+        bool handled = false;      //  1 byte
+        std::string name;          //  event name
 
         static ElapseTimer timer_s;
     };
@@ -104,10 +112,94 @@ namespace Rocket {
 
     struct EventDelayCompare {
         bool operator() (const Rocket::EventPtr& x, const Rocket::EventPtr& y) const {
-            return x->time_delay_ < y->time_delay_;
+            return x->time_delay < y->time_delay;
         }
         typedef Rocket::EventPtr first_argument_type;
         typedef Rocket::EventPtr second_argument_type;
         typedef bool result_type;
+    };
+
+    class ManualEvent {
+    public:
+        explicit ManualEvent(bool signaled = false)
+        : m_signaled(signaled) {}
+
+        void signal() {
+            {
+                std::unique_lock lock(m_mutex);
+                m_signaled = true;
+            }
+            m_cv.notify_all();
+        }
+
+        void wait() {
+            std::unique_lock lock(m_mutex);
+            m_cv.wait(lock, [&]() { return m_signaled != false; });
+        }
+
+        template<typename Rep, typename Period>
+        bool wait_for(const std::chrono::duration<Rep, Period>& t) {
+            std::unique_lock lock(m_mutex);
+            bool result = m_cv.wait_for(lock, t, [&]() { return m_signaled != false; });
+            return result;
+        }
+
+        template<typename Clock, typename Duration>
+        bool wait_until(const std::chrono::time_point<Clock, Duration>& t) {
+            std::unique_lock lock(m_mutex);
+            bool result = m_cv.wait_until(lock, t, [&]() { return m_signaled != false; });
+            return result;
+        }
+
+        void reset() {
+            std::unique_lock lock(m_mutex);
+            m_signaled = false;
+        }
+
+    private:
+        bool m_signaled = false;
+        std::mutex m_mutex;
+        std::condition_variable m_cv;
+    };
+
+    class AutoEvent {
+    public:
+        explicit AutoEvent(bool signaled = false)
+        : m_signaled(signaled) {}
+
+        void signal() {
+            {
+                std::unique_lock lock(m_mutex);
+                m_signaled = true;
+            }
+            m_cv.notify_one();
+        }
+
+        void wait() {
+            std::unique_lock lock(m_mutex);
+            m_cv.wait(lock, [&]() { return m_signaled != false; });
+            m_signaled = false;
+        }
+
+        template<typename Rep, typename Period>
+        bool wait_for(const std::chrono::duration<Rep, Period>& t) {
+            std::unique_lock lock(m_mutex);
+            bool result = m_cv.wait_for(lock, t, [&]() { return m_signaled != false; });
+            if(result) m_signaled = false;
+            return result;
+        }
+
+        template<typename Clock, typename Duration>
+        bool wait_until(const std::chrono::time_point<Clock, Duration>& t) {
+            std::unique_lock lock(m_mutex);
+            bool result = m_cv.wait_until(lock, t, [&]() { return m_signaled != false; });
+            if(result) m_signaled = false;
+            return result;
+        }
+
+    private:
+        bool m_signaled = false;
+        std::mutex m_mutex;
+        std::condition_variable m_cv;
     };
 }

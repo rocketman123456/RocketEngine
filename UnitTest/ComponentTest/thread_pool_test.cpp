@@ -8,7 +8,7 @@
 
 using namespace std;
 using namespace std::chrono;
-//using namespace ansi_escape_code;
+
 using namespace Rocket;
 using namespace Rocket::AnsiEscapeCode;
 
@@ -33,12 +33,9 @@ void benchmark(
 	std::atomic_uint check{};
 	auto work = [&](uint64_t r) {
 		volatile uint32_t sum = 0;
-		while (r--)
-#ifdef _MSC_VER
+		while (r--) {
 			++sum;
-#else
-			asm volatile("inc %0\n\t" : "+r" (sum));
-#endif
+		}
 		check.fetch_add(sum, std::memory_order_relaxed);
 	};
 
@@ -69,7 +66,6 @@ void benchmark(
 	cout << endl;
 }
 
-
 int main() {
 	auto cores = std::thread::hardware_concurrency();
 
@@ -88,7 +84,6 @@ int main() {
 		for(auto r = REPS_START; r <= REPS_STOP; r += REPS_STEP) {
 			benchmark<SimpleThreadPool>(true, "S/fast", !t ? 100'000 : t, !r ? 1 : r, cores, cores / 2);
 			benchmark<ThreadPool>       (true, "A/fast", !t ? 100'000 : t, !r ? 1 : r, cores, cores / 2);
-			// cout << endl;
 			benchmark<SimpleThreadPool>(false, "S/slow", !t ? 100'000 : t, !r ? 1 : r, cores, cores / 2);
 			benchmark<ThreadPool>       (false, "A/slow", !t ? 100'000 : t, !r ? 1 : r, cores, cores / 2);
 

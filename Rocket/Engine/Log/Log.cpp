@@ -27,6 +27,8 @@ namespace Rocket {
         switch(level) {
         case LogLevel::TRACE:
             logger->set_level(spdlog::level::trace); break;
+        case LogLevel::DEBUG:
+            logger->set_level(spdlog::level::debug); break;
         case LogLevel::INFO:
             logger->set_level(spdlog::level::info); break;
         case LogLevel::WARN:

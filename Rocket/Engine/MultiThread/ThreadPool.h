@@ -105,10 +105,6 @@ namespace Rocket {
         ThreadPool& operator = (const ThreadPool&) = delete;
         ThreadPool& operator = (ThreadPool&&) = delete;
 
-        using work_item_t = std::function<void(void)>;
-
-        void DoWork(work_item_t wi);
-
         template<typename F, typename... Args>
         void EnqueueWork(F&& f, Args&&... args) {
             auto work = [p = std::forward<F>(f), t = std::make_tuple(std::forward<Args>(args)...)]() { std::apply(p, t); };
