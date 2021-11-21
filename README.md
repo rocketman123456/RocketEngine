@@ -1,6 +1,6 @@
 # RocketEngine
 
-![Logo](Logo/LOGO-3.png "Logo")
+![Logo](Logo/LOGO-03.png "Logo")
 
 [article 00 绪论-写作原因与后续计划](Document/article_00/article_00.md)<br>
 [article 01 第一个简单项目](Document/article_01/article_01.md)<br>
