@@ -83,12 +83,12 @@ namespace Rocket {
         }
 
         RK_TRACE(Audio, "Opened file '{}'", file_.full_name.data());
-        RK_TRACE(Audio, "    Sample rate : {}", file_info->samplerate);
-        RK_TRACE(Audio, "    Channels    : {}", file_info->channels);
-        RK_TRACE(Audio, "    Format      : {}", file_info->format);
-        RK_TRACE(Audio, "    Format Name : {}", FormatName(format));
-        RK_TRACE(Audio, "    Frames      : {}", (int)file_info->frames);
-        RK_TRACE(Audio, "    Sections    : {}", file_info->sections);
+        // RK_TRACE(Audio, "    Sample rate : {}", file_info->samplerate);
+        // RK_TRACE(Audio, "    Channels    : {}", file_info->channels);
+        // RK_TRACE(Audio, "    Format      : {}", file_info->format);
+        // RK_TRACE(Audio, "    Format Name : {}", FormatName(format));
+        // RK_TRACE(Audio, "    Frames      : {}", (int)file_info->frames);
+        // RK_TRACE(Audio, "    Sections    : {}", file_info->sections);
 
         return 0;
     }

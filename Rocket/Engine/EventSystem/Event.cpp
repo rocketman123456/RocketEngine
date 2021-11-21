@@ -30,9 +30,10 @@ namespace Rocket {
 		time_stamp = timer_s.GetExactTime();
 	}
 
+	// This is a SLOW function, Just use in debug mode
     std::string Event::ToString() {
-        std::stringstream os;
-        os << "Name:[" << this->name << "]Time:[" << this->time_stamp << "]Type:[" << this->type << "]Data:{";
+		std::stringstream os;
+        os << "Name:[" << this->name << "],Time:[" << this->time_stamp << "],Type:[" << this->type << "],Data:{";
 		for (int32_t i = 0; i < this->size; ++i) {
 			switch (this->variable[i].type) {
 			case Variant::TYPE_INT32:
@@ -49,6 +50,9 @@ namespace Rocket {
 				os << "[string_id:" << this->variable[i].as_string_id << "]"; break;
 			default:
 				RK_ERROR(Event, "Unknow Event Data Type"); break;
+			}
+			if(i < this->size - 1) {
+				os << ",";
 			}
 		}
 		os << "}";

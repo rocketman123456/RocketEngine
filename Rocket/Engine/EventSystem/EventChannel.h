@@ -3,17 +3,16 @@
 #include "Containers/Queue/UnboundedQueue.h"
 #include "Utils/TimeStep.h"
 
-#include <vector>
-#include <array>
 #include <list>
 #include <mutex>
 #include <thread>
+#include <condition_variable>
 
 namespace Rocket {
     constexpr int32_t EVENT_BUFFER_NUM = 2;
     constexpr int32_t MAX_EVENT_NUM = 1 * 100 * 100;
     using EventListener = std::unordered_map<EventType, std::vector<EventDelegate>>;
-    using EventStorage = std::unordered_map<EventType, UnboundedQueue<EventPtr>>;
+    using EventStorage = std::list<EventPtr>;
 
     class EventChannel {
     public:
@@ -34,19 +33,15 @@ namespace Rocket {
         inline bool IsEmpty() const { return event_listener_.empty(); }
     private:
         std::string name_;
+
         std::mutex register_mutex_;
         EventListener event_listener_;
-        EventStorage event_storage_;
-        EventStorage waiting_event_storage_;
 
-        std::mutex event_queue_mutex_single_;
-        std::mutex event_queue_mutex_[EVENT_BUFFER_NUM];
-        std::array<EventPtr, MAX_EVENT_NUM> event_array_[EVENT_BUFFER_NUM] = {};
-        std::array<EventPtr, MAX_EVENT_NUM> waiting_array_[EVENT_BUFFER_NUM] = {};
+        std::mutex queue_change_mutex_;
         int32_t current_queue_ = 0;
         int32_t handling_queue_ = 0;
-        int32_t event_queue_end_[EVENT_BUFFER_NUM] = {0};
-        int32_t waiting_queue_end_[EVENT_BUFFER_NUM] = {0};
+        EventStorage event_storage_[EVENT_BUFFER_NUM];
+        EventStorage waiting_storage_[EVENT_BUFFER_NUM];
     };
 
     using ChannelPtr = std::shared_ptr<EventChannel>;

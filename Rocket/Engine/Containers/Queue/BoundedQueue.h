@@ -1,7 +1,7 @@
 #pragma once
 
 #include <mutex>
-#include <queue>
+#include <list>
 #include <utility>
 #include <stdexcept>
 #include <condition_variable>
@@ -14,6 +14,8 @@ namespace Rocket {
             if (!m_max_size)
                 throw std::invalid_argument("bad queue max-size! must be non-zero!");
         }
+
+        ~BoundedQueue() { done(); }
 
         bool push(const T &item) {
             {
@@ -103,11 +105,25 @@ namespace Rocket {
             return m_block;
         }
 
+        void done() {
+            {
+                std::unique_lock guard(m_queue_lock);
+                m_done = true;
+            }
+            m_condition_push.notify_all();
+            m_condition_pop.notify_all();
+        }
+
+        // Not Thread Safe
+        auto begin() { return m_queue.begin(); }
+        auto end() { return m_queue.end(); }
+
     private:
-        using queue_t = std::queue<T>;
+        using queue_t = std::list<T>;
         queue_t m_queue;
 
         bool m_block;
+        bool m_done = false;
         const std::size_t m_max_size;
 
         mutable std::mutex m_queue_lock;

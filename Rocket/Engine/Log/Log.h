@@ -42,7 +42,7 @@ namespace Rocket {
 #define RK_ERROR(x, ...)        do{::Rocket::Log::Get##x##Logger()->error(__VA_ARGS__);}while(0);
 #define RK_WARN(x, ...)         do{::Rocket::Log::Get##x##Logger()->warn(__VA_ARGS__);}while(0);
 #define RK_INFO(x, ...)         do{::Rocket::Log::Get##x##Logger()->info(__VA_ARGS__);}while(0);
-#define RK_DEBUG(x, ...)        do{::Rocket::Log::Get##x##Logger()->debug(__VA_ARGS__);}while(0);
+#define RK_DEBUG_INFO(x, ...)        do{::Rocket::Log::Get##x##Logger()->debug(__VA_ARGS__);}while(0);
 #define RK_TRACE(x, ...)        do{::Rocket::Log::Get##x##Logger()->trace(__VA_ARGS__);}while(0);
 
 #else
@@ -51,7 +51,7 @@ namespace Rocket {
 #define RK_ERROR(x, ...)
 #define RK_WARN(x, ...)
 #define RK_INFO(x, ...)
-#define RK_DEBUG(x, ...)
+#define RK_DEBUG_INFO(x, ...)
 #define RK_TRACE(x, ...)
 
 #endif

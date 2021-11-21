@@ -6,21 +6,8 @@
 #include "Utils/FindRootDir.h"
 #include "Utils/Timer.h"
 #include "Log/Log.h"
-
-// #ifdef RK_MEMORY_CHECK
-// #ifdef new
-// #undef new
-// #endif
-// #endif
-
 #include "Parser/JsonParser.h"
 #include "AudioSystem/MusicGenerator.h"
-
-// #ifdef RK_MEMORY_CHECK
-// #ifndef new
-// #define new new(__FILE__, __LINE__, __FUNCTION__)
-// #endif
-// #endif
 
 //#define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
@@ -29,6 +16,9 @@
 #include <AL/al.h>
 #include <AL/alc.h>
 #include <AL/alext.h>
+
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb_image.h>
 
 #include <iostream>
 #include <string> 
@@ -103,6 +93,14 @@ int main() {
             wav_file_names.push_back(name);
         }
     }
+
+    std::string file_name = root + "/Logo/LOGO-ICON-02.png";
+
+    // TODO : replace with engine load function
+    int x,y,n;
+    unsigned char* data = stbi_load(file_name.c_str(), &x, &y, &n, 4);
+    GLFWimage image = {x, y, data};
+    glfwSetWindowIcon(window, 1, &image);
 
     FileBuffer buffer;
     FileSystem::LoadSync(root, "/Asset/Config/music_name.txt", FileOperateMode::READ_TEXT, buffer);

@@ -1,7 +1,6 @@
 #pragma once
 
 #include <mutex>
-#include <queue>
 #include <list>
 #include <utility>
 #include <stdexcept>
@@ -12,6 +11,7 @@ namespace Rocket {
     class UnboundedQueue {
     public:
         explicit UnboundedQueue(bool block = true) : m_block{block} {}
+        ~UnboundedQueue() { done(); }
 
         void push(const T& item) {
             {
@@ -107,15 +107,24 @@ namespace Rocket {
             return m_block;
         }
 
+        void done() {
+            {
+                std::unique_lock guard(m_queue_lock);
+                m_done = true;
+            }
+            m_condition.notify_all();
+        }
+
         // Not Thread Safe
-        auto begin() { m_queue.begin(); }
-        auto end() { m_queue.end(); }
+        auto begin() { return m_queue.begin(); }
+        auto end() { return m_queue.end(); }
 
     private:
         using queue_t = std::list<T>;
         queue_t m_queue;
-        bool m_block;
+        bool m_block = true;
         mutable std::mutex m_queue_lock;
         std::condition_variable m_condition;
+        bool m_done = false;
     };
 }
