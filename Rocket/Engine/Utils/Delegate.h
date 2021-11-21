@@ -78,7 +78,6 @@ public:
 		return Invoke(std::forward<Args>(args)...);
 	}
 
-	// TODO : check if this function correct
 	bool operator == (Delegate& ps) {
         if (this->instance_ == ps.instance_ && this->proxy_ == ps.proxy_) {
 			return true;

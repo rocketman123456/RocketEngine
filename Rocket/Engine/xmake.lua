@@ -18,6 +18,5 @@ includes(
     "Pattern",
     "Physics",
     "Scene",
-    "TaskScheduler",
     "Utils"
 )

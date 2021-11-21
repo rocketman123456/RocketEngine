@@ -54,11 +54,11 @@ namespace Rocket {
             data[0].type = Variant::TYPE_STRING_ID;
             data[0].as_string_id = hash(complete_name);
             EventPtr event = EventPtr(new Event("audio", data, 1));
-            event->time_delay_ = start_time + time_delay * one_step_;
+            event->time_delay = start_time + time_delay * one_step_;
             events.push_back(event);
 
             std::string id = (*note)["id"].string_value();
-            start_map[id] = event->time_delay_;
+            start_map[id] = event->time_delay;
             last_map[id] = time_last;
         }
         start_map.clear();

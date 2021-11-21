@@ -2,7 +2,8 @@
 #include "Core/Declare.h"
 #include "Pattern/IRuntimeModule.h"
 #include "Pattern/Singleton.h"
-#include "TaskScheduler/Task.h"
+#include "MultiThread/Task.h"
+#include "MultiThread/ThreadPool.h"
 
 
 namespace Rocket {
@@ -16,6 +17,6 @@ namespace Rocket {
         virtual void Finalize() final;
         virtual void Tick(TimeStep step) final;
     private:
-
+        ThreadPool pool;
     };
 }
