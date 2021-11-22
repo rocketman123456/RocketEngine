@@ -1,18 +1,21 @@
 #pragma once
 #include "EventSystem/Event.h"
-#include "Containers/Queue/UnboundedQueue.h"
+//#include "Containers/Queue/UnboundedQueue.h"
 #include "Utils/TimeStep.h"
 
 #include <list>
+#include <vector>
 #include <mutex>
+#include <unordered_map>
 #include <thread>
 #include <condition_variable>
+#include <cstdint>
 
 namespace Rocket {
     constexpr int32_t EVENT_BUFFER_NUM = 2;
     constexpr int32_t MAX_EVENT_NUM = 1 * 100 * 100;
     using EventListener = std::unordered_map<EventType, std::vector<EventDelegate>>;
-    using EventStorage = std::list<EventPtr>;
+    using EventStorage = std::vector<EventPtr>;
 
     class EventChannel {
     public:

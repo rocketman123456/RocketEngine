@@ -1,7 +1,6 @@
 #include "EventSystem/EventChannel.h"
 #include "Math/Parameter.h"
 
-// TODO : make a better event channel
 namespace Rocket {
     void EventChannel::RegisterEvent(const EventType& type, const EventDelegate& function) {
         std::scoped_lock guard{ register_mutex_ };
@@ -36,9 +35,7 @@ namespace Rocket {
             current_queue_ = (current_queue_ + 1) % EVENT_BUFFER_NUM;
         }
 
-        while(!waiting_storage_[handling_queue_].empty()) {
-            EventPtr event = waiting_storage_[handling_queue_].front();
-            waiting_storage_[handling_queue_].pop_front();
+        for(auto event : waiting_storage_[handling_queue_]) {
             double dt = step;
             event->time_delay -= dt;
             if(event->time_delay > EPS) 
@@ -48,11 +45,13 @@ namespace Rocket {
             }
         }
 
-        while(!event_storage_[handling_queue_].empty()) {
-            EventPtr event = event_storage_[handling_queue_].front();
-            event_storage_[handling_queue_].pop_front();
+        waiting_storage_[handling_queue_].clear();
+
+        for(auto event : event_storage_[handling_queue_]) {
             DispatchEvent(event);
         }
+
+        event_storage_[handling_queue_].clear();
     }
 
     void EventChannel::QueueEvent(EventPtr& event) {
