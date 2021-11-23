@@ -1,12 +1,15 @@
 #include "Containers/SymbolTable/SequentialSearchST.h"
+#include "Containers/SymbolTable/BinarySearchST.h"
 
 using namespace Rocket;
 
 int main() {
-    SequentialSearchST<int, double> st;
+    SequentialSearchST<int, double> ss_st;
+    BinarySearchST<int, double> bs_st;
 
     for(int i = 0; i < 100; ++i) {
-        st.put(i, i+1);
+        ss_st.put(i, i+1);
+        bs_st.put(i, i+1);
     }
 
     return 0;
