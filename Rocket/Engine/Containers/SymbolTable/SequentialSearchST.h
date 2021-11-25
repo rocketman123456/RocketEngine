@@ -19,11 +19,7 @@ namespace Rocket {
         virtual const T get(const S& key) const final;
         virtual bool contain(const S& key) const final;
         virtual std::vector<S> keys() const final;
-        virtual std::vector<T> values() const = 0;
-        virtual S min() const final;
-        virtual S max() const final;
-        virtual S ceiling(const T& key) const final;
-        virtual S floor(const T& key) const final;
+        virtual std::vector<T> values() const final;
 
         virtual inline bool empty() const final { return node_list_.empty(); }
         virtual inline std::size_t size() const final { return node_list_.size(); }
@@ -59,7 +55,7 @@ namespace Rocket {
         }
 
         if(!result) {
-            node_list_.push_back(std::make_shared<Node>(key, val));
+            node_list_.push_back(std::make_shared<Node>(key, value));
         } else {
             result->value = value;
         }
@@ -103,25 +99,5 @@ namespace Rocket {
             res.push_back((*iter)->value);
         }
         return res;
-    }
-
-    template<typename S, typename T>
-    S SequentialSearchST<S,T>::min() const {
-        
-    }
-
-    template<typename S, typename T>
-    S SequentialSearchST<S,T>::max() const {
-        
-    }
-
-    template<typename S, typename T>
-    S SequentialSearchST<S,T>::ceiling(const T& key) const {
-        
-    }
-
-    template<typename S, typename T>
-    S SequentialSearchST<S,T>::floor(const T& key) const {
-        
     }
 }

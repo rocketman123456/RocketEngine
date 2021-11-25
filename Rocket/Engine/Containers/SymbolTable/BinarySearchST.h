@@ -7,7 +7,7 @@
 
 namespace Rocket {
     template<typename S, typename T>
-    class BinarySearchST : _implements_ ST<S, T> {
+    class BinarySearchST : _implements_ ST<S, T>, _implements_ ST_Full<S, T> {
     public:
         virtual void put(const S& key, const T& value) final;
         virtual void remove(const S& key) final;
@@ -106,5 +106,39 @@ namespace Rocket {
     template<typename S, typename T>
     std::vector<S> BinarySearchST<S,T>::keys() const {
         return keys_;
+    }
+
+    template<typename S, typename T>
+    std::vector<T> BinarySearchST<S,T>::values() const {
+        return values_;
+    }
+
+    template<typename S, typename T>
+    S BinarySearchST<S,T>::min() const {
+        assert(keys_.size() > 0);
+        return *(keys_.begin());
+    }
+
+    template<typename S, typename T>
+    S BinarySearchST<S,T>::max() const {
+        assert(keys_.size() > 0);
+        return *(keys_.end()-1);
+    }
+
+    template<typename S, typename T>
+    S BinarySearchST<S,T>::ceiling(const S& key) const {
+        assert(keys_.size() > 0);
+        auto pos = rank(key);
+        assert(pos < this->size() && !"argument to ceiling() is too large");
+        return keys_[pos];
+    }
+
+    template<typename S, typename T>
+    S BinarySearchST<S,T>::floor(const S& key) const {
+        assert(keys_.size() > 0);
+        auto pos = rank(key);
+        if (pos < this->size() && key == keys_[pos]) return keys_[pos];
+        assert(pos > 0 && !"argument to floor() is too small");
+        return keys_[pos-1];
     }
 }

@@ -9,6 +9,7 @@ namespace Rocket {
     template<typename Key, typename Value>
     _Interface_ ST {
     public:
+        virtual ~ST() = default;
         virtual void put(const Key& key, const Value& value) = 0;
         virtual void remove(const Key& key) = 0;
         virtual const Value get(const Key& key) const = 0;
@@ -17,6 +18,12 @@ namespace Rocket {
         virtual std::size_t size() const = 0;
         virtual std::vector<Key> keys() const = 0;
         virtual std::vector<Value> values() const = 0;
+    };
+
+    template<typename Key, typename Value>
+    _Interface_ ST_Full {
+    public:
+        virtual ~ST_Full() = default;
         virtual Key min() const = 0;
         virtual Key max() const = 0;
         virtual Key ceiling(const Key& key) const = 0;

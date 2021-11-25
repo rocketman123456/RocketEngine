@@ -3,6 +3,8 @@
 
 using namespace Rocket;
 
+#include <iostream>
+
 int main() {
     SequentialSearchST<int, double> ss_st;
     BinarySearchST<int, double> bs_st;
@@ -11,6 +13,9 @@ int main() {
         ss_st.put(i, i+1);
         bs_st.put(i, i+1);
     }
+
+    std::cout << bs_st.get(2) << std::endl;
+    std::cout << bs_st.ceiling(2) << std::endl;
 
     return 0;
 }
