@@ -14,8 +14,4 @@ namespace Rocket {
     void RenderManager::InstallRenderDriver(RenderDriverPtr&& driver) {
         render_driver_.emplace_back(std::move(driver));
     }
-
-    void RenderManager::InstallRenderAPI(RenderAPIPtr&& api) {
-        render_api_.emplace_back(std::move(api));
-    }
 }

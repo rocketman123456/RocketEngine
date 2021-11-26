@@ -4,7 +4,6 @@
 #include "Pattern/IRuntimeModule.h"
 
 #include "Render/RenderDriver.h"
-#include "Render/RenderAPI.h"
 
 #include <vector>
 
@@ -20,10 +19,8 @@ namespace Rocket {
         virtual void Tick(TimeStep step) final;
 
         void InstallRenderDriver(RenderDriverPtr&& driver);
-        void InstallRenderAPI(RenderAPIPtr&& api);
 
     private:
         std::vector<RenderDriverPtr> render_driver_;
-        std::vector<RenderAPIPtr> render_api_;
     };
 }

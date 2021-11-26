@@ -4,6 +4,7 @@
 #include <vector>
 #include <memory>
 #include <cstddef>
+#include <cassert>
 
 namespace Rocket {
     template<typename S, typename T>
@@ -129,7 +130,7 @@ namespace Rocket {
     S BinarySearchST<S,T>::ceiling(const S& key) const {
         assert(keys_.size() > 0);
         auto pos = rank(key);
-        assert(pos < this->size() && !"argument to ceiling() is too large");
+        assert(pos < this->size() && "argument to ceiling() is too large");
         return keys_[pos];
     }
 
@@ -138,7 +139,7 @@ namespace Rocket {
         assert(keys_.size() > 0);
         auto pos = rank(key);
         if (pos < this->size() && key == keys_[pos]) return keys_[pos];
-        assert(pos > 0 && !"argument to floor() is too small");
+        assert(pos > 0 && "argument to floor() is too small");
         return keys_[pos-1];
     }
 }

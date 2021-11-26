@@ -83,9 +83,9 @@ int main() {
 
 		for(auto r = REPS_START; r <= REPS_STOP; r += REPS_STEP) {
 			benchmark<SimpleThreadPool>(true, "S/fast", !t ? 100'000 : t, !r ? 1 : r, cores, cores / 2);
-			benchmark<ThreadPool>       (true, "A/fast", !t ? 100'000 : t, !r ? 1 : r, cores, cores / 2);
+			benchmark<ThreadPool>      (true, "A/fast", !t ? 100'000 : t, !r ? 1 : r, cores, cores / 2);
 			benchmark<SimpleThreadPool>(false, "S/slow", !t ? 100'000 : t, !r ? 1 : r, cores, cores / 2);
-			benchmark<ThreadPool>       (false, "A/slow", !t ? 100'000 : t, !r ? 1 : r, cores, cores / 2);
+			benchmark<ThreadPool>      (false, "A/slow", !t ? 100'000 : t, !r ? 1 : r, cores, cores / 2);
 
 			if(REPS_START < REPS_STOP)
 				cout << endl;

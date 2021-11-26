@@ -28,9 +28,9 @@ namespace Rocket {
 
         virtual void Tick(TimeStep step);
         
-        virtual void QueueEvent(EventPtr& event);
-        virtual void TriggerEvent(EventPtr& event);
-        virtual void DispatchEvent(EventPtr& event);
+        virtual void QueueEvent(const EventPtr& event);
+        virtual void TriggerEvent(const EventPtr& event);
+        virtual void DispatchEvent(const EventPtr& event);
 
         inline std::string GetName() const { return name_; }
         inline bool IsEmpty() const { return event_listener_.empty(); }

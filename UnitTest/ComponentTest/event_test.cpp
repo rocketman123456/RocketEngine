@@ -2,6 +2,7 @@
 #include "EventSystem/Event.h"
 #include "EventSystem/EventChannel.h"
 #include "EventSystem/EventManager.h"
+#include "MultiThread/TaskManager.h"
 #include "Log/Log.h"
 
 #include <random>
@@ -26,6 +27,7 @@ struct TestEventHandle {
 int main() {
     Rocket::Log::Init();
     // Initialize
+    TaskManager::Create();
     EventManager::Create();
     auto result = EventManager::Instance()->Initialize();
     if(result != 0) {

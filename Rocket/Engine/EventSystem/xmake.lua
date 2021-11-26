@@ -8,6 +8,7 @@ target("RocketEngineEventSystem")
         {public = true}
     )
     add_deps(
+        "RocketEngineMultiThread",
         "RocketEngineUtils",
         {public = true}
     )

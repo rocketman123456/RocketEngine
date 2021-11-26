@@ -1,4 +1,5 @@
 #include "EventSystem/EventChannel.h"
+#include "MultiThread/TaskManager.h"
 #include "Math/Parameter.h"
 
 namespace Rocket {
@@ -54,7 +55,7 @@ namespace Rocket {
         event_storage_[handling_queue_].clear();
     }
 
-    void EventChannel::QueueEvent(EventPtr& event) {
+    void EventChannel::QueueEvent(const EventPtr& event) {
         if(event->time_delay > 1e-6) {
             std::unique_lock guard{ queue_change_mutex_ };
             waiting_storage_[current_queue_].push_back(event);
@@ -64,16 +65,19 @@ namespace Rocket {
         }
     }
 
-    void EventChannel::TriggerEvent(EventPtr& event) {
+    void EventChannel::TriggerEvent(const EventPtr& event) {
         DispatchEvent(event);
     }
 
-    void EventChannel::DispatchEvent(EventPtr& event) {
+    void EventChannel::DispatchEvent(const EventPtr& event) {
         std::scoped_lock guard{ register_mutex_ };
         RK_TRACE(Event, "Dispatch Event: {}", event->ToString());
         auto delegates = event_listener_.find(event->GetEventType())->second;
         for(auto delegate : delegates) {
-            delegate.Invoke(event);
+            TaskManager::Instance()->GetThreadPool()->EnqueueWork(
+                [=](EventPtr event){delegate.Invoke(event);}, 
+                event
+            );
         }
     }
 }

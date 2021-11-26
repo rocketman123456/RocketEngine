@@ -16,6 +16,7 @@ int main() {
 
     std::cout << bs_st.get(2) << std::endl;
     std::cout << bs_st.ceiling(2) << std::endl;
+    std::cout << bs_st.max() << std::endl;
 
     return 0;
 }

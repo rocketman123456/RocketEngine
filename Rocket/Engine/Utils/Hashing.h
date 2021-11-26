@@ -42,4 +42,9 @@ namespace Rocket {
     template<typename T>
     constexpr uint64_t hash(T&& t) { return Rocket::details::hasher< typename std::decay<T>::type >()(std::forward<T>(t)); }
     constexpr uint64_t operator "" _hash(const char* s, size_t) { return Rocket::details::hasher<std::string>()(s); }
+
+    int32_t hash_1(const std::string& key);
+    int32_t hash_2(const std::string& key);
+    int32_t hash_3(const std::string& key);
+    int32_t hash_4(const std::string& key);
 }

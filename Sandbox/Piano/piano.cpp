@@ -2,6 +2,7 @@
 #include "FileSystem/FileSystem.h"
 #include "AudioSystem/AudioManager.h"
 #include "EventSystem/EventManager.h"
+#include "MultiThread/TaskManager.h"
 #include "Utils/AudioChecker.h"
 #include "Utils/FindRootDir.h"
 #include "Utils/Timer.h"
@@ -112,10 +113,17 @@ int main() {
     generator_g.Initialize(std::move(parser));
 
     EventManager::Create();
+    TaskManager::Create();
+
     auto result = EventManager::Instance()->Initialize();
     if(result) {
         return 1;
     }
+    result = TaskManager::Instance()->Initialize();
+    if(result) {
+        return 1;
+    }
+
     ChannelPtr channel = std::shared_ptr<EventChannel>(new EventChannel("audio_channel"));
     EventManager::Instance()->AddChannel("audio", channel);
     REGISTER_DELEGATE_FN(AudioEventHandle, "audio", "audio_channel");
@@ -214,6 +222,7 @@ int main() {
 
     AudioManager::Destroy();
     EventManager::Destroy();
+    TaskManager::Destroy();
     Log::End();
     return 0;
 }
