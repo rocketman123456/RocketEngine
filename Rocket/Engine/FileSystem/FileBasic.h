@@ -1,5 +1,5 @@
 #pragma once
-#include "Memory/MemoryCheck.h"
+#include "Memory/MemoryDefine.h"
 #include "Core/Declare.h"
 
 #include <cstdlib>

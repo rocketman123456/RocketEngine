@@ -19,7 +19,7 @@ namespace Rocket {
         FileBuffer buffer;
         FileSystem::LoadSync(full_path_, FileOperateMode::READ_BINARY, buffer);
         int32_t x, y, ch;
-#ifdef RK_DEBUG
+#ifdef RK_DEBUG_INFO
         int result = stbi_info_from_memory((const unsigned char *)buffer.buffer, buffer.size, &x, &y, &ch);
         if(result == 0) {
             RK_ERROR(File, "Unsupported File");
@@ -42,7 +42,7 @@ namespace Rocket {
         FileSystem::LoadSync(full_path_, FileOperateMode::READ_BINARY, buffer);
         int32_t x, y, ch;
         int32_t de_ch = 4;
-#ifdef RK_DEBUG
+#ifdef RK_DEBUG_INFO
         int result = stbi_info_from_memory((const unsigned char *)buffer.buffer, buffer.size, &x, &y, &ch);
         if(result == 0) {
             RK_ERROR(File, "Unsupported File");
@@ -87,7 +87,7 @@ namespace Rocket {
         FileSystem::LoadSync(full_path_, FileOperateMode::READ_BINARY, buffer);
         int32_t x, y, ch;
         int32_t de_ch = 3;
-#ifdef RK_DEBUG
+#ifdef RK_DEBUG_INFO
         int result = stbi_info_from_memory((const unsigned char *)buffer.buffer, buffer.size, &x, &y, &ch);
         if(result == 0) {
             RK_ERROR(File, "Unsupported File");

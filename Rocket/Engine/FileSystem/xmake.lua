@@ -6,10 +6,12 @@ target("RocketEngineFileSystem")
     add_packages(
         "minizip", "zlib", 
         "openal-soft", "libsndfile",
+        "mimalloc", 
         {public = true}
     )
     add_deps(
         "RocketEngineLog",
+        "RocketEngineMemory",
         {public = true}
     )
     set_license("LGPL-2.0")

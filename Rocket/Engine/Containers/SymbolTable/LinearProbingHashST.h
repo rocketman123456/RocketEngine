@@ -21,49 +21,49 @@ namespace Rocket {
         }
 
         virtual void put(const Key& key, const Value& value) final {
-            if (N_ >= M_/2) resize(2 * M_);
-            int i;
-            for (i = hash(key); keys_[i] != nullptr; i = (i + 1) % m) {
-                if (keys_[i].equals(key)) {
-                    values_[i] = value;
-                    return;
-                }
-            }
-            keys_[i] = key;
-            values_[i] = value;
-            N_++;
+            // if (N_ >= M_/2) resize(2 * M_);
+            // int i;
+            // for (i = hash(key); keys_[i] != nullptr; i = (i + 1) % m) {
+            //     if (keys_[i].equals(key)) {
+            //         values_[i] = value;
+            //         return;
+            //     }
+            // }
+            // keys_[i] = key;
+            // values_[i] = value;
+            // N_++;
         }
 
         virtual void remove(const Key& key) final {
             // find position i of key
-            int i = hash(key);
-            while (!key.equals(keys[i])) {
-                i = (i + 1) % m;
-            }
+            // int i = hash(key);
+            // while (!key.equals(keys[i])) {
+            //     i = (i + 1) % m;
+            // }
 
-            // delete key and associated value
-            keys[i] = null;
-            vals[i] = null;
+            // // delete key and associated value
+            // keys[i] = null;
+            // vals[i] = null;
 
-            // rehash all keys in same cluster
-            i = (i + 1) % m;
-            while (keys[i] != null) {
-                // delete keys[i] an vals[i] and reinsert
-                Key   keyToRehash = keys[i];
-                Value valToRehash = vals[i];
-                keys[i] = null;
-                vals[i] = null;
-                n--;
-                put(keyToRehash, valToRehash);
-                i = (i + 1) % m;
-            }
+            // // rehash all keys in same cluster
+            // i = (i + 1) % m;
+            // while (keys[i] != null) {
+            //     // delete keys[i] an vals[i] and reinsert
+            //     Key   keyToRehash = keys[i];
+            //     Value valToRehash = vals[i];
+            //     keys[i] = null;
+            //     vals[i] = null;
+            //     n--;
+            //     put(keyToRehash, valToRehash);
+            //     i = (i + 1) % m;
+            // }
 
-            n--;
+            // n--;
 
-            // halves size of array if it's 12.5% full or less
-            if (n > 0 && n <= m/8) resize(m/2);
+            // // halves size of array if it's 12.5% full or less
+            // if (n > 0 && n <= m/8) resize(m/2);
 
-            assert(check());
+            // assert(check());
         }
 
         virtual Value get(const Key& key) const final {
@@ -118,21 +118,20 @@ namespace Rocket {
         }
 
         bool check() {
-            // check that hash table is at most 50% full
-            if (M_ < 2*N_) {
-                //System.err.println("Hash table size m = " + m + "; array size n = " + n);
-                return false;
-            }
-
-            // check that each key in table can be found by get()
-            for (int i = 0; i < M_; i++) {
-                if (keys_[i] == nullptr) continue;
-                else if (get(keys_[i]) != values_[i]) {
-                    //System.err.println("get[" + keys[i] + "] = " + get(keys[i]) + "; vals[i] = " + vals[i]);
-                    return false;
-                }
-            }
-            return true;
+            // // check that hash table is at most 50% full
+            // if (M_ < 2*N_) {
+            //     //System.err.println("Hash table size m = " + m + "; array size n = " + n);
+            //     return false;
+            // }
+            // // check that each key in table can be found by get()
+            // for (int i = 0; i < M_; i++) {
+            //     if (keys_[i] == nullptr) continue;
+            //     else if (get(keys_[i]) != values_[i]) {
+            //         //System.err.println("get[" + keys[i] + "] = " + get(keys[i]) + "; vals[i] = " + vals[i]);
+            //         return false;
+            //     }
+            // }
+            // return true;
         }
 
         const std::size_t HashCode(const Key& key) const {

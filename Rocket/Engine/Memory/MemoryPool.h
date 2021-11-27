@@ -8,7 +8,7 @@
 #include <ostream>
 #include <cstddef>
 #include <cstdlib>
-#ifdef RK_DEBUG // TODO : make this using engine log
+#ifdef RK_DEBUG_INFO // TODO : make this using engine log
 #include <iostream>
 #include <iomanip>
 #endif
@@ -50,7 +50,7 @@ namespace Rocket {
             chunk_ptr_t chunk = m_next_chunk;
             m_next_chunk = chunk->m_next;
             ++m_chunks;
-#ifdef RK_DEBUG
+#ifdef RK_DEBUG_INFO
             std::cout << "malloc chunk #" << std::setw(2) << std::setfill('0') << chunk->m_seq << " " << chunk << std::endl;
 #endif
             return chunk;
@@ -62,7 +62,7 @@ namespace Rocket {
             chunk->m_next = m_next_chunk;
             m_next_chunk = chunk;
             --m_chunks;
-#ifdef RK_DEBUG
+#ifdef RK_DEBUG_INFO
             std::cout << "free   chunk #" << std::setw(2) << std::setfill('0') << m_next_chunk->m_seq << " " << ptr << std::endl;
 #endif
         }
@@ -89,7 +89,7 @@ namespace Rocket {
     private:
         struct chunk_t {
             chunk_t(chunk_t* next = nullptr) noexcept : m_next{ next } {
-#ifdef RK_DEBUG
+#ifdef RK_DEBUG_INFO
                 std::cout << "create chunk #" << std::setw(2) << std::setfill('0') << m_seq << " " << this << " -> " << next << std::endl;
 #endif
             }
@@ -98,7 +98,7 @@ namespace Rocket {
                 chunk_t*  m_next;
                 std::byte m_storage[ChunkSize];
             };
-#ifdef RK_DEBUG
+#ifdef RK_DEBUG_INFO
             std::size_t m_seq = ++k_seq;
             inline static std::size_t k_seq = 0;
 #endif
@@ -114,21 +114,11 @@ namespace Rocket {
             m_allocated_blocks.push_back(block);
 
             chunk_ptr_t chunk = block;
-// #ifdef RK_MEMORY_CHECK
-// #ifdef new  // For Placement New
-// #undef new
-// #endif
-// #endif
             for(std::size_t i = 0; i < ChunksPerBlock - 1; ++i) {
                 new (chunk) chunk_t{ chunk + 1 };
                 chunk = chunk->m_next;
             }
             new (chunk) chunk_t{ tail };
-// #ifdef RK_MEMORY_CHECK
-// #ifndef new
-// #define new new(__FILE__, __LINE__, __FUNCTION__)
-// #endif
-// #endif
             return block;
         }
 

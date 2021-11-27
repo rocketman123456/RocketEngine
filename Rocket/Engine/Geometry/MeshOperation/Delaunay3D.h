@@ -1,4 +1,5 @@
 #pragma once
+#include "Memory/MemoryDefine.h"
 #include "Geometry/Vertex.h"
 #include "Geometry/Triangle.h"
 #include "Geometry/Sphere.h"

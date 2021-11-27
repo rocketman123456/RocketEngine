@@ -9,6 +9,7 @@ target("RocketEngineGeometry")
     )
     add_deps(
         "RocketEngineLog",
+        "RocketEngineMemory",
         {public = true}
     )
 target_end()

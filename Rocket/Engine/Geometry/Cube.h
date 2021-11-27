@@ -1,4 +1,5 @@
 #pragma once
+#include "Memory/MemoryDefine.h"
 
 namespace Rocket {
     namespace Geometry {

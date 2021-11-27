@@ -1,4 +1,6 @@
 #pragma once
+#include "Memory/MemoryDefine.h"
+
 #include <Eigen/Eigen>
 #include <atomic>
 #include <memory>

@@ -150,15 +150,15 @@ end
 -- 如果当前编译模式是debug
 if is_mode("debug", "check") then
     -- 添加DEBUG编译宏
-    add_defines("RK_DEBUG")
+    add_defines("RK_DEBUG_INFO")
 -- 如果是release模式
 elseif is_mode("release", "minsizerel", "releasedbg") then
     -- 添加RELEASE编译宏
-    add_defines("RK_RELEASE")
+    add_defines("RK_RELEASE_INFO")
 -- 如果是profile模式
 elseif is_mode("profile") then
     -- 添加PROFILE编译宏
-    add_defines("RK_PROFILE")
+    add_defines("RK_PROFILE_INFO")
 end
 
 --

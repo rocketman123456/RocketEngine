@@ -1,4 +1,5 @@
 #pragma once
+#include "Memory/MemoryDefine.h"
 #include "Geometry/BezierCurve.h"
 
 #include <array>
