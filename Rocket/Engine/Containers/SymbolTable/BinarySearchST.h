@@ -5,19 +5,22 @@
 #include <memory>
 #include <cstddef>
 #include <cassert>
+#include <functional>
 
 namespace Rocket {
+    // TODO : define compare function
     template<typename S, typename T>
     class BinarySearchST : _implements_ ST<S, T>, _implements_ ST_Full<S, T> {
     public:
         virtual void put(const S& key, const T& value) final;
         virtual void remove(const S& key) final;
-        virtual const T get(const S& key) const final;
+        virtual T get(const S& key) const final;
         virtual bool contain(const S& key) const final;
         virtual bool empty() const final;
         virtual std::size_t size() const final;
         virtual std::vector<S> keys() const final;
         virtual std::vector<T> values() const final;
+
         virtual S min() const final;
         virtual S max() const final;
         virtual S ceiling(const S& key) const final;
@@ -77,7 +80,7 @@ namespace Rocket {
     }
 
     template<typename S, typename T>
-    const T BinarySearchST<S,T>::get(const S& key) const {
+    T BinarySearchST<S,T>::get(const S& key) const {
         std::size_t pos = rank(key);
         if(pos < this->size() && keys_[pos] == key) { 
             return values_[pos];
@@ -138,7 +141,7 @@ namespace Rocket {
     S BinarySearchST<S,T>::floor(const S& key) const {
         assert(keys_.size() > 0);
         auto pos = rank(key);
-        if (pos < this->size() && key == keys_[pos]) return keys_[pos];
+        if (pos < this->size() && keys_[pos] == key) return keys_[pos];
         assert(pos > 0 && "argument to floor() is too small");
         return keys_[pos-1];
     }

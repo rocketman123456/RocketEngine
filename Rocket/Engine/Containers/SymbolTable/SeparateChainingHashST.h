@@ -6,45 +6,94 @@
 #include <functional>
 
 namespace Rocket {
-    template<typename Key, typename Value, typename Hash = std::hash<Key>>
-    class SeparateChainingHashST : _implements_ ST<S, T>, _implements_ ST_Full<S, T> {
+    // TODO : define compare function
+    template<typename Key, typename Value, typename Hash = std::hash<Key> >
+    class SeparateChainingHashST : _implements_ ST<Key, Value> {
     public:
-        SeparateChainingHashST(std::size_t init, const Hash& hash_func) 
-                : M_(init), hash_function_(hash_func) {
+        SeparateChainingHashST(std::size_t init = INIT_CAPACITY) : M_(init) {
             st_.resize(M_);
             for(int i = 0; i < M_; ++i) {
                 st_.push_back(BinarySearchST<Key, Value>());
             }
         }
 
-        virtual void put(const Key& key, const Value& value) final;
-        virtual void remove(const Key& key) final;
-        virtual const Value get(const Key& key) const final;
-        virtual bool contain(const Key& key) const final;
-        virtual bool empty() const final { return size() == 0; }
-        virtual std::size_t size() const final;
-        virtual std::vector<Key> keys() const final;
-        virtual std::vector<Value> values() const final;
-
-        virtual Key min() const final;
-        virtual Key max() const final;
-        virtual Key ceiling(const Key& key) const final;
-        virtual Key floor(const Key& key) const final;
-    private:
-        std::size_t HashTextBook(Key key) {
-            return (hash_function_(key) & 0x7fffffff) % m;
+        virtual void put(const Key& key, const Value& value) final {
+            if (N_ >= 10 * M_) resize(2 * M_);
+            auto i = HashCode(key);
+            if(!st_[i].contain(key)) N_++;
+            st_[i].put(key, value);
         }
 
-        std::size_t HashCode(Key key) {
+        virtual void remove(const Key& key) final {
+            auto i = HashCode(key);
+            if(st_[i].contain(key)) N_--;
+            st_[i].remove(key);
+            if (M_ > INIT_CAPACITY && N_ <= 2 * M_) resize(M_/2);
+        }
+
+        virtual Value get(const Key& key) const final {
+            return st_[HashCode(key)].get(key);
+        }
+
+        virtual bool contain(const Key& key) const final {
+            return st_[HashCode(key)].contain(key);
+        }
+
+        virtual std::vector<Key> keys() const final {
+            std::vector<Key> key_vec;
+            for(int i = 0; i < st_.size(); ++i) {
+                for(auto key : st_[i].keys()) {
+                    key_vec.push_back(key);
+                }
+            }
+            return key_vec;
+        }
+
+        virtual std::vector<Value> values() const final {
+            std::vector<Value> value_vec;
+            for(int i = 0; i < st_.size(); ++i) {
+                for(auto value : st_[i].values()) {
+                    value_vec.push_back(value);
+                }
+            }
+            return value_vec;
+        }
+
+        virtual inline bool empty() const final { return size() == 0; }
+        virtual inline std::size_t size() const final { return N_; }
+    private:
+        const std::size_t HashTextBook(const Key& key) const {
+            return (hash_function_(key) & 0x7fffffff) % M_;
+        }
+
+        const std::size_t HashCode(const Key& key) const {
             auto h = hash_function_(key);
-            h ^= (h >>> 20) ^ (h >>> 12) ^ (h >>> 7) ^ (h >>> 4);
-            return h & (m-1);
+            h ^= (h >> 20) ^ (h >> 12) ^ (h >> 7) ^ (h >> 4);
+            return h & (M_-1);
         }
+
+        void resize(std::size_t size) {
+            M_ = size;
+            std::vector<BinarySearchST<Key, Value> > st;
+            st.resize(M_);
+            for(int i = 0; i < M_; ++i) {
+                st.push_back(BinarySearchST<Key, Value>());
+            }
+            for(int i = 0; i < st_.size(); ++i) {
+                for(auto key : st_[i].keys()) {
+                    st[HashCode(key)].put(key, st_[i].get(key));
+                }
+            }
+            st_ = std::move(st);
+        }
+
     private:
-        constexpr std::size_t INIT_CAPACITY = 4;
-        std::size_t N_;
-        std::size_t M_;
-        std::vector<BinarySearchST<Key, Value>> st_;
-        Hash hash_function_;
+        static constexpr std::size_t INIT_CAPACITY = 4;
+        std::size_t N_ = 0;
+        std::size_t M_ = 0;
+        // Could use SequentialSearchST instead,
+        // but BinarySearchST will be faster
+        std::vector<BinarySearchST<Key, Value> > st_;
+        Hash hash_function_ = Hash();
     };
 }

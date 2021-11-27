@@ -4,8 +4,10 @@
 #include <list>
 #include <vector>
 #include <memory>
+#include <functional>
 
 namespace Rocket {
+    // TODO : define compare function
     template<typename S, typename T>
     class SequentialSearchST : _implements_ ST<S, T> {
         struct Node {
@@ -16,7 +18,7 @@ namespace Rocket {
     public:
         virtual void put(const S& key, const T& value) final;
         virtual void remove(const S& key) final;
-        virtual const T get(const S& key) const final;
+        virtual T get(const S& key) const final;
         virtual bool contain(const S& key) const final;
         virtual std::vector<S> keys() const final;
         virtual std::vector<T> values() const final;
@@ -29,7 +31,7 @@ namespace Rocket {
     };
 
     template<typename S, typename T>
-    const T SequentialSearchST<S,T>::get(const S& key) const {
+    T SequentialSearchST<S,T>::get(const S& key) const {
         NodePtr result = nullptr;
         for(auto iter = node_list_.begin(); iter != node_list_.end(); ++iter) {
             if((*iter)->key == key) {
