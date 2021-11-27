@@ -9,7 +9,7 @@
 using namespace Rocket;
 
 int main() {
-    Log::Init();
+    //Log::Init();
 
     auto root = Rocket::FindRootDir("_root_dir_");
     auto file = FileSystem::OpenSync(root + "/Config/", "basic.yaml", FileOperateMode::READ_BINARY);
@@ -22,10 +22,10 @@ int main() {
     std::cout << "app-name Node: " << node["app-name"].as<std::string>() << std::endl;
     std::cout << "resource-type Node: " << node["resource-type"].as<std::string>() << std::endl;
 
-    ConfigLoader loader;
+    ConfigLoader loader(root, "Config/");
     std::string result = loader.Get<std::string>("basic", "app-name");
     std::cout << "app-name From Config Loader : " << node["app-name"].as<std::string>() << std::endl;
 
-    Rocket::Log::End();
+    //Rocket::Log::End();
     return 0;
 }

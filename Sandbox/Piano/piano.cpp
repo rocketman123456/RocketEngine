@@ -57,7 +57,7 @@ bool AudioEventHandle(EventPtr& event) {
 MusicGenerator generator_g;
 
 int main() {
-    Log::Init();
+    //Log::Init();
 
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -223,6 +223,6 @@ int main() {
     AudioManager::Destroy();
     EventManager::Destroy();
     TaskManager::Destroy();
-    Log::End();
+    //Log::End();
     return 0;
 }

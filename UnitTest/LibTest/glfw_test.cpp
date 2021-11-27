@@ -39,7 +39,7 @@ const char *fragmentShaderSource = R"(
     })";
 
 int main() {
-    Log::Init();
+    //Log::Init();
     // glfw: initialize and configure
     // ------------------------------
     glfwInit();
@@ -214,6 +214,6 @@ int main() {
     glfwTerminate();
 
     stbi_image_free(data);
-    Log::End();
+    //Log::End();
     return 0;
 }

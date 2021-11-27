@@ -13,6 +13,7 @@
 #include <spdlog/fmt/fmt.h>
 
 IMPLEMENT_LOG_CHANNEL(Core);
+IMPLEMENT_LOG_CHANNEL(Memory);
 IMPLEMENT_LOG_CHANNEL(Window);
 IMPLEMENT_LOG_CHANNEL(Render);
 IMPLEMENT_LOG_CHANNEL(Event);
@@ -20,6 +21,16 @@ IMPLEMENT_LOG_CHANNEL(File);
 IMPLEMENT_LOG_CHANNEL(Audio);
 IMPLEMENT_LOG_CHANNEL(App);
 #endif
+
+namespace {
+    class DefaultLogger {
+    public:
+        DefaultLogger() { Rocket::Log::Init(); }
+        ~DefaultLogger() { Rocket::Log::End(); }
+    };
+
+    DefaultLogger _default_logger_ = DefaultLogger();
+}
 
 namespace Rocket {
 #ifdef RK_CONSOLE_LOG
@@ -43,6 +54,7 @@ namespace Rocket {
     void Log::Init(LogLevel level) {
         spdlog::set_pattern("%^[%l%$][%T][%n] %v%$");
         INIT_LOG_CHANNEL(Core);
+        INIT_LOG_CHANNEL(Memory);
         INIT_LOG_CHANNEL(Window);
         INIT_LOG_CHANNEL(Render);
         INIT_LOG_CHANNEL(Event);
@@ -53,6 +65,7 @@ namespace Rocket {
 
     void Log::End() {
         END_LOG_CHANNEL(Core);
+        END_LOG_CHANNEL(Memory);
         END_LOG_CHANNEL(Window);
         END_LOG_CHANNEL(Render);
         END_LOG_CHANNEL(Event);

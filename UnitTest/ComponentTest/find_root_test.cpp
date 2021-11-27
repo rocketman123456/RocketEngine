@@ -5,12 +5,12 @@
 using namespace Rocket;
 
 int main() {
-    Rocket::Log::Init();
+    //Rocket::Log::Init();
 
     std::string name = "_root_dir_";
     auto root = FindRootDir(name);
     std::cout << root << std::endl;
 
-    Rocket::Log::End();
+    //Rocket::Log::End();
     return 0;
 }

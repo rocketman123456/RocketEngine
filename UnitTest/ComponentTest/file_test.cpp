@@ -8,7 +8,7 @@
 using namespace Rocket;
 
 int main() {
-    Rocket::Log::Init();
+    //Rocket::Log::Init();
 
     std::string name = "_root_dir_";
     auto root = FindRootDir(name);
@@ -38,6 +38,6 @@ int main() {
         FileSystem::CloseZip(std::move(file));
     }
 
-    Rocket::Log::End();
+    //Rocket::Log::End();
     return 0;
 }

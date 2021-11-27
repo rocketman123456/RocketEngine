@@ -74,7 +74,7 @@ const char* FormatName(ALenum format) {
 }
 
 int main() {
-    Log::Init();
+    //Log::Init();
     std::string root = FindRootDir("_root_dir_");
     std::filesystem::path root_path = root + "\\Asset\\Music\\";
     std::filesystem::directory_iterator dir_list(root_path);
@@ -192,6 +192,6 @@ int main() {
     ALCboolean closed;
     alcCall(alcCloseDevice, closed, openALDevice, openALDevice);
 
-    Log::End();
+    //Log::End();
     return 0;
 }

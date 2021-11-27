@@ -16,7 +16,7 @@ using namespace Rocket;
 #include "../Utils/soft_render.h"
 
 int main(int argc, char** argv) {
-    Log::Init();
+    //Log::Init();
 
     RenderApp app;
     app.Initialize(1280, 720);
@@ -72,6 +72,6 @@ int main(int argc, char** argv) {
 
     app.Finalize();
 
-    Log::End();
+    //Log::End();
     return 0;
 }

@@ -9,13 +9,15 @@ namespace Rocket {
     public:
         explicit ConfigLoader();
         explicit ConfigLoader(const std::string& path);
+        explicit ConfigLoader(const std::string& root, const std::string& path);
 
         template<typename T>
         inline T Get(const std::string& file_name, const std::string& key_name) { return file_contents_[file_name][key_name].as<T>(); }
 
         inline const std::vector<std::string>& GetFiles() const { return files_; }
         inline const std::unordered_map<std::string, YAML::Node>& GetFileContents() const { return file_contents_; }
-
+    private:
+        void SearchFiles();
     private:
         std::string root_dir_;
         std::string file_path_;

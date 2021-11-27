@@ -25,7 +25,7 @@ struct TestEventHandle {
 };
 
 int main() {
-    Rocket::Log::Init();
+    //Rocket::Log::Init();
     // Initialize
     TaskManager::Create();
     EventManager::Create();
@@ -103,6 +103,6 @@ int main() {
     // Finalize
     EventManager::Instance()->Finalize();
 
-    Rocket::Log::End();
+    //Rocket::Log::End();
     return 0;
 }

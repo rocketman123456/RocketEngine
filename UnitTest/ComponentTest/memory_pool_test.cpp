@@ -5,8 +5,14 @@
 #include <random>
 #include <vector>
 
+// #include "Memory/MemoryAllocator.h"
+
+using namespace Rocket;
+
 int main() {
 	using namespace std;
+
+	// MyAllocator<double> alloc;
 
 	constexpr auto I = 3;
 	constexpr auto BLOCKS = 3;

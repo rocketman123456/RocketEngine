@@ -8,6 +8,7 @@ target("RocketEngineMemory")
         {public = true}
     )
     add_deps(
+        "RocketEngineLog",
         "RocketEngineUtils",
         {public = true}
     )

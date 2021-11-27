@@ -3,11 +3,11 @@
 #include <iostream>
 
 int main() {
-    Rocket::Log::Init();
+    //Rocket::Log::Init();
 
     RK_INFO(Core, "Hello Rocket Engine");
     RK_INFO(App, "Hello Rocket App");
 
-    Rocket::Log::End();
+    //Rocket::Log::End();
     return 0;
 }

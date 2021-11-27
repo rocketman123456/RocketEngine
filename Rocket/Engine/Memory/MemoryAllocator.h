@@ -1,67 +1,24 @@
 #pragma once
+#include "Memory/MemoryDefine.h"
 
-#include <cstddef>
 #include <new>
+#include <cstddef>
 #include <type_traits>
 #include <stdexcept>
 #include <exception>
 #include <limits>
+#include <iostream>
 
-namespace Rocket
-{
-    // TODO : implement different allocator
-    // template <typename T>
-    // class Allocator {
-    // public:
-    //     using value_type = T;
-    //     using pointer = T*;
-    //     using const_pointer = const T*;
-    //     using void_pointer = void*;
-    //     using const_void_pointer = const void*;
-    //     using size_type = std::size_t;
-    //     using different_type = std::ptrdiff_t;
-
-    //     Allocator() noexcept = default;
-    //     Allocator(const Allocator &) noexcept = default;
-    //     ~Allocator() = default;
-
-    //     template <class U>
-    //     Allocator(const Allocator<U> &) noexcept {}
-
-    //     [[nodiscard]] T* allocate(std::size_t n) {
-    //         if (n > std::size_t(-1) / sizeof(T)) {
-    //             throw std::bad_array_new_length();
-    //         }
-            
-    //         if constexpr (alignof(T) > __STDCPP_DEFAULT_NEW_ALIGNMENT__)
-    //             return static_cast<T *>( ::operator new(n * sizeof(T), static_cast<std::align_val_t>(alignof(T))) );
-    //         else
-    //             return static_cast<T *>( ::operator new(n * sizeof(T)) );
-    //     }
-
-    //     void deallocate(T *p, std::size_t n) {
-    //         if constexpr (alignof(T) > __STDCPP_DEFAULT_NEW_ALIGNMENT__)
-    //             return ::operator delete(p, n * sizeof(T), static_cast<std::align_val_t>(alignof(T)));
-    //         else
-    //             return ::operator delete(p, n * sizeof(T));
-    //     }
-    // };
-
-    // template <class T, class U>
-    // bool operator == (const Allocator<T> &, const Allocator<U> &) noexcept {
-    //     return true;
-    // }
-
-    // template <class T, class U>
-    // bool operator != (const Allocator<T> &, const Allocator<U> &) noexcept {
-    //     return false;
-    // }
-
+namespace Rocket {
+    // A Typical C++ Allocator for stl
+    // Can also be used in normal memory allocation
     template <class T>
     class MyAllocator {
     public:
         // type definitions
         using value_type = T;
+        using reference = T&;
+        using const_reference = const T&;
         using pointer = T*;
         using const_pointer = const T*;
         using void_pointer = void*;
@@ -72,51 +29,40 @@ namespace Rocket
         // rebind allocator to type U
         template <class U>
         struct rebind {
-            typedef MyAlloc<U> other;
+            typedef MyAllocator<U> other;
         };
 
         // return address of values
-        pointer address(reference value) const {
-            return &value;
-        }
-
-        const_pointer address(const_reference value) const {
-            return &value;
-        }
+        inline pointer address(reference value) const noexcept { return &value; }
+        inline const_pointer address(const_reference value) const noexcept { return &value; }
 
         // constructors and destructor
         // - nothing to do because the allocator has no state
-        MyAllocator() throw() {}
-        MyAllocator(const MyAllocator &) throw() {}
+        MyAllocator() noexcept {}
+        MyAllocator(const MyAllocator&) noexcept {}
         template <class U>
-        MyAllocator(const MyAllocator<U> &) throw() {}
-        ~MyAllocator() throw() {}
+        MyAllocator(const MyAllocator<U>&) noexcept {}
+        ~MyAllocator() noexcept {}
 
         // return maximum number of elements that can be allocated
-        size_type max_size() const throw() {
+        size_type max_size() const noexcept {
             return std::numeric_limits<std::size_t>::max() / sizeof(T);
         }
 
         // allocate but don't initialize num elements of type T
-        pointer allocate(size_type num, const void* = 0) {
+        pointer allocate(size_type num, const_void_pointer = static_cast<const_void_pointer>(0)) {
+            if (num > this->max_size())
+                throw std::bad_alloc();
             // print message and allocate memory with global new
+            pointer ret = nullptr;
+            if constexpr (alignof(T) > __STDCPP_DEFAULT_NEW_ALIGNMENT__)
+                ret = static_cast<pointer>(::operator new(num * sizeof(value_type), std::align_val_t(alignof(value_type))));
+            else 
+                ret = static_cast<pointer>(::operator new(num * sizeof(value_type)));
             std::cerr << "allocate " << num << " element(s)"
-                      << " of size " << sizeof(T) << std::endl;
-            pointer ret = (pointer)(::operator new(num * sizeof(T)));
-            std::cerr << " allocated at: " << (void *)ret << std::endl;
+                      << " of size " << sizeof(T)
+                      << " allocated at: " << (void *)ret << std::endl;
             return ret;
-        }
-
-        // initialize elements of allocated storage p with value value
-        void construct(pointer p, const T &value) {
-            // initialize memory with placement new
-            new ((void *)p) T(value);
-        }
-
-        // destroy elements of initialized storage p
-        void destroy(pointer p) {
-            // destroy objects by calling their destructor
-            p->~T();
         }
 
         // deallocate storage p of deleted elements
@@ -125,17 +71,34 @@ namespace Rocket
             std::cerr << "deallocate " << num << " element(s)"
                       << " of size " << sizeof(T)
                       << " at: " << (void *)p << std::endl;
-            ::operator delete((void *)p);
+            if constexpr (alignof(T) > __STDCPP_DEFAULT_NEW_ALIGNMENT__)
+                ::operator delete(static_cast<void_pointer>(p), num * sizeof(value_type), std::align_val_t(alignof(value_type)));
+            else
+                ::operator delete(static_cast<void_pointer>(p), num * sizeof(value_type));
+        }
+
+        // initialize elements of allocated storage p with value value
+        template <class U, typename ... Args>
+        void construct(U* p, Args&& ... args) noexcept {
+            // initialize memory with placement new
+            ::new ((void_pointer)p) U(std::forward<Args>(args)...);
+        }
+
+        // destroy elements of initialized storage p
+        void destroy(pointer p) noexcept {
+            // destroy objects by calling their destructor
+            p->~T();
         }
     };
 
     // return that all specializations of this allocator are interchangeable
     template <class T1, class T2>
-    bool operator == (const MyAllocator<T1> &, const MyAllocator<T2> &) throw() {
+    bool operator == (const MyAllocator<T1> &, const MyAllocator<T2> &) noexcept {
         return true;
     }
+
     template <class T1, class T2>
-    bool operator != (const MyAllocator<T1> &, const MyAllocator<T2> &) throw() {
+    bool operator != (const MyAllocator<T1> &, const MyAllocator<T2> &) noexcept {
         return false;
     }
 }

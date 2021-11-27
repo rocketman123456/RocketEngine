@@ -5,8 +5,6 @@
 #include <stdlib.h>     // srand, rand
 #include <cassert>
 
-#define OPERATIONS (10)
-
 namespace Rocket {
     void Benchmark::SingleAllocation(Allocator* allocator, const std::size_t size, const std::size_t alignment) {
         std::cout << "BENCHMARK: ALLOCATION" << IO::endl;

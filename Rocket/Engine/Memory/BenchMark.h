@@ -7,6 +7,8 @@
 #include <ratio>
 #include <vector>
 
+#define OPERATIONS (10)
+
 namespace Rocket {
     struct BenchmarkResults {
         std::size_t operations;

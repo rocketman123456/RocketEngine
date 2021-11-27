@@ -94,8 +94,10 @@ namespace Rocket {
 			return ms;
 		}
 	private:
-		std::chrono::time_point<std::chrono::steady_clock> start_;
-		std::chrono::time_point<std::chrono::steady_clock> end_;
+		std::chrono::high_resolution_clock::time_point start_;
+		std::chrono::high_resolution_clock::time_point end_;
+		//std::chrono::time_point<std::chrono::steady_clock> start_;
+		//std::chrono::time_point<std::chrono::steady_clock> end_;
 		std::chrono::duration<double> duration_;
 	};
 }

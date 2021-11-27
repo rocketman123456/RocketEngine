@@ -7,7 +7,7 @@
 using namespace Rocket;
 
 int main() {
-    Log::Init();
+    //Log::Init();
 
     std::string root = FindRootDir("_root_dir_");
 
@@ -15,6 +15,6 @@ int main() {
 
     parser.Initialize(root, "/Asset/Note/Castle in the Sky.json");
 
-    Log::End();
+    //Log::End();
     return 0;
 }

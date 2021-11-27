@@ -4,7 +4,7 @@
 #include <string>
 
 int main() {
-    Rocket::Log::Init();
+    //Rocket::Log::Init();
 
     RK_INFO(Core, "Hello Rocket Engine {}", std::string("Now"));
     RK_TRACE(App, "Hello Rocket App");
@@ -13,6 +13,6 @@ int main() {
     RK_ERROR(App, "Hello Rocket App");
     RK_CRITICAL(App, "Hello Rocket App");
 
-    Rocket::Log::End();
+    //Rocket::Log::End();
     return 0;
 }

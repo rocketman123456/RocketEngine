@@ -72,7 +72,7 @@ void VertexSphereTest() {
 }
 
 int main(int argc, char** argv) {
-    Log::Init();
+    //Log::Init();
 
     RenderApp app;
 
@@ -178,6 +178,6 @@ int main(int argc, char** argv) {
 
     app.Finalize();
 
-    Log::End();
+    //Log::End();
     return 0;
 }
