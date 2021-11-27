@@ -6,12 +6,6 @@
 #include <algorithm>
 
 namespace Rocket {
-    LinearAllocator::LinearAllocator(const std::size_t totalSize) : Allocator(totalSize) {}
-
-    LinearAllocator::~LinearAllocator() {
-        std::free(start_ptr);
-    }
-
     void* LinearAllocator::Allocate(const std::size_t size, const std::size_t alignment) {
         std::size_t padding = 0;
         std::size_t paddedAddress = 0;

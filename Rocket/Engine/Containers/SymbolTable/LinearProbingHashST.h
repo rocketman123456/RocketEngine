@@ -2,12 +2,13 @@
 #include "Containers/SymbolTable/ST.h"
 
 #include <vector>
+#include <memory>
 #include <functional>
 
 namespace Rocket {
     // TODO : define compare function
     // TODO : finish put and get function
-    template<typename Key, typename Value>
+    template<typename Key, typename Value, typename Hash = std::hash<Key> >
     class LinearProbingHashST : _implements_ ST<Key, Value> {
     public:
         LinearProbingHashST(std::size_t capacity = INIT_CAPACITY) : M_(capacity) {
@@ -145,5 +146,6 @@ namespace Rocket {
         std::size_t M_ = 0;
         Key* keys_ = nullptr;
         Value* values_ = nullptr;
+        Hash hash_function = Hash();
     };
 }

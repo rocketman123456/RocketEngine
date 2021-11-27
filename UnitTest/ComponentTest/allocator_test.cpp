@@ -19,7 +19,7 @@ int main() {
 
     Allocator * cAllocator = new CAllocator();
     Allocator * linearAllocator = new LinearAllocator(A);
-    linearAllocator->Init();
+    //linearAllocator->Init();
 
     Benchmark benchmark(OPERATIONS);
 
