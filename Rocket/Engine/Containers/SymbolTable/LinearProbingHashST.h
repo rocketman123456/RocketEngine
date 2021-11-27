@@ -12,65 +12,66 @@ namespace Rocket {
     class LinearProbingHashST : _implements_ ST<Key, Value> {
     public:
         LinearProbingHashST(std::size_t capacity = INIT_CAPACITY) : M_(capacity) {
-            keys_ = new Key[M_];
-            values_ = new Value[M_];
+            for(int i = 0; i < M_; ++i) {
+                keys_.push_back(nullptr);
+                values_.push_back(nullptr);
+            }
         }
 
-        virtual  ~LinearProbingHashST() {
-            if(keys_) delete [] keys_;
-            if(values_) delete [] values_;
-        }
+        virtual  ~LinearProbingHashST() {}
 
         virtual void put(const Key& key, const Value& value) final {
-            // if (N_ >= M_/2) resize(2 * M_);
-            // int i;
-            // for (i = hash(key); keys_[i] != nullptr; i = (i + 1) % m) {
-            //     if (keys_[i].equals(key)) {
-            //         values_[i] = value;
-            //         return;
-            //     }
-            // }
-            // keys_[i] = key;
-            // values_[i] = value;
-            // N_++;
+            if (N_ >= M_/2) resize(2 * M_);
+            int i;
+            for (i = hash_function(key); keys_[i] != nullptr; i = (i + 1) % M_) {
+                if (*keys_[i] == key) {
+                    *values_[i] = value;
+                    return;
+                }
+            }
+            keys_[i] = std::make_shared<Key>(); 
+            *keys_[i] = key;
+            values_[i] = std::make_shared<Value>(); 
+            *values_[i] = value;
+            N_++;
         }
 
         virtual void remove(const Key& key) final {
             // find position i of key
-            // int i = hash(key);
-            // while (!key.equals(keys[i])) {
-            //     i = (i + 1) % m;
-            // }
+            int i = hash_function(key);
+            while (!(key == *keys_[i])) {
+                i = (i + 1) % M_;
+            }
 
-            // // delete key and associated value
-            // keys[i] = null;
-            // vals[i] = null;
+            // delete key and associated value
+            keys_[i] = nullptr;
+            values_[i] = nullptr;
 
             // // rehash all keys in same cluster
-            // i = (i + 1) % m;
-            // while (keys[i] != null) {
-            //     // delete keys[i] an vals[i] and reinsert
-            //     Key   keyToRehash = keys[i];
-            //     Value valToRehash = vals[i];
-            //     keys[i] = null;
-            //     vals[i] = null;
-            //     n--;
-            //     put(keyToRehash, valToRehash);
-            //     i = (i + 1) % m;
-            // }
+            i = (i + 1) % M_;
+            while (keys_[i] != nullptr) {
+                // delete keys[i] an vals[i] and reinsert
+                auto keyToRehash = keys_[i];
+                auto valToRehash = values_[i];
+                keys_[i] = nullptr;
+                values_[i] = nullptr;
+                N_--;
+                put(*keyToRehash, *valToRehash);
+                i = (i + 1) % M_;
+            }
 
-            // n--;
+            N_--;
 
             // // halves size of array if it's 12.5% full or less
-            // if (n > 0 && n <= m/8) resize(m/2);
+            if (N_ > 0 && N_ <= M_/8) resize(M_/2);
 
-            // assert(check());
+            assert(check());
         }
 
         virtual Value get(const Key& key) const final {
             for(int i = 0; i < size(); ++i) {
-                if(key == keys_[i]) {
-                    return values_[i];
+                if(key == *keys_[i]) {
+                    return *values_[i];
                 }
             }
             return Value();
@@ -78,7 +79,7 @@ namespace Rocket {
 
         virtual bool contain(const Key& key) const final {
             for(int i = 0; i < size(); ++i) {
-                if(key == keys_[i]) {
+                if(key == *keys_[i]) {
                     return true;
                 }
             }
@@ -91,7 +92,7 @@ namespace Rocket {
         virtual std::vector<Key> keys() const final {
             std::vector<Key> key_vec;
             for(int i = 0; i < size(); ++i) {
-                key_vec.push_back(keys_[i]);
+                key_vec.push_back(*keys_[i]);
             }
             return key_vec;
         }
@@ -99,40 +100,39 @@ namespace Rocket {
         virtual std::vector<Value> values() const final {
             std::vector<Value> value_vec;
             for(int i = 0; i < size(); ++i) {
-                value_vec.push_back(values_[i]);
+                value_vec.push_back(*values_[i]);
             }
             return value_vec;
         }
-    private:
+
         void resize(std::size_t capacity) {
-            Key* key = new Key[capacity];
-            Value* value = new Value[capacity];
+            LinearProbingHashST<Key, Value> temp(capacity);
             for(int i = 0; i < size(); ++i) {
-                key[i] = keys_[i];
-                value[i] = values_[i];
+                temp.put(*keys_[i], *values_[i]);
             }
-            delete [] keys_;
-            delete [] values_;
-            keys_ = key;
-            values_ = value;
-            M_ = capacity;
+            keys_ = std::move(temp.keys_);
+            values_ = std::move(temp.values_);
+            M_ = temp.M_;
+            N_ = temp.N_;
         }
 
+    private:
         bool check() {
-            // // check that hash table is at most 50% full
-            // if (M_ < 2*N_) {
-            //     //System.err.println("Hash table size m = " + m + "; array size n = " + n);
-            //     return false;
-            // }
-            // // check that each key in table can be found by get()
-            // for (int i = 0; i < M_; i++) {
-            //     if (keys_[i] == nullptr) continue;
-            //     else if (get(keys_[i]) != values_[i]) {
-            //         //System.err.println("get[" + keys[i] + "] = " + get(keys[i]) + "; vals[i] = " + vals[i]);
-            //         return false;
-            //     }
-            // }
-            // return true;
+            // check that hash table is at most 50% full
+            if (M_ < 2 * N_) {
+                //System.err.println("Hash table size m = " + m + "; array size n = " + n);
+                return false;
+            }
+            // check that each key in table can be found by get()
+            for (int i = 0; i < M_; i++) {
+                if (keys_[i] == nullptr) 
+                    continue;
+                else if (get(*keys_[i]) != *values_[i]) {
+                    //System.err.println("get[" + keys[i] + "] = " + get(keys[i]) + "; vals[i] = " + vals[i]);
+                    return false;
+                }
+            }
+            return true;
         }
 
         const std::size_t HashCode(const Key& key) const {
@@ -144,8 +144,8 @@ namespace Rocket {
         static constexpr std::size_t INIT_CAPACITY = 4;
         std::size_t N_ = 0;
         std::size_t M_ = 0;
-        Key* keys_ = nullptr;
-        Value* values_ = nullptr;
+        std::vector<std::shared_ptr<Key>> keys_ = {};
+        std::vector<std::shared_ptr<Value>> values_ = {};
         Hash hash_function = Hash();
     };
 }

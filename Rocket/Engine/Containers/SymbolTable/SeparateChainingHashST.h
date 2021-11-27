@@ -11,7 +11,6 @@ namespace Rocket {
     class SeparateChainingHashST : _implements_ ST<Key, Value> {
     public:
         SeparateChainingHashST(std::size_t init = INIT_CAPACITY) : M_(init) {
-            st_.resize(M_);
             for(int i = 0; i < M_; ++i) {
                 st_.push_back(BinarySearchST<Key, Value>());
             }
@@ -59,12 +58,24 @@ namespace Rocket {
             return value_vec;
         }
 
+        void resize(std::size_t size) {
+            SeparateChainingHashST<Key, Value> temp(size);
+            for(int i = 0; i < st_.size(); ++i) {
+                for(auto key : st_[i].keys()) {
+                    temp.put(key, st_[i].get(key));
+                }
+            }
+            M_ = temp.M_;
+            N_ = temp.N_;
+            st_ = std::move(temp.st_);
+        }
+
         virtual inline bool empty() const final { return size() == 0; }
         virtual inline std::size_t size() const final { return N_; }
     private:
-        const std::size_t HashTextBook(const Key& key) const {
-            return (hash_function_(key) & 0x7fffffff) % M_;
-        }
+        // const std::size_t HashTextBook(const Key& key) const {
+        //     return (hash_function_(key) & 0x7fffffff) % M_;
+        // }
 
         const std::size_t HashCode(const Key& key) const {
             auto h = hash_function_(key);
@@ -72,28 +83,13 @@ namespace Rocket {
             return h & (M_-1);
         }
 
-        void resize(std::size_t size) {
-            M_ = size;
-            std::vector<BinarySearchST<Key, Value> > st;
-            st.resize(M_);
-            for(int i = 0; i < M_; ++i) {
-                st.push_back(BinarySearchST<Key, Value>());
-            }
-            for(int i = 0; i < st_.size(); ++i) {
-                for(auto key : st_[i].keys()) {
-                    st[HashCode(key)].put(key, st_[i].get(key));
-                }
-            }
-            st_ = std::move(st);
-        }
-
     private:
-        static constexpr std::size_t INIT_CAPACITY = 4;
+        static const std::size_t INIT_CAPACITY = 4;
         std::size_t N_ = 0;
         std::size_t M_ = 0;
         // Could use SequentialSearchST instead,
         // but BinarySearchST will be faster
-        std::vector<BinarySearchST<Key, Value> > st_;
+        std::vector<BinarySearchST<Key, Value> > st_ = {};
         Hash hash_function_ = Hash();
     };
 }

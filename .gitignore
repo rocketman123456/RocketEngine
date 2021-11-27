@@ -32,7 +32,6 @@
 
 # Xmake cache
 .xmake/
-.vscode/
 .VSCodeCounter/
 build/
 build_cmake/
