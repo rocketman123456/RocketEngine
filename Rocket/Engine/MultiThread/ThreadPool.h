@@ -1,5 +1,7 @@
 #pragma once
 #include "Containers/Queue/UnboundedQueue.h"
+#include "Memory/MemoryDefine.h"
+#include "Core/Declare.h"
 
 #include <thread>
 #include <mutex>

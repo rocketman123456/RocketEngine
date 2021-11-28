@@ -1,18 +1,16 @@
 #pragma once
-//#include "Memory/MemoryDefine.h"
+#include "Memory/MemoryDefine.h"
+#include "Core/Declare.h"
 #include "Utils/Variant.h"
 #include "Utils/Delegate.h"
 #include "Utils/Hashing.h"
 #include "Utils/Timer.h"
 #include "Log/Log.h"
 
-// #include <vector>
 #include <memory>
 #include <cstdint>
 #include <string>
 #include <cassert>
-// #include <functional>
-// #include <unordered_map>
 #include <mutex>
 #include <chrono>
 #include <condition_variable>

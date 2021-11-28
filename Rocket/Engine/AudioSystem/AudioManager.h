@@ -1,6 +1,8 @@
 #pragma once
 #include "Pattern/IRuntimeModule.h"
 #include "Pattern/Singleton.h"
+#include "Memory/MemoryDefine.h"
+#include "Core/Declare.h"
 #include "FileSystem/AudioFile.h"
 #include "AudioSystem/AudioTask.h"
 #include "Containers/Queue/UnboundedQueue.h"

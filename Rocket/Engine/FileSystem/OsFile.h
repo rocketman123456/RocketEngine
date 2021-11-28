@@ -1,7 +1,7 @@
 #pragma once
+#include "Memory/MemoryDefine.h"
 #include "Core/Declare.h"
 #include "FileSystem/FileBasic.h"
-#include "Memory/MemoryDefine.h"
 
 #include <string>
 

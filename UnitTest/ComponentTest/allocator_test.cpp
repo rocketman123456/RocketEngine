@@ -7,8 +7,12 @@
 // #include "Memory/StackAllocator.h"
 #include "Memory/CAllocator.h"
 #include "Memory/LinearAllocator.h"
+#include "Memory/PoolAllocator.h"
 
 using namespace Rocket;
+
+// From Benchmark Result, Maybe no need to manage Memory
+// Current System is working well
 
 int main() {
     const std::size_t A = static_cast<std::size_t>(1e9);
@@ -19,6 +23,7 @@ int main() {
 
     Allocator * cAllocator = new CAllocator();
     Allocator * linearAllocator = new LinearAllocator(A);
+    Allocator * poolAllocator = new PoolAllocator(16777216, 4096);
     //linearAllocator->Init();
 
     Benchmark benchmark(OPERATIONS);
@@ -31,7 +36,11 @@ int main() {
 
     std::cout << "LINEAR" << std::endl;
     benchmark.MultipleAllocation(linearAllocator, ALLOCATION_SIZES, ALIGNMENTS);
-    benchmark.RandomAllocation(linearAllocator, ALLOCATION_SIZES, ALIGNMENTS); 
+    benchmark.RandomAllocation(linearAllocator, ALLOCATION_SIZES, ALIGNMENTS);
+
+    std::cout << "POOL" << std::endl;
+    benchmark.SingleAllocation(poolAllocator, 4096, 8);
+    benchmark.SingleFree(poolAllocator, 4096, 8);
 
     return 0;
 }

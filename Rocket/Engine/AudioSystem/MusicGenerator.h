@@ -1,4 +1,6 @@
 #pragma once
+#include "Memory/MemoryDefine.h"
+#include "Core/Declare.h"
 #include "Parser/JsonParser.h"
 #include "EventSystem/Event.h"
 

@@ -12,7 +12,7 @@
 namespace Rocket {
     struct BenchmarkResults {
         std::size_t operations;
-        std::chrono::milliseconds milliseconds;
+        double milliseconds;
         double operations_per_sec;
         double time_per_operation;
         std::size_t memory_peak;
@@ -37,11 +37,11 @@ namespace Rocket {
 
         void RandomAllocationAttr(const std::vector<std::size_t>& allocationSizes, const std::vector<std::size_t>& alignments, std::size_t & size, std::size_t & alignment);
 
-        const BenchmarkResults BuildResults(std::size_t nOperations, std::chrono::milliseconds&& ellapsedTime, const std::size_t memoryUsed) const;
+        const BenchmarkResults BuildResults(std::size_t nOperations, double ellapsedTime, const std::size_t memoryUsed) const;
         
         inline void SetStartTime() noexcept { start = std::chrono::high_resolution_clock::now(); }
         inline void SetFinishTime() noexcept { finish = std::chrono::high_resolution_clock::now(); }
-        inline void SetElapsedTime() noexcept { time_elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(finish - start); }
+        inline void SetElapsedTime() noexcept { duration = finish - start; }
         
         void StartRound() noexcept { SetStartTime(); }
         void FinishRound() noexcept {
@@ -52,9 +52,9 @@ namespace Rocket {
     private:
         std::size_t operation_count;
 
-        std::chrono::time_point<std::chrono::high_resolution_clock> start;
-        std::chrono::time_point<std::chrono::high_resolution_clock> finish;
+        std::chrono::high_resolution_clock::time_point start;
+        std::chrono::high_resolution_clock::time_point finish;
 
-        std::chrono::milliseconds time_elapsed;
+        std::chrono::duration<double> duration;
     };
 }

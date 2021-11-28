@@ -8,6 +8,8 @@ target("RocketEngineParser")
         {public = true}
     )
     add_deps(
+        "RocketEngineLog",
+        "RocketEngineMemory",
         "RocketEngineAlgorithm",
         "RocketEngineFileSystem",
         "RocketEngineMath",

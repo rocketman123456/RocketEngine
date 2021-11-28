@@ -24,9 +24,7 @@ namespace Rocket {
         const std::size_t nextAddress = currentAddress + padding;
         offset += size;
 
-#ifdef RK_DEBUG_INFO
-        RK_TRACE(Memory, "Linear\t@C {}\t@N {}\tO {}\tP {}", currentAddress, nextAddress, offset, padding);
-#endif
+        RK_TRACE(Memory, "Linear\t@Curr {}\t@Next {}\tSize {}\tTotal {}\tPad {}", currentAddress, nextAddress, size, offset, padding);
 
         used = offset;
         peak = std::max(peak, used);

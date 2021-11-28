@@ -1,5 +1,7 @@
 #pragma once
 #include "Vectors.h"
+#include "Memory/MemoryDefine.h"
+#include "Core/Declare.h"
 
 namespace Rocket {
     class Quaternion {

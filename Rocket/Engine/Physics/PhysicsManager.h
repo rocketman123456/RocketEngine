@@ -1,6 +1,9 @@
 #pragma once
+#include "Memory/MemoryDefine.h"
+#include "Core/Declare.h"
 #include "Pattern/Singleton.h"
 #include "Pattern/IRuntimeModule.h"
+
 namespace Rocket {
     class PhysicsManager : _implements_ IRuntimeModule, _implements_ AbstractSingleton<PhysicsManager> {
         RUNTIME_MODULE_TYPE(PhysicsManager);

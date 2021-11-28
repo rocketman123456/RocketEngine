@@ -1,4 +1,6 @@
 #pragma once
+#include "Memory/MemoryDefine.h"
+#include "Core/Declare.h"
 #include "Pattern/IRuntimeModule.h"
 #include "Pattern/Singleton.h"
 #include "EventSystem/Event.h"

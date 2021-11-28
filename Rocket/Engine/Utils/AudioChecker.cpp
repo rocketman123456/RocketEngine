@@ -1,4 +1,5 @@
 #include "Utils/AudioChecker.h"
+
 #include <iostream>
 
 bool CheckALErrors(const std::string& filename, const std::uint_fast32_t line) {

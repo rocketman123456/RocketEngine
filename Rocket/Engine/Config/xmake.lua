@@ -8,6 +8,8 @@ target("RocketEngineConfig")
         {public = true}
     )
     add_deps(
+        "RocketEngineLog",
+        "RocketEngineMemory",
         "RocketEngineFileSystem",
         {public = true}
     )

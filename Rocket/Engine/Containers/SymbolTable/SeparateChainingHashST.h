@@ -73,9 +73,9 @@ namespace Rocket {
         virtual inline bool empty() const final { return size() == 0; }
         virtual inline std::size_t size() const final { return N_; }
     private:
-        // const std::size_t HashTextBook(const Key& key) const {
-        //     return (hash_function_(key) & 0x7fffffff) % M_;
-        // }
+        const std::size_t HashTextBook(const Key& key) const {
+            return (hash_function_(key) & 0x7fffffff) % M_;
+        }
 
         const std::size_t HashCode(const Key& key) const {
             auto h = hash_function_(key);

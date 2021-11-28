@@ -1,4 +1,6 @@
 #include "Algorithm/StringOperation.h"
+#include "Memory/MemoryDefine.h"
+#include "Core/Declare.h"
 
 namespace Rocket {
     namespace Algorithm {

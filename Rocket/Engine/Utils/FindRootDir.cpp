@@ -1,10 +1,11 @@
 #include "Utils/FindRootDir.h"
 #include "Log/Log.h"
+
 #include <filesystem>
 
 namespace Rocket {
     std::string FindRootDir(const std::string& root_symbol) {
-        constexpr uint16_t max_depth_count = 8;
+        const uint16_t max_depth_count = 8;
         std::filesystem::path root_path = std::filesystem::current_path();
         bool quit = false;
 

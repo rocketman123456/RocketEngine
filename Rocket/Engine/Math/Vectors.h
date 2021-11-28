@@ -1,5 +1,7 @@
 #pragma once
 #include "Math/Parameter.h"
+#include "Memory/MemoryDefine.h"
+#include "Core/Declare.h"
 
 #include <Eigen/Eigen>
 

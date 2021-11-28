@@ -1,5 +1,5 @@
 #include "Memory/BenchMark.h"
-#include "Utils/IO.h"
+// #include "Utils/IO.h"
 
 #include <iostream>
 #include <stdlib.h>     // srand, rand
@@ -7,9 +7,9 @@
 
 namespace Rocket {
     void Benchmark::SingleAllocation(Allocator* allocator, const std::size_t size, const std::size_t alignment) {
-        std::cout << "BENCHMARK: ALLOCATION" << IO::endl;
-        std::cout << "\tSize:     \t" << size << IO::endl;
-        std::cout << "\tAlignment\t" << alignment << IO::endl;
+        std::cout << "BENCHMARK: ALLOCATION" << std::endl;//IO::endl;
+        std::cout << "\tSize:     \t" << size << std::endl;//IO::endl;
+        std::cout << "\tAlignment\t" << alignment << std::endl;//IO::endl;
 
         StartRound();
 
@@ -24,15 +24,15 @@ namespace Rocket {
         
         FinishRound();
 
-        BenchmarkResults results = BuildResults(operation_count, std::move(time_elapsed), allocator->peak);
+        BenchmarkResults results = BuildResults(operation_count, duration.count() * 1000.0, allocator->peak);
 
         PrintResults(results);
     }
 
     void Benchmark::SingleFree(Allocator* allocator, const std::size_t size, const std::size_t alignment) {
-        std::cout << "BENCHMARK: ALLOCATION/FREE" << IO::endl;
-        std::cout << "\tSize:     \t" << size << IO::endl;
-        std::cout << "\tAlignment\t" << alignment << IO::endl;
+        std::cout << "BENCHMARK: ALLOCATION/FREE" << std::endl;//IO::endl;
+        std::cout << "\tSize:     \t" << size << std::endl;//IO::endl;
+        std::cout << "\tAlignment\t" << alignment << std::endl;//IO::endl;
 
         // BUG: (https://github.com/mtrebi/memory-allocators/issues/6)
         // void* addresses[m_nOperations];
@@ -55,7 +55,7 @@ namespace Rocket {
 
         FinishRound();
 
-        BenchmarkResults results = BuildResults(operation_count, std::move(time_elapsed), allocator->peak);
+        BenchmarkResults results = BuildResults(operation_count, duration.count() * 1000.0, allocator->peak);
 
         PrintResults(results);
     }
@@ -81,7 +81,7 @@ namespace Rocket {
         // NOTE: Is this actually initializing the RNG? Jose Fernando Lopez Fernandez 11/07/2018 @ 12:54am (UTC)
         srand(1);
 
-        std::cout << "\tBENCHMARK: ALLOCATION" << IO::endl;
+        std::cout << "\tBENCHMARK: ALLOCATION" << std::endl;//IO::endl;
 
         StartRound();
 
@@ -100,7 +100,7 @@ namespace Rocket {
         
         FinishRound();
 
-        BenchmarkResults results = BuildResults(operation_count, std::move(time_elapsed), allocator->peak);
+        BenchmarkResults results = BuildResults(operation_count, duration.count() * 1000.0, allocator->peak);
         
         PrintResults(results);
     }
@@ -110,7 +110,7 @@ namespace Rocket {
         // NOTE: Is this actually initializing the RNG? Jose Fernando Lopez Fernandez 11/07/2018 @ 1:51am (UTC)
         srand(1);
 
-        std::cout << "\tBENCHMARK: ALLOCATION/FREE" << IO::endl;
+        std::cout << "\tBENCHMARK: ALLOCATION/FREE" << std::endl;//IO::endl;
 
         StartRound();
 
@@ -135,30 +135,30 @@ namespace Rocket {
 
         FinishRound();
 
-        BenchmarkResults results = BuildResults(operation_count, std::move(time_elapsed), allocator->peak);
+        BenchmarkResults results = BuildResults(operation_count, duration.count() * 1000.0, allocator->peak);
 
         PrintResults(results);
 
     }
 
     void Benchmark::PrintResults(const BenchmarkResults& results) const {
-        std::cout << "\tRESULTS:" << IO::endl;
-        std::cout << "\t\tOperations:    \t" << results.operations << IO::endl;
-        std::cout << "\t\tTime elapsed: \t" << results.milliseconds.count() << " ms" << IO::endl;
-        std::cout << "\t\tOp per sec:    \t" << results.operations_per_sec << " ops/ms" << IO::endl;
-        std::cout << "\t\tTimer per op:  \t" << results.time_per_operation << " ms/ops" << IO::endl;
-        std::cout << "\t\tMemory peak:   \t" << results.memory_peak << " bytes" << IO::endl;
+        std::cout << "\tRESULTS:" << std::endl;//IO::endl;
+        std::cout << "\t\tOperations:    \t" << results.operations << std::endl;//IO::endl;
+        std::cout << "\t\tTime elapsed: \t" << results.milliseconds << " ms" << std::endl;//IO::endl;
+        std::cout << "\t\tOp per sec:    \t" << results.operations_per_sec << " ops/ms" << std::endl;//IO::endl;
+        std::cout << "\t\tTimer per op:  \t" << results.time_per_operation << " ms/ops" << std::endl;//IO::endl;
+        std::cout << "\t\tMemory peak:   \t" << results.memory_peak << " bytes" << std::endl;//IO::endl;
 
-        std::cout << IO::endl;
+        std::cout << std::endl;//IO::endl;
     }
 
-    const BenchmarkResults Benchmark::BuildResults(std::size_t nOperations, std::chrono::milliseconds&& elapsedTime, const std::size_t memoryPeak) const {
+    const BenchmarkResults Benchmark::BuildResults(std::size_t nOperations, double elapsedTime, const std::size_t memoryPeak) const {
         BenchmarkResults results;
 
         results.operations = nOperations;
-        results.milliseconds = std::move(elapsedTime);
-        results.operations_per_sec = results.operations / static_cast<double>(results.milliseconds.count());
-        results.time_per_operation = static_cast<double>(results.milliseconds.count()) / static_cast<double>(results.operations);
+        results.milliseconds = elapsedTime;
+        results.operations_per_sec = static_cast<double>(results.operations) / results.milliseconds;
+        results.time_per_operation = results.milliseconds / static_cast<double>(results.operations);
         results.memory_peak = memoryPeak;
 
         return results;

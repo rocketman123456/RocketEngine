@@ -1,5 +1,6 @@
 //https://vorbrodt.blog/2020/07/10/singleton-pattern/
 #pragma once
+#include "Memory/MemoryDefine.h"
 #include "Core/Declare.h"
 
 #include <mutex>

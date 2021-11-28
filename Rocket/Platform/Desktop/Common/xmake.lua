@@ -7,4 +7,9 @@ target("RocketPlatformDesktop")
         "glfw", 
         {public = true}
     )
+    add_deps(
+        "RocketEngineLog",
+        "RocketEngineMemory",
+        {public = true}
+    )
 target_end()

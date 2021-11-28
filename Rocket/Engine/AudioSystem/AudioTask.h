@@ -1,4 +1,6 @@
 #pragma once
+#include "Memory/MemoryDefine.h"
+#include "Core/Declare.h"
 #include "FileSystem/AudioFile.h"
 #include "Utils/AudioChecker.h"
 

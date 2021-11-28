@@ -1,5 +1,4 @@
 #pragma once
-#include "Core/Declare.h"
 #include "Render/RenderShader.h"
 #include "Render/SoftTexture.h"
 
