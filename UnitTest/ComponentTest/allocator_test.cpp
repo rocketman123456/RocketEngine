@@ -2,12 +2,12 @@
 #include <cstddef>
 #include <vector>
 
-#include "Memory/Benchmark.h"
 #include "Memory/Allocator.h"
 #include "Memory/StackAllocator.h"
 #include "Memory/CAllocator.h"
 #include "Memory/LinearAllocator.h"
 #include "Memory/PoolAllocator.h"
+#include "Memory/Benchmark.h"
 
 using namespace Rocket;
 
