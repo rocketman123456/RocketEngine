@@ -4,7 +4,7 @@
 
 #include "Memory/Benchmark.h"
 #include "Memory/Allocator.h"
-// #include "Memory/StackAllocator.h"
+#include "Memory/StackAllocator.h"
 #include "Memory/CAllocator.h"
 #include "Memory/LinearAllocator.h"
 #include "Memory/PoolAllocator.h"
@@ -24,7 +24,7 @@ int main() {
     Allocator * cAllocator = new CAllocator();
     Allocator * linearAllocator = new LinearAllocator(A);
     Allocator * poolAllocator = new PoolAllocator(16777216, 4096);
-    //linearAllocator->Init();
+    Allocator * stackAllocator = new StackAllocator(A);
 
     Benchmark benchmark(OPERATIONS);
 
@@ -41,6 +41,12 @@ int main() {
     std::cout << "POOL" << std::endl;
     benchmark.SingleAllocation(poolAllocator, 4096, 8);
     benchmark.SingleFree(poolAllocator, 4096, 8);
+
+    std::cout << "STACK" << std::endl;
+    benchmark.MultipleAllocation(stackAllocator, ALLOCATION_SIZES, ALIGNMENTS);
+    benchmark.MultipleFree(stackAllocator, ALLOCATION_SIZES, ALIGNMENTS);
+    benchmark.RandomAllocation(stackAllocator, ALLOCATION_SIZES, ALIGNMENTS);
+    benchmark.RandomFree(stackAllocator, ALLOCATION_SIZES, ALIGNMENTS);
 
     return 0;
 }
