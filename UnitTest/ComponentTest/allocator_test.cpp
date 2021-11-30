@@ -5,6 +5,7 @@
 #include "Memory/Allocator.h"
 #include "Memory/StackAllocator.h"
 #include "Memory/CAllocator.h"
+#include "Memory/MiAllocator.h"
 #include "Memory/LinearAllocator.h"
 #include "Memory/PoolAllocator.h"
 #include "Memory/Benchmark.h"
@@ -22,17 +23,24 @@ int main() {
     const std::vector<std::size_t> ALIGNMENTS {8, 8, 8, 8, 8, 8, 8};
 
     Allocator * cAllocator = new CAllocator();
+    Allocator * miAllocator = new MiAllocator();
     Allocator * linearAllocator = new LinearAllocator(A);
     Allocator * poolAllocator = new PoolAllocator(16777216, 4096);
     Allocator * stackAllocator = new StackAllocator(A);
 
     Benchmark benchmark(OPERATIONS);
 
-    std::cout << "C" << std::endl;
+    std::cout << "CAllocator" << std::endl;
     benchmark.MultipleAllocation(cAllocator, ALLOCATION_SIZES, ALIGNMENTS);
     benchmark.MultipleFree(cAllocator, ALLOCATION_SIZES, ALIGNMENTS);
     benchmark.RandomAllocation(cAllocator, ALLOCATION_SIZES, ALIGNMENTS);
     benchmark.RandomFree(cAllocator, ALLOCATION_SIZES, ALIGNMENTS);
+
+    std::cout << "MiAllocator" << std::endl;
+    benchmark.MultipleAllocation(miAllocator, ALLOCATION_SIZES, ALIGNMENTS);
+    benchmark.MultipleFree(miAllocator, ALLOCATION_SIZES, ALIGNMENTS);
+    benchmark.RandomAllocation(miAllocator, ALLOCATION_SIZES, ALIGNMENTS);
+    benchmark.RandomFree(miAllocator, ALLOCATION_SIZES, ALIGNMENTS);
 
     std::cout << "LINEAR" << std::endl;
     benchmark.MultipleAllocation(linearAllocator, ALLOCATION_SIZES, ALIGNMENTS);

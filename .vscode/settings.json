@@ -83,6 +83,26 @@
         "__functional_03": "cpp",
         "__memory": "cpp",
         "memory_resource": "cpp",
-        "filesystem": "cpp"
+        "filesystem": "cpp",
+        "charconv": "cpp",
+        "concepts": "cpp",
+        "format": "cpp",
+        "stop_token": "cpp",
+        "xfacet": "cpp",
+        "xhash": "cpp",
+        "xiosbase": "cpp",
+        "xlocale": "cpp",
+        "xlocbuf": "cpp",
+        "xlocinfo": "cpp",
+        "xlocmes": "cpp",
+        "xlocmon": "cpp",
+        "xlocnum": "cpp",
+        "xloctime": "cpp",
+        "xmemory": "cpp",
+        "xstddef": "cpp",
+        "xstring": "cpp",
+        "xtr1common": "cpp",
+        "xtree": "cpp",
+        "xutility": "cpp"
     }
 }
