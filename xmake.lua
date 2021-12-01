@@ -110,24 +110,20 @@ option_end()
 --
 add_includedirs(
     "Rocket/Engine",
-    "Rocket/Render/Common",
-    "Rocket/Render/SoftRender",
-    "Rocket/Platform/Common"
+    "Rocket/Render/Common"
+    -- "Rocket/Render/SoftRender",
+    -- "Rocket/Platform/Common"
 )
 if is_plat("windows", "macosx", "linux") then
     add_includedirs("Rocket/Platform/Desktop/Common")
-    if is_plat("windows") then
-        add_includedirs("Rocket/Platform/Desktop/Windows")
-    elseif is_plat("macosx") then
-        add_includedirs("Rocket/Platform/Desktop/MacOS")
-    elseif is_plat("linux") then
-        add_includedirs("Rocket/Platform/Desktop/Linux")
-    end
+    -- if is_plat("windows") then
+    --     add_includedirs("Rocket/Platform/Desktop/Windows")
+    -- elseif is_plat("macosx") then
+    --     add_includedirs("Rocket/Platform/Desktop/MacOS")
+    -- elseif is_plat("linux") then
+    --     add_includedirs("Rocket/Platform/Desktop/Linux")
+    -- end
 end
-
---
--- Add ISPC Build Rule
---
 
 --
 -- Set Platform Defines
@@ -164,4 +160,8 @@ end
 --
 -- Add Sub Module
 --
-includes("Rocket", "Sandbox", "UnitTest")
+includes(
+    "Rocket" 
+    --"Sandbox", 
+    --"UnitTest"
+)

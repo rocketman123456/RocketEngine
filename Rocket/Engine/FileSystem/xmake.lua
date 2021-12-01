@@ -1,17 +1,17 @@
-target("RocketEngineFileSystem")
+includes("BasicFile")
+
+target("RocketFileSystem")
     set_kind("static")
     add_files("*.cpp")
     add_options("console_log")
     add_options("memory_check")
-    add_packages(
-        "minizip", "zlib", 
-        "openal-soft", "libsndfile",
-        {public = true}
-    )
     add_deps(
-        "RocketEngineLog",
-        "RocketEngineMemory",
+        "RocketLog",
+        "RocketMemory",
+        "RocketNativeFile",
+        "RocketZipFile",
+        "RocketMemoryFile",
+        "RocketSpecialFile",
         {public = true}
     )
-    set_license("LGPL-2.0")
 target_end()

@@ -1,5 +1,5 @@
 #pragma once
-#include "Core/Declare.h"
+#include <cstddef>
 
 // ----------------------------------------------------------------------------
 // This header provides convenient overrides for the new and
@@ -13,8 +13,7 @@
 // ---------------------------------------------------------------------------
 
 #if defined(__cplusplus)
-#include <new>
-#include <cstddef>
+    #include <new>
 
     void operator delete(void* p) noexcept;
     void operator delete[](void* p) noexcept;
@@ -25,12 +24,12 @@
     void* operator new  (std::size_t n, const std::nothrow_t& tag) noexcept;
     void* operator new[](std::size_t n, const std::nothrow_t& tag) noexcept;
 
-#if (__cplusplus >= 201402L || _MSC_VER >= 1916)
+    #if (__cplusplus >= 201402L || _MSC_VER >= 1916)
     void operator delete  (void* p, std::size_t n) noexcept;
     void operator delete[](void* p, std::size_t n) noexcept;
-#endif
+    #endif
 
-#if (__cplusplus > 201402L || defined(__cpp_aligned_new))
+    #if (__cplusplus > 201402L || defined(__cpp_aligned_new))
     void operator delete  (void* p, std::align_val_t al) noexcept;
     void operator delete[](void* p, std::align_val_t al) noexcept;
     void operator delete  (void* p, std::size_t n, std::align_val_t al) noexcept;
@@ -40,7 +39,7 @@
     void* operator new[]( std::size_t n, std::align_val_t al) noexcept(false);
     void* operator new  (std::size_t n, std::align_val_t al, const std::nothrow_t&) noexcept;
     void* operator new[](std::size_t n, std::align_val_t al, const std::nothrow_t&) noexcept;
-#endif
+    #endif
 #endif
 
 
