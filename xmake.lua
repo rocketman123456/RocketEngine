@@ -115,7 +115,7 @@ add_includedirs(
     -- "Rocket/Platform/Common"
 )
 if is_plat("windows", "macosx", "linux") then
-    add_includedirs("Rocket/Platform/Desktop/Common")
+    --add_includedirs("Rocket/Platform/Desktop/Common")
     -- if is_plat("windows") then
     --     add_includedirs("Rocket/Platform/Desktop/Windows")
     -- elseif is_plat("macosx") then
@@ -123,6 +123,8 @@ if is_plat("windows", "macosx", "linux") then
     -- elseif is_plat("linux") then
     --     add_includedirs("Rocket/Platform/Desktop/Linux")
     -- end
+elseif is_plat("android", "iphoneos") then
+
 end
 
 --
@@ -161,7 +163,7 @@ end
 -- Add Sub Module
 --
 includes(
-    "Rocket" 
-    --"Sandbox", 
-    --"UnitTest"
+    "Rocket",
+    --"Sandbox",
+    "UnitTest"
 )

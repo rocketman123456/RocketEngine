@@ -1,9 +1,9 @@
 includes(
+    -- "AlgorismTest",
+    -- "ComponentTest",
     "ContainerTest",
-    "AlgorismTest",
-    "ComponentTest",
-    "CppTest",
-    "GAMES101",
-    "LibTest",
-    "Utils"
+    "CppTest"
+    -- "GAMES101",
+    -- "LibTest",
+    -- "Utils"
 )

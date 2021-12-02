@@ -5,7 +5,7 @@
 namespace Rocket {
     namespace Algorithm {
         // Split a String into a string array at a given token
-        void Split(const std::string &in, std::vector<std::string> &out, std::string token);
+        void Split(const std::string &in, std::vector<std::string> &out, const std::string& token);
 
         // Get tail of string after first token and possibly following spaces
         std::string Tail(const std::string &in);

@@ -14,11 +14,11 @@ namespace Rocket {
         virtual void Finalize() = 0;
 
         inline FileOperateMode GetFileOperateMode() const { return mode_; }
-        inline const FileHandle* GetFileHandle() const { return &file_; }
+        inline const FileInfo* GetFileHandle() const { return &file_; }
         
     protected:
         FileOperateMode mode_;
-        FileHandle file_;
+        FileInfo file_;
         bool initialized_;
     };
 }

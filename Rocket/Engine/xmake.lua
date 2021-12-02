@@ -8,7 +8,7 @@ includes(
     -- "Core",
     -- "EventSystem",
     -- "Exception",
-    -- "FileSystem",
+    "FileSystem",
     -- "Geometry",
     "Log",
     -- "Math",

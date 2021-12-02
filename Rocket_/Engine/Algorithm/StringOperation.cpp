@@ -4,7 +4,7 @@
 
 namespace Rocket {
     namespace Algorithm {
-        void Split(const std::string &in, std::vector<std::string> &out, std::string token) {
+        void Split(const std::string &in, std::vector<std::string> &out, const std::string& token) {
             out.clear();
 
             std::string temp;

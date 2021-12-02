@@ -13,19 +13,19 @@ target("sort_compare")
     add_files("sort_compare.cpp")
 target_end()
 
-target("factory_test")
-    set_kind("binary")
-    add_files("factory_test.cpp")
-target_end()
+-- target("factory_test")
+--     set_kind("binary")
+--     add_files("factory_test.cpp")
+-- target_end()
 
 target("L1_cache")
     set_kind("binary")
     add_files("L1_cache.cpp")
+    if is_plat("macosx") then
+        add_frameworks("Cocoa", "IOKit", "CoreVideo")
+    end
     if is_plat("linux", "macosx") then
         add_links("pthread", "m", "dl")
-        if is_plat("macosx") then
-            add_frameworks("Cocoa", "IOKit", "CoreVideo")
-        end
     elseif is_plat("windows") then
         add_links("user32", "gdi32", "shell32", "kernel32")
     end
@@ -42,8 +42,8 @@ target("serializer")
     add_includedirs(".")
 target_end()
 
-target("singleton")
-    set_kind("binary")
-    add_files("singleton.cpp")
-    add_includedirs(".")
-target_end()
+-- target("singleton")
+--     set_kind("binary")
+--     add_files("singleton.cpp")
+--     add_includedirs(".")
+-- target_end()

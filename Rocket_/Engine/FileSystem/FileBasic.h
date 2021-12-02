@@ -74,7 +74,7 @@ namespace Rocket {
 
     using FileBufferPtr = std::shared_ptr<FileBuffer>;
 
-    struct FileHandle {
+    struct FileInfo {
         void* file_pointer = nullptr;
         void* extra_file_info = nullptr;
         int64_t total_size;
@@ -93,7 +93,7 @@ namespace Rocket {
         /// Cancels the asynchronous operation
         virtual void Cancel() = 0;
     protected:
-        FileHandle file_;
+        FileInfo file_;
         std::atomic<int32_t> overlapped_;
     };
 }

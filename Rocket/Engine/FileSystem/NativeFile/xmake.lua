@@ -9,5 +9,4 @@ target("RocketNativeFile")
         "RocketMemory",
         {public = true}
     )
-    set_license("LGPL-2.0")
 target_end()
