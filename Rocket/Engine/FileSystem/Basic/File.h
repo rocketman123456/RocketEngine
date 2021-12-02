@@ -39,6 +39,8 @@ namespace Rocket {
         virtual std::size_t Read(uint8_t* buffer, std::size_t size) = 0;
         virtual std::size_t Write(const uint8_t* buffer, std::size_t size) = 0;
 
+        // TODO : Maybe add some multi-thread support
+
         template<typename T>
         std::size_t Read(T& value) {
             return (Read(&value, sizeof(value)) == sizeof(value)) ? sizeof(value) : 0;

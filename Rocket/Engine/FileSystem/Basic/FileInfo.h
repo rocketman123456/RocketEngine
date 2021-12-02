@@ -1,11 +1,11 @@
 #pragma once
 #include "Memory/MemoryDefine.h"
 #include "FileSystem/Basic/FileBuffer.h"
-#include "Utils/Hashing.h"
 #include "Utils/StringUtils.h"
+#include "Utils/Hashing.h"
 #include "Log/Log.h"
 
-#include <gsl/gsl>
+//#include <gsl/gsl>
 
 #include <cstdint>
 #include <cstddef>
@@ -83,8 +83,8 @@ namespace Rocket {
         }
 
     private:
-        gsl::span<char> basic_info;     // basic info data
-        gsl::span<char> extra_info;     // extra info data
+        //gsl::span<char> basic_info;     // basic info data
+        //gsl::span<char> extra_info;     // extra info data
         std::string name = "";          // File Name
         std::string base_path = "";     // File Basic Path
         std::string base_name = "";     // File Name Without type
