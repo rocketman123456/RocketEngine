@@ -2,8 +2,10 @@
 #include "FileSystem/Basic/FileInfo.h"
 #include "FileSystem/Basic/FileBuffer.h"
 
+#include <gsl/gsl>
+
 namespace Rocket {
-    class File {
+    _Interface_ File {
     public:
         enum FileOperateMode {
             READ_BINARY = 1 << 0,
@@ -24,7 +26,7 @@ namespace Rocket {
 
     public:
         File() = default;
-        virtual ~File() = default();
+        virtual ~File() = default;
 
         virtual FileInfoPtr GetFileInfo() const = 0;
         virtual std::size_t Size() const = 0;
@@ -33,11 +35,12 @@ namespace Rocket {
         virtual void Open(int32_t mode) = 0;
         virtual void Close() = 0;
         virtual std::size_t Seek(std::size_t offset, FileOrigin origin) = 0;
-        virtual std::size_t SeekToEnd(void) = 0;
         virtual std::size_t Tell() = 0;
 
-        virtual std::size_t Read(uint8_t* buffer, std::size_t size) = 0;
-        virtual std::size_t Write(const uint8_t* buffer, std::size_t size) = 0;
+        virtual gsl::span<gsl::byte> Read(std::size_t size) = 0;
+        virtual std::size_t Write(gsl::span<gsl::byte> data, std::size_t size) = 0;
+        //virtual std::size_t Read(uint8_t* buffer, std::size_t size) = 0;
+        //virtual std::size_t Write(const uint8_t* buffer, std::size_t size) = 0;
 
         // TODO : Maybe add some multi-thread support
 

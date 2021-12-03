@@ -31,8 +31,8 @@ namespace Rocket {
             Initialize(base_path, file_name, is_dir);
         }
 
-        FileInfo(const FileInfo& buffer) = delete;
-        FileInfo& operator = (const FileInfo& buffer) = delete;
+        //FileInfo(const FileInfo& buffer) = delete;
+        //FileInfo& operator = (const FileInfo& buffer) = delete;
 
         inline const std::string& Name() const { return name; }
         inline const std::string& BaseName() const { return base_name; }
@@ -42,6 +42,7 @@ namespace Rocket {
         inline bool IsDir() const { return is_dir; }
         inline bool IsValid() const { return is_valid; }
         inline int64_t Hash() const { return hash_code; }
+        inline int64_t HashExt() const { return hash_ext; }
 
     private:
         void Initialize(const std::string& file_path, bool is_dir) noexcept {
@@ -70,33 +71,36 @@ namespace Rocket {
 
             // find file name and type
             std::size_t dots_num = std::count(name.begin(), name.end(), '.');
-            bool isDotOrDotDot = (dots_num == name.length() && is_dir);
-            if(!isDotOrDotDot) {
+            bool is_real_dir = (dots_num == name.length() && is_dir);
+            if(!is_real_dir) {
                 std::size_t found = name.rfind(".");
-                if (found != std::string::npos) {
+                if(found != std::string::npos) {
                     base_name = name.substr(0, found);
-                    if (found < name.length()) {
+                    if(found < name.length()) {
                         extension = name.substr(found, name.length() - found);
+                        hash_ext = hash_i64(extension);
                     }
                 }
             }
+
+            // Finally, hash code
+            hash_code = hash_i64(absolute_path);
         }
 
     private:
-        //gsl::span<char> basic_info;     // basic info data
-        //gsl::span<char> extra_info;     // extra info data
         std::string name = "";          // File Name
         std::string base_path = "";     // File Basic Path
         std::string base_name = "";     // File Name Without type
         std::string extension = "";     // File Type
         std::string absolute_path = ""; // File Full Path
         int64_t     hash_code = -1;     // File Hash Code
+        int64_t     hash_ext = -1;
         bool        is_dir = false;
         bool        is_valid = true;
     };
 
-    inline bool operator ==(const FileInfo& fi1, const FileInfo& fi2) { return fi1.Hash() == fi2.Hash(); }
-    inline bool operator <(const FileInfo& fi1, const FileInfo& fi2) { return fi1.Hash() < fi2.Hash(); }
+    inline bool operator == (const FileInfo& fi1, const FileInfo& fi2) { return fi1.Hash() == fi2.Hash(); }
+    inline bool operator < (const FileInfo& fi1, const FileInfo& fi2) { return fi1.Hash() < fi2.Hash(); }
 
     using FileInfoPtr = std::shared_ptr<FileInfo>;
 }
