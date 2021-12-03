@@ -3,6 +3,7 @@
 #include "FileSystem/Basic/FileBuffer.h"
 
 #include <gsl/gsl>
+#include <future>
 
 namespace Rocket {
     _Interface_ File {
@@ -38,11 +39,11 @@ namespace Rocket {
         virtual std::size_t Tell() = 0;
 
         virtual gsl::span<gsl::byte> Read(std::size_t size) = 0;
-        virtual std::size_t Write(gsl::span<gsl::byte> data, std::size_t size) = 0;
-        //virtual std::size_t Read(uint8_t* buffer, std::size_t size) = 0;
-        //virtual std::size_t Write(const uint8_t* buffer, std::size_t size) = 0;
+        virtual std::size_t Write(gsl::span<gsl::byte> data) = 0;
 
-        // TODO : Maybe add some multi-thread support
+        // TODO : add async support
+        //virtual std::future<gsl::span<gsl::byte>> ReadAsync(std::size_t size) = 0;
+        //virtual std::future<std::size_t> WriteAsync(gsl::span<gsl::byte> data, std::size_t size) = 0;
 
         template<typename T>
         std::size_t Read(T& value) {
@@ -53,9 +54,5 @@ namespace Rocket {
         std::size_t Write(const T& value) {
             return (Write(&value, sizeof(value)) == sizeof(value)) ? sizeof(value) : 0;
         }
-
-    // private:
-        //FileInfoPtr file_info_ = nullptr;
-        //FileBufferPtr file_buffer_ = nullptr;
     };
 }

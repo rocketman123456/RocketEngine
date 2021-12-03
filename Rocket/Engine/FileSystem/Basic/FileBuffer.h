@@ -1,42 +1,31 @@
 #pragma once
 #include "Memory/MemoryDefine.h"
 
+#include <gsl/gsl>
+
 #include <cstdlib>
 #include <cstdint>
-#include <string>
-#include <cstring>    // std::memcpy
 #include <memory>
 
 namespace Rocket {
+    //Should Manage Memory by User
     struct FileBuffer {
-        int64_t uuid = 0;           // hash code for check
-        int64_t size = 0;           // bytes
-        char*   buffer = nullptr;
+        // hash code for quicker find
+        int64_t uuid = 0;
+        gsl::span<gsl::byte> buffer;
 
-        FileBuffer() = default;
-        ~FileBuffer() { if(buffer) delete[] buffer; } // Auto Delete
+        ~FileBuffer() {
+            if(buffer.data()) {
+                delete [] buffer.data();
+            }
+        }
 
+        // Uncopyable
         FileBuffer(const FileBuffer& buffer) = delete;
         FileBuffer& operator = (const FileBuffer& buffer) = delete;
-
-        // Move
-        FileBuffer(FileBuffer&& buffer) {
-            this->uuid = buffer.uuid;
-            this->size = buffer.size;
-            buffer.buffer = nullptr;
-            buffer.size = 0;
-        }
-
-        // Move
-        FileBuffer& operator = (FileBuffer&& buffer) {
-            if (this == &buffer) return *this;
-            if(this->buffer) delete [] this->buffer;
-            this->uuid = buffer.uuid;
-            this->size = buffer.size;
-            buffer.buffer = nullptr;
-            buffer.size = 0;
-            return *this;
-        }
+        // Can Only Move
+        FileBuffer(FileBuffer&& buffer) = default;
+        FileBuffer& operator = (FileBuffer&& buffer) = default;
     };
 
     using FileBufferPtr = std::shared_ptr<FileBuffer>;

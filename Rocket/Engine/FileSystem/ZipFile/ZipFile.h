@@ -19,9 +19,7 @@ namespace Rocket {
         std::size_t Tell() final;
 
         gsl::span<gsl::byte> Read(std::size_t size) final;
-        std::size_t Write(gsl::span<gsl::byte> data, std::size_t size) final;
-        //std::size_t Read(uint8_t* buffer, std::size_t size) final;
-        //std::size_t Write(const uint8_t* buffer, std::size_t size) final;
+        std::size_t Write(gsl::span<gsl::byte> data) final;
     private:
         FileInfoPtr file_info = nullptr;
         int32_t mode = 0;

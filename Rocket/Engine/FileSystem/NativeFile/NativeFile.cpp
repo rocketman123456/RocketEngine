@@ -2,16 +2,6 @@
 #include "Log/Log.h"
 
 namespace Rocket {
-    //std::size_t NativeFile::Size() const {
-        // if (IsOpened()) {
-        //     uint64_t cur_pos = Tell();
-        //     Seek(0, FILE_END);
-        //     file_size = Tell();
-        //     Seek(cur_pos, FILE_BEGIN);
-        //     return size;
-        // }
-    //}
-
     void NativeFile::Open(int32_t mode) {
         // Check Re-open case
         if(IsOpened() && this->mode & mode != 0) {
@@ -49,6 +39,14 @@ namespace Rocket {
         }
 
         stream.open(file_info->AbsolutePath().c_str(), open_mode);
+
+        // Calculate File Size
+        if (IsOpened()) {
+            auto cur_pos = Tell();
+            Seek(0, File::FILE_END);
+            file_size = Tell();
+            Seek(cur_pos, File::FILE_BEGIN);
+        }
     }
 
     void NativeFile::Close() {
@@ -59,7 +57,6 @@ namespace Rocket {
         if (!IsOpened()) {
             return 0;
         }
-        
         std::ios_base::seekdir way;
         if (origin == File::FILE_BEGIN) {
             way = std::ios_base::beg;
@@ -68,10 +65,8 @@ namespace Rocket {
         } else {
             way = std::ios_base::cur;
         }
-        
         stream.seekg(offset, way);
         stream.seekp(offset, way);
-        
         return Tell();
     }
 
@@ -81,24 +76,24 @@ namespace Rocket {
 
     gsl::span<gsl::byte> NativeFile::Read(std::size_t size) {
         if (!IsOpened()) {
-            return gsl::span<gsl::byte>(nullptr, static_cast<std::size_t>(0));
+            return gsl::span<gsl::byte>(nullptr, std::size_t(0));
         }
         gsl::byte* data = nullptr;
-        stream.read(reinterpret_cast<char*>(data), (std::streamsize)size);
+        stream.read(reinterpret_cast<char*>(data), static_cast<std::streamsize>(size));
         if (stream) {
             return gsl::span<gsl::byte>(data, size);
         }
-        return gsl::span<gsl::byte>(data, stream.gcount());
+        return gsl::span<gsl::byte>(data, static_cast<std::size_t>(stream.gcount()));
     }
 
-    std::size_t NativeFile::Write(gsl::span<gsl::byte> data, std::size_t size) {
+    std::size_t NativeFile::Write(gsl::span<gsl::byte> data) {
         if (!IsOpened() || IsReadOnly()) {
             return 0;
         }
-        stream.write(reinterpret_cast<const char*>(data.data()), static_cast<std::streamsize>(size));
+        stream.write(reinterpret_cast<const char*>(data.data()), static_cast<std::streamsize>(data.size()));
         if (stream) {
-            return size;
+            return data.size();
         }
-        return static_cast<uint64_t>(stream.gcount());
+        return static_cast<std::size_t>(stream.gcount());
     }
 }
