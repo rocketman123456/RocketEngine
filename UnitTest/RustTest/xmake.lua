@@ -10,6 +10,8 @@ target("add_fun")
     add_packages("cargo::cxx")
 target_end()
 
+add_requires("cargo::cxx")
+
 target("call_rust_test")
     set_kind("binary")
     add_rules("rust.cxxbridge")

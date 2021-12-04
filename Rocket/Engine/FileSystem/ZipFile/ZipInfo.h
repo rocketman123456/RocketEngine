@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <memory>
 #include <unordered_map>
 #include <tuple>
 
@@ -20,4 +21,6 @@ namespace Rocket {
         void* zip_archive;
         EntryMap entries;
     };
+
+    using ZipInfoPtr = std::shared_ptr<ZipInfo>;
 }

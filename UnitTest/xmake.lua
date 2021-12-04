@@ -1,3 +1,4 @@
 includes(
-    "ContainerTest"
+    "ContainerTest",
+    "RustTest"
 )

@@ -1,5 +1,6 @@
 #pragma once
 #include "FileSystem/Basic/File.h"
+#include "FileSystem/ZipFile/ZipInfo.h"
 
 namespace Rocket {
     class ZipFile : _implements_ File {
@@ -20,6 +21,7 @@ namespace Rocket {
         std::size_t Write(gsl::span<gsl::byte> data) final;
     private:
         FileInfoPtr file_info = nullptr;
+        ZipInfoPtr zip_info;
         int32_t mode = 0;
         bool is_read_only = false;
     };

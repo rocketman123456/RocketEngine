@@ -40,8 +40,6 @@ add_requires("mimalloc 2.0.2", {system = false, configs = {shared = false, debug
 add_requires("lua v5.4.2", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
 add_requires("luajit", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
 
---add_requires("cargo::cxx")
-
 -- if is_plat("macosx", "linux", "windows") then
 --     add_requires("libtorch v1.8.1", {system = false, configs = {shared = true, debug = true, cxflags = "-fPIC"}})
 -- end
