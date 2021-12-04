@@ -1,6 +1,6 @@
 #pragma once
 #include "FileSystem/Basic/FileInfo.h"
-#include "FileSystem/Basic/FileBuffer.h"
+// #include "FileSystem/Basic/FileBuffer.h"
 
 #include <gsl/gsl>
 #include <future>
@@ -45,14 +45,9 @@ namespace Rocket {
         //virtual std::future<gsl::span<gsl::byte>> ReadAsync(std::size_t size) = 0;
         //virtual std::future<std::size_t> WriteAsync(gsl::span<gsl::byte> data, std::size_t size) = 0;
 
-        template<typename T>
-        std::size_t Read(T& value) {
-            return (Read(&value, sizeof(value)) == sizeof(value)) ? sizeof(value) : 0;
-        }
-
-        template<typename T>
-        std::size_t Write(const T& value) {
-            return (Write(&value, sizeof(value)) == sizeof(value)) ? sizeof(value) : 0;
-        }
+        // template<typename T>
+        // gsl::span<T> Read(T& value) { return Read(sizeof(value)); }
+        // template<typename T>
+        // std::size_t Write(gsl::span<T> value) { return Write(value); }
     };
 }

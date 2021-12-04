@@ -1,7 +1,5 @@
 #pragma once
 #include "FileSystem/Basic/File.h"
-#include "FileSystem/Basic/FileInfo.h"
-#include "FileSystem/Basic/FileBuffer.h"
 
 namespace Rocket {
     class MemoryFile : _implements_ File {

@@ -11,8 +11,8 @@ namespace Rocket {
     //Should Manage Memory by User
     struct FileBuffer {
         // hash code for quicker find
-        int64_t uuid = 0;
         gsl::span<gsl::byte> buffer;
+        int64_t uuid = 0;
 
         ~FileBuffer() {
             if(buffer.data()) {

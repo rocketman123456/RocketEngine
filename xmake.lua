@@ -22,8 +22,9 @@ set_languages("c99", "c++17")
 add_requires("fmt 8.0.1", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
 add_requires("spdlog v1.9.0", {system = false, configs = {shared = false, debug = true, fmt_external = true, cxflags = "-fPIC"}})
 add_requires("glad v0.1.34", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
-add_requires("minizip 1.2.11", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
-add_requires("zlib 1.2.11", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
+--add_requires("minizip 1.2.11", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
+add_requires("miniz 2.1.0", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
+--add_requires("zlib 1.2.11", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
 add_requires("yaml-cpp 0.7.0", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
 add_requires("openal-soft 1.21.1", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
 add_requires("libsndfile 1.0.30", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
@@ -38,6 +39,8 @@ add_requires("gsl v3.1.0", {system = false, configs = {shared = false, debug = t
 add_requires("mimalloc 2.0.2", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
 add_requires("lua v5.4.2", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
 add_requires("luajit", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
+
+--add_requires("cargo::cxx")
 
 -- if is_plat("macosx", "linux", "windows") then
 --     add_requires("libtorch v1.8.1", {system = false, configs = {shared = true, debug = true, cxflags = "-fPIC"}})

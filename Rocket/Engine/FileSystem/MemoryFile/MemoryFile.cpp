@@ -66,6 +66,7 @@ namespace Rocket {
             return gsl::span<gsl::byte>(nullptr, std::size_t(0));
         }
 
+        // Copy Specify Memory Area
         gsl::byte* buffer = nullptr;
         std::size_t buffer_size = Size() - Tell();
         std::size_t max_size = std::min(size, buffer_size);
