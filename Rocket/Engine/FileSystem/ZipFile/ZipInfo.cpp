@@ -50,6 +50,10 @@ namespace Rocket {
         if (stat(FileName().c_str(), &file_stat) < 0) {
             return false;
         }
+#ifdef RK_WINDOWS
+        return (file_stat.st_mode & _S_IWRITE);
+#else
         return (file_stat.st_mode & S_IWUSR);
+#endif
     }
 }
