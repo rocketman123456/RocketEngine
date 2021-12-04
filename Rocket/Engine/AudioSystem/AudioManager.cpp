@@ -31,11 +31,13 @@ namespace Rocket {
     }
 
     void AudioManager::Tick(TimeStep step) {
-        for(auto it = tasks_.begin(); it != tasks_.end(); ++it) {
+        for(auto it = tasks_.begin(); it != tasks_.end();) {
             if((*it)->IsStoped()) {
                 (*it)->Finalize();
-                tasks_.erase(it);
+                it = tasks_.erase(it);
+                continue;
             }
+            ++it;
         }
     }
 
