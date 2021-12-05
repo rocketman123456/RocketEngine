@@ -132,7 +132,8 @@ namespace Rocket {
     }
 
     bool NativeFileSystem::IsFileExists(const FileInfoPtr& file_path) const {
-        return (FindFile(std::make_shared<FileInfo>(BasePath() + file_path->AbsolutePath())) != nullptr);
+        auto extra_info = std::make_shared<FileInfo>(BasePath() + file_path->AbsolutePath());
+        return (FindFile(extra_info) != nullptr);
     }
 
     bool NativeFileSystem::IsFile(const FileInfoPtr& file_path) const {
@@ -177,7 +178,31 @@ namespace Rocket {
         return nullptr;
     }
 
-    void NativeFileSystem::BuildFilelist(SDir* dir, const std::string& basePath, FileList& out) {
-        // TODO
+    void NativeFileSystem::BuildFilelist(SDir* dir, const std::string& base, FileList& out) {
+        auto basePath = base;
+        if (!EndsWith(basePath, "/")) {
+            basePath += "/";
+        }
+        struct dirent* ent;
+        while((ent = readdir(dir)) != NULL) {
+            std::string filename = ent->d_name;
+            std::string filepath = basePath + filename;
+            SDir* childDir = static_cast<SDir*>(opendir(filepath.c_str()));
+            bool isDotOrDotDot = EndsWith(filename, ".") && childDir;
+            if (childDir && !isDotOrDotDot) {
+                filename += "/";
+            }
+            FileInfoPtr fileInfo = std::make_shared<FileInfo>(basePath, filename, childDir != nullptr);
+            if(!FindFile(fileInfo)) {
+                FilePtr file(new NativeFile(fileInfo));
+                out.insert(file);
+            }
+            if(childDir) {
+                if(!isDotOrDotDot) {
+                    BuildFilelist(childDir, (childDir ? filepath : basePath), out);
+                }
+                closedir(childDir);
+            }
+        }
     }
 }
