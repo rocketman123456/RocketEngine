@@ -3,6 +3,9 @@ target("rust_print_test")
     add_files("print_test.rs")
 target_end()
 
+add_requires("cargo::base64")
+add_requires("cargo::cxx")
+
 target("add_fun")
     set_kind("static")
     add_files("add_fun.rs")
@@ -10,12 +13,10 @@ target("add_fun")
     add_packages("cargo::cxx")
 target_end()
 
-add_requires("cargo::cxx")
-
 target("call_rust_test")
     set_kind("binary")
     add_rules("rust.cxxbridge")
-    add_files("call_rust_test.cpp")
     add_files("bridge.rsx")
+    add_files("call_rust_test.cc")
     add_deps("add_fun")
 target_end()

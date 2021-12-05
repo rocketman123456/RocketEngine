@@ -10,9 +10,8 @@
 namespace Rocket {
     //Should Manage Memory by User
     struct FileBuffer {
-        // hash code for quicker find
-        gsl::span<gsl::byte> buffer;
-        int64_t uuid = 0;
+        int64_t uuid = 0;               // Global Resource Id, to Identify a File, Using Hash of full path
+        gsl::span<gsl::byte> buffer;    // Store file content, can't be changed during runtime
 
         ~FileBuffer() {
             if(buffer.data()) {
@@ -28,5 +27,5 @@ namespace Rocket {
         FileBuffer& operator = (FileBuffer&& buffer) = default;
     };
 
-    using FileBufferPtr = std::shared_ptr<FileBuffer>;
+    CLASS_PTR(FileBuffer);
 }

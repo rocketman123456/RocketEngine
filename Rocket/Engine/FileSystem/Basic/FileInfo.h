@@ -31,9 +31,6 @@ namespace Rocket {
             Initialize(base_path, file_name, is_dir);
         }
 
-        //FileInfo(const FileInfo& buffer) = delete;
-        //FileInfo& operator = (const FileInfo& buffer) = delete;
-
         inline const std::string& Name() const { return name; }
         inline const std::string& BaseName() const { return base_name; }
         inline const std::string& BasePath() const { return base_path; }
@@ -101,6 +98,6 @@ namespace Rocket {
 
     inline bool operator == (const FileInfo& fi1, const FileInfo& fi2) { return fi1.Hash() == fi2.Hash(); }
     inline bool operator < (const FileInfo& fi1, const FileInfo& fi2) { return fi1.Hash() < fi2.Hash(); }
-
-    using FileInfoPtr = std::shared_ptr<FileInfo>;
+    
+    CLASS_PTR(FileInfo);
 }

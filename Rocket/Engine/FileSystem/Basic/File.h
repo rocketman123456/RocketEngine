@@ -1,14 +1,13 @@
 #pragma once
 #include "FileSystem/Basic/FileInfo.h"
-// #include "FileSystem/Basic/FileBuffer.h"
+#include "FileSystem/Basic/FileBuffer.h"
 
 #include <gsl/gsl>
 #include <future>
 
 namespace Rocket {
-    _Interface_ File {
-    public:
-        enum FileOperateMode {
+    namespace FileMode {
+        enum FileOperate {
             READ_BINARY = 1 << 0,
             WRITE_BINARY = 1 << 1,
             READWRITE_BINARY = READ_BINARY | WRITE_BINARY,
@@ -20,24 +19,27 @@ namespace Rocket {
         };
 
         enum FileOrigin {
-            FILE_BEGIN = 1 << 0,
-            FILE_END = 1 << 1,
-            FILE_SET = 1 << 2,
+            BEGIN = 0,
+            END = 1,
+            SET = 2,
         };
+    }
 
+    _Interface_ File {
     public:
         File() = default;
         virtual ~File() = default;
 
-        virtual FileInfoPtr GetFileInfo() const = 0;
+        virtual FileInfoPtr FileInfo() const = 0;
         virtual std::size_t Size() const = 0;
         virtual bool IsReadOnly() const = 0;
         virtual bool IsOpened() const = 0;
         virtual void Open(int32_t mode) = 0;
         virtual void Close() = 0;
-        virtual std::size_t Seek(std::size_t offset, FileOrigin origin) = 0;
+        virtual std::size_t Seek(std::size_t offset, FileMode::FileOrigin origin) = 0;
         virtual std::size_t Tell() = 0;
 
+        // TODO : change to file buffer
         virtual gsl::span<gsl::byte> Read(std::size_t size) = 0;
         virtual std::size_t Write(gsl::span<gsl::byte> data) = 0;
 
@@ -50,4 +52,6 @@ namespace Rocket {
         // template<typename T>
         // std::size_t Write(gsl::span<T> value) { return Write(value); }
     };
+
+    CLASS_PTR(File);
 }

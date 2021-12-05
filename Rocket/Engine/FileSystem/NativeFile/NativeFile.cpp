@@ -4,9 +4,9 @@
 namespace Rocket {
     void NativeFile::Open(int32_t mode) {
         // Check Re-open case
-        if(IsOpened() && this->mode & mode != 0) {
+        if(IsOpened() && (this->mode & mode) != 0) {
             RK_WARN(File, "Reopen File");
-            Seek(0, File::FILE_BEGIN);
+            Seek(0, FileMode::BEGIN);
             return;
         }
 
@@ -14,27 +14,27 @@ namespace Rocket {
         this->is_read_only = true;
 
         std::ios_base::openmode open_mode = (std::ios_base::openmode)0x00;
-        if (mode & File::READ_BINARY) {
+        if (mode & FileMode::READ_BINARY) {
             open_mode |= std::fstream::in;
             open_mode |= std::fstream::binary;
         }
-        if (mode & File::WRITE_BINARY) {
+        if (mode & FileMode::WRITE_BINARY) {
             is_read_only = false;
             open_mode |= std::fstream::out;
             open_mode |= std::fstream::binary;
         }
-        if (mode & File::READ_TEXT) {
+        if (mode & FileMode::READ_TEXT) {
             open_mode |= std::fstream::in;
         }
-        if (mode & File::WRITE_TEXT) {
+        if (mode & FileMode::WRITE_TEXT) {
             is_read_only = false;
             open_mode |= std::fstream::out;
         }
-        if (mode & File::APPEND) {
+        if (mode & FileMode::APPEND) {
             is_read_only = false;
             open_mode |= std::fstream::app;
         }
-        if (mode & File::TRUNCATE) {
+        if (mode & FileMode::TRUNCATE) {
             open_mode |= std::fstream::trunc;
         }
 
@@ -43,9 +43,9 @@ namespace Rocket {
         // Calculate File Size
         if (IsOpened()) {
             auto cur_pos = Tell();
-            Seek(0, File::FILE_END);
+            Seek(0, FileMode::END);
             file_size = Tell();
-            Seek(cur_pos, File::FILE_BEGIN);
+            Seek(cur_pos, FileMode::BEGIN);
         }
     }
 
@@ -53,14 +53,14 @@ namespace Rocket {
         stream.close();
     }
 
-    std::size_t NativeFile::Seek(std::size_t offset, FileOrigin origin) {
+    std::size_t NativeFile::Seek(std::size_t offset, FileMode::FileOrigin origin) {
         if (!IsOpened()) {
             return 0;
         }
         std::ios_base::seekdir way;
-        if (origin == File::FILE_BEGIN) {
+        if (origin == FileMode::BEGIN) {
             way = std::ios_base::beg;
-        } else if (origin == File::FILE_END) {
+        } else if (origin == FileMode::END) {
             way = std::ios_base::end;
         } else {
             way = std::ios_base::cur;

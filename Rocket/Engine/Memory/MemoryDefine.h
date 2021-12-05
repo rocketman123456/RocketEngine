@@ -1,6 +1,11 @@
 #pragma once
 #include "Core/Declare.h"
 
+#include <memory>
+#define CLASS_PTR(_class_) \
+    using _class_##Ptr = std::shared_ptr<_class_>;\
+    using _class_##Weak = std::weak_ptr<_class_>;
+
 // ----------------------------------------------------------------------------
 // This header provides convenient overrides for the new and
 // delete operations in C++.

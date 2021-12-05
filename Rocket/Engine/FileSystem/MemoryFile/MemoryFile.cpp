@@ -5,9 +5,9 @@
 namespace Rocket {
     void MemoryFile::Open(int32_t mode) {
         // Check Re-open case
-        if(IsOpened() && this->mode & mode != 0) {
+        if(IsOpened() && (this->mode & mode) != 0) {
             RK_WARN(File, "Reopen File");
-            Seek(0, File::FILE_BEGIN);
+            Seek(0, FileMode::BEGIN);
             return;
         }
 
@@ -15,17 +15,17 @@ namespace Rocket {
         this->seek_pos = 0;
         this->is_read_only = true;
 
-        if (mode & File::WRITE_BINARY) {
+        if (mode & FileMode::WRITE_BINARY) {
             is_read_only = false;
         }
-        if (mode & File::WRITE_TEXT) {
+        if (mode & FileMode::WRITE_TEXT) {
             is_read_only = false;
         }
-        if (mode & File::APPEND) {
+        if (mode & FileMode::APPEND) {
             is_read_only = false;
             seek_pos = Size() > 0 ? Size() - 1 : 0;
         }
-        if (mode & File::TRUNCATE) {
+        if (mode & FileMode::TRUNCATE) {
             if(file_data.size() > 0) delete [] file_data.data();
             file_data = {nullptr, std::size_t(0)};
         }
@@ -41,13 +41,13 @@ namespace Rocket {
         seek_pos = 0;
     }
 
-    std::size_t MemoryFile::Seek(std::size_t offset, FileOrigin origin) {
+    std::size_t MemoryFile::Seek(std::size_t offset, FileMode::FileOrigin origin) {
         if (!IsOpened()) {
             return 0;
         }
-        if (origin == File::FILE_BEGIN) {
+        if (origin == FileMode::BEGIN) {
             seek_pos = offset;
-        } else if (origin == File::FILE_END) {
+        } else if (origin == FileMode::END) {
             seek_pos = Size() - offset;
         } else {
             seek_pos += offset;
@@ -97,5 +97,6 @@ namespace Rocket {
         }
         // Copy Needed Data
         std::memcpy(file_data.data() + Tell(), data.data(), data.size());
+        return data.size();
     }
 }

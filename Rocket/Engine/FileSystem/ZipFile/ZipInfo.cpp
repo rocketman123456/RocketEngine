@@ -1,16 +1,13 @@
 #include "FileSystem/ZipFile/ZipInfo.h"
-#include "Memory/MemoryDefine.h"
 #include "Utils/StringUtils.h"
 #include "Log/Log.h"
 
-#include <miniz.h>
-#include <miniz_zip.h>
 #include <cstring>      // memset
 #include <sys/stat.h>
 
 namespace Rocket {
     ZipInfo::ZipInfo(const std::string& zip_path) : file_name(zip_path) {
-        zip_archive = static_cast<mz_zip_archive*>(new mz_zip_archive{});
+        zip_archive = new mz_zip_archive{};
         std::memset(zip_archive, 0, sizeof(mz_zip_archive));
         mz_bool status = mz_zip_reader_init_file((mz_zip_archive*)zip_archive, zip_path.c_str(), 0);
         if(!status) {

@@ -9,14 +9,14 @@ namespace Rocket {
         NativeFile(const FileInfoPtr& info) : file_info(info) {}
         virtual ~NativeFile() = default;//{ Close(); }
 
-        inline FileInfoPtr GetFileInfo() const final { return file_info; }
+        inline FileInfoPtr FileInfo() const final { return file_info; }
         inline bool IsReadOnly() const final { return is_read_only; }
         inline bool IsOpened() const final { return stream.is_open(); }
         inline std::size_t Size() const final { return file_size; }
 
         void Open(int32_t mode) final;
         void Close() final;
-        std::size_t Seek(std::size_t offset, FileOrigin origin) final;
+        std::size_t Seek(std::size_t offset, FileMode::FileOrigin origin) final;
         std::size_t Tell() final;
 
         gsl::span<gsl::byte> Read(std::size_t size) final;
@@ -28,4 +28,6 @@ namespace Rocket {
         bool is_read_only = false;
         std::fstream stream;
     };
+
+    CLASS_PTR(NativeFile);
 }

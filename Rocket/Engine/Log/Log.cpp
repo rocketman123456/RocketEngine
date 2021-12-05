@@ -2,7 +2,7 @@
 
 #ifdef RK_CONSOLE_LOG
 
-#define SPDLOG_FMT_EXTERNAL
+// #define SPDLOG_FMT_EXTERNAL
 #include <spdlog/spdlog.h>
 #include <spdlog/async.h>
 #include <spdlog/sinks/stdout_color_sinks.h>

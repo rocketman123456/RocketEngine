@@ -1,4 +1,10 @@
 #pragma once
+#include "Memory/MemoryDefine.h"
+
+#include <miniz.h>
+#include <miniz_zip.h>
+#include <gsl/gsl>
+
 #include <string>
 #include <memory>
 #include <unordered_map>
@@ -17,10 +23,11 @@ namespace Rocket {
         inline const std::string& FileName() const { return file_name; }
     private:
         using EntryMap = std::unordered_map<std::string, std::tuple<uint32_t, uint64_t>>;
+        using ZipArchive = mz_zip_archive;
         std::string file_name;
-        void* zip_archive;
+        gsl::owner<ZipArchive*> zip_archive;
         EntryMap entries;
     };
 
-    using ZipInfoPtr = std::shared_ptr<ZipInfo>;
+    CLASS_PTR(ZipInfo);
 }
