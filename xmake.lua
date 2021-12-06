@@ -115,18 +115,23 @@ add_includedirs(
     "Rocket/Platform"
     -- "Rocket/Render/SoftRender",
 )
-if is_plat("windows", "macosx", "linux") then
-    --add_includedirs("Rocket/Platform/Desktop/Common")
-    -- if is_plat("windows") then
-    --     add_includedirs("Rocket/Platform/Desktop/Windows")
-    -- elseif is_plat("macosx") then
-    --     add_includedirs("Rocket/Platform/Desktop/MacOS")
-    -- elseif is_plat("linux") then
-    --     add_includedirs("Rocket/Platform/Desktop/Linux")
-    -- end
-elseif is_plat("android", "iphoneos") then
-
-end
+-- if is_plat("windows", "macosx", "linux") then
+--     add_includedirs("Rocket/Platform/Desktop/Common")
+--     if is_plat("windows") then
+--         add_includedirs("Rocket/Platform/Desktop/Windows")
+--     elseif is_plat("macosx") then
+--         add_includedirs("Rocket/Platform/Desktop/MacOS")
+--     elseif is_plat("linux") then
+--         add_includedirs("Rocket/Platform/Desktop/Linux")
+--     end
+-- elseif is_plat("android", "iphoneos") then
+--     add_includedirs("Rocket/Platform/Mobile/Common")
+--     if is_plat("android") then
+--         add_includedirs("Rocket/Platform/Mobile/Android")
+--     elseif is_plat("iphoneos") then
+--         add_includedirs("Rocket/Platform/Mobile/iOS")
+--     end
+-- end
 
 --
 -- Set Platform Defines

@@ -48,6 +48,7 @@ Data/
 # Ignore Large Asset File
 *.wav
 *.ogg
+Asset.zip
 
 # Ignore LaTeX outputs
 Document/LaTeX/*.toc
