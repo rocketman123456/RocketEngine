@@ -1,5 +1,5 @@
 #pragma once
-#include "Memory/MemoryDefine.h"
+#include "Core/MemoryDefine.h"
 // #include "FileSystem/Basic/FileInfoCache.h"
 // #include "FileSystem/Basic/FileBufferCache.h"
 

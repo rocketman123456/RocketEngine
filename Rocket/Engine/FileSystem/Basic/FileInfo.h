@@ -1,5 +1,5 @@
 #pragma once
-#include "Memory/MemoryDefine.h"
+#include "Core/MemoryDefine.h"
 #include "FileSystem/Basic/FileBuffer.h"
 #include "Utils/StringUtils.h"
 #include "Utils/Hashing.h"

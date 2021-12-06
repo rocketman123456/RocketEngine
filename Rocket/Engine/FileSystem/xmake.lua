@@ -11,11 +11,9 @@ target("RocketFileSystem")
     add_options("memory_check")
     add_deps(
         "RocketLog",
-        "RocketMemory",
         "RocketNativeFile",
         "RocketMemoryFile",
         "RocketZipFile",
-        -- "RocketSpecialFile",
         {public = true}
     )
 target_end()

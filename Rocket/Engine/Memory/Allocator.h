@@ -1,6 +1,6 @@
 #pragma once
-#include "Memory/MemoryDefine.h"
 #include "Core/Declare.h"
+#include "Core/MemoryDefine.h"
 
 #include <cstddef>
 

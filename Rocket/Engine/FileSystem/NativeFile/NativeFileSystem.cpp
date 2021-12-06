@@ -3,7 +3,11 @@
 #include "Log/Log.h"
 
 #include <sys/stat.h>
+#ifdef RK_WINDOWS
+#include "Desktop/Windows/dirent.h"
+#else
 #include <dirent.h>
+#endif
 #include <vector>
 
 namespace Rocket {
@@ -36,7 +40,7 @@ namespace Rocket {
     }
 
     FilePtr NativeFileSystem::OpenFile(const FileInfoPtr& file_path, int mode) {
-        FileInfoPtr file_info = make_shared<FileInfo>(BasePath(), file_path->AbsolutePath(), false);
+        FileInfoPtr file_info = std::make_shared<FileInfo>(BasePath(), file_path->AbsolutePath(), false);
         FilePtr file = FindFile(file_info);
         bool is_exists = (file != nullptr);
         if (!is_exists) {

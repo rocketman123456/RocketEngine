@@ -49,90 +49,90 @@ namespace Rocket {
     constexpr uint64_t operator "" _hash(const char* s, size_t) { return Rocket::details::hasher<std::string>()(s); }
 
     // Final Options
-    template<typename T, 
-        std::enable_if<
-            std::is_same<T, int16_t>::value ||
-            std::is_same<T, uint16_t>::value ||
-            std::is_same<T, int32_t>::value ||
-            std::is_same<T, uint32_t>::value ||
-            std::is_same<T, int64_t>::value ||
-            std::is_same<T, uint64_t>::value
-        > 
-    >
-    T hash_1(const std::string& key) {
-        T hash_ = 5381;
-        auto count = key.size();
-        while(count > 0) {
-            hash_ += (hash_ << 5) + key[key.size() - count];
-            count--;
-        }
-        return (hash_ & 0x7fffffff);
-    }
+    // template<typename T, 
+    //     std::enable_if<
+    //         std::is_same<T, int16_t>::value ||
+    //         std::is_same<T, uint16_t>::value ||
+    //         std::is_same<T, int32_t>::value ||
+    //         std::is_same<T, uint32_t>::value ||
+    //         std::is_same<T, int64_t>::value ||
+    //         std::is_same<T, uint64_t>::value
+    //     > 
+    // >
+    // T hash_1(const std::string& key) {
+    //     T hash_ = 5381;
+    //     auto count = key.size();
+    //     while(count > 0) {
+    //         hash_ += (hash_ << 5) + key[key.size() - count];
+    //         count--;
+    //     }
+    //     return (hash_ & 0x7fffffff);
+    // }
 
-    template<typename T, 
-        std::enable_if<
-            std::is_same<T, int16_t>::value ||
-            std::is_same<T, uint16_t>::value ||
-            std::is_same<T, int32_t>::value ||
-            std::is_same<T, uint32_t>::value ||
-            std::is_same<T, int64_t>::value ||
-            std::is_same<T, uint64_t>::value
-        > 
-    >
-    T hash_2(const std::string& key) {
-        T seed = 131;
-        T hash_ = 0;
-        std::string str = key + "key2";
-        auto count = str.size();
-        while(count > 0) {
-            hash_ = hash_ * seed + str[str.size() - count];
-            count--;
-        }
-        return (hash_ & 0x7fffffff);
-    }
+    // template<typename T, 
+    //     std::enable_if<
+    //         std::is_same<T, int16_t>::value ||
+    //         std::is_same<T, uint16_t>::value ||
+    //         std::is_same<T, int32_t>::value ||
+    //         std::is_same<T, uint32_t>::value ||
+    //         std::is_same<T, int64_t>::value ||
+    //         std::is_same<T, uint64_t>::value
+    //     > 
+    // >
+    // T hash_2(const std::string& key) {
+    //     T seed = 131;
+    //     T hash_ = 0;
+    //     std::string str = key + "key2";
+    //     auto count = str.size();
+    //     while(count > 0) {
+    //         hash_ = hash_ * seed + str[str.size() - count];
+    //         count--;
+    //     }
+    //     return (hash_ & 0x7fffffff);
+    // }
 
-    template<typename T, 
-        std::enable_if<
-            std::is_same<T, int16_t>::value ||
-            std::is_same<T, uint16_t>::value ||
-            std::is_same<T, int32_t>::value ||
-            std::is_same<T, uint32_t>::value ||
-            std::is_same<T, int64_t>::value ||
-            std::is_same<T, uint64_t>::value
-        > 
-    >
-    T hash_3(const std::string& key) {
-        T hash_ = 0;
-        std::string str = key + "keykey3";
-        auto count = str.size();
-        for(int i = 0; i < count; ++i) {
-            if((i * 1) == 0) {
-                hash_ ^= ((hash_ << 7) ^ (str[i] ^ hash_ >> 3));
-            } else {
-                hash_ ^= (~(hash_ << 11) ^ (str[i] ^ hash_ >> 5));
-            }
-        }
-        return (hash_ & 0x7fffffff);
-    }
+    // template<typename T, 
+    //     std::enable_if<
+    //         std::is_same<T, int16_t>::value ||
+    //         std::is_same<T, uint16_t>::value ||
+    //         std::is_same<T, int32_t>::value ||
+    //         std::is_same<T, uint32_t>::value ||
+    //         std::is_same<T, int64_t>::value ||
+    //         std::is_same<T, uint64_t>::value
+    //     > 
+    // >
+    // T hash_3(const std::string& key) {
+    //     T hash_ = 0;
+    //     std::string str = key + "keykey3";
+    //     auto count = str.size();
+    //     for(int i = 0; i < count; ++i) {
+    //         if((i * 1) == 0) {
+    //             hash_ ^= ((hash_ << 7) ^ (str[i] ^ hash_ >> 3));
+    //         } else {
+    //             hash_ ^= (~(hash_ << 11) ^ (str[i] ^ hash_ >> 5));
+    //         }
+    //     }
+    //     return (hash_ & 0x7fffffff);
+    // }
 
-    template<typename T, 
-        std::enable_if<
-            std::is_same<T, int16_t>::value ||
-            std::is_same<T, uint16_t>::value ||
-            std::is_same<T, int32_t>::value ||
-            std::is_same<T, uint32_t>::value ||
-            std::is_same<T, int64_t>::value ||
-            std::is_same<T, uint64_t>::value
-        > 
-    >
-    T hash_4(const std::string& key) {
-        T hash_ = 5381;
-        std::string str = key + "keykeykey4";
-        auto count = str.size();
-        while(count > 0) {
-            hash_ += (hash_ << 5) + str[str.size() - count];
-            count--;
-        }
-        return (hash_ & 0x7fffffff);
-    }
+    // template<typename T, 
+    //     std::enable_if<
+    //         std::is_same<T, int16_t>::value ||
+    //         std::is_same<T, uint16_t>::value ||
+    //         std::is_same<T, int32_t>::value ||
+    //         std::is_same<T, uint32_t>::value ||
+    //         std::is_same<T, int64_t>::value ||
+    //         std::is_same<T, uint64_t>::value
+    //     > 
+    // >
+    // T hash_4(const std::string& key) {
+    //     T hash_ = 5381;
+    //     std::string str = key + "keykeykey4";
+    //     auto count = str.size();
+    //     while(count > 0) {
+    //         hash_ += (hash_ << 5) + str[str.size() - count];
+    //         count--;
+    //     }
+    //     return (hash_ & 0x7fffffff);
+    // }
 }
