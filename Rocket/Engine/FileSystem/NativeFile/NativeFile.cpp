@@ -54,17 +54,6 @@ namespace Rocket {
         }
     }
 
-    // std::size_t NativeFile::Size() {
-    //     if (IsOpened()) {
-    //         auto cur_pos = Tell();
-    //         Seek(0, FileMode::END);
-    //         uint64_t size = Tell();
-    //         Seek(cur_pos, FileMode::BEGIN);
-    //         return size;
-    //     }
-    //     return 0;
-    // }
-
     void NativeFile::Close() {
         stream.close();
     }
