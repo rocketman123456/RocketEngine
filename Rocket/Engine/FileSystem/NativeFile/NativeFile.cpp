@@ -42,24 +42,28 @@ namespace Rocket {
         stream.open(file_info->AbsolutePath().c_str(), open_mode);
 
         // Calculate File Size
-        // if (IsOpened()) {
-        //     auto cur_pos = Tell();
-        //     Seek(0, FileMode::END);
-        //     file_size = Tell();
-        //     Seek(cur_pos, FileMode::BEGIN);
-        // }
+        UpdateSize();
     }
 
-    std::size_t NativeFile::Size() {
+    void NativeFile::UpdateSize() {
         if (IsOpened()) {
             auto cur_pos = Tell();
             Seek(0, FileMode::END);
-            uint64_t size = Tell();
+            file_size = Tell();
             Seek(cur_pos, FileMode::BEGIN);
-            return size;
         }
-        return 0;
     }
+
+    // std::size_t NativeFile::Size() {
+    //     if (IsOpened()) {
+    //         auto cur_pos = Tell();
+    //         Seek(0, FileMode::END);
+    //         uint64_t size = Tell();
+    //         Seek(cur_pos, FileMode::BEGIN);
+    //         return size;
+    //     }
+    //     return 0;
+    // }
 
     void NativeFile::Close() {
         stream.close();
@@ -102,6 +106,10 @@ namespace Rocket {
             return 0;
         }
         stream.write(reinterpret_cast<const char*>(data.data()), static_cast<std::streamsize>(data.size()));
+
+        // Update File Size
+        UpdateSize();
+
         if (stream) {
             return data.size();
         }

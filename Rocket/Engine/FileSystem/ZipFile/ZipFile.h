@@ -11,7 +11,7 @@ namespace Rocket {
         inline FileInfoPtr FileInfo() const final { return file_info; }
         inline ZipInfoPtr ZipInfo() const { return zip_info; }
         
-        std::size_t Size() final;
+        std::size_t Size() const final;
         bool IsReadOnly() const final;
         bool IsOpened() const final;
         void Open(int32_t mode) final;

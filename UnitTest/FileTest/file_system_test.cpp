@@ -19,17 +19,20 @@ int main() {
     {
         //auto info = std::make_shared<FileInfo>("music_name.txt");
         auto info = std::make_shared<FileInfo>("_root_dir_");
-        auto file = nfs->OpenFile(info, FileMode::READ_BINARY);
+        auto file = nfs->OpenFile(info, FileMode::READWRITE_BINARY | FileMode::APPEND);
         if(file != nullptr) {
-            //file->Open(FileMode::READ_BINARY);
             gsl::span<gsl::byte> data = {new gsl::byte[file->Size()], file->Size()};
             file->Read(data);
-            std::cout << data.size() << "," << (char*) data.data() << std::endl;
+            std::cout << data.size() << ",";
+            for(int i = 0; i > data.size(); ++i) {
+                printf("%c", ((char*)data.data())[i]);
+            }
+            std::cout << std::endl;
+            //file->Write(data);
             delete [] data.data();
         }
         auto src_info = std::make_shared<FileInfo>("_root_dir_");
-        auto dst_info = std::make_shared<FileInfo>("_root_dir_1");
-        //nfs->CreateFile(dst_info);
+        auto dst_info = std::make_shared<FileInfo>("_root_dir_.txt");
         nfs->CopyFile(src_info, dst_info);
     }
 

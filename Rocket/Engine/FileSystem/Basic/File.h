@@ -31,7 +31,7 @@ namespace Rocket {
         virtual ~File() = default;
 
         virtual FileInfoPtr FileInfo() const = 0;
-        virtual std::size_t Size() = 0;
+        virtual std::size_t Size() const = 0;
         virtual bool IsReadOnly() const = 0;
         virtual bool IsOpened() const = 0;
         virtual void Open(int32_t mode) = 0;

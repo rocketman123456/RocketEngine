@@ -2,8 +2,15 @@
 #include "Utils/StringUtils.h"
 #include "Log/Log.h"
 
-#include <cstring>      // memset
 #include <sys/stat.h>
+
+#ifdef RK_WINDOWS
+#include "Desktop/Windows/dirent.h"
+#else
+#include <dirent.h>
+#endif
+
+#include <cstring>      // memset
 
 namespace Rocket {
     ZipInfo::ZipInfo(const std::string& zip_path) : file_name(zip_path) {
@@ -47,10 +54,6 @@ namespace Rocket {
         if (stat(FileName().c_str(), &file_stat) < 0) {
             return false;
         }
-#ifdef RK_WINDOWS
-        return (file_stat.st_mode & _S_IWRITE);
-#else
         return (file_stat.st_mode & S_IWUSR);
-#endif
     }
 }

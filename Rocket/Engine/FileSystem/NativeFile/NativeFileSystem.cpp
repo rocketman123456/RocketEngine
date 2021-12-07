@@ -8,6 +8,7 @@
 #else
 #include <dirent.h>
 #endif
+
 #include <vector>
 
 namespace Rocket {
@@ -97,10 +98,8 @@ namespace Rocket {
                 std::size_t size = CHUNK_SIZE;
                 gsl::span<gsl::byte> data = {new gsl::byte[size], size};
                 do {
-                    
                     size = fromFile->Read(data);
                     toFile->Write({data.data(), size});
-                    delete [] data.data();
                 } while (size == CHUNK_SIZE);
                 delete [] data.data();
                 result = true;
@@ -163,11 +162,7 @@ namespace Rocket {
         if (result < 0) {
             return false;
         }
-#ifdef RK_WINDOWS
-        return (file_stat.st_mode & _S_IWRITE);
-#else
         return (file_stat.st_mode & S_IWUSR);
-#endif
     }
 
     FilePtr NativeFileSystem::FindFile(const FileInfoPtr& fileInfo) const {
