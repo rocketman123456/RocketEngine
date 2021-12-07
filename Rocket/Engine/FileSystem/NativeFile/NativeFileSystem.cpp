@@ -106,7 +106,6 @@ namespace Rocket {
                 result = true;
             }
         }
-        
         return result;
     }
 
@@ -159,9 +158,9 @@ namespace Rocket {
         if (!IsInitialized()) {
             return true;
         }
-        
         struct stat file_stat;
-        if (stat(BasePath().c_str(), &file_stat) < 0) {
+        auto result = stat(BasePath().c_str(), &file_stat);
+        if (result < 0) {
             return false;
         }
 #ifdef RK_WINDOWS
