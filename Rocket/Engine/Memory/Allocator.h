@@ -1,6 +1,6 @@
 #pragma once
-#include "Memory/MemoryDefine.h"
 #include "Core/Declare.h"
+#include "Core/MemoryDefine.h"
 
 #include <cstddef>
 
@@ -38,9 +38,8 @@ namespace Rocket {
         std::size_t used = 0;   
         std::size_t peak = 0;
     public:
-        
-        Allocator(const std::size_t totalSize) : total_size(totalSize) {}
-        virtual ~Allocator() { total_size = 0; }
+        Allocator(const std::size_t totalSize);
+        virtual ~Allocator();
 
         virtual void Init() = 0;
         virtual void Reset() = 0;

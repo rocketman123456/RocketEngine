@@ -3,7 +3,11 @@
 #include "Log/Log.h"
 
 #include <sys/stat.h>
+#ifdef RK_WINDOWS
+#include "Desktop/Windows/dirent.h"
+#else
 #include <dirent.h>
+#endif
 #include <vector>
 
 namespace Rocket {

@@ -1,5 +1,5 @@
 #pragma once
-#include "Memory/MemoryDefine.h"
+#include "Core/MemoryDefine.h"
 #include "FileSystem/Basic/FileBuffer.h"
 #include "Utils/StringUtils.h"
 #include "Utils/Hashing.h"
@@ -102,8 +102,10 @@ namespace Rocket {
         bool        is_valid = true;
     };
 
+    CLASS_PTR(FileInfo);
+
     inline bool operator == (const FileInfo& fi1, const FileInfo& fi2) { return fi1.Hash() == fi2.Hash(); }
     inline bool operator < (const FileInfo& fi1, const FileInfo& fi2) { return fi1.Hash() < fi2.Hash(); }
-    
-    CLASS_PTR(FileInfo);
+    inline bool operator == (const FileInfoPtr& fi1, const FileInfoPtr& fi2) { return fi1->Hash() == fi2->Hash(); }
+    inline bool operator < (const FileInfoPtr& fi1, const FileInfoPtr& fi2) { return fi1->Hash() < fi2->Hash(); }
 }

@@ -19,12 +19,12 @@ set_languages("c99", "c++17")
 --
 -- Add Required Modules
 --
-add_requires("fmt 8.0.1", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
-add_requires("spdlog v1.9.2", {system = false, configs = {shared = false, debug = true, fmt_external = true, cxflags = "-fPIC"}})
+add_requires("spdlog v1.9.2", {system = false, configs = {shared = false, debug = true, fmt_external = false, cxflags = "-fPIC"}})
 add_requires("gsl v3.1.0", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
 add_requires("glad v0.1.34", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
 add_requires("miniz 2.1.0", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
 add_requires("mimalloc 2.0.2", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
+--add_requires("fmt 8.0.1", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
 -- add_requires("minizip 1.2.11", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
 -- add_requires("zlib 1.2.11", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
 -- add_requires("yaml-cpp 0.7.0", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
@@ -111,22 +111,27 @@ option_end()
 --
 add_includedirs(
     "Rocket/Engine",
-    "Rocket/Render/Common"
+    "Rocket/Render",
+    "Rocket/Platform"
     -- "Rocket/Render/SoftRender",
-    -- "Rocket/Platform/Common"
 )
-if is_plat("windows", "macosx", "linux") then
-    --add_includedirs("Rocket/Platform/Desktop/Common")
-    -- if is_plat("windows") then
-    --     add_includedirs("Rocket/Platform/Desktop/Windows")
-    -- elseif is_plat("macosx") then
-    --     add_includedirs("Rocket/Platform/Desktop/MacOS")
-    -- elseif is_plat("linux") then
-    --     add_includedirs("Rocket/Platform/Desktop/Linux")
-    -- end
-elseif is_plat("android", "iphoneos") then
-
-end
+-- if is_plat("windows", "macosx", "linux") then
+--     add_includedirs("Rocket/Platform/Desktop/Common")
+--     if is_plat("windows") then
+--         add_includedirs("Rocket/Platform/Desktop/Windows")
+--     elseif is_plat("macosx") then
+--         add_includedirs("Rocket/Platform/Desktop/MacOS")
+--     elseif is_plat("linux") then
+--         add_includedirs("Rocket/Platform/Desktop/Linux")
+--     end
+-- elseif is_plat("android", "iphoneos") then
+--     add_includedirs("Rocket/Platform/Mobile/Common")
+--     if is_plat("android") then
+--         add_includedirs("Rocket/Platform/Mobile/Android")
+--     elseif is_plat("iphoneos") then
+--         add_includedirs("Rocket/Platform/Mobile/iOS")
+--     end
+-- end
 
 --
 -- Set Platform Defines

@@ -4,7 +4,7 @@ target("RocketLog")
     add_options("console_log")
     add_options("memory_check")
     add_packages(
-        "spdlog", "fmt", 
+        "spdlog", "mimalloc",
         {public = true}
     )
 target_end()

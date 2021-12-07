@@ -15,7 +15,6 @@ target("RocketFileSystem")
         "RocketNativeFile",
         "RocketMemoryFile",
         "RocketZipFile",
-        -- "RocketSpecialFile",
         {public = true}
     )
 target_end()
