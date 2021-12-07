@@ -11,7 +11,7 @@ namespace Rocket {
         inline FileInfoPtr FileInfo() const final { return file_info; }
         inline ZipInfoPtr ZipInfo() const { return zip_info; }
         
-        std::size_t Size() const final;
+        std::size_t Size() final;
         bool IsReadOnly() const final;
         bool IsOpened() const final;
         void Open(int32_t mode) final;
@@ -19,7 +19,7 @@ namespace Rocket {
         std::size_t Seek(std::size_t offset, FileMode::FileOrigin origin) final;
         std::size_t Tell() final;
 
-        gsl::span<gsl::byte> Read(std::size_t size) final;
+        std::size_t Read(gsl::span<gsl::byte>& data) final;
         std::size_t Write(gsl::span<gsl::byte> data) final;
     private:
         FileInfoPtr file_info = nullptr;

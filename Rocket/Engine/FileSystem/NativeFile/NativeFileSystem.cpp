@@ -36,7 +36,7 @@ namespace Rocket {
     }
 
     FilePtr NativeFileSystem::OpenFile(const FileInfoPtr& file_path, int mode) {
-        FileInfoPtr file_info = make_shared<FileInfo>(BasePath(), file_path->AbsolutePath(), false);
+        FileInfoPtr file_info = std::make_shared<FileInfo>(BasePath(), file_path->AbsolutePath(), false);
         FilePtr file = FindFile(file_info);
         bool is_exists = (file != nullptr);
         if (!is_exists) {
@@ -44,18 +44,15 @@ namespace Rocket {
             file.reset(new NativeFile(file_info));
         }
         file->Open(mode);
-        
         if (!is_exists && file->IsOpened()) {
             file_list.insert(file);
         }
-        
         return file;
     }
 
     void NativeFileSystem::CloseFile(const FilePtr& file) {
         if(file) {
             file->Close();
-            //file_list.erase(file);
         }
     }
 
@@ -93,13 +90,15 @@ namespace Rocket {
             FilePtr toFile = OpenFile(dest, FileMode::WRITE_BINARY);
             
             if (fromFile && toFile) {
-                uint64_t size = kChunkSize;
-                std::vector<uint8_t> buff((size_t)size);
+                std::size_t size = CHUNK_SIZE;
+                gsl::span<gsl::byte> data = {new gsl::byte[size], size};
                 do {
-                    //fromFile->Read(buff.data(), kChunkSize);
-                    //toFile->Write(buff.data(), size);
-                }
-                while (size == kChunkSize);
+                    
+                    size = fromFile->Read(data);
+                    toFile->Write({data.data(), size});
+                    delete [] data.data();
+                } while (size == CHUNK_SIZE);
+                delete [] data.data();
                 result = true;
             }
         }

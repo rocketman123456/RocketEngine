@@ -61,21 +61,19 @@ namespace Rocket {
         return seek_pos;
     }
 
-    gsl::span<gsl::byte> MemoryFile::Read(std::size_t size) {
+    std::size_t MemoryFile::Read(gsl::span<gsl::byte>& buffer) {
         if (!IsOpened()) {
-            return gsl::span<gsl::byte>(nullptr, std::size_t(0));
+            return std::size_t(0);
         }
 
         // Copy Specify Memory Area
-        gsl::byte* buffer = nullptr;
         std::size_t buffer_size = Size() - Tell();
-        std::size_t max_size = std::min(size, buffer_size);
+        std::size_t max_size = std::min(buffer.size(), buffer_size);
         if (max_size > 0) {
-            buffer = new gsl::byte[max_size];
-            std::memcpy(buffer, file_data.data(), max_size);
-            return {buffer, max_size};
+            std::memcpy(buffer.data(), file_data.data(), max_size);
+            return max_size;
         } else {
-            return {buffer, std::size_t(0)};
+            return std::size_t(0);
         }
     }
 

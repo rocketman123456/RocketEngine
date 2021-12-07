@@ -38,15 +38,27 @@ namespace Rocket {
             open_mode |= std::fstream::trunc;
         }
 
+        RK_TRACE(File, "Native Absolute Path: {}", file_info->AbsolutePath());
         stream.open(file_info->AbsolutePath().c_str(), open_mode);
 
         // Calculate File Size
+        // if (IsOpened()) {
+        //     auto cur_pos = Tell();
+        //     Seek(0, FileMode::END);
+        //     file_size = Tell();
+        //     Seek(cur_pos, FileMode::BEGIN);
+        // }
+    }
+
+    std::size_t NativeFile::Size() {
         if (IsOpened()) {
             auto cur_pos = Tell();
             Seek(0, FileMode::END);
-            file_size = Tell();
+            uint64_t size = Tell();
             Seek(cur_pos, FileMode::BEGIN);
+            return size;
         }
+        return 0;
     }
 
     void NativeFile::Close() {
@@ -74,16 +86,15 @@ namespace Rocket {
         return static_cast<std::size_t>(stream.tellg());
     }
 
-    gsl::span<gsl::byte> NativeFile::Read(std::size_t size) {
+    std::size_t NativeFile::Read(gsl::span<gsl::byte>& buffer) {
         if (!IsOpened()) {
-            return gsl::span<gsl::byte>(nullptr, std::size_t(0));
+            return std::size_t(0);
         }
-        gsl::byte* data = nullptr;
-        stream.read(reinterpret_cast<char*>(data), static_cast<std::streamsize>(size));
+        stream.read(reinterpret_cast<char*>(buffer.data()), static_cast<std::streamsize>(buffer.size()));
         if (stream) {
-            return gsl::span<gsl::byte>(data, size);
+            return buffer.size();
         }
-        return gsl::span<gsl::byte>(data, static_cast<std::size_t>(stream.gcount()));
+        return static_cast<std::size_t>(stream.gcount());
     }
 
     std::size_t NativeFile::Write(gsl::span<gsl::byte> data) {

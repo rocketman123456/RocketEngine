@@ -18,14 +18,17 @@ namespace Rocket {
         explicit FileInfo() = default;
         ~FileInfo() = default;
 
-        explicit FileInfo(const std::string& file_path) : FileInfo(file_path, false) {}
+        explicit FileInfo(const std::string& file_path) {
+            Initialize(file_path, false);
+        }
 
         explicit FileInfo(const std::string& file_path, bool is_dir) {
             Initialize(file_path, is_dir);
         }
 
-        explicit FileInfo(const std::string& base_path, const std::string& file_name) 
-            : FileInfo(base_path, file_name, false) {}
+        explicit FileInfo(const std::string& base_path, const std::string& file_name) {
+            Initialize(base_path, file_name, false);
+        }
 
         explicit FileInfo(const std::string& base_path, const std::string& file_name, bool is_dir) {
             Initialize(base_path, file_name, is_dir);
@@ -52,12 +55,15 @@ namespace Rocket {
                 }
                 Initialize(base_path, file_name, is_dir);
             }
+            Initialize("", file_path, is_dir);
         }
 
         void Initialize(const std::string& base_path_, const std::string& file_name_, bool is_dir_) noexcept {
             this->base_path = base_path_;
             this->name = file_name_;
             this->is_dir = is_dir_;
+
+            //RK_TRACE(File, "Base Path: {}, File Name: {}, Is Dir: {}", base_path_, file_name_, is_dir_);
 
             // Standardize names
             if (!EndsWith(this->base_path, "/")) { this->base_path += "/"; }

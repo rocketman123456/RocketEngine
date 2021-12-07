@@ -1,6 +1,6 @@
 #pragma once
 #include "FileSystem/Basic/FileInfo.h"
-#include "FileSystem/Basic/FileBuffer.h"
+// #include "FileSystem/Basic/FileBuffer.h"
 
 #include <gsl/gsl>
 #include <future>
@@ -31,7 +31,7 @@ namespace Rocket {
         virtual ~File() = default;
 
         virtual FileInfoPtr FileInfo() const = 0;
-        virtual std::size_t Size() const = 0;
+        virtual std::size_t Size() = 0;
         virtual bool IsReadOnly() const = 0;
         virtual bool IsOpened() const = 0;
         virtual void Open(int32_t mode) = 0;
@@ -40,7 +40,7 @@ namespace Rocket {
         virtual std::size_t Tell() = 0;
 
         // TODO : change to file buffer
-        virtual gsl::span<gsl::byte> Read(std::size_t size) = 0;
+        virtual std::size_t Read(gsl::span<gsl::byte>& data) = 0;
         virtual std::size_t Write(gsl::span<gsl::byte> data) = 0;
 
         // TODO : add async support
