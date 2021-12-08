@@ -17,12 +17,6 @@ namespace Rocket {
                     RK_TRACE(Core, "Find File: {}", it.path().filename().string());
                     quit = true;
                     break;
-                    //std::filesystem::directory_entry entry(it.path().root_path());
-                    //auto type = entry.status().type();
-                    //if(type == std::filesystem::file_type::directory) {
-                    //    quit = true;
-                    //    break;
-                    //}
                 }
             }
             if(quit) {

@@ -48,9 +48,9 @@ int main() {
             //file->Write(data);
             delete [] data.data();
         }
-        auto src_info = std::make_shared<FileInfo>("_root_dir_");
-        auto dst_info = std::make_shared<FileInfo>("_root_dir_.txt");
-        nfs->CopyFile(src_info, dst_info);
+        //auto src_info = std::make_shared<FileInfo>("_root_dir_");
+        //auto dst_info = std::make_shared<FileInfo>("_root_dir_.txt");
+        //nfs->CopyFile(src_info, dst_info);
     }
 
     nfs->Finalize();
