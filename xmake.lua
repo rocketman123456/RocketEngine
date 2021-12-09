@@ -22,9 +22,10 @@ set_languages("c99", "c++17")
 add_requires("spdlog v1.9.2", {system = false, configs = {shared = false, debug = true, fmt_external = false, cxflags = "-fPIC"}})
 add_requires("gsl v3.1.0", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
 add_requires("glad v0.1.34", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
-add_requires("miniz 2.1.0", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
 add_requires("mimalloc 2.0.2", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
---add_requires("fmt 8.0.1", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
+add_requires("libzip 1.8.0", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
+--add_requires("miniz 2.1.0", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
+-- add_requires("fmt 8.0.1", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
 -- add_requires("minizip 1.2.11", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
 -- add_requires("zlib 1.2.11", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
 -- add_requires("yaml-cpp 0.7.0", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
@@ -169,7 +170,7 @@ end
 -- Add Sub Module
 --
 includes(
-    "Rocket",
+    "Rocket"
     --"Sandbox",
-    "UnitTest"
+    -- "UnitTest"
 )

@@ -12,11 +12,11 @@ includes(
     -- "Geometry",
     "Log",
     -- "Math",
-    "Memory"
+    "Memory",
     -- "MultiThread",
     -- "Parser",
     -- "Pattern",
     -- "Physics",
     -- "Scene",
-    -- "Utils"
+    "Utils"
 )
