@@ -47,23 +47,23 @@ namespace Rocket {
         std::memset(this->lookup_table, 0, LUT_SIZE * sizeof(uint8_t));
 
         if (this->use_lut)
-            create_lookup_table();
+            CreateLookupTable();
     };
 
-    uint8_t CRC8::calculate(const char* string) {
+    uint8_t CRC8::Calculate(const char* string) {
         auto length = strlen(string);
-        return calculate((const uint8_t*)string, length);
+        return Calculate((const uint8_t*)string, length);
     }
 
-    uint8_t CRC8::calculate(const std::vector<uint8_t>& data) {
-        return calculate(data.data(), data.size());
+    uint8_t CRC8::Calculate(const std::vector<uint8_t>& data) {
+        return Calculate(data.data(), data.size());
     }
 
-    uint8_t CRC8::calculate(gsl::span<uint8_t> data) {
-        return calculate(data.data(), data.size());
+    uint8_t CRC8::Calculate(gsl::span<uint8_t> data) {
+        return Calculate(data.data(), data.size());
     }
 
-    uint8_t CRC8::calculate(const uint8_t* data, const int length) {
+    uint8_t CRC8::Calculate(const uint8_t* data, const int length) {
         uint8_t crc = this->init_value;
         uint8_t byte = 0;
 
@@ -83,14 +83,14 @@ namespace Rocket {
         }
 
         if (this->reflect_output) {
-            crc = reflect(crc);
+            crc = Reflect(crc);
         }
 
         crc = (crc ^ this->xor_output) & 0xFF;
         return crc;
     }
 
-    void CRC8::printLookupTable() {
+    void CRC8::PrintLookupTable() {
         for (int i = 0; i < 32; i++) {
             for (int j = 0; j < 8; j++) {
                 printf("0x%02X, ", this->lookup_table[i * 8 + j]);
@@ -99,7 +99,7 @@ namespace Rocket {
         }
     }
 
-    uint8_t CRC8::reflect(uint8_t value) {
+    uint8_t CRC8::Reflect(uint8_t value) {
         uint8_t reflected = 0;
         for (int i = 0; i < 8; i++) {
             if (value & 0x01)
@@ -109,7 +109,7 @@ namespace Rocket {
         return reflected;
     }
 
-    void CRC8::create_lookup_table() {
+    void CRC8::CreateLookupTable() {
         uint8_t x = 0;
         for (int i = 0; i < LUT_SIZE; i++) {
             x = (uint8_t)i;
@@ -131,24 +131,24 @@ namespace Rocket {
         std::memset(this->lookup_table, 0, LUT_SIZE * sizeof(uint16_t));
 
         if (this->use_lut)
-            create_lookup_table();
+            CreateLookupTable();
     };
 
-    uint16_t CRC16::calculate(const char* string) {
+    uint16_t CRC16::Calculate(const char* string) {
         //std::vector<uint8_t> data;
         auto length = strlen(string);
-        return calculate((const uint8_t*)string, length);
+        return Calculate((const uint8_t*)string, length);
     }
 
-    uint16_t CRC16::calculate(const std::vector<uint8_t>& data) {
-        return calculate(data.data(), data.size());
+    uint16_t CRC16::Calculate(const std::vector<uint8_t>& data) {
+        return Calculate(data.data(), data.size());
     }
 
-    uint16_t CRC16::calculate(gsl::span<uint8_t> data) {
-        return calculate(data.data(), data.size());
+    uint16_t CRC16::Calculate(gsl::span<uint8_t> data) {
+        return Calculate(data.data(), data.size());
     }
 
-    uint16_t CRC16::calculate(const uint8_t* data, const int length) {
+    uint16_t CRC16::Calculate(const uint8_t* data, const int length) {
         uint16_t crc = this->init_value;
         uint8_t byte = 0;
 
@@ -168,14 +168,14 @@ namespace Rocket {
         }
 
         if (this->reflect_output) {
-            crc = reflect(crc);
+            crc = Reflect(crc);
         }
 
         crc = (crc ^ this->xor_output) & 0xFFFF;
         return crc;
     }
 
-    void CRC16::printLookupTable() {
+    void CRC16::PrintLookupTable() {
         for (int i = 0; i < 32; i++) {
             for (int j = 0; j < 8; j++) {
                 printf("0x%04X, ", this->lookup_table[i * 8 + j]);
@@ -184,7 +184,7 @@ namespace Rocket {
         }
     }
 
-    uint16_t CRC16::reflect(uint16_t value) {
+    uint16_t CRC16::Reflect(uint16_t value) {
         uint16_t reflected = 0;
         for (int i = 0; i < 16; i++) {
             if (value & 0x01)
@@ -194,7 +194,7 @@ namespace Rocket {
         return reflected;
     }
 
-    void CRC16::create_lookup_table() {
+    void CRC16::CreateLookupTable() {
         uint16_t x = 0;
         for (int i = 0; i < LUT_SIZE; i++) {
             x = (uint16_t)(i << 8);
@@ -217,23 +217,23 @@ namespace Rocket {
         std::memset(this->lookup_table, 0, LUT_SIZE * sizeof(uint32_t));
 
         if (this->use_lut)
-            create_lookup_table();
+            CreateLookupTable();
     }
 
-    uint32_t CRC32::calculate(const char* string) {
+    uint32_t CRC32::Calculate(const char* string) {
         auto length = strlen(string);
-        return calculate((const uint8_t*)string, length);
+        return Calculate((const uint8_t*)string, length);
     }
 
-    uint32_t CRC32::calculate(const std::vector<uint8_t>& data) {
-        return calculate(data.data(), data.size());
+    uint32_t CRC32::Calculate(const std::vector<uint8_t>& data) {
+        return Calculate(data.data(), data.size());
     }
 
-    uint32_t CRC32::calculate(gsl::span<uint8_t> data) {
-        return calculate(data.data(), data.size());
+    uint32_t CRC32::Calculate(gsl::span<uint8_t> data) {
+        return Calculate(data.data(), data.size());
     }
 
-    uint32_t CRC32::calculate(const uint8_t* data, const int length) {
+    uint32_t CRC32::Calculate(const uint8_t* data, const int length) {
         uint32_t crc = this->init_value;
         uint8_t byte = 0;
 
@@ -254,14 +254,14 @@ namespace Rocket {
         }
 
         if (this->reflect_output) {
-            crc = reflect(crc);
+            crc = Reflect(crc);
         }
 
         crc = (crc ^ this->xor_output) & 0xFFFFFFFF;
         return crc;
     }
 
-    void CRC32::printLookupTable() {
+    void CRC32::PrintLookupTable() {
         for (int i = 0; i < 32; i++) {
             for (int j = 0; j < 8; j++) {
                 printf("0x%08X, ", this->lookup_table[i * 8 + j]);
@@ -270,7 +270,7 @@ namespace Rocket {
         }
     }
 
-    uint32_t CRC32::reflect(uint32_t value) {
+    uint32_t CRC32::Reflect(uint32_t value) {
         uint32_t reflected = 0;
         for (int i = 0; i < 32; i++) {
             if (value & 0x01)
@@ -280,7 +280,7 @@ namespace Rocket {
         return reflected;
     }
 
-    void CRC32::create_lookup_table() {
+    void CRC32::CreateLookupTable() {
         uint32_t x = 0;
         for (int i = 0; i < LUT_SIZE; i++) {
             x = (uint32_t)(i << 24);

@@ -15,15 +15,15 @@ namespace Rocket {
 		CRC8(bool use_lut = false) : CRC8(0x07, 0x00, false, false, 0x00, use_lut) {};
 
 	public:
-		uint8_t calculate(const char* string);
-		uint8_t calculate(const uint8_t* data_in, const int length);
-		uint8_t calculate(gsl::span<uint8_t> data);
-		uint8_t calculate(const std::vector<uint8_t>& data);
-		void printLookupTable();
+		uint8_t Calculate(const char* string);
+		uint8_t Calculate(const uint8_t* data_in, const int length);
+		uint8_t Calculate(gsl::span<uint8_t> data);
+		uint8_t Calculate(const std::vector<uint8_t>& data);
+		void PrintLookupTable();
 
 	private:
-		uint8_t reflect(uint8_t value);
-		void create_lookup_table();
+		uint8_t Reflect(uint8_t value);
+		void CreateLookupTable();
 
 	private:
 		uint8_t lookup_table[LUT_SIZE];
@@ -89,15 +89,15 @@ namespace Rocket {
 		CRC16(bool use_lut = false) : CRC16(0x1021, 0x0000, false, false, 0x0000, use_lut) {};
 
 	public:
-		uint16_t calculate(const char* string);
-		uint16_t calculate(const uint8_t* data_in, const int length);
-		uint16_t calculate(gsl::span<uint8_t> data);
-		uint16_t calculate(const std::vector<uint8_t>& data);
-		void printLookupTable();
+		uint16_t Calculate(const char* string);
+		uint16_t Calculate(const uint8_t* data_in, const int length);
+		uint16_t Calculate(gsl::span<uint8_t> data);
+		uint16_t Calculate(const std::vector<uint8_t>& data);
+		void PrintLookupTable();
 
 	private:
-		uint16_t reflect(uint16_t value);
-		void create_lookup_table();
+		uint16_t Reflect(uint16_t value);
+		void CreateLookupTable();
 
 	private:
 		uint16_t lookup_table[LUT_SIZE];
@@ -233,15 +233,15 @@ namespace Rocket {
 		CRC32(bool use_lut = false) : CRC32(0x04C11DB7, 0xFFFFFFFF, true, true, 0xFFFFFFFF, use_lut) {};
 
 	public:
-		uint32_t calculate(const char* string);
-		uint32_t calculate(const uint8_t* data_in, const int length);
-		uint32_t calculate(gsl::span<uint8_t> data);
-		uint32_t calculate(const std::vector<uint8_t>& data);
-		void printLookupTable();
+		uint32_t Calculate(const char* string);
+		uint32_t Calculate(const uint8_t* data_in, const int length);
+		uint32_t Calculate(gsl::span<uint8_t> data);
+		uint32_t Calculate(const std::vector<uint8_t>& data);
+		void PrintLookupTable();
 
 	private:
-		uint32_t reflect(uint32_t value);
-		void create_lookup_table();
+		uint32_t Reflect(uint32_t value);
+		void CreateLookupTable();
 
 	private:
 		uint32_t lookup_table[LUT_SIZE];
