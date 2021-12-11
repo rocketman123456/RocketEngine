@@ -1,7 +1,6 @@
 #pragma once
 #include "Core/MemoryDefine.h"
 #include "FileSystem/Basic/File.h"
-#include "FileSystem/Basic/VirtualNode.h"
 
 #include <fstream>
 
@@ -11,18 +10,32 @@ namespace Rocket {
         NativeFile(const VirtualNodePtr& vnode_, const std::string& path_, const std::string& alias_path_);
         virtual ~NativeFile() = default;
 
-        std::size_t Size() const final;
-        bool IsReadOnly() const final;
-        bool IsOpened() const final;
+        inline VirtualNodePtr VNode() const final { return vnode; }
+        inline std::string FilePath() const final { return file_path; }
+        inline std::string AliasPath() const final { return alias_path; }
+        inline std::size_t Size() const final { return file_size; }
+        inline bool IsReadOnly() const final { return is_read_only; }
+        inline bool IsOpened() const final { return is_opened; }
+
+        // Should Check File Status Before These Operation
+        // these functions don't promise correct behavior 
+        // if you give a wrong file name input
         void Open(int32_t mode) final;
         void Close() final;
-        std::size_t Seek(std::size_t offset, int32_t origin) final;
+        std::size_t Seek(std::size_t offset, FileMode::FileOrigin origin) final;
         std::size_t Tell() final;
         std::size_t Read(gsl::span<gsl::byte>& data) final;
         std::size_t Write(gsl::span<gsl::byte> data) final;
-    public:
+    private:
+        void UpdateSize();
+    private:
         VirtualNodePtr vnode = nullptr;
-        std::string path;
-        std::string alias_path;
+        std::string file_path = "";
+        std::string alias_path = "";
+        std::fstream stream;
+        std::size_t file_size = 0;
+        int32_t mode = 0;
+        bool is_opened = false;
+        bool is_read_only = false;
     };
 }

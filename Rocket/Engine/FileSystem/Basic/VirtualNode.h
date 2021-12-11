@@ -12,40 +12,35 @@
 namespace Rocket {
     class VirtualBlock;
     class VirtualFileSystem;
+    // Contain Basic and Additional File Infos
+    // Can be modified if needed
     class VirtualNode {
-        friend class VirtualFileSystem;
     public:
         explicit VirtualNode(const std::string& path) {
-            Parse(path, file_path, file_name);
+            Parse(path);
             CheckName(file_path, file_name);
         }
         explicit VirtualNode(const std::string& path, const std::string& name) {
-            // Check if name contains a part of path
-            // std::string temp_path;
-            // Parse(name, temp_path, file_name);
-            // file_path = path;
-            // CheckName(file_path, file_name);
-            // file_path += temp_path;
             CheckName(file_path, file_name);
         }
         ~VirtualNode() = default;
     private:
-        void Parse(const std::string& path, std::string& filepath, std::string& filename) {
+        void Parse(const std::string& path) {
             // for "/User/Name/File.txt"
             // we will get "/User/Name/" as base path,
             // get "File.txt" as file name
             std::size_t found = path.rfind("/");
             if (found != std::string::npos) {
-                const std::string filepath = path.substr(0, found + 1);
+                file_path = path.substr(0, found + 1);
                 if (found != path.length()) {
-                    filename = path.substr(found + 1, path.length() - found - 1);
+                    file_name = path.substr(found + 1, path.length() - found - 1);
                 } else {
                     RK_ERROR(File, "Invalid File Name {}", path);
                     throw std::runtime_error("Invalid File Name");
                 }
             } else {
-                filename = path;
-                filepath = "/";
+                file_name = path;
+                file_path = "/";
             }
         }
 

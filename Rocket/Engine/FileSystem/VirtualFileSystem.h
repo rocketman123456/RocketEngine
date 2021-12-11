@@ -19,6 +19,8 @@ namespace Rocket  {
         void CloseFile(FilePtr file);
         bool CreateFile(const std::string& file_path);
         bool RemoveFile(const std::string& file_path);
+        bool CreateDir(const std::string& file_path);
+        bool RemoveDir(const std::string& file_path);
         bool CreateLink(const std::string& src, const std::string& dst);
         bool RemoveLink(const std::string& target);
         bool CopyFile(const std::string& src, const std::string& dest);
