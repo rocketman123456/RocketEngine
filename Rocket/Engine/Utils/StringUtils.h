@@ -47,7 +47,7 @@ namespace Rocket {
     static void SplitLastSingleChar(const std::string& name, std::string& first, std::string& second, const char token) {
         std::size_t found = name.rfind(token);
         if (found != std::string::npos) {
-            first = name.substr(0, found + 1);
+            first = name.substr(0, found);
             second = name.substr(found + 1, name.length() - found - 1);
         } else {
             first = "";

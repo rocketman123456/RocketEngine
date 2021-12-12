@@ -15,12 +15,13 @@ namespace Rocket {
 
     void DisplayFileInfo(const std::filesystem::directory_entry& entry, const std::string& lead, std::filesystem::path& filename) {
         auto file_size = ComputeFileSize(entry);
-        auto ftime = std::filesystem::last_write_time(entry);
-        std::time_t cftime = decltype(ftime)::clock::to_time_t(ftime);
-        std::string time_str = std::asctime(std::localtime(&cftime));
-        if(time_str.at(time_str.length() - 1) == '\n')
-            time_str = time_str.substr(0, time_str.length() - 1);
-        RK_TRACE(File, "{} {}, {}, time: {}", lead, filename.u8string(), file_size, time_str);
+        //auto ftime = std::filesystem::last_write_time(entry);
+        //std::time_t cftime = decltype(ftime)::clock::to_time_t(ftime);
+        //std::string time_str = std::asctime(std::localtime(&cftime));
+        //if(time_str.at(time_str.length() - 1) == '\n')
+        //    time_str = time_str.substr(0, time_str.length() - 1);
+        //RK_TRACE(File, "{} {}, {}, time: {}", lead, filename.u8string(), file_size, time_str);
+        RK_TRACE(File, "{} {}, {}", lead, filename.u8string(), file_size);
     }
 
     void DisplayDirTree(const std::filesystem::path& pathToShow, int level) {

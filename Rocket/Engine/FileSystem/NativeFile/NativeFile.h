@@ -9,7 +9,7 @@ namespace Rocket {
     public:
         // For File System
         NativeFile(const VirtualNodePtr& vnode_, const std::string& path_, const std::string& alias_path_);
-        // For Normal Use
+        NativeFile(const std::string& path_, const std::string& alias_path_);
         NativeFile(const std::string& path_);
         virtual ~NativeFile() = default;
 

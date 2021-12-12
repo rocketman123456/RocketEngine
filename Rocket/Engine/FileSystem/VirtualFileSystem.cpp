@@ -7,8 +7,10 @@
 
 namespace Rocket {
     void VirtualFileSystem::MountFileSystem(const std::string& alias, FileSystemPtr filesystem) {
+        std::string alias_temp = alias;
         std::vector<std::string> path_stack;
-        SplitSingleChar(alias, path_stack, '/');
+        Replace(alias_temp, "\\", "/");
+        SplitSingleChar(alias_temp, path_stack, '/');
         // Build up vfs blocks
         auto result = FindVirtualBlock(root_block, path_stack);
         if(result == nullptr) {
@@ -18,12 +20,17 @@ namespace Rocket {
         filesystem->SetAliasPath(alias);
         filesystem->Initialize();
         auto block = filesystem->RootBlock();
-        // Insert file system root block
-        result = FindVirtualBlock(root_block, path_stack);
-        if(result == nullptr) {
-            throw std::runtime_error("Cannot find mount point");
+        // Insert file system's root block
+        if(path_stack.size() == 0) {
+            root_block = block;
+        } else {
+            result = FindVirtualBlock(root_block, path_stack);
+            if(result == nullptr) {
+                throw std::runtime_error("Cannot find mount point");
+            }
+            block->parent = result;
+            result->block_map[block->block_name] = block;
         }
-        
     }
 
     void VirtualFileSystem::UnmountFileSystem(const std::string& alias) {

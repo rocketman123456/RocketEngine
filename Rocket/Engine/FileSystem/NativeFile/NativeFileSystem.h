@@ -23,7 +23,7 @@ namespace Rocket {
         void Initialize() final;
         void Finalize() final;
         // For File System
-        const FileList& Files(const std::string& dir) const final;
+        VNodeList VNodes(const std::string& dir) const final;
         FilePtr OpenFile(const std::string& file_path, int32_t mode) final;
         void CloseFile(const FilePtr& file) final;
         bool CreateFile(const std::string& file_path) final;
@@ -31,6 +31,7 @@ namespace Rocket {
         bool CreateDir(const std::string& dir_path) final;
         bool RemoveDir(const std::string& dir_path) final;
         bool IsFileExists(const std::string& file_path) const final;
+        bool IsDirExists(const std::string& dir_path) const final;
         bool IsFile(const std::string& file_path) const final;
         bool IsDir(const std::string& file_path) const final;
         bool IsReadOnly() const final;
