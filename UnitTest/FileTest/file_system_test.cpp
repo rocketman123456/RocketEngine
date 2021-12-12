@@ -6,6 +6,7 @@
 
 #include <iostream>
 #include <string>
+#include <cassert>
 
 using namespace Rocket;
 
@@ -19,12 +20,15 @@ int main() {
 
     std::string find_file = "/Config/music_name.txt";
     bool result = nfs->IsFileExists(find_file);
+    assert(result == true);
     RK_INFO(App, "File Exist: {}, {}", find_file, result);
     std::string find_dir = "/Model/bunny";
     result = nfs->IsDirExists(find_dir);
+    assert(result == true);
     RK_INFO(App, "Dir Exist: {}, {}", find_dir, result);
     find_dir = "/Model/bunny_spot";
     result = nfs->IsDirExists(find_dir);
+    assert(result == false);
     RK_INFO(App, "Dir Exist: {}, {}", find_dir, result);
 
     auto file = nfs->OpenFile(find_file, FileMode::READWRITE_BINARY);

@@ -8,12 +8,12 @@ namespace Rocket {
     class NativeFile : _implements_ File {
     public:
         // For File System
-        NativeFile(const VirtualNodePtr& vnode_, const std::string& path_, const std::string& alias_path_);
+        // NativeFile(const VirtualNodePtr& vnode_, const std::string& path_, const std::string& alias_path_);
         NativeFile(const std::string& path_, const std::string& alias_path_);
         NativeFile(const std::string& path_);
         virtual ~NativeFile() = default;
 
-        inline VirtualNodePtr VNode() const final { return vnode; }
+        // inline VirtualNodePtr VNode() const final { return vnode; }
         inline std::string FilePath() const final { return file_path; }
         inline std::string AliasPath() const final { return alias_path; }
         inline std::size_t Size() const final { return file_size; }
@@ -32,7 +32,7 @@ namespace Rocket {
     private:
         void UpdateSize();
     private:
-        VirtualNodePtr vnode = nullptr;
+        // VirtualNodePtr vnode = nullptr;
         std::string file_path = "";
         std::string alias_path = "";
         std::fstream stream;
