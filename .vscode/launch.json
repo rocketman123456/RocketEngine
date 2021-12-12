@@ -30,16 +30,29 @@
         },
         {
             "name": "(windows) file_system_test",
-            "type": "cppdbg",
+            "type": "cppvsdbg",
             "request": "launch",
             "program": "${workspaceFolder}/build/windows/x64/debug/file_system_test.exe",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],
-            "externalConsole": false,
-            "MIMode": "gdb",
-            "MIDebuggerPath": "gdb.exe",
+            "console": "externalTerminal"
+            //"externalConsole": false
+            //"MIMode": "gdb",
+            //"MIDebuggerPath": "gdb.exe",
+        },
+        {
+            "name": "cl.exe - 生成和调试活动文件",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "program": "${fileDirname}\\${fileBasenameNoExtension}.exe",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${fileDirname}",
+            "environment": [],
+            "console": "externalTerminal",
+            "preLaunchTask": "C/C++: cl.exe 生成活动文件"
         }
     ]
 }
