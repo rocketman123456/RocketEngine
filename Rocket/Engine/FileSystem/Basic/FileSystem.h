@@ -2,6 +2,7 @@
 #include "Core/MemoryDefine.h"
 #include "FileSystem/Basic/File.h"
 #include "FileSystem/Basic/VirtualBlock.h"
+#include "Utils/CRC.h"
 
 #include <set>
 

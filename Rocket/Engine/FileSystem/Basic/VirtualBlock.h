@@ -28,4 +28,21 @@ namespace Rocket {
     };
 
     CLASS_PTR(VirtualBlock);
+
+    static VirtualBlockPtr FindVirtualBlock(const VirtualBlockPtr& root, const std::vector<std::string>& dirs, int32_t level) {
+        // check invalid status
+        if(root == nullptr || level > dirs.size())
+            return nullptr;
+        auto found = root->block_map.find(dirs[level]);
+        if(found == root->block_map.end()) {
+            return nullptr;
+        } else {
+            VirtualBlockPtr sub_block = found->second;
+            return FindVirtualBlock(sub_block, dirs, level + 1);
+        }
+    }
+
+    static VirtualBlockPtr FindVirtualBlock(const VirtualBlockPtr& root, const std::vector<std::string>& dirs) {
+        return FindVirtualBlock(root, dirs, 0);
+    }
 }

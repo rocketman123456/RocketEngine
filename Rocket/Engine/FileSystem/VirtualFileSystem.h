@@ -10,7 +10,7 @@
 namespace Rocket  {
     class VirtualFileSystem {
     public:
-        using DirectoryMap = std::unordered_map<std::string, VirtualBlockPtr>;
+        using VirtualBlockMap = std::unordered_map<std::string, VirtualBlockPtr>;
     public:
         VirtualFileSystem() = default;
         ~VirtualFileSystem() = default;
@@ -36,8 +36,10 @@ namespace Rocket  {
         bool IsDirectory(const std::string& file_path) const;
         bool IsReadOnly() const;
     private:
+        void SetupFileSystemRecurisively(VirtualBlockPtr block, const FileSystemPtr& file_system);
+    private:
         VirtualBlockPtr root_block = nullptr;
-        DirectoryMap directory_map = {};
+        VirtualBlockMap directory_map = {};
         CRC32 crc32;
     };
 

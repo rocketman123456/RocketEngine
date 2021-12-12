@@ -18,34 +18,31 @@ namespace Rocket {
     class VirtualNode {
     public:
         explicit VirtualNode(const std::string& path) {
-            Parse(path);
+            std::string path_ = path;
+            Replace(path_, "\\", "/");
+            SplitName(path_);
             CheckName(file_path, file_name);
-            Replace(file_path, "\\", "/");
             SplitPath();
         }
-        explicit VirtualNode(const std::string& path, const std::string& name) 
-            : file_path(path), file_name(name) {
+        explicit VirtualNode(const std::string& path, const std::string& name) {
+            std::string path_ = path + name;
+            Replace(path_, "\\", "/");
+            SplitName(path_);
             CheckName(file_path, file_name);
-            Replace(file_path, "\\", "/");
             SplitPath();
         }
         ~VirtualNode() = default;
-    private:
-        void Parse(const std::string& path) {
+
+        void SplitName(const std::string& path) {
             // for "/User/Name/File.txt"
             // we will get "/User/Name/" as base path,
             // get "File.txt" as file name
-            std::size_t found = path.rfind("/");
-            if (found != std::string::npos) {
-                file_path = path.substr(0, found + 1);
-                if (found != path.length()) {
-                    file_name = path.substr(found + 1, path.length() - found - 1);
-                } else {
-                    RK_ERROR(File, "Invalid File Name {}", path);
-                    throw std::runtime_error("Invalid File Name");
-                }
-            } else {
-                file_name = path;
+            SplitLastSingleChar(path, file_path, file_name, '/');
+            if(file_name.length() == 0) {
+                RK_ERROR(File, "Invalid File Name {}", path);
+                throw std::runtime_error("Invalid File Name");
+            }
+            if(file_path.length() == 0) {
                 file_path = "/";
             }
         }
@@ -57,9 +54,6 @@ namespace Rocket {
 
         void SplitPath() {
             SplitSingleChar(file_path, path_stack, '/');
-            // for(auto sub_str : path_stack) {
-            //     RK_TRACE(File, "{}", sub_str);
-            // }
         }
     public:
         std::vector<std::string> path_stack = {};

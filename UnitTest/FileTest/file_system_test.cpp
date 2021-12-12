@@ -2,6 +2,7 @@
 #include "FileSystem/NativeFile/NativeFileSystem.h"
 // #include "FileSystem/MemoryFile/MemoryFileSystem.h"
 #include "Utils/FindRootDir.h"
+#include "Utils/PrintFiles.h"
 
 #include <iostream>
 #include <string>
@@ -13,6 +14,7 @@ int main() {
     std::string asset_path = root + "/Asset";
     NativeFileSystemPtr nfs = std::make_shared<NativeFileSystem>(asset_path);
     nfs->Initialize();
+    DisplayDirTree(nfs->BasicPath());
 
     {
         //auto info = std::make_shared<FileInfo>("music_name.txt");

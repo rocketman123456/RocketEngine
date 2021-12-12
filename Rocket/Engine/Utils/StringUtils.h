@@ -43,6 +43,18 @@ namespace Rocket {
         }
     }
 
+    // Split string into first and second part
+    static void SplitLastSingleChar(const std::string& name, std::string& first, std::string& second, const char token) {
+        std::size_t found = name.rfind(token);
+        if (found != std::string::npos) {
+            first = name.substr(0, found + 1);
+            second = name.substr(found + 1, name.length() - found - 1);
+        } else {
+            first = "";
+            second = name;
+        }
+    }
+
     static std::string Replace(const std::string& target, const std::string& from, const std::string& to) {
         std::string copy = target;
         std::size_t pos = 0;
@@ -99,7 +111,7 @@ namespace Rocket {
 
     // Get element at given index position
     template <class T>
-    const T & GetElement(const std::vector<T> &elements, std::string &index) {
+    const T & GetElement(const std::vector<T>& elements, std::string& index) {
         int idx = std::stoi(index);
         if (idx < 0) idx = int(elements.size()) + idx;
         else idx--;
