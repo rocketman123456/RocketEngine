@@ -4,7 +4,7 @@
 #include <algorithm>
 
 namespace Rocket {
-    static void Split(const std::string& in, std::vector<std::string>& out, const std::string& token) {
+    static void SplitMultiChar(const std::string& in, std::vector<std::string>& out, const std::string& token) {
         out.clear();
         std::string temp;
         for (int i = 0; i < int(in.size()); i++) {
@@ -27,7 +27,7 @@ namespace Rocket {
         }
     }
 
-    static void Split(const std::string &in, std::vector<std::string> &out, const char token) {
+    static void SplitSingleChar(const std::string &in, std::vector<std::string> &out, const char token) {
         out.clear();
         std::size_t start = 0;
         std::size_t end = 0;
@@ -36,6 +36,11 @@ namespace Rocket {
             start = end + 1;
         }
         out.push_back(in.substr(start));
+        // Remove Empty String
+        for(auto it = out.begin(); it != out.end();) {
+            if((*it).length() == 0) { it = out.erase(it); } 
+            else { ++it; }
+        }
     }
 
     static std::string Replace(const std::string& target, const std::string& from, const std::string& to) {

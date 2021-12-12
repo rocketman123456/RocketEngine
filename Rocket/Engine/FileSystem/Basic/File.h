@@ -28,7 +28,7 @@ namespace Rocket {
     public:
         virtual ~File() = default;
 
-        virtual VirtualNodePtr VNode() const = 0;
+        // virtual VirtualNodePtr VNode() const = 0;
         virtual std::string FilePath() const = 0;
         virtual std::string AliasPath() const = 0;
         virtual std::size_t Size() const = 0;

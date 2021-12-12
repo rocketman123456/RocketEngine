@@ -170,7 +170,7 @@ end
 -- Add Sub Module
 --
 includes(
-    "Rocket"
+    "Rocket",
     --"Sandbox",
-    -- "UnitTest"
+    "UnitTest"
 )

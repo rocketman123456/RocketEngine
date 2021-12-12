@@ -5,7 +5,7 @@ includes(
     -- "AudioSystem",
     -- "Config",
     -- "Containers",
-    -- "Core",
+    "Core",
     -- "EventSystem",
     -- "Exception",
     "FileSystem",

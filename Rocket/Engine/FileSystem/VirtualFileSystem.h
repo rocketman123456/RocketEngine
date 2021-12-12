@@ -3,6 +3,7 @@
 #include "FileSystem/Basic/FileSystem.h"
 #include "FileSystem/Basic/VirtualBlock.h"
 #include "FileSystem/Basic/VirtualNode.h"
+#include "Utils/CRC.h"
 
 #include <unordered_map>
 
@@ -11,6 +12,9 @@ namespace Rocket  {
     public:
         using DirectoryMap = std::unordered_map<std::string, VirtualBlockPtr>;
     public:
+        VirtualFileSystem() = default;
+        ~VirtualFileSystem() = default;
+
         void MountFileSystem(const std::string& alias, FileSystemPtr filesystem);
         void UnmountFileSystem(const std::string& alias);
         FileSystemPtr GetFilesystem(const std::string& dir);
@@ -34,6 +38,7 @@ namespace Rocket  {
     private:
         VirtualBlockPtr root_block = nullptr;
         DirectoryMap directory_map = {};
+        CRC32 crc32;
     };
 
     CLASS_PTR(VirtualFileSystem);

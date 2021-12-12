@@ -5,8 +5,9 @@ target("RocketUtils")
     add_options("memory_check")
     add_packages("gsl", {public = true})
     add_deps(
+        "RocketCore",
         "RocketLog",
-        "RocketMemory",
+        -- "RocketMemory",
         {public = true}
     )
 target_end()

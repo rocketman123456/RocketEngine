@@ -11,8 +11,9 @@ target("RocketFileSystem")
     add_options("memory_check")
     add_packages("gsl", {public = true})
     add_deps(
+        "RocketCore",
         "RocketLog",
-        "RocketMemory",
+        "RocketUtils",
         "RocketNativeFile",
         -- "RocketMemoryFile",
         -- "RocketZipFile",

@@ -1,9 +1,14 @@
 #include "FileSystem/NativeFile/NativeFile.h"
 #include "Log/Log.h"
 
+#include <filesystem>
+
 namespace Rocket {
-    NativeFile::NativeFile(const VirtualNodePtr& vnode_, const std::string& path_, const std::string& alias_path_)
-        : vnode(vnode_), file_path(path_), alias_path(alias_path_) {}
+    //NativeFile::NativeFile(const VirtualNodePtr& vnode_, const std::string& path_, const std::string& alias_path_)
+    //    : vnode(vnode_), file_path(path_), alias_path(alias_path_) {}
+    
+    NativeFile::NativeFile(const std::string& path_, const std::string& alias_path_)
+        : file_path(path_), alias_path(alias_path_) {}
 
     void NativeFile::Open(int32_t mode) {
         if(IsOpened() && (this->mode & mode) != 0) {
@@ -40,6 +45,16 @@ namespace Rocket {
             open_mode |= std::fstream::trunc;
         }
 
+        // Check in filesystem to assure is_read_only
+        if(!is_read_only) {
+            auto perm = std::filesystem::status(file_path).permissions();
+            if((perm & std::filesystem::perms::owner_write) == std::filesystem::perms::none) {
+                //(perm & std::filesystem::perms::group_write) == std::filesystem::perms::none) &&
+                //(perm & std::filesystem::perms::others_write) == std::filesystem::perms::none)) {
+                is_read_only = true;
+            }
+        }
+
         RK_TRACE(File, "Native Path: {}, {}", file_path, alias_path);
         stream.open(file_path, open_mode);
 
@@ -49,16 +64,25 @@ namespace Rocket {
 
     void NativeFile::Close() {
         stream.close();
-        is_opened = false;
         file_size = std::size_t(0);
     }
 
     void NativeFile::UpdateSize() {
         if (IsOpened()) {
+#if 0
             auto cur_pos = Tell();
             Seek(0, FileMode::END);
             file_size = Tell();
             Seek(cur_pos, FileMode::BEGIN);
+#else
+            std::filesystem::path path = this->file_path;
+            auto err = std::error_code{};
+            auto filesize = std::filesystem::file_size(path, err);
+            if (filesize != static_cast<uintmax_t>(-1))
+                file_size = filesize;
+            else 
+                file_size = 0;
+#endif
         } else {
             file_size = std::size_t(0);
         }
