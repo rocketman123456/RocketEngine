@@ -4,8 +4,8 @@
 #include <filesystem>
 
 namespace Rocket {
-    NativeFile::NativeFile(const VirtualNodePtr& vnode_, const std::string& path_, const std::string& alias_path_)
-        : vnode(vnode_), file_path(path_), alias_path(alias_path_) {}
+    //NativeFile::NativeFile(const VirtualNodePtr& vnode_, const std::string& path_, const std::string& alias_path_)
+    //    : vnode(vnode_), file_path(path_), alias_path(alias_path_) {}
     NativeFile::NativeFile(const std::string& path_, const std::string& alias_path_)
         : file_path(path_), alias_path(alias_path_) {}
     NativeFile::NativeFile(const std::string& path_)

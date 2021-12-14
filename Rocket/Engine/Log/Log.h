@@ -1,4 +1,5 @@
 #pragma once
+#include "Core/MemoryDefine.h"
 #ifdef RK_CONSOLE_LOG
 #include <memory>
 #include <unordered_map>

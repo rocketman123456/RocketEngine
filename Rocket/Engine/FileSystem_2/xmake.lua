@@ -1,7 +1,7 @@
 includes(
     "NativeFile",
-    "MemoryFile",
-    "ZipFile"
+    "MemoryFile"
+    -- "ZipFile"
 )
 
 target("RocketFileSystem")
@@ -9,10 +9,12 @@ target("RocketFileSystem")
     add_files("*.cpp")
     add_options("console_log")
     add_options("memory_check")
+    add_packages("gsl", {public = true})
     add_deps(
+        "RocketCore",
         "RocketLog",
-        "RocketMemory",
-        -- "RocketNativeFile",
+        "RocketUtils",
+        "RocketNativeFile",
         -- "RocketMemoryFile",
         -- "RocketZipFile",
         {public = true}

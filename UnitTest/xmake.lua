@@ -1,5 +1,5 @@
 includes(
-    "ContainerTest",
-    "FileTest"
+    "ContainerTest"
+    -- "FileTest"
     -- "RustTest"
 )
