@@ -4,5 +4,5 @@
 #include <filesystem>
 
 namespace Rocket {
-    void DisplayDirTree(const std::filesystem::path& pathToShow);
+    void DisplayNativeDirTree(const std::filesystem::path& pathToShow);
 }

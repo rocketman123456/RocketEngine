@@ -23,13 +23,16 @@ namespace Rocket {
         };
     }
 
+    using FileByte = std::byte;
+    using FileBuffer = gsl::span<FileByte>;
+
     // File Handle
     _Interface_ File {
     public:
         virtual ~File() = default;
 
         virtual VirtualNodePtr VNode() const = 0;
-        virtual std::string FilePath() const = 0;
+        virtual std::string VirtualPath() const = 0;
         virtual std::string RealPath() const = 0;
         virtual void Open(int32_t mode) = 0;
         virtual void Close() = 0;
@@ -39,8 +42,8 @@ namespace Rocket {
         virtual std::size_t Seek(std::size_t offset, FileEnum::Origin origin) = 0;
         virtual std::size_t Tell() = 0;
         // Should Pre-Allocate Memory
-        virtual std::size_t Read(gsl::span<gsl::byte>& data) = 0;
-        virtual std::size_t Write(gsl::span<gsl::byte> data) = 0;
+        virtual std::size_t Read(FileBuffer& data) = 0;
+        virtual std::size_t Write(const FileBuffer& data) = 0;
     };
 
     CLASS_PTR(File);

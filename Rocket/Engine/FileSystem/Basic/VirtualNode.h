@@ -16,6 +16,7 @@ namespace Rocket {
     // Can be modified if needed
     struct VirtualNode {
         std::vector<std::string> stack = {};
+        // File Full Name will be path + name
         std::string path = "";  // file basic path in vfs
         std::string name = "";  // file name
         std::shared_ptr<VirtualBlock> vblock = nullptr;

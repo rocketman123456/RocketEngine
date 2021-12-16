@@ -21,9 +21,9 @@ namespace Rocket {
         // if parent == nullptr, means that this is root dir
         std::shared_ptr<VirtualBlock> parent = nullptr;
         // Parent Name to find file
-        std::string name = "";
+        std::string name = {};
         // Alias Path in VFS
-        std::string path = "";
+        std::string path = {};
         // Store data
         SubBlockMap block_map = {};
         NodeMap node_map = {};

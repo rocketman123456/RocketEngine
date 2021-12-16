@@ -114,6 +114,7 @@
         "gsl_assert": "cpp",
         "gsl_byte": "cpp",
         "gsl_util": "cpp",
-        "span_ext": "cpp"
+        "span_ext": "cpp",
+        "__functional_base_03": "cpp"
     }
 }

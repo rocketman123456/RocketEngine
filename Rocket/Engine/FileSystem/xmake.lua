@@ -12,9 +12,8 @@ target("RocketFileSystem")
     add_packages("gsl", {public = true})
     add_deps(
         "RocketLog",
-        "RocketMemory",
-        -- "RocketNativeFile",
-        -- "RocketMemoryFile",
+        "RocketNativeFile",
+        "RocketMemoryFile",
         -- "RocketZipFile",
         {public = true}
     )

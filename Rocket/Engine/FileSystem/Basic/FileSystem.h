@@ -12,34 +12,7 @@ namespace Rocket {
     using VNodeList = std::vector<VirtualNodePtr>;
     using VBlockList = std::vector<VirtualBlockPtr>;
 
-    _Interface_ FileSystemFileOperation {
-    public:
-        virtual ~FileSystemFileOperation() = default;
-
-        virtual FilePtr OpenFile(const std::string& file_path, int32_t mode) = 0;
-        virtual void CloseFile(const FilePtr& file) = 0;
-        virtual std::size_t ReadFile(const FilePtr& file, gsl::span<gsl::byte>& data) = 0;
-        virtual std::size_t WriteFile(FilePtr& file, const gsl::span<gsl::byte>& data) = 0;
-        virtual bool CreateFile(const std::string& file_path) = 0;
-        virtual bool RemoveFile(const std::string& file_path) = 0;
-        // virtual bool MoveFile(const std::string& src, const std::string& dst) = 0;
-        // virtual bool RenameFile(const std::string& src, const std::string& dst) = 0;
-        // virtual bool CopyFile(const std::string& src, const std::string& dst) = 0;
-        virtual std::size_t FileSize(const FilePtr& file) const = 0;
-    };
-
-    _Interface_ FileSystemDirOperation {
-    public:
-        virtual ~FileSystemDirOperation() = default;
-
-        virtual bool CreateDir(const std::string& dir_path) = 0;
-        virtual bool RemoveDir(const std::string& dir_path) = 0;
-        // virtual bool MoveDir(const std::string& src, const std::string& dst) = 0;
-        // virtual bool RenameDir(const std::string& src, const std::string& dst) = 0;
-        // virtual bool CopyDir(const std::string& src, const std::string& dst) = 0;
-    };
-
-    _Interface_ FileSystem : _inherits_ FileSystemFileOperation, FileSystemDirOperation {
+    _Interface_ FileSystem {
     public:
         virtual ~FileSystem() = default;
         // Basic Operation
@@ -60,8 +33,23 @@ namespace Rocket {
         virtual bool IsFile(const std::string& file_path) const = 0;
         virtual bool IsDir(const std::string& file_path) const = 0;
         virtual bool IsReadOnly() const = 0;
-
-        
+        // File Operation
+        virtual FilePtr OpenFile(const std::string& file_path, int32_t mode) = 0;
+        virtual void CloseFile(const FilePtr& file) = 0;
+        virtual std::size_t ReadFile(const FilePtr& file, FileBuffer& data) = 0;
+        virtual std::size_t WriteFile(FilePtr& file, const FileBuffer& data) = 0;
+        virtual bool CreateFile(const std::string& file_path) = 0;
+        virtual bool RemoveFile(const std::string& file_path) = 0;
+        // virtual bool MoveFile(const std::string& src, const std::string& dst) = 0;
+        // virtual bool RenameFile(const std::string& src, const std::string& dst) = 0;
+        // virtual bool CopyFile(const std::string& src, const std::string& dst) = 0;
+        virtual std::size_t FileSize(const FilePtr& file) const = 0;
+        // Dir Operation
+        virtual bool CreateDir(const std::string& dir_path) = 0;
+        virtual bool RemoveDir(const std::string& dir_path) = 0;
+        // virtual bool MoveDir(const std::string& src, const std::string& dst) = 0;
+        // virtual bool RenameDir(const std::string& src, const std::string& dst) = 0;
+        // virtual bool CopyDir(const std::string& src, const std::string& dst) = 0;
     };
 
     CLASS_PTR(FileSystem);
