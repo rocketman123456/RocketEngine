@@ -28,7 +28,10 @@ int main() {
         mf->Read(data_copy);
         std::string data_str((char*)data_copy.data(), data_copy.size());
         std::cout << data_str << std::endl;
+        delete [] data_copy.data();
     }
+
+    delete [] data.data();
 
     return 0;
 }

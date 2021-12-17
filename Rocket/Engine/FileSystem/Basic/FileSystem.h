@@ -20,10 +20,10 @@ namespace Rocket {
         virtual void Finalize() = 0;
         virtual bool IsInitialized() const = 0;
         // For File System
-        virtual void SetBasicPath(const std::string& basic) = 0;
-        virtual void SetAliasPath(const std::string& alias) = 0;
-        virtual const std::string& BasicPath() const = 0;
-        virtual const std::string& AliasPath() const = 0;
+        virtual void SetVirtualPath(const std::string& basic) = 0;
+        virtual void SetRealPath(const std::string& alias) = 0;
+        virtual const std::string& VirtualPath() const = 0;
+        virtual const std::string& RealPath() const = 0;
         virtual VirtualBlockPtr RootBlock() const = 0;
         virtual VNodeList VNodes(const std::string& dir) const = 0;
         virtual VBlockList VBlocks(const std::string& dir) const = 0;

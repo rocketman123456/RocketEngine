@@ -4,6 +4,7 @@
 
 namespace Rocket {
     MemoryFile::MemoryFile(const VirtualNodePtr& vnode_) : vnode(vnode_) {
+        // TODO
         virtual_path = vnode->path + vnode->name;
     }
     MemoryFile::MemoryFile(const std::string& path_, const std::string& virtual_path_)
