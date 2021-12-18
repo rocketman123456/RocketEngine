@@ -14,7 +14,7 @@ int main() {
 
     nf->Open(FileEnum::READWRITE_BINARY);
     FileBuffer data = {new FileByte[nf->Size()], nf->Size()};
-    nf->Read(data);
+    nf->Read(&data);
 
     {
         std::string data_str((char*)data.data(), data.size());
@@ -25,7 +25,7 @@ int main() {
         mf->Open(FileEnum::READWRITE_BINARY);
         mf->Write(data);
         FileBuffer data_copy = {new FileByte[mf->Size()], mf->Size()};
-        mf->Read(data_copy);
+        mf->Read(&data_copy);
         std::string data_str((char*)data_copy.data(), data_copy.size());
         std::cout << data_str << std::endl;
         delete [] data_copy.data();

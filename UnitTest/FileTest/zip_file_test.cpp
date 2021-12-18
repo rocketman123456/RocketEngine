@@ -66,7 +66,7 @@ int main() {
         zfp->Open(FileEnum::READWRITE_BINARY);
 
         FileBuffer data = {new FileByte[zfp->Size()], zfp->Size()};
-        zfp->Read(data);
+        zfp->Read(&data);
         std::string data_str((char*)data.data(), data.size());
         std::cout << data_str << std::endl;
         delete [] data.data();

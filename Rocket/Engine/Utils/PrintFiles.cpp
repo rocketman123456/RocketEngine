@@ -1,5 +1,6 @@
 #include "Utils/PrintFiles.h"
 
+#include <filesystem>
 #include <chrono>
 
 namespace Rocket {
@@ -42,7 +43,7 @@ namespace Rocket {
         }
     }
 
-    void DisplayNativeDirTree(const std::filesystem::path& pathToShow) {
+    void DisplayNativeDirTree(const std::string& pathToShow) {
         DisplayNativeDirTree(pathToShow, 0);
     }
 }

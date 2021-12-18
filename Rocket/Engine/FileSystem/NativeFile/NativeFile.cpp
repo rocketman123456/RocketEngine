@@ -1,8 +1,10 @@
 #include "FileSystem/NativeFile/NativeFile.h"
 #include "FileSystem/Basic/VirtualUtils.h"
+#include "FileSystem/NativeFile/NativeUtils.h"
 #include "Log/Log.h"
 
 #include <filesystem>
+#include <cassert>
 
 namespace Rocket {
     NativeFile::NativeFile(const VirtualNodePtr& vnode_) 
@@ -48,9 +50,8 @@ namespace Rocket {
         }
         // Check in filesystem to assure is_read_only
         if(!is_read_only) {
-            auto perm = std::filesystem::status(real_path).permissions();
-            // Check Owner's Permission
-            if((perm & std::filesystem::perms::owner_write) == std::filesystem::perms::none) {
+            auto result = IsNativeReadOnly(real_path);
+            if(result) {
                 is_read_only = true;
             }
         }
@@ -111,14 +112,11 @@ namespace Rocket {
         }
     }
 
-    std::size_t NativeFile::Read(FileBuffer& buffer) {
-        if (!IsOpened()) {
-            return std::size_t(0);
-        }
-        stream.read(reinterpret_cast<char*>(buffer.data()), static_cast<std::streamsize>(buffer.size()));
-        if (stream) {
-            return buffer.size();
-        }
+    std::size_t NativeFile::Read(FileBuffer* buffer) {
+        assert(buffer != nullptr);
+        if (!IsOpened()) { return std::size_t(0); }
+        stream.read(reinterpret_cast<char*>(buffer->data()), static_cast<std::streamsize>(buffer->size()));
+        if (stream) { return buffer->size(); }
         return static_cast<std::size_t>(stream.gcount());
     }
 

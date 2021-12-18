@@ -6,7 +6,7 @@
 
 #include <memory>
 #include <string>
-#include <vector>
+// #include <vector>
 #include <exception>
 #include <stdexcept>
 
@@ -15,12 +15,12 @@ namespace Rocket {
     // Contain Basic and Additional File Infos
     // Can be modified if needed
     struct VirtualNode {
-        std::vector<std::string> stack = {};
+        // std::vector<std::string> stack = {};
         // File Full Name will be path + name
         std::string path = "";  // file basic path in vfs
         std::string name = "";  // file name
         std::shared_ptr<VirtualBlock> vblock = nullptr;
-        std::shared_ptr<VirtualNode> vlink = nullptr;
+        // std::shared_ptr<VirtualNode> vlink = nullptr;
     };
 
     CLASS_PTR(VirtualNode);

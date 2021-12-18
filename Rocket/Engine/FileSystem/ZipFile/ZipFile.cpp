@@ -5,6 +5,8 @@
 #include <exception>
 #include <stdexcept>
 #include <algorithm>
+#include <filesystem>
+#include <cassert>
 
 namespace Rocket {
     ZipFile::ZipFile(const VirtualNodePtr& vnode_) 
@@ -18,7 +20,6 @@ namespace Rocket {
         if(IsOpened()) return;
         this->mode = mode;
         is_read_only = true;
-        // TODO : add file write permission check
         if(mode & FileEnum::APPEND) {
             is_read_only = false;
         }
@@ -27,6 +28,14 @@ namespace Rocket {
         }
         if(mode & FileEnum::TRUNCATE) {
             is_read_only = false;
+        }
+
+        if(!is_read_only) {
+            auto perm = std::filesystem::status(real_path).permissions();
+            // Check Owner's Permission
+            if((perm & std::filesystem::perms::owner_write) == std::filesystem::perms::none) {
+                is_read_only = true;
+            }
         }
 
         zip_file_ptr = OpenZipFile(zip_ptr, real_path);
@@ -61,9 +70,10 @@ namespace Rocket {
         return 0;
     }
 
-    std::size_t ZipFile::Read(FileBuffer& data) {
-        std::size_t read_size = std::min(Size(), data.size());
-        zip_fread(zip_file_ptr, data.data(), data.size());
+    std::size_t ZipFile::Read(FileBuffer* data) {
+        assert(data != nullptr);
+        std::size_t read_size = std::min(Size(), data->size());
+        zip_fread(zip_file_ptr, data->data(), data->size());
         return read_size;
     }
 
@@ -73,7 +83,7 @@ namespace Rocket {
             // TODO : support append to zip file
             FileBuffer append_data = {new FileByte[Size() + data.size()], Size() + data.size()};
             FileBuffer origin_data = {append_data.data(), Size()};
-            Read(origin_data);
+            Read(&origin_data);
             std::memcpy((void*)(append_data.data() + Size()), data.data(), data.size());
         } else {
             origin_data = data;

@@ -25,7 +25,7 @@ namespace Rocket {
         void Close() final;
         std::size_t Seek(std::size_t offset, FileEnum::Origin origin) final;
         std::size_t Tell() final;
-        std::size_t Read(FileBuffer& data) final;
+        std::size_t Read(FileBuffer* data) final;
         std::size_t Write(const FileBuffer& data) final;
     private:
         VirtualNodePtr vnode = nullptr;

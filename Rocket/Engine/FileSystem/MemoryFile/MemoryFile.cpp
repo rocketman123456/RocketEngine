@@ -2,6 +2,7 @@
 #include "FileSystem/Basic/VirtualUtils.h"
 
 #include <algorithm>
+#include <cassert>
 
 namespace Rocket {
     MemoryFile::MemoryFile(const VirtualNodePtr& vnode_) 
@@ -65,13 +66,14 @@ namespace Rocket {
         return seek_pos;
     }
 
-    std::size_t MemoryFile::Read(FileBuffer& buffer) {
+    std::size_t MemoryFile::Read(FileBuffer* buffer) {
+        assert(buffer != nullptr);
         if (!IsOpened()) { return std::size_t(0); }
         // Copy Specify Memory Area
         std::size_t buffer_size = Size() - Tell();
-        std::size_t max_size = std::min(buffer.size(), buffer_size);
+        std::size_t max_size = std::min(buffer->size(), buffer_size);
         if (max_size > 0) {
-            std::memcpy(buffer.data(), file_data.data(), max_size);
+            std::memcpy(buffer->data(), file_data.data(), max_size);
             return max_size;
         } else {
             return std::size_t(0);

@@ -4,6 +4,22 @@
 #include <cassert>
 
 namespace Rocket {
+    zip_t* OpenZip(const std::string& file_name, uint32_t mode) {
+        auto zip_archive = zip_open(file_name.c_str(), ZIP_CREATE, nullptr);
+        if(zip_archive == nullptr) {
+            RK_TRACE(File, "Unable to Open Zip: {}, Error: {}", file_name, zip_strerror(zip_archive));
+            return nullptr;
+        }
+        return zip_archive;
+    }
+
+    void CloseZip(zip_t* zip) {
+        auto result = zip_close(zip);
+        if(result < 0) {
+            RK_WARN(File, "Zip Close Error: {}", zip_strerror(zip));
+        }
+    }
+
     zip_file_t* OpenZipFile(zip_t* zip, const std::string& file_name, uint32_t mode) {
         assert(zip != nullptr);
         auto file = zip_fopen(zip, file_name.c_str(), mode);
