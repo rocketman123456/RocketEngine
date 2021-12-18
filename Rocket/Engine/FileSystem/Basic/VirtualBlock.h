@@ -27,6 +27,7 @@ namespace Rocket {
         // Store data
         SubBlockMap block_map = {};
         NodeMap node_map = {};
+        // int32_t crc = 0;
     };
 
     CLASS_PTR(VirtualBlock);

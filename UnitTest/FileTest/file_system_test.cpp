@@ -70,6 +70,5 @@ int main() {
 
     vfs->UnmountFileSystem(vpath_native);
     vfs->UnmountFileSystem(vpath_zip);
-
     return 0;
 }

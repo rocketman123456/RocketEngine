@@ -48,29 +48,12 @@ namespace Rocket {
             return true;
     }
 
-    bool FileSystem::IsFile(const std::string& file_path) const {
-        return IsFileExists(file_path);
-    }
-
-    bool FileSystem::IsDir(const std::string& dir_path) const {
-        return IsDirExists(dir_path);
-    }
-
-    void FileSystem::OpenFile(const FilePtr& file, int32_t mode) {
-        file->Open(mode);
-    }
-
-    void FileSystem::CloseFile(const FilePtr& file) {
-        file->Close();
-    }
-
-    std::size_t FileSystem::ReadFile(const FilePtr& file, FileBuffer* data) {
-        return file->Read(data);
-    }
-
-    std::size_t FileSystem::WriteFile(FilePtr& file, const FileBuffer& data) {
-        return file->Write(data);
-    }
+    bool FileSystem::IsFile(const std::string& file_path) const { return IsFileExists(file_path); }
+    bool FileSystem::IsDir(const std::string& dir_path) const { return IsDirExists(dir_path); }
+    void FileSystem::OpenFile(const FilePtr& file, int32_t mode) { file->Open(mode); }
+    void FileSystem::CloseFile(const FilePtr& file) { file->Close(); }
+    std::size_t FileSystem::ReadFile(const FilePtr& file, FileBuffer* data) { return file->Read(data); }
+    std::size_t FileSystem::WriteFile(FilePtr& file, const FileBuffer& data) { return file->Write(data); }
 
     bool FileSystem::CreateFile(const std::string& file_path) {
         RK_WARN(File, "Create File Not Supported");

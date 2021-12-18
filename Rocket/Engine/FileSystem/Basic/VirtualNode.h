@@ -6,7 +6,6 @@
 
 #include <memory>
 #include <string>
-// #include <vector>
 #include <exception>
 #include <stdexcept>
 
@@ -20,6 +19,8 @@ namespace Rocket {
         std::string path = "";  // file basic path in vfs
         std::string name = "";  // file name
         std::shared_ptr<VirtualBlock> vblock = nullptr;
+        // int32_t crc = 0;
+        // TODO : add support for link function
         // std::shared_ptr<VirtualNode> vlink = nullptr;
     };
 

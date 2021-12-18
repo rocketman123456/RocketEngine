@@ -16,20 +16,16 @@ namespace Rocket {
     using VNodeMap = std::unordered_map<std::string, VirtualNodePtr>;
     using VBlockMap = std::unordered_map<std::string, VirtualBlockPtr>;
 
-    // TODO : add unimplement functions 
-    // and merge some common code into base class
-    // most operations of the file system share same logic
+    // File System will generate file and dir index map
+    // which will make searching faster
+    // Further optimization will be use crc hash code as search key instead of string
     _Interface_ FileSystem {
     public:
         FileSystem(const std::string& real_path, const std::string& virtual_path);
         virtual ~FileSystem() = default;
         // Basic Operation
-        virtual void Initialize() = 0;
-        virtual void Finalize() = 0;
-        inline virtual bool IsInitialized() const { return is_initialized; }
+        inline bool IsInitialized() const { return is_initialized; }
         // For File System
-        virtual void SetVirtualPath(const std::string& basic) = 0;
-        virtual void SetRealPath(const std::string& alias) = 0;
         [[nodiscard]] inline const std::string& VirtualPath() const { return virtual_path; }
         [[nodiscard]] inline const std::string& RealPath() const { return real_path; }
         [[nodiscard]] inline VirtualBlockPtr RootBlock() const { return root; }
@@ -42,21 +38,30 @@ namespace Rocket {
         [[nodiscard]] bool IsDirExists(const std::string& dir_path) const;
         [[nodiscard]] bool IsFile(const std::string& file_path) const;
         [[nodiscard]] bool IsDir(const std::string& file_path) const;
-        [[nodiscard]] virtual bool IsReadOnly() const = 0;
         // File Operation
-        [[nodiscard]] virtual FilePtr GetFilePointer(const std::string& file_path) = 0;
         void OpenFile(const FilePtr& file, int32_t mode);
         void CloseFile(const FilePtr& file);
         [[nodiscard]] std::size_t ReadFile(const FilePtr& file, FileBuffer* data);
         [[nodiscard]] std::size_t WriteFile(FilePtr& file, const FileBuffer& data);
+
+        // Virtual Functions --------------------------------------------------------------
         
+        // Basic Operation
+        virtual void Initialize() = 0;
+        virtual void Finalize() = 0;
+        // For File System
+        virtual void SetVirtualPath(const std::string& basic) = 0;
+        virtual void SetRealPath(const std::string& alias) = 0;
+        [[nodiscard]] virtual bool IsReadOnly() const = 0;
+        // TODO : File Operation -- Unfinished
+        [[nodiscard]] virtual FilePtr GetFilePointer(const std::string& file_path) = 0;
         [[nodiscard]] virtual bool CreateFile(const std::string& file_path);
         [[nodiscard]] virtual bool RemoveFile(const std::string& file_path);
         [[nodiscard]] virtual bool MoveFile(const std::string& src, const std::string& dst);
         [[nodiscard]] virtual bool RenameFile(const std::string& src, const std::string& dst);
         [[nodiscard]] virtual bool CopyFile(const std::string& src, const std::string& dst);
         [[nodiscard]] virtual std::size_t FileSize(const FilePtr& file) const;
-        // Dir Operation
+        // TODO : Dir Operation -- Unfinished
         [[nodiscard]] virtual bool CreateDir(const std::string& dir_path);
         [[nodiscard]] virtual bool RemoveDir(const std::string& dir_path);
         [[nodiscard]] virtual bool MoveDir(const std::string& src, const std::string& dst);

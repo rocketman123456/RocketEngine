@@ -47,7 +47,7 @@ namespace Rocket {
 
     private:
         VirtualBlockPtr CreateVirtualBlock(VirtualBlockPtr& root, const std::vector<std::string>& dirs, int32_t level);
-        void RemoveVirtualBlock(VirtualBlockPtr& root);
+        void RemoveCacheInfo(VirtualBlockPtr& root);
         void SetupBlockFileSystem(VirtualBlockPtr& root, const FileSystemPtr& fs);
 
     private:
