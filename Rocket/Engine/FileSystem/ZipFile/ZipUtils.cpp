@@ -13,6 +13,10 @@ namespace Rocket {
         return file;
     }
 
+    void CloseZipFile(zip_file_t* zip_file) {
+        zip_fclose(zip_file);
+    }
+
     void GetZipFileStatus(zip_t* zip, zip_stat_t* status, const std::string& file_name, uint32_t mode) {
         assert(zip != nullptr && status != nullptr);
         zip_stat_init(status);

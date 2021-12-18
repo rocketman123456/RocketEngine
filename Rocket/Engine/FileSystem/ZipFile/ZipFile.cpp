@@ -47,7 +47,7 @@ namespace Rocket {
 
     void ZipFile::Close() {
         if(!IsOpened()) return;
-        zip_fclose(zip_file_ptr);
+        CloseZipFile(zip_file_ptr);
         is_opened = false;
     }
 
