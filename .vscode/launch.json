@@ -50,9 +50,17 @@
             "cwd": "${workspaceFolder}",
             "environment": [],
             "console": "externalTerminal"
-            //"externalConsole": false
-            //"MIMode": "gdb",
-            //"MIDebuggerPath": "gdb.exe",
+        },
+        {
+            "name": "(windows) zip_file_test",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/windows/x64/debug/zip_file_test.exe",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "console": "externalTerminal"
         }
     ]
 }

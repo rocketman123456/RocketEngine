@@ -1,16 +1,12 @@
 #include "FileSystem/NativeFile/NativeFile.h"
+#include "FileSystem/Basic/VirtualUtils.h"
 #include "Log/Log.h"
 
 #include <filesystem>
 
 namespace Rocket {
-    NativeFile::NativeFile(const VirtualNodePtr& vnode_) : vnode(vnode_) {
-        // TODO
-        virtual_path = vnode->path + vnode->name;
-        //auto fs_real_path = vnode->vblock->file_system->RealPath();
-        //auto fs_virtual_path = vnode->vblock->file_system->VirtualPath();
-        //real_path = fs_real_path + vnode->path.substr(fs_virtual_path.size()) + vnode->name
-    }
+    NativeFile::NativeFile(const VirtualNodePtr& vnode_) 
+        : vnode(vnode_), real_path(GetVirtualPath(vnode)), virtual_path(GetRealPath(vnode)) {}
     NativeFile::NativeFile(const std::string& path_, const std::string& virtual_path_)
         : real_path(path_), virtual_path(virtual_path_) {}
     NativeFile::NativeFile(const std::string& path_)

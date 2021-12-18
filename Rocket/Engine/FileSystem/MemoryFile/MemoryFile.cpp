@@ -1,12 +1,11 @@
 #include "FileSystem/MemoryFile/MemoryFile.h"
+#include "FileSystem/Basic/VirtualUtils.h"
 
 #include <algorithm>
 
 namespace Rocket {
-    MemoryFile::MemoryFile(const VirtualNodePtr& vnode_) : vnode(vnode_) {
-        // TODO
-        virtual_path = vnode->path + vnode->name;
-    }
+    MemoryFile::MemoryFile(const VirtualNodePtr& vnode_) 
+        : vnode(vnode_), real_path(GetVirtualPath(vnode)), virtual_path(GetRealPath(vnode)) {}
     MemoryFile::MemoryFile(const std::string& path_, const std::string& virtual_path_)
         : real_path(path_), virtual_path(virtual_path_) {}
     MemoryFile::MemoryFile(const std::string& path_)

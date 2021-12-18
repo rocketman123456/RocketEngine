@@ -1,4 +1,5 @@
 includes(
+    "Basic",
     "NativeFile",
     "MemoryFile",
     "ZipFile"
@@ -14,7 +15,7 @@ target("RocketFileSystem")
         "RocketLog",
         "RocketNativeFile",
         "RocketMemoryFile",
-        -- "RocketZipFile",
+        "RocketZipFile",
         {public = true}
     )
 target_end()

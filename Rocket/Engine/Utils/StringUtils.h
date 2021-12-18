@@ -2,56 +2,65 @@
 #include <string>
 #include <vector>
 #include <algorithm>
+#include <cassert>
 
 namespace Rocket {
-    static void SplitMultiChar(const std::string& in, std::vector<std::string>& out, const std::string& token) {
-        out.clear();
+    static void SplitMultiChar(const std::string& in, std::vector<std::string>* out, const std::string& token) {
+        assert(out != nullptr);
+        out->clear();
         std::string temp;
         for (int i = 0; i < int(in.size()); i++) {
             std::string test = in.substr(i, token.size());
             if (test == token) {
                 if (!temp.empty()) {
-                    out.push_back(temp);
+                    out->push_back(temp);
                     temp.clear();
                     i += (int)token.size() - 1;
                 } else {
-                    out.push_back("");
+                    out->push_back("");
                 }
             } else if (i + token.size() >= in.size()) {
                 temp += in.substr(i, token.size());
-                out.push_back(temp);
+                out->push_back(temp);
                 break;
             } else {
                 temp += in[i];
             }
         }
+        // Remove Empty String
+        for(auto it = out->begin(); it != out->end();) {
+            if((*it).length() == 0) { it = out->erase(it); } 
+            else { ++it; }
+        }
     }
 
-    static void SplitSingleChar(const std::string &in, std::vector<std::string> &out, const char token) {
-        out.clear();
+    static void SplitSingleChar(const std::string &in, std::vector<std::string>* out, const char token) {
+        assert(out != nullptr);
+        out->clear();
         std::size_t start = 0;
         std::size_t end = 0;
         while ((end = in.find(token, start)) != std::string::npos) {
-            out.push_back(in.substr(start, end - start));
+            out->push_back(in.substr(start, end - start));
             start = end + 1;
         }
-        out.push_back(in.substr(start));
+        out->push_back(in.substr(start));
         // Remove Empty String
-        for(auto it = out.begin(); it != out.end();) {
-            if((*it).length() == 0) { it = out.erase(it); } 
+        for(auto it = out->begin(); it != out->end();) {
+            if((*it).length() == 0) { it = out->erase(it); } 
             else { ++it; }
         }
     }
 
     // Split string into first and second part
-    static void SplitLastSingleChar(const std::string& name, std::string& first, std::string& second, const char token) {
+    static void SplitLastSingleChar(const std::string& name, std::string* first, std::string* second, const char token) {
+        assert(first != nullptr && second != nullptr);
         std::size_t found = name.rfind(token);
         if (found != std::string::npos) {
-            first = name.substr(0, found);
-            second = name.substr(found + 1, name.length() - found - 1);
+            *first = name.substr(0, found);
+            *second = name.substr(found + 1, name.length() - found - 1);
         } else {
-            first = "";
-            second = name;
+            *first = "";
+            *second = name;
         }
     }
 
@@ -111,7 +120,7 @@ namespace Rocket {
 
     // Get element at given index position
     template <class T>
-    const T & GetElement(const std::vector<T>& elements, std::string& index) {
+    const T & GetElement(const std::vector<T>& elements, std::string* index) {
         int idx = std::stoi(index);
         if (idx < 0) idx = int(elements.size()) + idx;
         else idx--;

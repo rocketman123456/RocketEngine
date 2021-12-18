@@ -1,4 +1,6 @@
 #pragma once
+#include "Log/Log.h"
+
 #include <string>
 #include <filesystem>
 

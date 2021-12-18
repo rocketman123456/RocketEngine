@@ -1,0 +1,64 @@
+#include "Utils/FindRootDir.h"
+#include "FileSystem/ZipFile/ZipUtils.h"
+#include "FileSystem/ZipFile/ZipFile.h"
+#include "Log/Log.h"
+
+#include <zip.h>
+#include <iostream>
+#include <cassert>
+
+using namespace Rocket;
+
+int main() {
+    std::string root = FindRootDir("_root_dir_");
+    std::string zip_name = "_root_dir_.zip";
+    std::string full_name = root + "/" + zip_name;
+
+    int err;
+    zip_t* zip_archive;
+    zip_archive = zip_open(full_name.c_str(), ZIP_CREATE, &err);
+    if(zip_archive == nullptr) {
+        char buf[100];
+        zip_error_to_str(buf, sizeof(buf), err, errno);
+        RK_ERROR(File, "Unable to open zip: {}, Error: {}", full_name, buf);
+    } else {
+        RK_INFO(File, "Open zip success: {}", full_name);
+    }
+
+    std::string zip_file_name = "_root_dir_";
+
+    {
+        auto zip_file = OpenZipFile(zip_archive, zip_file_name);
+        if(zip_file == nullptr) {
+            RK_ERROR(File, "Unable to open file: {}", zip_file_name);
+        } else {
+            RK_INFO(File, "Open file success: {}", zip_file_name);
+        }
+        zip_stat_t zip_file_status;
+        zip_stat(zip_archive, zip_file_name.c_str(), 0, &zip_file_status);
+    }
+
+    {
+        ZipFilePtr zfp = std::make_shared<ZipFile>(zip_file_name, zip_archive);
+        zfp->Open(FileEnum::READWRITE_BINARY);
+
+        FileBuffer data = {new FileByte[zfp->Size()], zfp->Size()};
+        zfp->Read(data);
+        std::string data_str((char*)data.data(), data.size());
+        std::cout << data_str << std::endl;
+        delete [] data.data();
+
+        std::string content = "root dir - zip test";
+        auto size = zfp->Write({(std::byte*)content.data(), content.size()});
+        assert(size == content.size());
+
+        zfp->Close();
+    }
+
+    auto result = zip_close(zip_archive);
+    if(result < 0) {
+        std::cout << zip_strerror(zip_archive) << std::endl;
+    }
+
+    return 0;
+}
