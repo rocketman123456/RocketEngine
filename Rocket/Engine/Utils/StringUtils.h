@@ -121,7 +121,7 @@ namespace Rocket {
     // Get element at given index position
     template <class T>
     const T & GetElement(const std::vector<T>& elements, std::string* index) {
-        int idx = std::stoi(index);
+        int idx = std::stoi(*index);
         if (idx < 0) idx = int(elements.size()) + idx;
         else idx--;
         return elements[idx];

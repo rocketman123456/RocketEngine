@@ -16,6 +16,9 @@ namespace Rocket {
     void GetZipFileStatus(zip_t* zip, zip_stat_t* status, const std::string& file_name, uint32_t mode) {
         assert(zip != nullptr && status != nullptr);
         zip_stat_init(status);
-        zip_stat(zip, file_name.c_str(), mode, status);
+        auto result = zip_stat(zip, file_name.c_str(), mode, status);
+        if(result < 0) {
+            RK_WARN(File, "Get File Info in Zip Error: {}", file_name);
+        }
     }
 }
