@@ -47,7 +47,8 @@ namespace Rocket {
         void CheckFileSystem();
         void GetRootName();
         void BuildVirtualSystem();
-
+        VirtualBlockPtr CreateVirtualBlock(VirtualBlockPtr& root, const std::vector<std::string>& dirs, int32_t level);
+        VirtualNodePtr CreateVirtualNode(VirtualBlockPtr& root, const std::vector<std::string>& dirs);
     private:
         VirtualBlockPtr root = nullptr;
         std::string real_path = "";

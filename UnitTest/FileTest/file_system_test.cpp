@@ -19,36 +19,22 @@ int main() {
     nfs->Initialize();
 
     // DisplayNativeDirTree(nfs->RealPath());
-    auto file = nfs->OpenFile("/Native/Config/music_name.txt", FileEnum::READWRITE_BINARY);
+    auto native_file = nfs->OpenFile("/Native/Config/music_name.txt", FileEnum::READWRITE_BINARY);
+    nfs->CloseFile(native_file);
 
     nfs->Finalize();
 
     ZipFileSystemPtr zfs = std::make_shared<ZipFileSystem>(root + "/_root_dir_.zip", "/Zip");
     zfs->Initialize();
+
+    auto zip_file = zfs->OpenFile("/Zip/Config/basic.yaml", FileEnum::READWRITE_BINARY);
+    FileBuffer buffer = {new std::byte[zip_file->Size()], zip_file->Size()};
+    zfs->ReadFile(zip_file, &buffer);
+    std::string buffer_str((char*)buffer.data(), buffer.size());
+    std::cout << buffer_str << std::endl;
+    zfs->CloseFile(zip_file);
+
     zfs->Finalize();
-
-    // std::string find_file = "/Config/music_name.txt";
-    // bool result = nfs->IsFileExists(find_file);
-    // assert(result == true);
-    // RK_INFO(App, "File Exist: {}, {}", find_file, result);
-    // std::string find_dir = "/Model/bunny";
-    // result = nfs->IsDirExists(find_dir);
-    // assert(result == true);
-    // RK_INFO(App, "Dir Exist: {}, {}", find_dir, result);
-    // find_dir = "/Model/bunny_spot";
-    // result = nfs->IsDirExists(find_dir);
-    // assert(result == false);
-    // RK_INFO(App, "Dir Exist: {}, {}", find_dir, result);
-
-    // auto file = nfs->OpenFile(find_file, FileMode::READWRITE_BINARY);
-    // gsl::span<gsl::byte> data = {new gsl::byte[file->Size()], file->Size()};
-    // file->Read(data);
-    // std::string content = "";
-    // for(auto byte : data) {
-    //     content += (char)byte;
-    // }
-    // RK_INFO(App, "Content: {}", content);
-    // nfs->CloseFile(file);
 
     return 0;
 }

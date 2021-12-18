@@ -2,8 +2,11 @@
 #include "FileSystem/Basic/FileSystem.h"
 #include "FileSystem/MemoryFile/MemoryFile.h"
 
+#include <unordered_map>
+
 namespace Rocket {
     class MemoryFileSystem : _implements_ FileSystem {
+        using MemoryFileMap = std::unordered_map<std::string, MemoryFilePtr>;
     public:
         MemoryFileSystem(const std::string& real_path);
         MemoryFileSystem(const std::string& real_path, const std::string& virtual_path);
@@ -48,6 +51,7 @@ namespace Rocket {
         std::string virtual_path = "";
         VNodeMap node_map = {};
         VBlockMap block_map = {};
+        MemoryFileMap file_map;
         bool is_initialized = false;
     };
 

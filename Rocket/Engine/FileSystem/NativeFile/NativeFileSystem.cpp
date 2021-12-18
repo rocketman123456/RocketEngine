@@ -99,8 +99,8 @@ namespace Rocket {
                 block->path = root->path + filename_str + "/";
                 // Create Block Index
                 block_map[block->path] = block;
-                RK_TRACE(File, "Block Name: {}", filename_str);
-                // RK_TRACE(File, "Block Path: {}", block->path);
+                // RK_TRACE(File, "Block Name: {}", filename_str);
+                RK_TRACE(File, "Block Path: {}", block->path);
                 BuildVirtualSystem(entry, block);
             } else if (std::filesystem::is_regular_file(entry.status())) {
                 // Add Node
@@ -157,17 +157,27 @@ namespace Rocket {
     }
 
     VNodeList NativeFileSystem::VNodes(const std::string& dir) const {
+        auto dir_ = Replace(virtual_path, "\\", "/");
+        std::vector<std::string> dir_stack;
+        SplitSingleChar(dir_, &dir_stack, '/');
+        auto block = FindVirtualBlock(root, dir_stack, 0);
+        if(block == nullptr) return {};
         VNodeList nodes = {};
-        for(auto& node : node_map) {
-            nodes.push_back(node.second);
+        for(auto item : block->node_map) {
+            nodes.push_back(item.second);
         }
         return nodes;
     }
 
     VBlockList NativeFileSystem::VBlocks(const std::string& dir) const {
+        auto dir_ = Replace(virtual_path, "\\", "/");
+        std::vector<std::string> dir_stack;
+        SplitSingleChar(dir_, &dir_stack, '/');
+        auto block = FindVirtualBlock(root, dir_stack, 0);
+        if(block == nullptr) return {};
         VBlockList blocks = {};
-        for(auto& block : block_map) {
-            blocks.push_back(block.second);
+        for(auto item : block->block_map) {
+            blocks.push_back(item.second);
         }
         return blocks;
     }

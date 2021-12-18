@@ -42,17 +42,27 @@ namespace Rocket {
     }
 
     VNodeList MemoryFileSystem::VNodes(const std::string& dir) const {
+        auto dir_ = Replace(virtual_path, "\\", "/");
+        std::vector<std::string> dir_stack;
+        SplitSingleChar(dir_, &dir_stack, '/');
+        auto block = FindVirtualBlock(root, dir_stack, 0);
+        if(block == nullptr) return {};
         VNodeList nodes = {};
-        for(auto& node : node_map) {
-            nodes.push_back(node.second);
+        for(auto item : block->node_map) {
+            nodes.push_back(item.second);
         }
         return nodes;
     }
 
     VBlockList MemoryFileSystem::VBlocks(const std::string& dir) const {
+        auto dir_ = Replace(virtual_path, "\\", "/");
+        std::vector<std::string> dir_stack;
+        SplitSingleChar(dir_, &dir_stack, '/');
+        auto block = FindVirtualBlock(root, dir_stack, 0);
+        if(block == nullptr) return {};
         VBlockList blocks = {};
-        for(auto& block : block_map) {
-            blocks.push_back(block.second);
+        for(auto item : block->block_map) {
+            blocks.push_back(item.second);
         }
         return blocks;
     }
@@ -90,7 +100,11 @@ namespace Rocket {
             RK_WARN(File, "File Not Exist {}", file_path);
             return nullptr;
         }
-        return nullptr;
+        // TODO : make a usable memory file storage
+        auto full_path = file_path.substr(virtual_path.size());
+        auto file = std::make_shared<MemoryFile>(full_path, file_path);
+        file->Open(mode);
+        return file;
     }
 
     void MemoryFileSystem::CloseFile(const FilePtr& file) {
