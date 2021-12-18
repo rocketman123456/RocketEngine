@@ -5,6 +5,7 @@
 #include "FileSystem/Basic/VirtualBlock.h"
 
 #include <string>
+#include <gsl/gsl>
 
 namespace Rocket {
     class VirtualFileSystem {
@@ -26,7 +27,8 @@ namespace Rocket {
         [[nodiscard]] bool IsDir(const std::string& file_path) const;
         [[nodiscard]] bool IsReadOnly() const;
         // File Operation
-        [[nodiscard]] FilePtr OpenFile(const std::string& file_path, int32_t mode);
+        [[nodiscard]] FilePtr GetFilePointer(const std::string& file_path);
+        void OpenFile(const FilePtr& file, int32_t mode);
         void CloseFile(const FilePtr& file);
         [[nodiscard]] std::size_t ReadFile(const FilePtr& file, FileBuffer* data);
         [[nodiscard]] std::size_t WriteFile(FilePtr& file, const FileBuffer& data);
@@ -45,7 +47,9 @@ namespace Rocket {
 
     private:
         VirtualBlockPtr CreateVirtualBlock(VirtualBlockPtr& root, const std::vector<std::string>& dirs, int32_t level);
+        void RemoveVirtualBlock(VirtualBlockPtr& root);
         void SetupBlockFileSystem(VirtualBlockPtr& root, const FileSystemPtr& fs);
+
     private:
         VirtualBlockPtr root = nullptr;
         VNodeMap node_map = {};

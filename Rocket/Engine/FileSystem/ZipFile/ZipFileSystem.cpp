@@ -117,6 +117,7 @@ namespace Rocket {
             node->vblock = block;
             node->path = block->path;
             node->name = dirs[dirs.size() - 1];
+            block->node_map[node->name] = node;
             node_map[node->path + node->name] = node;
             RK_TRACE(File, "Node Path: {}", node->path + node->name);
             return node;

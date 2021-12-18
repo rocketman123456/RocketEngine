@@ -6,6 +6,7 @@
 
 #include "Utils/FindRootDir.h"
 #include "Utils/PrintFiles.h"
+#include "Utils/GetTime.h"
 
 #include <iostream>
 #include <string>
@@ -17,6 +18,8 @@ int main() {
     std::string root = FindRootDir("_root_dir_");
     std::string asset_path = root + "/Asset/Model";
     std::string zip_path = root + "/_root_dir_.zip";
+    std::string vpath_native = "/Native";
+    std::string vpath_zip = "/Zip";
 
     {
         FileSystemFactory::RegisterFileSystem(FileSystemType::Native, 
@@ -39,41 +42,34 @@ int main() {
     VirtualFileSystemPtr vfs = std::make_shared<VirtualFileSystem>();
 
     {
-        std::string vpath = "/Native";
-        auto nfs = FileSystemFactory::CreateFileSystem(FileSystemType::Native, asset_path, vpath);
-        nfs->Initialize();
-
-        vfs->MountFileSystem(nfs, vpath);
-
-        // DisplayNativeDirTree(nfs->RealPath());
-        auto native_file = nfs->GetFilePointer("/Native/cube/cube.obj");
-        nfs->OpenFile(native_file, FileEnum::READWRITE_BINARY);
-        nfs->CloseFile(native_file);
-
-        vfs->UnmountFileSystem(nfs);
-
-        nfs->Finalize();
+        auto nfs = FileSystemFactory::CreateFileSystem(FileSystemType::Native, asset_path, vpath_native);
+        vfs->MountFileSystem(nfs, vpath_native);
     }
 
     {
-        std::string vpath = "/Zip";
-        auto zfs = FileSystemFactory::CreateFileSystem(FileSystemType::Zip, zip_path, vpath);
-        zfs->Initialize();
-
-        vfs->MountFileSystem(zfs, vpath);
-
-        auto zip_file = zfs->GetFilePointer("/Zip/Config/basic.yaml");
-        zfs->OpenFile(zip_file, FileEnum::READWRITE_BINARY);
-        FileBuffer buffer = {new std::byte[zip_file->Size()], zip_file->Size()};
-        zfs->ReadFile(zip_file, &buffer);
-        std::string buffer_str((char*)buffer.data(), buffer.size());
-        std::cout << buffer_str << std::endl;
-        zfs->CloseFile(zip_file);
-
-        vfs->UnmountFileSystem(vpath);
-
-        zfs->Finalize();
+        auto zfs = FileSystemFactory::CreateFileSystem(FileSystemType::Zip, zip_path, vpath_zip);
+        vfs->MountFileSystem(zfs, vpath_zip);
     }
+
+    auto native_file = vfs->GetFilePointer("/Native/cube/cube.obj");
+    //auto zip_file = vfs->GetFilePointer("/Zip/Config/basic.yaml");
+    auto zip_file = vfs->GetFilePointer("/Zip/_root_dir_");
+
+    vfs->OpenFile(native_file, FileEnum::READWRITE_BINARY);
+    vfs->CloseFile(native_file);
+
+    vfs->OpenFile(zip_file, FileEnum::READWRITE_BINARY);
+    FileBuffer buffer = {new std::byte[zip_file->Size()], zip_file->Size()};
+    vfs->ReadFile(zip_file, &buffer);
+    std::string buffer_str((char*)buffer.data(), buffer.size());
+    std::cout << buffer_str << std::endl;
+    std::string content = "root dir - zip test: " + CurrentDate();
+    auto size = vfs->WriteFile(zip_file, {(std::byte*)content.data(), content.size()});
+    assert(size == content.size());
+    vfs->CloseFile(zip_file);
+
+    vfs->UnmountFileSystem(vpath_native);
+    vfs->UnmountFileSystem(vpath_zip);
 
     return 0;
 }

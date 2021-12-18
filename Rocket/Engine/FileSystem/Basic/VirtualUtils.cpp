@@ -20,15 +20,14 @@ namespace Rocket {
         // check invalid status
         if(dirs.size() == 0) return root;
         if(root == nullptr) return nullptr;
+        if(level == dirs.size()) return root;
         // find if dir exist
         auto found = root->block_map.find(dirs[level]);
         // if not exist, return null
         if(found == root->block_map.end()) { return nullptr; }
         // check return or go deeper
         VirtualBlockPtr sub_block = found->second;
-        level = level + 1;
-        if(level == dirs.size()) return sub_block;
-        else return FindVirtualBlock(sub_block, dirs, level);
+        return FindVirtualBlock(sub_block, dirs, level + 1);
     }
 
     VirtualBlockPtr FindVirtualBlock(const VirtualBlockPtr& root, const std::vector<std::string>& dirs) {
@@ -39,15 +38,14 @@ namespace Rocket {
         // check invalid status
         if(dirs.size() == 0) return root;
         if(root == nullptr) return nullptr;
+        if(level == dirs.size()) return root;
         // find if dir exist
         auto found = root->block_map.find(dirs[level]);
         // we reach deepest dir
         if(found == root->block_map.end()) { return root; }
         // check return or go deeper
         VirtualBlockPtr sub_block = found->second;
-        level = level + 1;
-        if(level == dirs.size()) return sub_block;
-        else return FindVirtualBlock(sub_block, dirs, level);
+        return FindVirtualBlock(sub_block, dirs, level + 1);
     }
 
     VirtualBlockPtr FindDeepestExistVirtualBlock(const VirtualBlockPtr& root, const std::vector<std::string>& dirs) {

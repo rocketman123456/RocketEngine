@@ -37,25 +37,58 @@ namespace Rocket {
             root = std::make_shared<VirtualBlock>();
             root->path = "/";
         }
-        std::vector<std::string> dir_stack = {};
-        SplitSingleChar(path, &dir_stack, '/');
-        auto final_block = CreateVirtualBlock(root, dir_stack, 0);
+
+        if(!fs->IsInitialized()) {
+            fs->Initialize();
+        }
         auto fs_root = fs->RootBlock();
         if(fs_root == nullptr) {
             RK_WARN(File, "Empty Root Block")
             return false;
         }
-        if(final_block->parent != nullptr) {
-            final_block->parent->block_map[fs_root->name] = fs_root;
-        } else {
-            root = fs_root;
+
+        std::vector<std::string> dir_stack = {};
+        SplitSingleChar(path, &dir_stack, '/');
+        auto final_block = CreateVirtualBlock(root, dir_stack, 0);
+
+        if(final_block == nullptr) {
+            return false;
         }
 
         SetupBlockFileSystem(fs_root, fs);
 
-        // TODO : add index
+        if(final_block->parent != nullptr) {
+            fs_root->parent = final_block->parent;
+            final_block->parent->block_map[fs_root->name] = fs_root;
+            block_map[fs_root->path] = fs_root;
+        } else {
+            root = fs_root;
+            block_map[fs_root->path] = fs_root;
+        }
+
+        auto block_map_ = fs->BlockMap();
+        auto node_map_ = fs->NodeMap();
+
+        node_map.insert(node_map_.begin(), node_map_.end());
+        block_map.insert(block_map_.begin(), block_map_.end());
 
         return true;
+    }
+
+    void VirtualFileSystem::RemoveVirtualBlock(VirtualBlockPtr& root) {
+        for(auto& node : root->node_map) {
+            auto found = node_map.find(node.second->path + node.second->name);
+            if(found != node_map.end()) {
+                node_map.erase(found);
+            }
+        }
+        for(auto& block : root->block_map) {
+            auto found = block_map.find(block.second->path);
+            if(found != block_map.end()) {
+                block_map.erase(found);
+            }
+            RemoveVirtualBlock(block.second);
+        }
     }
 
     bool VirtualFileSystem::UnmountFileSystem(const FileSystemPtr& fs) {
@@ -67,7 +100,15 @@ namespace Rocket {
         SplitSingleChar(path, &dir_stack, '/');
         auto block = FindVirtualBlock(root, dir_stack);
 
-        // TODO : remove index
+        if(block == nullptr) {
+            return false;
+        }
+
+        auto fs = block->file_system;
+
+        RemoveVirtualBlock(block);
+
+        fs->Finalize();
 
         if(block == nullptr) {
             return false;
@@ -78,6 +119,8 @@ namespace Rocket {
             } else {
                 auto found = block->parent->block_map.find(block->name);
                 block->parent->block_map.erase(found);
+                auto found_2 = block_map.find(block->path);
+                block_map.erase(found_2);
             }
             return true;
         }
@@ -107,5 +150,30 @@ namespace Rocket {
             blocks.push_back(item.second);
         }
         return blocks;
+    }
+
+    FilePtr VirtualFileSystem::GetFilePointer(const std::string& file_path) {
+        auto found = node_map.find(file_path);
+        if(found == node_map.end()) {
+            return nullptr;
+        } else {
+            return found->second->vblock->file_system->GetFilePointer(file_path);
+        }
+    }
+
+    void VirtualFileSystem::OpenFile(const FilePtr& file, int32_t mode) {
+        file->Open(mode);
+    }
+
+    void VirtualFileSystem::CloseFile(const FilePtr& file) {
+        file->Close();
+    }
+
+    std::size_t VirtualFileSystem::ReadFile(const FilePtr& file, FileBuffer* data) {
+        return file->Read(data);
+    }
+
+    std::size_t VirtualFileSystem::WriteFile(FilePtr& file, const FileBuffer& data) {
+        return file->Write(data);
     }
 }
