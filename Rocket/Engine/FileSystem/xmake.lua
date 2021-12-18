@@ -13,6 +13,7 @@ target("RocketFileSystem")
     add_packages("gsl", {public = true})
     add_deps(
         "RocketLog",
+        "RocketFileBasic",
         "RocketNativeFile",
         "RocketMemoryFile",
         "RocketZipFile",

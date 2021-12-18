@@ -1,5 +1,4 @@
 #include "FileSystem/NativeFile/NativeFileSystem.h"
-#include "FileSystem/Basic/VirtualUtils.h"
 #include "FileSystem/NativeFile/NativeUtils.h"
 #include "Utils/StringUtils.h"
 #include "Log/Log.h"
@@ -10,9 +9,9 @@
 
 namespace Rocket {
     NativeFileSystem::NativeFileSystem(const std::string& real_path) 
-        : real_path(real_path), virtual_path("/") {}
+        : FileSystem(real_path, "/") {}
     NativeFileSystem::NativeFileSystem(const std::string& real_path, const std::string& virtual_path)
-        : real_path(real_path), virtual_path(virtual_path) {}
+        : FileSystem(real_path, virtual_path) {}
 
     void NativeFileSystem::Initialize() {
         if(IsInitialized()) {
@@ -77,15 +76,6 @@ namespace Rocket {
         BuildVirtualSystem(basic, root);
     }
 
-    void NativeFileSystem::Finalize() {
-        root = nullptr;
-        real_path = "";
-        virtual_path = "";
-        node_map.clear();
-        block_map.clear();
-        is_initialized = false;
-    }
-
     void NativeFileSystem::BuildVirtualSystem(const std::filesystem::path& path, VirtualBlockPtr& root) {
         for (const auto& entry : std::filesystem::directory_iterator(path)) {
             auto filename = entry.path().filename();
@@ -122,6 +112,15 @@ namespace Rocket {
         }
     }
 
+    void NativeFileSystem::Finalize() {
+        root = nullptr;
+        real_path = "";
+        virtual_path = "";
+        node_map.clear();
+        block_map.clear();
+        is_initialized = false;
+    }
+
     void NativeFileSystem::SetVirtualPath(const std::string& vpath) {
         virtual_path = vpath;
         if(!IsInitialized()) { return; }
@@ -156,61 +155,11 @@ namespace Rocket {
         BuildVirtualSystem();
     }
 
-    VNodeList NativeFileSystem::VNodes(const std::string& dir) const {
-        auto dir_ = Replace(virtual_path, "\\", "/");
-        std::vector<std::string> dir_stack;
-        SplitSingleChar(dir_, &dir_stack, '/');
-        auto block = FindVirtualBlock(root, dir_stack, 0);
-        if(block == nullptr) return {};
-        VNodeList nodes = {};
-        for(auto item : block->node_map) {
-            nodes.push_back(item.second);
-        }
-        return nodes;
-    }
-
-    VBlockList NativeFileSystem::VBlocks(const std::string& dir) const {
-        auto dir_ = Replace(virtual_path, "\\", "/");
-        std::vector<std::string> dir_stack;
-        SplitSingleChar(dir_, &dir_stack, '/');
-        auto block = FindVirtualBlock(root, dir_stack, 0);
-        if(block == nullptr) return {};
-        VBlockList blocks = {};
-        for(auto item : block->block_map) {
-            blocks.push_back(item.second);
-        }
-        return blocks;
-    }
-
-    bool NativeFileSystem::IsFileExists(const std::string& file_path) const {
-        auto found = node_map.find(file_path);
-        if(found == node_map.end())
-            return false;
-        else
-            return true;
-    }
-
-    bool NativeFileSystem::IsDirExists(const std::string& dir_path) const {
-        auto found = block_map.find(dir_path);
-        if(found == block_map.end())
-            return false;
-        else
-            return true;
-    }
-
-    bool NativeFileSystem::IsFile(const std::string& file_path) const {
-        return IsFileExists(file_path);
-    }
-
-    bool NativeFileSystem::IsDir(const std::string& dir_path) const {
-        return IsDirExists(dir_path);
-    }
-
     bool NativeFileSystem::IsReadOnly() const {
         return IsNativeReadOnly(real_path);
     }
 
-    FilePtr NativeFileSystem::OpenFile(const std::string& file_path, int32_t mode) {
+    FilePtr NativeFileSystem::GetFilePointer(const std::string& file_path) {
         if(!IsFileExists(file_path)) {
             RK_WARN(File, "File Not Exist {}", file_path);
             return nullptr;
@@ -218,43 +167,6 @@ namespace Rocket {
         auto temp = file_path.substr(virtual_path.size());
         auto full_path = real_path + temp;
         auto file = std::make_shared<NativeFile>(full_path, file_path);
-        file->Open(mode);
         return file;
-    }
-
-    void NativeFileSystem::CloseFile(const FilePtr& file) {
-        file->Close();
-    }
-
-    std::size_t NativeFileSystem::ReadFile(const FilePtr& file, FileBuffer* data) {
-        return file->Read(data);
-    }
-
-    std::size_t NativeFileSystem::WriteFile(FilePtr& file, const FileBuffer& data) {
-        return file->Write(data);
-    }
-
-    bool NativeFileSystem::CreateFile(const std::string& file_path) {
-        RK_WARN(File, "Create File Not Supported");
-        return false;
-    }
-
-    bool NativeFileSystem::RemoveFile(const std::string& file_path) {
-        RK_WARN(File, "Remove File Not Supported");
-        return false;
-    }
-
-    std::size_t NativeFileSystem::FileSize(const FilePtr& file) const {
-        return file->Size();
-    }
-
-    bool NativeFileSystem::CreateDir(const std::string& dir_path) {
-        RK_WARN(File, "Create Dir Not Supported");
-        return false;
-    }
-
-    bool NativeFileSystem::RemoveDir(const std::string& dir_path) {
-        RK_WARN(File, "Remove Dir Not Supported");
-        return false;
     }
 }

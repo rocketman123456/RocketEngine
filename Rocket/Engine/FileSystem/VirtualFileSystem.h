@@ -8,19 +8,17 @@
 
 namespace Rocket {
     class VirtualFileSystem {
-        void Initialize();
-        void Finalize();
-        bool IsInitialized() const;
+    public:
         // Mount and Unmount
-        bool MountFileSystem(const FileSystemPtr& fs, const std::string& path);
-        bool UnmountFileSystem(const FileSystemPtr& fs);
-        bool UnmountFileSystem(const std::string& path);
+        [[nodiscard]] bool MountFileSystem(const FileSystemPtr& fs, const std::string& path);
+        [[nodiscard]] bool UnmountFileSystem(const FileSystemPtr& fs);
+        [[nodiscard]] bool UnmountFileSystem(const std::string& path);
         // VFS
-        [[nodiscard]] VirtualBlockPtr RootBlock() const;
+        [[nodiscard]] inline VirtualBlockPtr RootBlock() const { return root; }
+        [[nodiscard]] inline const VNodeMap& NodeMap() const { return node_map; }
+        [[nodiscard]] inline const VBlockMap& BlockMap() const { return block_map; }
         [[nodiscard]] VNodeList VNodes(const std::string& dir) const;
         [[nodiscard]] VBlockList VBlocks(const std::string& dir) const;
-        [[nodiscard]] const VNodeMap& VNodesMap() const;
-        [[nodiscard]] const VBlockMap& VBlocksMap() const;
         // Basic Judgement
         [[nodiscard]] bool IsFileExists(const std::string& file_path) const;
         [[nodiscard]] bool IsDirExists(const std::string& dir_path) const;
@@ -44,5 +42,15 @@ namespace Rocket {
         [[nodiscard]] bool MoveDir(const std::string& src, const std::string& dst);
         [[nodiscard]] bool RenameDir(const std::string& src, const std::string& dst);
         [[nodiscard]] bool CopyDir(const std::string& src, const std::string& dst);
+
+    private:
+        VirtualBlockPtr CreateVirtualBlock(VirtualBlockPtr& root, const std::vector<std::string>& dirs, int32_t level);
+        void SetupBlockFileSystem(VirtualBlockPtr& root, const FileSystemPtr& fs);
+    private:
+        VirtualBlockPtr root = nullptr;
+        VNodeMap node_map = {};
+        VBlockMap block_map = {};
     };
+
+    CLASS_PTR(VirtualFileSystem);
 }
