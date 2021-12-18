@@ -4,33 +4,40 @@
 
 #include <forward_list>
 #include <cstdint>
+#include <mutex>
 
 namespace Rocket {
+    // TODO : check multi-thread bug
     template<typename Item>
-    class Bag {
+    class ConcurrentBag
+    {
     public:
         typedef std::forward_list<Item> List;
         typedef typename List::iterator Iterator;
         typedef typename List::const_iterator CIterator;
     private:
+        std::recursive_mutex add_lock;
         List list;
         int32_t N;
     public:
-        Bag() : list(List()), N(0) {}
+        ConcurrentBag() : list(List()), N(0) {}
         bool empty() const{ return list.empty(); }
         int32_t size() const{ return N; }
 
-        Bag(const Bag& list) = delete;
-        Bag& operator = (const Bag& other) = delete;
+        ConcurrentBag(const ConcurrentBag& list) = delete;
+        ConcurrentBag& operator = (const ConcurrentBag& other) = delete;
 
-        Bag(Bag&& bag) {
+        ConcurrentBag(ConcurrentBag&& bag) {
+            std::scoped_lock guard{ bag.add_lock };
             list = bag.list;
             N = bag.N;
             bag.list.clear();
             bag.N = 0;
         }
 
-        Bag& operator = (Bag&& other) {
+        ConcurrentBag& operator = (ConcurrentBag&& other) {
+            std::scoped_lock guard_this{ add_lock };
+            std::scoped_lock guard_other{ other.add_lock };
             list = other.list;
             N = other.N;
             other.list.clear();
@@ -38,11 +45,13 @@ namespace Rocket {
         }
 
         void add(const Item &item) {
+            std::scoped_lock guard{ add_lock };
             list.push_front(item);
             ++N;
         }
 
         void add(Item &&item) {
+            std::scoped_lock guard{ add_lock };
             list.push_front(std::forward<Item>(item));
             ++N;
         }
