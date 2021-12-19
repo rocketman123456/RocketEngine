@@ -18,10 +18,10 @@ using namespace Rocket;
 int main() {
     RK_PROFILE_BEGIN_SESSION("FileSystem", "FileSystem-Profile.json");
     std::string root = FindRootDir("_root_dir_");
-    std::string asset_path = root + "/Asset/Model";
-    std::string zip_path = root + "/_root_dir_.zip";
-    std::string vpath_native = "/Native";
-    std::string vpath_zip = "/Zip";
+    std::string asset_path = root + "/Asset";
+    std::string zip_path = root + "/Asset/Music.zip";
+    std::string vpath_native = "/Asset";
+    std::string vpath_zip = "/Asset/Music";
 
     {
         RK_PROFILE_SCOPE("Register");
@@ -55,22 +55,25 @@ int main() {
     }
 
     {
+        std::string obj_file = "/Asset/Model/cube/cube.obj";
+        std::string wav_file = "/Asset/Music/Piano.ff.A0.wav";
         RK_PROFILE_SCOPE("ReadWrite");
-        auto native_file = vfs->GetFilePointer("/Native/cube/cube.obj");
+        auto native_file = vfs->GetFilePointer(obj_file);
         //auto zip_file = vfs->GetFilePointer("/Zip/Config/basic.yaml");
-        auto zip_file = vfs->GetFilePointer("/Zip/_root_dir_");
+        auto zip_file = vfs->GetFilePointer(wav_file);
 
         vfs->OpenFile(native_file, FileEnum::READWRITE_BINARY);
         vfs->CloseFile(native_file);
 
+        // Able to read file from mix file system structure
         vfs->OpenFile(zip_file, FileEnum::READWRITE_BINARY);
         FileBuffer buffer = {new std::byte[zip_file->Size()], zip_file->Size()};
-        vfs->ReadFile(zip_file, &buffer);
-        std::string buffer_str((char*)buffer.data(), buffer.size());
-        std::cout << buffer_str << std::endl;
-        std::string content = "root dir - zip test: " + CurrentDate();
-        auto size = vfs->WriteFile(zip_file, {(std::byte*)content.data(), content.size()});
-        assert(size == content.size());
+        auto result = vfs->ReadFile(zip_file, &buffer);
+        //std::string buffer_str((char*)buffer.data(), buffer.size());
+        std::cout << "Read: " << wav_file << " Size: " << result << std::endl;
+        //std::string content = "root dir - zip test: " + CurrentDate();
+        //auto size = vfs->WriteFile(zip_file, {(std::byte*)content.data(), content.size()});
+        //assert(size == content.size());
         vfs->CloseFile(zip_file);
     }
 

@@ -49,6 +49,8 @@ Data/
 *.wav
 *.ogg
 Asset.zip
+Asset/Music.zip
+Asset/MusicOther.zip
 
 # Ignore LaTeX outputs
 Document/LaTeX/*.toc

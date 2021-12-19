@@ -40,7 +40,6 @@ namespace Rocket {
             }
         }
     private:
-        //typename  Iter;
         using ResourceMap = std::unordered_map<S, typename std::deque<std::pair<S, T> >::iterator>;
         std::size_t capacity = 0;
         std::deque<std::pair<S, T> > history;
