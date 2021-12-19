@@ -29,7 +29,7 @@ namespace Rocket {
         DECLARE_LOG_CHANNEL(Core);
         DECLARE_LOG_CHANNEL(Memory);
         DECLARE_LOG_CHANNEL(Window);
-        DECLARE_LOG_CHANNEL(Render);
+        DECLARE_LOG_CHANNEL(Graphics);
         DECLARE_LOG_CHANNEL(Event);
         DECLARE_LOG_CHANNEL(File);
         DECLARE_LOG_CHANNEL(Audio);

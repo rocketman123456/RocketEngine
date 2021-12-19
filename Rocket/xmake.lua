@@ -1,7 +1,5 @@
 includes(
     "Engine",
-    "EntryPoint",
-    "Platform",
-    "Render",
-    "Robotic"
+    "Graphics",
+    "Platform"
 )
