@@ -1,0 +1,6 @@
+[submodule "ThirdParty/easy_profiler"]
+	path = ThirdParty/easy_profiler
+	url = git@github.com:yse/easy_profiler.git
+[submodule "ThirdParty/optick"]
+	path = ThirdParty/optick
+	url = git@github.com:bombomby/optick.git
