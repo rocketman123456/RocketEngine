@@ -27,6 +27,7 @@ add_requires("libzip 1.8.0", {system = false, configs = {shared = false, debug =
 add_requires("yaml-cpp 0.7.0", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
 add_requires("stb", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
 add_requires("tinygltf v2.5.0", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
+add_requires("glfw 3.3.5", {system = false, configs = {glfw_include = "none", shared = false, debug = true, cxflags = "-fPIC"}})
 
 -- add_requires("imgui v1.85", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
 -- add_requires("imguizmo 1.83", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
@@ -38,7 +39,6 @@ add_requires("tinygltf v2.5.0", {system = false, configs = {shared = false, debu
 -- add_requires("libsndfile 1.0.30", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
 -- add_requires("taskflow v3.2.0", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
 -- add_requires("eigen 3.4.0", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
--- add_requires("glfw 3.3.4", {system = false, configs = {glfw_include = "none", shared = false, debug = true, cxflags = "-fPIC"}})
 -- add_requires("libsdl 2.0.16", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
 -- add_requires("bullet3 3.09", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
 -- add_requires("lua v5.4.2", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
@@ -174,6 +174,7 @@ end
 --
 includes(
     "Rocket",
+    "ThirdParty",
     --"Sandbox",
     "UnitTest"
 )

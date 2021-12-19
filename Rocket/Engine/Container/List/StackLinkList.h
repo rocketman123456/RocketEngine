@@ -14,6 +14,11 @@ namespace Rocket {
     public:
         StackLinkList() = default;
         StackLinkList(const StackLinkList& stackLinkedList) = delete;
+        StackLinkList& operator = (const StackLinkList& other) = delete;
+        StackLinkList& operator = (StackLinkList&& stackLinkedList) {
+            this->head = stackLinkedList.head;
+            stackLinkedList.head = nullptr;
+        }
         StackLinkList(StackLinkList&& stackLinkedList) {
             this->head = stackLinkedList.head;
             stackLinkedList.head = nullptr;

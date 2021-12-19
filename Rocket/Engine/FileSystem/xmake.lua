@@ -10,6 +10,7 @@ target("RocketFileSystem")
     add_files("*.cpp")
     add_options("console_log")
     add_options("memory_check")
+    add_options("profile_settings")
     add_packages("gsl", {public = true})
     add_deps(
         "RocketLog",

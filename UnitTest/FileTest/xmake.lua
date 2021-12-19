@@ -4,6 +4,7 @@ target("file_system_test")
     add_deps("RocketFileSystem")
     add_options("console_log")
     add_options("memory_check")
+    add_options("profile_settings")
 target_end()
 
 -- target("file_test")

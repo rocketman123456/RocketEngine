@@ -15,6 +15,11 @@ namespace Rocket {
     public:
         SingleLinkList() = default;
         SingleLinkList(const SingleLinkList& doublyLinkedList) = delete;
+        SingleLinkList& operator = (const SingleLinkList& other) = delete;
+        SingleLinkList& operator = (SingleLinkList&& stackLinkedList) {
+            this->head = stackLinkedList.head;
+            stackLinkedList.head = nullptr;
+        }
         SingleLinkList(SingleLinkList&& stackLinkedList) {
             this->head = stackLinkedList.head;
             stackLinkedList.head = nullptr;
