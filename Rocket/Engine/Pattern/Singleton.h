@@ -1,6 +1,6 @@
 //https://vorbrodt.blog/2020/07/10/singleton-pattern/
 #pragma once
-#include "Memory/MemoryDefine.h"
+#include "Core/MemoryDefine.h"
 #include "Core/Declare.h"
 
 #include <mutex>
@@ -12,17 +12,15 @@ namespace Rocket {
     template<typename T>
     _Interface_ Singleton {
     public:
+        // Should Create before use
         template<typename... Args>
         static void Create(Args&&... args) {
-            //static std::mutex s_lock;
-            //std::scoped_lock lock(s_lock);
             std::call_once(flag, [&](){ s_instance.reset(new T(std::forward<Args>(args)...)); });
-            //if(!s_instance) s_instance.reset(new T(std::forward<Args>(args)...));
-            //else throw std::logic_error("This singleton has already been created!");
         }
 
         static T* Instance() noexcept { return s_instance.get(); }
 
+        // Can Destroy after use
         static void Destroy() {
             s_instance.reset();
         }
@@ -44,21 +42,18 @@ namespace Rocket {
     template<typename T>
     _Interface_ AbstractSingleton {
     public:
+        // Should Create before use
         template<typename... Args>
         static void Create(Args&&... args) {
-            //static std::mutex s_lock;
-            //std::scoped_lock lock(s_lock);
-
             struct Q : T {
                 using T::T;
                 void __abstract_singleton__() override {}
             };
 
             std::call_once(flag, [&](){ s_instance = std::make_unique<Q>(args...); });
-            //if(!s_instance) s_instance.reset(new Q(std::forward<Args>(args)...));
-            //else throw std::logic_error("This abstract singleton has already been created!");
         }
 
+        // Can Destroy after use
         static void Destroy() {
             s_instance.reset();
         }

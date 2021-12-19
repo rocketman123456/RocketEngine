@@ -16,6 +16,7 @@ includes(
     -- "MultiThread",
     -- "Parser",
     -- "Pattern",
+    "ScriptSystem",
     -- "Physics",
     -- "Scene",
     "Utils"

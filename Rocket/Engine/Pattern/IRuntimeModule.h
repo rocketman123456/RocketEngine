@@ -1,5 +1,5 @@
 #pragma once
-#include "Memory/MemoryDefine.h"
+#include "Core/MemoryDefine.h"
 #include "Core/Declare.h"
 #include "Utils/TimeStep.h"
 
@@ -11,10 +11,7 @@ namespace Rocket {
     public:
         virtual ~IRuntimeModule() = default;
 
-        // TODO : maybe use exception to handle Errors 
-        // Return == 0 : everything OK
-        // Return != 0 : something wrong
-        [[nodiscard]] virtual int32_t Initialize() = 0;
+        virtual void Initialize() = 0;
         virtual void Finalize() = 0;
         virtual void Tick(TimeStep step) = 0;
         // For Debug
