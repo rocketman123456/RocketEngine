@@ -1,6 +1,12 @@
 #include "Log/Log.h"
 
 #ifdef RK_CONSOLE_LOG
+#define INIT_LOG_CHANNEL(x) s_##x##_logger_ = spdlog::stdout_color_mt(#x); SetLevel(level, s_##x##_logger_.get());
+#define END_LOG_CHANNEL(x) s_##x##_logger_.reset();
+#define IMPLEMENT_LOG_CHANNEL(x) std::shared_ptr<spdlog::logger> Rocket::Log::s_##x##_logger_;
+#endif
+
+#ifdef RK_CONSOLE_LOG
 
 // #define SPDLOG_FMT_EXTERNAL
 #include <spdlog/spdlog.h>
@@ -14,6 +20,7 @@
 
 IMPLEMENT_LOG_CHANNEL(Core);
 IMPLEMENT_LOG_CHANNEL(Memory);
+IMPLEMENT_LOG_CHANNEL(Console);
 IMPLEMENT_LOG_CHANNEL(Window);
 IMPLEMENT_LOG_CHANNEL(Graphics);
 IMPLEMENT_LOG_CHANNEL(Event);
@@ -55,6 +62,7 @@ namespace Rocket {
         spdlog::set_pattern("%^[%l%$][%T][%n] %v%$");
         INIT_LOG_CHANNEL(Core);
         INIT_LOG_CHANNEL(Memory);
+        INIT_LOG_CHANNEL(Console);
         INIT_LOG_CHANNEL(Window);
         INIT_LOG_CHANNEL(Graphics);
         INIT_LOG_CHANNEL(Event);
@@ -66,6 +74,7 @@ namespace Rocket {
     void Log::End() {
         END_LOG_CHANNEL(Core);
         END_LOG_CHANNEL(Memory);
+        END_LOG_CHANNEL(Console);
         END_LOG_CHANNEL(Window);
         END_LOG_CHANNEL(Graphics);
         END_LOG_CHANNEL(Event);

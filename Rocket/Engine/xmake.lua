@@ -6,6 +6,7 @@ includes(
     -- "Config",
     -- "Containers",
     "Core",
+    "Console",
     -- "EventSystem",
     -- "Exception",
     "FileSystem",
