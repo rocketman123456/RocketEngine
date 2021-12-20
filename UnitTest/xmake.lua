@@ -1,6 +1,8 @@
 includes(
+    "ConsoleTest",
     "ContainerTest",
     "FileTest",
-    "LibTest"
+    "LibTest",
+    "UtilsTest"
     -- "RustTest"
 )

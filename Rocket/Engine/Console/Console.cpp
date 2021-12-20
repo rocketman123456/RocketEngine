@@ -14,22 +14,62 @@ namespace Rocket {
     }
 
     void Console::Input(const std::string& input) {
-        SplitSingleChar(input, &arguments, ' ');
-        if(arguments.size() == 0) {
-            RK_ERROR(Console, "Invald Arguments");
-            return;
-        }
-        auto found = command_list.find(input);
-        if(found == command_list.end()) {
-            RK_ERROR(Console, "Invald Command");
-            return;
-        }
+        current_input = input;
+        ParseCommand();
+        Execute();
     }
 
     void Console::ParseCommand() {
+        std::vector<std::string> arg_stack;
+        SplitSingleChar(current_input, &arg_stack, ' ');
+        if(arg_stack.size() == 0) {
+            RK_ERROR(Console, "Invald Arguments");
+            return;
+        }
+        command_name = arg_stack[0];
+        auto found = command_list.find(command_name);
+        if(found == command_list.end()) {
+            FindBestMatch();
+            return;
+        }
+        command_type = found->second;
+        arguments.clear();
+        if(arg_stack.size() > 1) {
+            for(int i = 1; i < arg_stack.size(); ++i) {
+                arguments.push_back(arg_stack[i]);
+            }
+        }
+        if(capacity > 0) {
+            if(input_buffer.size() == capacity)
+                input_buffer.erase(input_buffer.begin());
+            input_buffer.push_back(current_input);
+        }
+    }
+
+    void Console::FindBestMatch() {
+        RK_WARN(Console, "Unknown Command: {}", command_name);
+        float best_match = 0.0;
+        std::string possible_name = "";
+        for(auto& command : command_list) {
+            auto result = StringMatch(command_name, command.first);
+            if(result > best_match) {
+                best_match = result;
+                possible_name = command.first;
+            }
+        }
+        if(best_match > 0.45) {
+            RK_WARN(Console, "Possiable Command: {}", possible_name);
+        }
     }
 
     void Console::Execute() {
-        current_command->Execute();
+        current_command = ConsoleCommandFactory::CreateCommand(command_type, arguments);
+        if(current_command != nullptr)
+            current_command->Execute();
+        if(capacity > 0) {
+            if(command_nuffer.size() == capacity)
+                command_nuffer.erase(command_nuffer.begin());
+            command_nuffer.push_back(current_command);
+        }
     }
 }

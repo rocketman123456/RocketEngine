@@ -1,6 +1,7 @@
 target("RocketConsole")
     set_kind("static")
     add_files("*.cpp")
+    add_files("Command/*.cpp")
     add_options("console_log")
     add_options("memory_check")
     add_options("profile_settings")

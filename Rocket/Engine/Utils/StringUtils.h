@@ -3,6 +3,8 @@
 #include <vector>
 #include <algorithm>
 #include <cassert>
+#include <cctype>
+#include <climits>
 
 namespace Rocket {
     static void SplitMultiChar(const std::string& in, std::vector<std::string>* out, const std::string& token) {
@@ -86,6 +88,64 @@ namespace Rocket {
             return (0 == full_string.compare(0, starting.length(), starting));
         }
         return false;
+    }
+
+    static float StringMatch(const std::string& left, const std::string& right) {
+        std::size_t left_size = left.length();
+        std::size_t right_size = right.length();
+        std::size_t larger_size = left_size > right_size ? left_size : right_size;
+        std::size_t left_ptr = 0;
+        std::size_t right_ptr = 0;
+        const float CAP_MISMATCH_VAL = 0.9f;
+        float match_val = 0.0f;
+
+        while(left_ptr < left_size && right_ptr < right_size) {
+            if(left.at(left_ptr) == right.at(right_ptr)) {
+                match_val += 1.0f / (float)larger_size;
+                if(left_ptr < left_size)
+                    ++left_ptr;
+                if(right_ptr < right_size)
+                    ++right_ptr;
+            } else if(std::tolower(left.at(left_ptr)) == std::tolower(right.at(right_ptr))) {
+                match_val += CAP_MISMATCH_VAL / (float)larger_size;
+                if(left_ptr < left_size)
+                    ++left_ptr;
+                if(right_ptr < right_size)
+                    ++right_ptr;
+            } else {
+                std::size_t lpbest = left_size;
+                std::size_t rpbest = right_size;
+                std::size_t total_count = 0;
+                std::size_t best_count = INT_MAX;
+                std::size_t left_count = 0;
+                std::size_t right_count = 0;
+                for(auto lp = left_ptr; (lp < left_size) && ((left_count + right_count) < best_count); ++lp) {
+                    for(auto rp = right_ptr; (rp < right_size) && ((left_count + right_count) < best_count); ++rp) {
+                        if(std::tolower(left.at(lp)) == std::tolower(right.at(rp))) {
+                            total_count = left_count + right_count;
+                            if(total_count < best_count) {
+                                best_count = total_count;
+                                lpbest = lp;
+                                rpbest = rp;
+                            }
+                        }
+                        ++right_count;
+                    }
+                    ++left_count;
+                    right_count = 0;
+                }
+                left_ptr = lpbest;
+                right_ptr = rpbest;
+            }
+        }
+
+        if(match_val > 0.999) {
+            match_val = 1.0f;
+        } else if(match_val < 0.001) {
+            match_val = 0.0f;
+        }
+
+        return match_val;
     }
 
     // Get tail of string after first token and possibly following spaces

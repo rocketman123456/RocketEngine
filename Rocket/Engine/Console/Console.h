@@ -21,6 +21,7 @@ namespace Rocket {
         void Input(const std::string& input);
     private:
         void ParseCommand();
+        void FindBestMatch();
         void Execute();
     private:
         std::size_t capacity = 0;
@@ -30,6 +31,7 @@ namespace Rocket {
         std::string current_input = {};
         ConsoleCommandPtr current_command = nullptr;
         std::string command_name = "";
+        ConsoleCommandType command_type;
         std::vector<std::string> arguments = {};
     };
 }

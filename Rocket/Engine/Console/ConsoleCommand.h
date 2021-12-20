@@ -7,6 +7,7 @@
 namespace Rocket {
     enum class ConsoleCommandType : int32_t {
         PRINT = 0,
+        EXIT,
     };
 
     _Interface_ ConsoleCommand : _inherits_ Command {
