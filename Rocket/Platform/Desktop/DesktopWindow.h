@@ -12,6 +12,7 @@ namespace Rocket {
         void Initialize() final;
         void Finalize() final;
         void Tick() final;
+        bool IsRunning() final;
 
         inline void* GetWindowHandle() final { return window; }
 

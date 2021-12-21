@@ -10,7 +10,6 @@ namespace Rocket {
             RK_ERROR(Window, "Failed to Initialize GLFW");
             throw std::runtime_error("Failed to Initialize GLFW");
         }
-
 #if defined(RK_VULKAN)
         if (glfwVulkanSupported()) {
             RK_INFO(Window, "Vulkan Supported");
@@ -28,14 +27,24 @@ namespace Rocket {
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 #endif
-
+        window = glfwCreateWindow(Width(), Height(), Title().c_str(), nullptr, nullptr);
+        if (!window) {
+            RK_ERROR(Window, "Failed to initialize glfw window");
+            glfwTerminate();
+            exit(EXIT_FAILURE);
+        }
     }
 
     void DesktopWindow::Finalize() {
-        
+        glfwDestroyWindow(window);
+	    glfwTerminate();
     }
 
     void DesktopWindow::Tick() {
         glfwPollEvents();
+    }
+
+    bool DesktopWindow::IsRunning() {
+        return !glfwWindowShouldClose(window);
     }
 }

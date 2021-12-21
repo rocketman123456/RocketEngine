@@ -15,7 +15,6 @@ int main() {
         std::cout << "Input Command: ";
         const int MAX_SIZE = 1000;
         char cmd[MAX_SIZE];
-        //std::cin >> cmd;
         std::cin.getline(cmd, MAX_SIZE);
         console.Input(cmd);
     }

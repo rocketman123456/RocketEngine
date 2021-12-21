@@ -15,14 +15,15 @@ namespace Rocket {
     public:
         WindowContainer(const WindowInfo& info) : info(info) {}
         virtual ~WindowContainer() = default;
-        const WindowInfo& GetInfo() const { return info; }
-        const std::string& GetTitle() const { return info.title; }
-        int32_t GetHeight() const { return info.height; }
-        int32_t GetWidth() const { return info.width; }
+        const WindowInfo& Info() const { return info; }
+        const std::string& Title() const { return info.title; }
+        int32_t Height() const { return info.height; }
+        int32_t Width() const { return info.width; }
 
         virtual void Initialize() = 0;
         virtual void Finalize() = 0;
         virtual void Tick() = 0;
+        virtual bool IsRunning() = 0;
         virtual void* GetWindowHandle() = 0;
     private:
         WindowInfo info;
