@@ -59,3 +59,21 @@ target("OptickCore")
     add_includedirs("optick/src")
     add_files("optick/src/*.cpp")
 target_end()
+
+target("meshoptimizer")
+    set_kind("static")
+    add_defines(
+        ""
+    )
+    add_includedirs(
+        "meshoptimizer/extern",
+        "meshoptimizer/src",
+        "meshoptimizer/gltf",
+        "meshoptimizer/tools"
+    )
+    add_files(
+        "meshoptimizer/src/*.cpp"
+        -- "meshoptimizer/gltf/*.cpp",
+        -- "meshoptimizer/tools/*.cpp"
+    )
+target_end()

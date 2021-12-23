@@ -4,3 +4,6 @@
 [submodule "ThirdParty/optick"]
 	path = ThirdParty/optick
 	url = git@github.com:bombomby/optick.git
+[submodule "ThirdParty/meshoptimizer"]
+	path = ThirdParty/meshoptimizer
+	url = git@github.com:zeux/meshoptimizer.git

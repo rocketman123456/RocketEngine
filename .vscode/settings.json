@@ -117,5 +117,8 @@
         "span_ext": "cpp",
         "__functional_base_03": "cpp",
         "*.rh": "cpp"
-    }
+    },
+    "Lua.diagnostics.globals": [
+        "user_score"
+    ]
 }

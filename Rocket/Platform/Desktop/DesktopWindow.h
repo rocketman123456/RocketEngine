@@ -15,7 +15,6 @@ namespace Rocket {
         bool IsRunning() final;
 
         inline void* GetWindowHandle() final { return window; }
-
     private:
         GLFWwindow* window = nullptr;
     };

@@ -17,33 +17,6 @@ set_languages("c99", "c++17")
 --set_warnings("all", "error")
 
 --
--- Add Required Modules
---
-add_requires("spdlog v1.9.2", {system = false, configs = {shared = false, debug = true, fmt_external = false, cxflags = "-fPIC"}})
-add_requires("gsl v3.1.0", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
-add_requires("glad v0.1.34", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
-add_requires("mimalloc 2.0.2", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
-add_requires("libzip 1.8.0", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
-add_requires("yaml-cpp 0.7.0", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
-add_requires("stb", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
-add_requires("tinygltf v2.5.0", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
-add_requires("glfw 3.3.5", {system = false, configs = {glfw_include = "none", shared = false, debug = true, cxflags = "-fPIC"}})
-add_requires("taskflow v3.2.0", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
-
--- add_requires("lua v5.4.2", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
--- add_requires("imgui v1.85", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
--- add_requires("imguizmo 1.83", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
--- add_requires("openal-soft 1.21.1", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
--- add_requires("libsndfile 1.0.30", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
--- add_requires("eigen 3.4.0", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
--- add_requires("libsdl 2.0.16", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
--- add_requires("bullet3 3.09", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
--- add_requires("luajit", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
--- if is_plat("macosx", "linux", "windows") then
---     add_requires("libtorch v1.8.1", {system = false, configs = {shared = true, debug = true, cxflags = "-fPIC"}})
--- end
-
---
 -- Set Render Options
 --
 option("render")
@@ -102,6 +75,52 @@ option("memory_check")
     set_category("Rocket")
     add_defines("RK_MEMORY_CHECK")
 option_end()
+
+--
+-- Add Required Modules
+--
+add_requires("spdlog v1.9.2", {system = false, configs = {shared = false, debug = true, fmt_external = false, cxflags = "-fPIC"}})
+add_requires("gsl v3.1.0", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
+add_requires("mimalloc 2.0.2", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
+add_requires("libzip 1.8.0", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
+add_requires("yaml-cpp 0.7.0", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
+add_requires("stb", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
+add_requires("tinygltf v2.5.0", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
+add_requires("glfw 3.3.5", {system = false, configs = {glfw_include = "none", shared = false, debug = true, cxflags = "-fPIC"}})
+add_requires("taskflow v3.2.0", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
+add_requires("glad v0.1.34", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
+add_requires("concurrentqueue", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
+add_requires("lua v5.4.2", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
+
+if is_config("render", "soft") then
+    -- add_requires("glad v0.1.34", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
+elseif is_config("render", "opengl") then
+    -- add_requires("glad v0.1.34", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
+elseif is_config("render", "vulkan") then
+    add_requires("vulkan-headers 1.2.189", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
+    add_requires("volk 1.2.190", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
+    add_requires("shaderc 2021.11.22", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
+    -- add_requires("glslang 1.2.189", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
+-- elseif is_config("render", "metal") then
+--     add_defines("RK_METAL")
+-- elseif is_config("render", "dx12") then
+--     add_defines("RK_DX12")
+-- elseif is_config("render", "dx11") then
+--     add_defines("RK_DX11")
+end
+
+-- add_requires("imgui v1.85", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
+-- add_requires("imguizmo 1.83", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
+-- add_requires("openal-soft 1.21.1", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
+-- add_requires("libsndfile 1.0.30", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
+-- add_requires("eigen 3.4.0", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
+-- add_requires("libsdl 2.0.16", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
+-- add_requires("bullet3 3.09", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
+-- add_requires("luajit", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
+-- if is_plat("macosx", "linux", "windows") then
+--     add_requires("libtorch v1.8.1", {system = false, configs = {shared = true, debug = true, cxflags = "-fPIC"}})
+-- end
+
 
 --
 -- Set Include Dirs

@@ -37,7 +37,7 @@ namespace Rocket {
 
     void DesktopWindow::Finalize() {
         glfwDestroyWindow(window);
-	    glfwTerminate();
+        glfwTerminate();
     }
 
     void DesktopWindow::Tick() {
