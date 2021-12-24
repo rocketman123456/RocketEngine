@@ -42,7 +42,10 @@ namespace Rocket {
         [[nodiscard]] virtual std::size_t Seek(std::size_t offset, FileEnum::Origin origin) = 0;
         [[nodiscard]] virtual std::size_t Tell() = 0;
         // Should Pre-Allocate Memory
+        // If Read Text, read will read [size - 1] bytes,
+        // because last will be ['\0'] for string
         [[nodiscard]] virtual std::size_t Read(FileBuffer* data) = 0;
+        // Write will write all data to file, has no different
         [[nodiscard]] virtual std::size_t Write(const FileBuffer& data) = 0;
     };
 

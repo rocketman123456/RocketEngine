@@ -72,8 +72,17 @@ namespace Rocket {
 
     std::size_t ZipFile::Read(FileBuffer* data) {
         assert(data != nullptr);
-        std::size_t read_size = std::min(Size(), data->size());
-        zip_fread(zip_file_ptr, data->data(), data->size());
+        if(!IsOpened()) return std::size_t(0);
+        std::size_t read_size = 0;
+        if(mode & FileEnum::READ_TEXT) {
+            read_size = std::min(Size(), data->size()-1);
+        } else {
+            read_size = std::min(Size(), data->size());
+        }
+        zip_fread(zip_file_ptr, data->data(), read_size);
+        if(mode & FileEnum::READ_TEXT) {
+            data->data()[read_size] = std::byte(0);
+        }
         return read_size;
     }
 

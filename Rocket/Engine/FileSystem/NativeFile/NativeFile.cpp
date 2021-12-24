@@ -115,9 +115,28 @@ namespace Rocket {
     std::size_t NativeFile::Read(FileBuffer* buffer) {
         assert(buffer != nullptr);
         if (!IsOpened()) { return std::size_t(0); }
-        stream.read(reinterpret_cast<char*>(buffer->data()), static_cast<std::streamsize>(buffer->size()));
-        if (stream) { return buffer->size(); }
-        return static_cast<std::size_t>(stream.gcount());
+        std::size_t buffer_size = Size() - Tell();
+        std::size_t max_size = 0;
+        if(mode & FileEnum::READ_TEXT) {
+            max_size = std::min(buffer->size()-1, buffer_size);
+        } else {
+            max_size = std::min(buffer->size(), buffer_size);
+        }
+        stream.read(reinterpret_cast<char*>(buffer->data()), static_cast<std::streamsize>(max_size));
+        std::size_t read_count = 0;
+        if (stream) {
+            if(mode & FileEnum::READ_TEXT) {
+                read_count = buffer->size() - 1;
+            } else {
+                read_count = buffer->size(); 
+            }
+        } else {
+            read_count = static_cast<std::size_t>(stream.gcount());
+        }
+        if(mode & FileEnum::READ_TEXT) {
+            buffer->data()[read_count] = std::byte(0);
+        }
+        return read_count;
     }
 
     std::size_t NativeFile::Write(const FileBuffer& data) {

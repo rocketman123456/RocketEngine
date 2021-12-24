@@ -25,6 +25,7 @@ namespace Rocket {
         // 声明Log输出频道
         DECLARE_LOG_CHANNEL(Core);
         DECLARE_LOG_CHANNEL(Memory);
+        DECLARE_LOG_CHANNEL(Script);
         DECLARE_LOG_CHANNEL(Console);
         DECLARE_LOG_CHANNEL(Window);
         DECLARE_LOG_CHANNEL(Graphics);

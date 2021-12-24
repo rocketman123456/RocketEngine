@@ -62,7 +62,15 @@ int main() {
         //auto zip_file = vfs->GetFilePointer("/Zip/Config/basic.yaml");
         auto zip_file = vfs->GetFilePointer(wav_file);
 
-        vfs->OpenFile(native_file, FileEnum::READWRITE_BINARY);
+        vfs->OpenFile(native_file, FileEnum::READWRITE_TEXT);
+        {
+            FileBuffer buffer = {new std::byte[native_file->Size()+1], native_file->Size()+1};
+            auto result = vfs->ReadFile(native_file, &buffer);
+            std::cout << "Read: " << obj_file << " Size: " << result << std::endl;
+            std::cout << "Content: " << std::endl;
+            std::cout << reinterpret_cast<char*>(buffer.data()) << std::endl;
+            delete [] buffer.data();
+        }
         vfs->CloseFile(native_file);
 
         // Able to read file from mix file system structure
@@ -75,6 +83,7 @@ int main() {
         //auto size = vfs->WriteFile(zip_file, {(std::byte*)content.data(), content.size()});
         //assert(size == content.size());
         vfs->CloseFile(zip_file);
+        delete [] buffer.data();
     }
 
     {

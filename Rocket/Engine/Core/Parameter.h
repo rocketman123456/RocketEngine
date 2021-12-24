@@ -1,13 +1,30 @@
 #pragma once
 #include <cstddef>
+#include <cstdint>
+#include <limits>
 
 namespace Rocket {
+    // Limits
+    constexpr int MAX_INT           = (std::numeric_limits<int>::max)();
+    constexpr int MIN_INT           = (std::numeric_limits<int>::min)();
+    constexpr int8_t MAX_INT8       = (std::numeric_limits<int8_t>::max)();
+    constexpr int8_t MIN_INT8       = (std::numeric_limits<int8_t>::min)();
+    constexpr int16_t MAX_INT16     = (std::numeric_limits<int16_t>::max)();
+    constexpr int16_t MIN_INT16     = (std::numeric_limits<int16_t>::min)();
+    constexpr int32_t MAX_INT32     = (std::numeric_limits<int32_t>::max)();
+    constexpr int32_t MIN_INT32     = (std::numeric_limits<int32_t>::min)();
+    constexpr int64_t MAX_INT64     = (std::numeric_limits<int64_t>::max)();
+    constexpr int64_t MIN_INT64     = (std::numeric_limits<int64_t>::min)();
+    constexpr double MAX_DOUBLE     = (std::numeric_limits<double>::max)();
+    constexpr double MIN_DOUBLE     = (std::numeric_limits<double>::min)();
+    constexpr float MAX_FLOAT       = (std::numeric_limits<float>::max)();
+    constexpr float MIN_FLOAT       = (std::numeric_limits<float>::min)();
     // Common Used Variables
     constexpr double MATH_PI        = 3.14159265358979323846264338327950288;
-    constexpr double MATH_PI_2      = 1.57079632679489661923132169163975144;
-    constexpr double MATH_PI_4      = 0.785398163397448309615660845819875721;
-    constexpr double MATH_1_PI      = 0.318309886183790671537767526745028724;
-    constexpr double MATH_2_PI      = 0.636619772367581343075535053490057448;
+    constexpr double MATH_PI_2      = MATH_PI * 2.0;
+    constexpr double MATH_PI_4      = MATH_PI * 4.0;
+    constexpr double MATH_1_PI      = 1.0 / MATH_PI;
+    constexpr double MATH_2_PI      = 2.0 / MATH_PI;
     constexpr double MATH_2_SQRTPI  = 1.12837916709551257389615890312154517;
     constexpr double EPS            = 1e-9;
     constexpr double SQRT_3         = 1.73205080756887729352744634150587237;

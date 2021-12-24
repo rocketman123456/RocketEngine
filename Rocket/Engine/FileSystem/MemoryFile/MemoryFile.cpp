@@ -71,9 +71,18 @@ namespace Rocket {
         if (!IsOpened()) { return std::size_t(0); }
         // Copy Specify Memory Area
         std::size_t buffer_size = Size() - Tell();
-        std::size_t max_size = std::min(buffer->size(), buffer_size);
+        std::size_t max_size = 0;
+        if(mode & FileEnum::READ_TEXT) {
+            max_size = std::min(buffer->size()-1, buffer_size);
+        } else {
+            max_size = std::min(buffer->size(), buffer_size);
+        }
         if (max_size > 0) {
             std::memcpy(buffer->data(), file_data.data(), max_size);
+            if(mode & FileEnum::READ_TEXT) {
+                buffer->data()[max_size] = std::byte(0);
+            }
+            Seek(max_size, FileEnum::BEGIN);
             return max_size;
         } else {
             return std::size_t(0);

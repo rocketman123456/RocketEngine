@@ -5,6 +5,8 @@
 #include <cassert>
 #include <cctype>
 #include <climits>
+#include <sstream>
+#include <iomanip>
 
 namespace Rocket {
     static void SplitMultiChar(const std::string& in, std::vector<std::string>* out, const std::string& token) {
@@ -90,6 +92,32 @@ namespace Rocket {
         return false;
     }
 
+    // convert a type to a string
+    template <class T>
+    inline std::string TypeToStr(const T& t, int precision = 2) {
+        std::ostringstream buffer;
+        buffer << std::fixed << std::setprecision(precision) << t;
+        return buffer.str();
+    }
+
+    // convert a bool to a string
+    static inline std::string BoolToStr(bool b) {
+        if(b) return "true";
+        return "false";
+    }
+
+    // grabs a value of the specified type from an input stream
+    template <typename T>
+    inline T GetValueFromStream(std::ifstream& stream) {
+        T val;
+        stream >> val;
+        //make sure it was the correct type
+        if (!stream) {
+            throw std::runtime_error("Attempting to retrieve wrong type from stream");
+        }
+        return val;
+    }
+
     static float StringMatch(const std::string& left, const std::string& right) {
         std::size_t left_size = left.length();
         std::size_t right_size = right.length();
@@ -138,13 +166,11 @@ namespace Rocket {
                 right_ptr = rpbest;
             }
         }
-
         if(match_val > 0.999) {
             match_val = 1.0f;
         } else if(match_val < 0.001) {
             match_val = 0.0f;
         }
-
         return match_val;
     }
 

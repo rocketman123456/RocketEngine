@@ -20,6 +20,7 @@
 
 IMPLEMENT_LOG_CHANNEL(Core);
 IMPLEMENT_LOG_CHANNEL(Memory);
+IMPLEMENT_LOG_CHANNEL(Script);
 IMPLEMENT_LOG_CHANNEL(Console);
 IMPLEMENT_LOG_CHANNEL(Window);
 IMPLEMENT_LOG_CHANNEL(Graphics);
@@ -32,8 +33,12 @@ IMPLEMENT_LOG_CHANNEL(App);
 namespace {
     class DefaultLogger {
     public:
-        DefaultLogger() { Rocket::Log::Init(); }
-        ~DefaultLogger() { Rocket::Log::End(); }
+        DefaultLogger() { 
+            Rocket::Log::Init(Rocket::LogLevel::DEBUG); 
+        }
+        ~DefaultLogger() { 
+            Rocket::Log::End(); 
+        }
     };
 
     DefaultLogger _default_logger_ = DefaultLogger();
@@ -62,6 +67,7 @@ namespace Rocket {
         spdlog::set_pattern("%^[%l%$][%T][%n] %v%$");
         INIT_LOG_CHANNEL(Core);
         INIT_LOG_CHANNEL(Memory);
+        INIT_LOG_CHANNEL(Script);
         INIT_LOG_CHANNEL(Console);
         INIT_LOG_CHANNEL(Window);
         INIT_LOG_CHANNEL(Graphics);
@@ -74,6 +80,7 @@ namespace Rocket {
     void Log::End() {
         END_LOG_CHANNEL(Core);
         END_LOG_CHANNEL(Memory);
+        END_LOG_CHANNEL(Script);
         END_LOG_CHANNEL(Console);
         END_LOG_CHANNEL(Window);
         END_LOG_CHANNEL(Graphics);
