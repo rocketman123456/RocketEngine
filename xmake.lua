@@ -56,7 +56,7 @@ option_end()
 -- Set Profile Options
 --
 option("profile_settings")
-    set_default(false)
+    set_default(true)
     set_showmenu(true)
     set_values(false, true)
     set_description("Profile Settings")

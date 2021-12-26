@@ -1,6 +1,7 @@
 #include "FileSystem/NativeFile/NativeFile.h"
 #include "FileSystem/Basic/VirtualUtils.h"
 #include "FileSystem/NativeFile/NativeUtils.h"
+#include "Log/Instrumentor.h"
 #include "Log/Log.h"
 
 #include <filesystem>
@@ -113,6 +114,7 @@ namespace Rocket {
     }
 
     std::size_t NativeFile::Read(FileBuffer* buffer) {
+        RK_PROFILE_FUNCTION();
         assert(buffer != nullptr);
         if (!IsOpened()) { return std::size_t(0); }
         std::size_t buffer_size = Size() - Tell();
@@ -140,6 +142,7 @@ namespace Rocket {
     }
 
     std::size_t NativeFile::Write(const FileBuffer& data) {
+        RK_PROFILE_FUNCTION();
         if (!IsOpened() || IsReadOnly()) {
             RK_WARN(File, "Write to Read Only File {}, {}", virtual_path, real_path);
             return 0;

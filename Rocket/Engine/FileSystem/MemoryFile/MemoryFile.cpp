@@ -1,5 +1,7 @@
 #include "FileSystem/MemoryFile/MemoryFile.h"
 #include "FileSystem/Basic/VirtualUtils.h"
+#include "Log/Instrumentor.h"
+#include "Log/Log.h"
 
 #include <algorithm>
 #include <cassert>
@@ -67,6 +69,7 @@ namespace Rocket {
     }
 
     std::size_t MemoryFile::Read(FileBuffer* buffer) {
+        RK_PROFILE_FUNCTION();
         assert(buffer != nullptr);
         if (!IsOpened()) { return std::size_t(0); }
         // Copy Specify Memory Area
@@ -90,6 +93,7 @@ namespace Rocket {
     }
 
     std::size_t MemoryFile::Write(const FileBuffer& data) {
+        RK_PROFILE_FUNCTION();
         if (!IsOpened() || IsReadOnly()) { 
             RK_WARN(File, "Write to Read Only File {}, {}", virtual_path, real_path);
             return 0; 

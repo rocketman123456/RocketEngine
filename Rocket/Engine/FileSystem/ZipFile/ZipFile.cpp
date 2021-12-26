@@ -1,6 +1,8 @@
 #include "FileSystem/ZipFile/ZipFile.h"
 #include "FileSystem/Basic/VirtualUtils.h"
 #include "FileSystem/ZipFile/ZipUtils.h"
+#include "Log/Instrumentor.h"
+#include "Log/Log.h"
 
 #include <exception>
 #include <stdexcept>
@@ -71,6 +73,7 @@ namespace Rocket {
     }
 
     std::size_t ZipFile::Read(FileBuffer* data) {
+        RK_PROFILE_FUNCTION();
         assert(data != nullptr);
         if(!IsOpened()) return std::size_t(0);
         std::size_t read_size = 0;
@@ -79,7 +82,10 @@ namespace Rocket {
         } else {
             read_size = std::min(Size(), data->size());
         }
-        zip_fread(zip_file_ptr, data->data(), read_size);
+        {
+            RK_PROFILE_SCOPE("Zip Read Part");
+            zip_fread(zip_file_ptr, data->data(), read_size);
+        }
         if(mode & FileEnum::READ_TEXT) {
             data->data()[read_size] = std::byte(0);
         }
@@ -87,6 +93,7 @@ namespace Rocket {
     }
 
     std::size_t ZipFile::Write(const FileBuffer& data) {
+        RK_PROFILE_FUNCTION();
         FileBuffer origin_data = {};
         if(mode & FileEnum::APPEND) {
             // TODO : support append to zip file

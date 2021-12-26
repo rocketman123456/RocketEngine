@@ -65,6 +65,7 @@ int main() {
 
         vfs->OpenFile(native_file, FileEnum::READWRITE_TEXT);
         {
+            RK_PROFILE_SCOPE("ReadNative");
             // FileBuffer buffer = {(FileByte*)alloca(native_file->Size()+1), native_file->Size()+1};
             FileBuffer buffer = {new FileByte[native_file->Size()+1], native_file->Size()+1};
             auto result = vfs->ReadFile(native_file, &buffer);
@@ -78,6 +79,7 @@ int main() {
         // Able to read file from mix file system structure
         vfs->OpenFile(zip_file, FileEnum::READWRITE_BINARY);
         {
+            RK_PROFILE_SCOPE("ReadZip");
             // FileBuffer buffer = {(FileByte*)alloca(zip_file->Size()), zip_file->Size()};
             FileBuffer buffer = {new FileByte[zip_file->Size()], zip_file->Size()};
             auto result = vfs->ReadFile(zip_file, &buffer);

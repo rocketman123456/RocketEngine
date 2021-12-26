@@ -1,6 +1,7 @@
 #include "FileSystem/NativeFile/NativeFileSystem.h"
 #include "FileSystem/NativeFile/NativeUtils.h"
 #include "Utils/StringUtils.h"
+#include "Log/Instrumentor.h"
 #include "Log/Log.h"
 
 #include <exception>
@@ -15,11 +16,11 @@ namespace Rocket {
         : FileSystem(real_path, virtual_path) {}
 
     void NativeFileSystem::Initialize() {
+        RK_PROFILE_FUNCTION();
         if(IsInitialized()) {
             RK_INFO(File, "File System Already Initialized");
             return;
         }
-
         // Normalize Path
         NormalizePath();
         // Check File System
@@ -36,6 +37,7 @@ namespace Rocket {
     }
 
     void NativeFileSystem::NormalizePath() {
+        RK_PROFILE_FUNCTION();
         real_path = Replace(real_path, "\\", "/");
         if(!EndsWith(real_path, "/")) 
             real_path += "/";
@@ -48,6 +50,7 @@ namespace Rocket {
     }
 
     void NativeFileSystem::CheckFileSystem() {
+        RK_PROFILE_FUNCTION();
         std::filesystem::path basic = real_path;
         if(!std::filesystem::exists(basic)) {
             RK_TRACE(File, "Native File System {} Not Exist", real_path);
@@ -60,6 +63,7 @@ namespace Rocket {
     }
 
     void NativeFileSystem::GetRootName() {
+        RK_PROFILE_FUNCTION();
         std::vector<std::string> dir_stack;
         SplitSingleChar(virtual_path, &dir_stack, '/');
         if(dir_stack.size() > 0) {
@@ -70,14 +74,14 @@ namespace Rocket {
     }
 
     void NativeFileSystem::BuildVirtualSystem() {
+        RK_PROFILE_FUNCTION();
         std::filesystem::path basic = real_path;
-        // node_map.clear();
-        // block_map.clear();
         RK_INFO(File, "Build Up Virtual Blocks");
         BuildVirtualSystem(basic, root);
     }
 
     void NativeFileSystem::BuildVirtualSystem(const std::filesystem::path& path, VirtualBlockPtr& root) {
+        RK_PROFILE_FUNCTION();
         for (const auto& entry : std::filesystem::directory_iterator(path)) {
             auto filename = entry.path().filename();
             auto filename_str = filename.u8string();
@@ -118,15 +122,15 @@ namespace Rocket {
     }
 
     void NativeFileSystem::SetVirtualPath(const std::string& vpath) {
+        RK_PROFILE_FUNCTION();
         virtual_path = vpath;
         if(!IsInitialized()) { return; }
-
         // Normalize Path
         NormalizePath();
         // Init Root Block
-        root = nullptr;
-        root = std::make_shared<VirtualBlock>();
         root->path = virtual_path;
+        root->node_map.clear();
+        root->block_map.clear();
         // Get Root Name
         GetRootName();
         // Build up virtual blocks recurisively
@@ -134,17 +138,17 @@ namespace Rocket {
     }
 
     void NativeFileSystem::SetRealPath(const std::string& rpath) {
+        RK_PROFILE_FUNCTION();
         real_path = rpath;
         if(!IsInitialized()) { return; }
-
         // Normalize Path
         NormalizePath();
         // Check File System
         CheckFileSystem();
         // Init Root Block
-        root = nullptr;
-        root = std::make_shared<VirtualBlock>();
         root->path = virtual_path;
+        root->node_map.clear();
+        root->block_map.clear();
         // Get Root Name
         GetRootName();
         // Build up virtual blocks recurisively
@@ -156,6 +160,7 @@ namespace Rocket {
     }
 
     FilePtr NativeFileSystem::GetFilePointer(const std::string& file_path) {
+        RK_PROFILE_FUNCTION();
         if(!IsFileExists(file_path)) {
             RK_WARN(File, "File Not Exist {}", file_path);
             return nullptr;
@@ -187,7 +192,6 @@ namespace Rocket {
         }
         // Add info to VFS
         
-
         return true;
     }
 

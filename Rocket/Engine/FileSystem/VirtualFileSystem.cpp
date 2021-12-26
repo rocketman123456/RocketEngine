@@ -2,6 +2,7 @@
 #include "FileSystem/FileSystemFactory.h"
 #include "FileSystem/Basic/VirtualUtils.h"
 #include "Utils/StringUtils.h"
+#include "Log/Instrumentor.h"
 
 #include <vector>
 #include <string>
@@ -124,6 +125,7 @@ namespace Rocket {
     // }
 
     FilePtr VirtualFileSystem::GetFilePointer(const std::string& file_path) {
+        RK_PROFILE_FUNCTION();
         auto node = FindVirtualNode(root, file_path);
         if(node == nullptr) {
             return nullptr;

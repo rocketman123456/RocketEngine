@@ -2,6 +2,7 @@
 #include "FileSystem/Basic/VirtualUtils.h"
 #include "FileSystem/NativeFile/NativeUtils.h"
 #include "FileSystem/ZipFile/ZipUtils.h"
+#include "Log/Instrumentor.h"
 #include "Utils/StringUtils.h"
 
 #include <filesystem>
@@ -14,6 +15,7 @@ namespace Rocket {
         : FileSystem(real_path, virtual_path) {}
 
     void ZipFileSystem::Initialize() {
+        RK_PROFILE_FUNCTION();
         if(IsInitialized()) {
             RK_INFO(File, "File System Already Initialized");
             return;
@@ -24,15 +26,18 @@ namespace Rocket {
         root->path = virtual_path;
         GetRootName();
         // Open Zip
-        zip_archive = OpenZip(real_path, ZIP_CREATE);
-        if(zip_archive == nullptr) {
-            throw std::runtime_error("Unable to Open Zip");
+        {
+            zip_archive = OpenZip(real_path, ZIP_CREATE);
+            if(zip_archive == nullptr) {
+                throw std::runtime_error("Unable to Open Zip");
+            }
         }
         BuildVirtualSystem();
         is_initialized = true;
     }
 
     void ZipFileSystem::NormalizePath() {
+        RK_PROFILE_FUNCTION();
         real_path = Replace(real_path, "\\", "/");
         virtual_path = Replace(virtual_path, "\\", "/");
         if(!EndsWith(virtual_path, "/")) 
@@ -43,6 +48,7 @@ namespace Rocket {
     }
 
     void ZipFileSystem::CheckFileSystem() {
+        RK_PROFILE_FUNCTION();
         std::filesystem::path basic = real_path;
         if(!std::filesystem::is_regular_file(basic)) {
             RK_TRACE(File, "Zip File System {} Not Exist", real_path);
@@ -52,8 +58,10 @@ namespace Rocket {
 
     void ZipFileSystem::GetRootName() {
         std::string dir;
+        RK_PROFILE_FUNCTION();
         std::string file_name;
         SplitLastSingleChar(virtual_path, &dir, &file_name, '/');
+        SplitLastSingleChar(dir, nullptr, &file_name, '/');
         if(file_name.length() > 0) {
             root->name = file_name;
         } else {
@@ -62,6 +70,7 @@ namespace Rocket {
     }
 
     void ZipFileSystem::BuildVirtualSystem() {
+        RK_PROFILE_FUNCTION();
         // Iterate Through Zip Files
         zip_int64_t num_entries = zip_get_num_entries(zip_archive, 0);
         for(zip_int64_t i = 0; i < num_entries; ++i) {
@@ -83,6 +92,7 @@ namespace Rocket {
     }
 
     void ZipFileSystem::SetVirtualPath(const std::string& vpath) {
+        RK_PROFILE_FUNCTION();
         virtual_path = vpath;
         if(!IsInitialized()) { return; }
         // Normalize Path
@@ -98,6 +108,7 @@ namespace Rocket {
     }
 
     void ZipFileSystem::SetRealPath(const std::string& rpath) {
+        RK_PROFILE_FUNCTION();
         if(IsInitialized()) {
             RK_WARN(File, "Zip File System Not Able To Change Real Path After Initialize");
         } else {
@@ -110,6 +121,7 @@ namespace Rocket {
     }
 
     FilePtr ZipFileSystem::GetFilePointer(const std::string& file_path) {
+        RK_PROFILE_FUNCTION();
         if(!IsFileExists(file_path)) {
             RK_WARN(File, "File Not Exist {}", file_path);
             return nullptr;

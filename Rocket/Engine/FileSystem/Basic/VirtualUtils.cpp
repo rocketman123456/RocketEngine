@@ -1,5 +1,6 @@
 #include "FileSystem/Basic/VirtualUtils.h"
 #include "FileSystem/Basic/FileSystem.h"
+#include "Log/Instrumentor.h"
 
 #include <cassert>
 
@@ -17,6 +18,7 @@ namespace Rocket {
     }
 
     VirtualBlockPtr CreateVirtualBlock(VirtualBlockPtr& root, const std::vector<std::string>& dirs, int32_t level) {
+        RK_PROFILE_FUNCTION();
         if(root == nullptr) return nullptr;
         if(dirs.size() == 0 || level == dirs.size()) return root;
         auto found = root->block_map.find(dirs[level]);
@@ -34,6 +36,7 @@ namespace Rocket {
     }
 
     VirtualBlockPtr CreateVirtualBlock(VirtualBlockPtr& root, const std::string& path) {
+        RK_PROFILE_FUNCTION();
         auto dir_ = Replace(path, "\\", "/");
         std::vector<std::string> dir_stack;
         SplitSingleChar(dir_, &dir_stack, '/');
@@ -42,6 +45,7 @@ namespace Rocket {
     }
 
     VirtualNodePtr CreateVirtualNode(VirtualBlockPtr& root, const std::string& file_path) {
+        RK_PROFILE_FUNCTION();
         auto dir_ = Replace(file_path, "\\", "/");
         std::string dir;
         std::string file_name;
@@ -67,6 +71,7 @@ namespace Rocket {
     }
 
     VirtualBlockPtr FindVirtualBlock(const VirtualBlockPtr& root, const std::vector<std::string>& dirs, int32_t level) {
+        RK_PROFILE_FUNCTION();
         // check invalid status
         if(dirs.size() == 0) return root;
         if(root == nullptr) return nullptr;
@@ -81,6 +86,7 @@ namespace Rocket {
     }
 
     VirtualBlockPtr FindVirtualBlock(const VirtualBlockPtr& root, const std::string& dir) {
+        RK_PROFILE_FUNCTION();
         auto dir_ = Replace(dir, "\\", "/");
         std::vector<std::string> dir_stack;
         SplitSingleChar(dir_, &dir_stack, '/');
@@ -89,6 +95,7 @@ namespace Rocket {
     }
 
     VirtualBlockPtr FindDeepestExistVirtualBlock(const VirtualBlockPtr& root, const std::vector<std::string>& dirs, int32_t level) {
+        RK_PROFILE_FUNCTION();
         // check invalid status
         if(dirs.size() == 0) return root;
         if(root == nullptr) return nullptr;
@@ -103,6 +110,7 @@ namespace Rocket {
     }
 
     VirtualBlockPtr FindDeepestExistVirtualBlock(const VirtualBlockPtr& root, const std::string& dir) {
+        RK_PROFILE_FUNCTION();
         auto dir_ = Replace(dir, "\\", "/");
         std::vector<std::string> dir_stack;
         SplitSingleChar(dir_, &dir_stack, '/');
@@ -111,6 +119,7 @@ namespace Rocket {
     }
 
     VirtualNodePtr FindVirtualNode(const VirtualBlockPtr& root, const std::vector<std::string>& dirs, const std::string& name) {
+        RK_PROFILE_FUNCTION();
         // find file parent block
         auto block = FindVirtualBlock(root, dirs, 0);
         if(block == nullptr) return nullptr;
@@ -124,6 +133,7 @@ namespace Rocket {
     }
 
     VirtualNodePtr FindVirtualNode(const VirtualBlockPtr& root, const std::string& dir, const std::string& name) {
+        RK_PROFILE_FUNCTION();
         auto dir_ = Replace(dir, "\\", "/");
         std::vector<std::string> dir_stack;
         SplitSingleChar(dir_, &dir_stack, '/');
@@ -132,6 +142,7 @@ namespace Rocket {
     }
 
     VirtualNodePtr FindVirtualNode(const VirtualBlockPtr& root, const std::string& file_path) {
+        RK_PROFILE_FUNCTION();
         auto dir_ = Replace(file_path, "\\", "/");
         std::string dir;
         std::string file_name;

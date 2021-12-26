@@ -1,6 +1,7 @@
 #include "FileSystem/Basic/FileSystem.h"
 #include "FileSystem/Basic/VirtualUtils.h"
 #include "Utils/StringUtils.h"
+#include "Log/Instrumentor.h"
 
 namespace Rocket {
     FileSystem::FileSystem(const std::string& real_path, const std::string& virtual_path)
@@ -27,6 +28,7 @@ namespace Rocket {
     }
 
     bool FileSystem::IsFileExists(const std::string& file_path) const {
+        RK_PROFILE_FUNCTION();
         std::string temp_path = file_path.substr(virtual_path.size());
         auto node = FindVirtualNode(root, temp_path);
         if(node == nullptr)
@@ -36,6 +38,7 @@ namespace Rocket {
     }
 
     bool FileSystem::IsDirExists(const std::string& dir_path) const {
+        RK_PROFILE_FUNCTION();
         std::string temp_path = dir_path.substr(virtual_path.size());
         auto block = FindVirtualBlock(root, temp_path);
         if(block == nullptr)
