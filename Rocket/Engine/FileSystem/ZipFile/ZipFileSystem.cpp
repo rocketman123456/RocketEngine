@@ -18,22 +18,17 @@ namespace Rocket {
             RK_INFO(File, "File System Already Initialized");
             return;
         }
-
         NormalizePath();
         CheckFileSystem();
-
         root = std::make_shared<VirtualBlock>();
         root->path = virtual_path;
         GetRootName();
-
         // Open Zip
         zip_archive = OpenZip(real_path, ZIP_CREATE);
         if(zip_archive == nullptr) {
             throw std::runtime_error("Unable to Open Zip");
         }
-
         BuildVirtualSystem();
-
         is_initialized = true;
     }
 
@@ -75,11 +70,9 @@ namespace Rocket {
             if(EndsWith(name, "/")) {
                 // Is Dir
                 VirtualBlockPtr block = CreateVirtualBlock(root, dir_stack, 0);
-                //block_map[virtual_path + name] = block;
             } else {
                 // Is File
                 VirtualNodePtr node = CreateVirtualNode(root, dir_stack);
-                //node_map[virtual_path + name] = node;
             }
             // RK_TRACE(File, "Zip File Name: {}", name);
         }
@@ -110,8 +103,7 @@ namespace Rocket {
             dirs_copy.push_back(dirs[i]);
         }
         auto block = CreateVirtualBlock(root, dirs_copy, 0);
-
-        auto found = block->node_map.find(dirs[0]);
+        auto found = block->node_map.find(dirs[dirs.size() - 1]);
         if(found == block->node_map.end()) {
             auto node = std::make_shared<VirtualNode>();
             node->vblock = block;

@@ -11,6 +11,9 @@
 namespace Rocket {
     class VirtualFileSystem { // : _implements_ AbstractSingleton<VirtualFileSystem> {
     public:
+        //using FileSystemMap = std::unordered_map<std::string, FileSystemPtr>;
+        using FileSystemMap = std::vector<std::pair<std::string, FileSystemPtr>>;
+    public:
         // Mount and Unmount
         [[nodiscard]] bool MountFileSystem(const FileSystemPtr& fs, const std::string& path);
         [[nodiscard]] bool UnmountFileSystem(const FileSystemPtr& fs);
@@ -26,8 +29,8 @@ namespace Rocket {
         [[nodiscard]] bool IsDirExists(const std::string& dir_path) const;
         [[nodiscard]] bool IsFile(const std::string& file_path) const;
         [[nodiscard]] bool IsDir(const std::string& file_path) const;
-        [[nodiscard]] bool IsFileReadOnly(const std::string& file_path) const;
-        [[nodiscard]] bool IsDirReadOnly(const std::string& file_path) const;
+        // [[nodiscard]] bool IsFileReadOnly(const std::string& file_path) const;
+        // [[nodiscard]] bool IsDirReadOnly(const std::string& file_path) const;
         // File Operation
         [[nodiscard]] FilePtr GetFilePointer(const std::string& file_path);
         void OpenFile(const FilePtr& file, int32_t mode);
@@ -52,8 +55,7 @@ namespace Rocket {
 
     private:
         VirtualBlockPtr root = nullptr;
-        // VNodeMap node_map = {};
-        // VBlockMap block_map = {};
+        FileSystemMap mounted_file_system;
     };
 
     CLASS_PTR(VirtualFileSystem);

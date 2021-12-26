@@ -26,7 +26,6 @@ namespace Rocket {
             block->name = dirs[level];
             block->path = root->path + block->name + "/";
             root->block_map[block->name] = block;
-            //block_map[block->path] = block;
             RK_TRACE(File, "Block Path: {}", block->path);
             return CreateVirtualBlock(block, dirs, level + 1);
         } else {
@@ -53,6 +52,7 @@ namespace Rocket {
         } else {
             auto found = block->node_map.find(file_name);
             if(found == block->node_map.end()) {
+                // Create Virtual Node
                 auto node_name = block->path + file_name;
                 auto node = std::make_shared<VirtualNode>();
                 root->node_map[file_name] = node;
@@ -80,15 +80,11 @@ namespace Rocket {
         return FindVirtualBlock(sub_block, dirs, level + 1);
     }
 
-    VirtualBlockPtr FindVirtualBlock(const VirtualBlockPtr& root, const std::vector<std::string>& dirs) {
-        return FindVirtualBlock(root, dirs, 0);
-    }
-
     VirtualBlockPtr FindVirtualBlock(const VirtualBlockPtr& root, const std::string& dir) {
         auto dir_ = Replace(dir, "\\", "/");
         std::vector<std::string> dir_stack;
         SplitSingleChar(dir_, &dir_stack, '/');
-        auto block = FindVirtualBlock(root, dir_stack);
+        auto block = FindVirtualBlock(root, dir_stack, 0);
         return block;
     }
 
@@ -106,15 +102,11 @@ namespace Rocket {
         return FindVirtualBlock(sub_block, dirs, level + 1);
     }
 
-    VirtualBlockPtr FindDeepestExistVirtualBlock(const VirtualBlockPtr& root, const std::vector<std::string>& dirs) {
-        return FindDeepestExistVirtualBlock(root, dirs, 0);
-    }
-
     VirtualBlockPtr FindDeepestExistVirtualBlock(const VirtualBlockPtr& root, const std::string& dir) {
         auto dir_ = Replace(dir, "\\", "/");
         std::vector<std::string> dir_stack;
         SplitSingleChar(dir_, &dir_stack, '/');
-        auto block = FindDeepestExistVirtualBlock(root, dir_stack);
+        auto block = FindDeepestExistVirtualBlock(root, dir_stack, 0);
         return block;
     }
 
@@ -123,9 +115,12 @@ namespace Rocket {
         auto block = FindVirtualBlock(root, dirs, 0);
         if(block == nullptr) return nullptr;
         // find target file
-        auto found = root->node_map.find(name);
-        if(found == root->node_map.end()) { return nullptr; }
-        return found->second;
+        auto found = block->node_map.find(name);
+        if(found == block->node_map.end()) { 
+            return nullptr; 
+        } else {
+            return found->second;
+        }
     }
 
     VirtualNodePtr FindVirtualNode(const VirtualBlockPtr& root, const std::string& dir, const std::string& name) {
@@ -141,9 +136,6 @@ namespace Rocket {
         std::string dir;
         std::string file_name;
         SplitLastSingleChar(dir_, &dir, &file_name, '/');
-        std::vector<std::string> dir_stack;
-        SplitSingleChar(dir, &dir_stack, '/');
-        auto node = FindVirtualNode(root, dir_stack, file_name);
-        return node;
+        return FindVirtualNode(root, dir, file_name);
     }
 }

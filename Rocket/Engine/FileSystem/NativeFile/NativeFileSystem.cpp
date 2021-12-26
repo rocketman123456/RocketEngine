@@ -98,10 +98,11 @@ namespace Rocket {
                 auto node_name = root->path + filename_str;
                 auto node = std::make_shared<VirtualNode>();
                 root->node_map[filename_str] = node;
-                node->name = node_name;
+                node->path = root->path;
+                node->name = filename_str;
                 node->vblock = root;
                 // Create Node Index
-                node_map[node->path + node->name] = node;
+                node_map[node_name] = node;
                 // RK_TRACE(File, "Node Name: {}", node->file_name);
                 RK_TRACE(File, "Node Path: {}", node->path + node->name);
             } else {

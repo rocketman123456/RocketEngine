@@ -51,18 +51,22 @@ namespace Rocket {
     }
 
     void FileSystem::OpenFile(const FilePtr& file, int32_t mode) { 
+        if(file == nullptr) return;
         file->Open(mode); 
     }
 
     void FileSystem::CloseFile(const FilePtr& file) { 
+        if(file == nullptr) return;
         file->Close(); 
     }
 
     std::size_t FileSystem::ReadFile(const FilePtr& file, FileBuffer* data) { 
+        if(file == nullptr) return std::size_t(0);
         return file->Read(data); 
     }
 
     std::size_t FileSystem::WriteFile(FilePtr& file, const FileBuffer& data) { 
+        if(file == nullptr) return std::size_t(0);
         return file->Write(data); 
     }
 
