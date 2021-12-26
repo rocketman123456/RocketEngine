@@ -15,7 +15,7 @@ includes(
     -- "Math",
     "Memory",
     -- "MultiThread",
-    -- "Parser",
+    "Parser",
     -- "Pattern",
     "ScriptSystem",
     -- "Physics",

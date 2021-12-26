@@ -64,26 +64,30 @@ int main() {
 
         vfs->OpenFile(native_file, FileEnum::READWRITE_TEXT);
         {
-            FileBuffer buffer = {new std::byte[native_file->Size()+1], native_file->Size()+1};
+            FileBuffer buffer = {(FileByte*)alloca(native_file->Size()+1), native_file->Size()+1};
+            // FileBuffer buffer = {(FileByte*)alloca[native_file->Size()+1], native_file->Size()+1};
             auto result = vfs->ReadFile(native_file, &buffer);
             std::cout << "Read: " << obj_file << " Size: " << result << std::endl;
             std::cout << "Content: " << std::endl;
             std::cout << reinterpret_cast<char*>(buffer.data()) << std::endl;
-            delete [] buffer.data();
+            // delete [] buffer.data();
         }
         vfs->CloseFile(native_file);
 
         // Able to read file from mix file system structure
         vfs->OpenFile(zip_file, FileEnum::READWRITE_BINARY);
-        FileBuffer buffer = {new std::byte[zip_file->Size()], zip_file->Size()};
-        auto result = vfs->ReadFile(zip_file, &buffer);
-        //std::string buffer_str((char*)buffer.data(), buffer.size());
-        std::cout << "Read: " << wav_file << " Size: " << result << std::endl;
-        //std::string content = "root dir - zip test: " + CurrentDate();
-        //auto size = vfs->WriteFile(zip_file, {(std::byte*)content.data(), content.size()});
-        //assert(size == content.size());
+        {
+            FileBuffer buffer = {(FileByte*)alloca(zip_file->Size()), zip_file->Size()};
+            //FileBuffer buffer = {(FileByte*)alloca[zip_file->Size()], zip_file->Size()};
+            auto result = vfs->ReadFile(zip_file, &buffer);
+            //std::string buffer_str((char*)buffer.data(), buffer.size());
+            std::cout << "Read: " << wav_file << " Size: " << result << std::endl;
+            //std::string content = "root dir - zip test: " + CurrentDate();
+            //auto size = vfs->WriteFile(zip_file, {(std::byte*)content.data(), content.size()});
+            //assert(size == content.size());
+            // delete [] buffer.data();
+        }
         vfs->CloseFile(zip_file);
-        delete [] buffer.data();
     }
 
     {

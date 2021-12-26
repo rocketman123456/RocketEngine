@@ -93,20 +93,21 @@ add_requires("concurrentqueue", {system = false, configs = {shared = false, debu
 add_requires("lua v5.4.2", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
 
 if is_config("render", "soft") then
-    -- add_requires("glad v0.1.34", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
+    add_requires("glad v0.1.34", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
 elseif is_config("render", "opengl") then
-    -- add_requires("glad v0.1.34", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
+    add_requires("glad v0.1.34", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
 elseif is_config("render", "vulkan") then
+    add_defines("VK_NO_PROTOTYPES")
     add_requires("vulkan-headers 1.2.189", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
     add_requires("volk 1.2.190", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
     add_requires("shaderc 2021.11.22", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
     -- add_requires("glslang 1.2.189", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
--- elseif is_config("render", "metal") then
---     add_defines("RK_METAL")
--- elseif is_config("render", "dx12") then
---     add_defines("RK_DX12")
--- elseif is_config("render", "dx11") then
---     add_defines("RK_DX11")
+elseif is_config("render", "metal") then
+    -- add_defines("RK_METAL")
+elseif is_config("render", "dx12") then
+    -- add_defines("RK_DX12")
+elseif is_config("render", "dx11") then
+    -- add_defines("RK_DX11")
 end
 
 -- add_requires("imgui v1.85", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})

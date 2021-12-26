@@ -173,4 +173,24 @@ namespace Rocket {
         auto file = std::make_shared<ZipFile>(full_path, file_path, zip_archive);
         return file;
     }
+
+    bool ZipFileSystem::CreateFile(const std::string& file_path) {
+        RK_WARN(File, "Create File Not Supported");
+        return false;
+    }
+
+    bool ZipFileSystem::RemoveFile(const std::string& file_path) {
+        RK_WARN(File, "Remove File Not Supported");
+        return false;
+    }
+
+    bool ZipFileSystem::CreateDir(const std::string& dir_path) {
+        RK_WARN(File, "Create Dir Not Supported");
+        return false;
+    }
+
+    bool ZipFileSystem::RemoveDir(const std::string& dir_path) {
+        RK_WARN(File, "Remove Dir Not Supported");
+        return false;
+    }
 }

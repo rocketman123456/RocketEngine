@@ -116,7 +116,8 @@
         "gsl_util": "cpp",
         "span_ext": "cpp",
         "__functional_base_03": "cpp",
-        "*.rh": "cpp"
+        "*.rh": "cpp",
+        "fpscounter": "c"
     },
     "Lua.diagnostics.globals": [
         "user_score"

@@ -79,10 +79,14 @@ namespace Rocket {
     }
 
     static bool EndsWith(const std::string& full_string, const std::string& ending) {
+#if 0
         if (full_string.length() >= ending.length()) {
             return (0 == full_string.compare(full_string.length() - ending.length(), ending.length(), ending));
         }
         return false;
+#else
+        return (strstr(full_string.c_str(), ending.c_str()) - full_string.c_str()) == (full_string.length() - ending.length());
+#endif
     }
 
     static bool StartsWith(const std::string& full_string, const std::string& starting) {

@@ -27,11 +27,11 @@ namespace Rocket {
 
     protected:
         Singleton() = default;
+        ~Singleton() = default;
         Singleton(const Singleton&) = delete;
         Singleton(Singleton&&) = delete;
         Singleton& operator = (const Singleton&) = delete;
         Singleton& operator = (Singleton&&) = delete;
-        ~Singleton() = default;
 
     private:
         using storage_t = std::unique_ptr<T>;
@@ -62,11 +62,11 @@ namespace Rocket {
 
     protected:
         AbstractSingleton() = default;
+        virtual ~AbstractSingleton() = default;
         AbstractSingleton(const AbstractSingleton&) = delete;
         AbstractSingleton(AbstractSingleton&&) = delete;
         AbstractSingleton& operator = (const AbstractSingleton&) = delete;
         AbstractSingleton& operator = (AbstractSingleton&&) = delete;
-        virtual ~AbstractSingleton() = default;
 
     private:
         using storage_t = std::unique_ptr<T>;

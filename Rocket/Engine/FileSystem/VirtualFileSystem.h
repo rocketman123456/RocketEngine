@@ -3,12 +3,13 @@
 #include "FileSystem/Basic/FileSystem.h"
 #include "FileSystem/Basic/VirtualNode.h"
 #include "FileSystem/Basic/VirtualBlock.h"
+#include "Pattern/Singleton.h"
 
 #include <string>
 #include <gsl/gsl>
 
 namespace Rocket {
-    class VirtualFileSystem {
+    class VirtualFileSystem { // : _implements_ AbstractSingleton<VirtualFileSystem> {
     public:
         // Mount and Unmount
         [[nodiscard]] bool MountFileSystem(const FileSystemPtr& fs, const std::string& path);
@@ -16,8 +17,8 @@ namespace Rocket {
         [[nodiscard]] bool UnmountFileSystem(const std::string& path);
         // VFS
         [[nodiscard]] inline VirtualBlockPtr RootBlock() const { return root; }
-        [[nodiscard]] inline const VNodeMap& NodeMap() const { return node_map; }
-        [[nodiscard]] inline const VBlockMap& BlockMap() const { return block_map; }
+        // [[nodiscard]] inline const VNodeMap& NodeMap() const { return node_map; }
+        // [[nodiscard]] inline const VBlockMap& BlockMap() const { return block_map; }
         [[nodiscard]] VNodeList VNodes(const std::string& dir) const;
         [[nodiscard]] VBlockList VBlocks(const std::string& dir) const;
         // Basic Judgement
@@ -25,7 +26,8 @@ namespace Rocket {
         [[nodiscard]] bool IsDirExists(const std::string& dir_path) const;
         [[nodiscard]] bool IsFile(const std::string& file_path) const;
         [[nodiscard]] bool IsDir(const std::string& file_path) const;
-        [[nodiscard]] bool IsReadOnly() const;
+        [[nodiscard]] bool IsFileReadOnly(const std::string& file_path) const;
+        [[nodiscard]] bool IsDirReadOnly(const std::string& file_path) const;
         // File Operation
         [[nodiscard]] FilePtr GetFilePointer(const std::string& file_path);
         void OpenFile(const FilePtr& file, int32_t mode);
@@ -46,14 +48,12 @@ namespace Rocket {
         [[nodiscard]] bool CopyDir(const std::string& src, const std::string& dst);
 
     private:
-        VirtualBlockPtr CreateVirtualBlock(VirtualBlockPtr& root, const std::vector<std::string>& dirs, int32_t level);
-        void RemoveCacheInfo(VirtualBlockPtr& root);
         void SetupBlockFileSystem(VirtualBlockPtr& root, const FileSystemPtr& fs);
 
     private:
         VirtualBlockPtr root = nullptr;
-        VNodeMap node_map = {};
-        VBlockMap block_map = {};
+        // VNodeMap node_map = {};
+        // VBlockMap block_map = {};
     };
 
     CLASS_PTR(VirtualFileSystem);

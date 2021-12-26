@@ -21,16 +21,15 @@ namespace Rocket {
         bool IsReadOnly() const final { return false; }
         // File Operation
         FilePtr GetFilePointer(const std::string& file_path) final;
-        // virtual FilePtr GetFilePointer(const std::string& file_path) = 0;
-        // virtual bool CreateFile(const std::string& file_path);
-        // virtual bool RemoveFile(const std::string& file_path);
+        bool CreateFile(const std::string& file_path) final;
+        bool RemoveFile(const std::string& file_path) final;
         // virtual bool MoveFile(const std::string& src, const std::string& dst);
         // virtual bool RenameFile(const std::string& src, const std::string& dst);
         // virtual bool CopyFile(const std::string& src, const std::string& dst);
         // virtual std::size_t FileSize(const FilePtr& file) const;
         // Dir Operation
-        // virtual bool CreateDir(const std::string& dir_path);
-        // virtual bool RemoveDir(const std::string& dir_path);
+        bool CreateDir(const std::string& dir_path) final;
+        bool RemoveDir(const std::string& dir_path) final;
         // virtual bool MoveDir(const std::string& src, const std::string& dst);
         // virtual bool RenameDir(const std::string& src, const std::string& dst);
         // virtual bool CopyDir(const std::string& src, const std::string& dst);

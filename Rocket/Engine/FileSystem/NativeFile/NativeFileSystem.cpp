@@ -6,6 +6,7 @@
 #include <exception>
 #include <stdexcept>
 #include <vector>
+#include <fstream>
 
 namespace Rocket {
     NativeFileSystem::NativeFileSystem(const std::string& real_path) 
@@ -168,5 +169,50 @@ namespace Rocket {
         auto full_path = real_path + temp;
         auto file = std::make_shared<NativeFile>(full_path, file_path);
         return file;
+    }
+
+    bool NativeFileSystem::CreateFile(const std::string& file_path) {
+        if(IsFileExists(file_path)) {
+            RK_WARN(File, "File Existed {}", file_path);
+            return false;
+        }
+        // Create Dir in Real File System
+        std::string temp_path = Replace(file_path, "\\", "/");
+        std::string dir;
+        std::string file_name;
+        SplitLastSingleChar(temp_path, &dir, &file_name, '/');
+        CreateDir(dir);
+        // Create File in Real File System
+        auto temp = file_path.substr(virtual_path.size());
+        auto full_path = real_path + temp;
+        std::fstream stream(full_path, std::fstream::out);
+        if(!stream.is_open()) {
+            RK_ERROR(File, "Failed to create file: {}, {}", file_path, full_path);
+            return false;
+        }
+        // Add info to VFS
+        
+
+        return true;
+    }
+
+    bool NativeFileSystem::RemoveFile(const std::string& file_path) {
+        if(!IsFileExists(file_path)) {
+            RK_WARN(File, "File Not Existed {}", file_path);
+            return false;
+        }
+        // Remove File in Real File System
+        // Remove info in VFS
+        return true;
+    }
+
+    bool NativeFileSystem::CreateDir(const std::string& dir_path) {
+        RK_WARN(File, "Create Dir Not Supported");
+        return false;
+    }
+
+    bool NativeFileSystem::RemoveDir(const std::string& dir_path) {
+        RK_WARN(File, "Remove Dir Not Supported");
+        return false;
     }
 }
