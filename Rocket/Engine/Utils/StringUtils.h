@@ -60,11 +60,15 @@ namespace Rocket {
         assert(first != nullptr && second != nullptr);
         std::size_t found = name.rfind(token);
         if (found != std::string::npos) {
-            *first = name.substr(0, found);
-            *second = name.substr(found + 1, name.length() - found - 1);
+            if(first != nullptr)
+                *first = name.substr(0, found);
+            if(second != nullptr)
+                *second = name.substr(found + 1, name.length() - found - 1);
         } else {
-            *first = "";
-            *second = name;
+            if(first != nullptr)
+                *first = "";
+            if(second != nullptr)
+                *second = name;
         }
     }
 

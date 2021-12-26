@@ -44,9 +44,6 @@ namespace Rocket {
         } else {
             root = fs_root;
         }
-        // 6. update cached index
-        auto block_map_ = fs->BlockMap();
-        auto node_map_ = fs->NodeMap();
         return true;
     }
 

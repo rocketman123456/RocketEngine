@@ -27,16 +27,18 @@ namespace Rocket {
     }
 
     bool FileSystem::IsFileExists(const std::string& file_path) const {
-        auto found = node_map.find(file_path);
-        if(found == node_map.end())
+        std::string temp_path = file_path.substr(virtual_path.size());
+        auto node = FindVirtualNode(root, temp_path);
+        if(node == nullptr)
             return false;
         else
             return true;
     }
 
     bool FileSystem::IsDirExists(const std::string& dir_path) const {
-        auto found = block_map.find(dir_path);
-        if(found == block_map.end())
+        std::string temp_path = dir_path.substr(virtual_path.size());
+        auto block = FindVirtualBlock(root, temp_path);
+        if(block == nullptr)
             return false;
         else
             return true;

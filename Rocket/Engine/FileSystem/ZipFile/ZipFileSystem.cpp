@@ -51,10 +51,11 @@ namespace Rocket {
     }
 
     void ZipFileSystem::GetRootName() {
-        std::vector<std::string> dir_stack;
-        SplitSingleChar(virtual_path, &dir_stack, '/');
-        if(dir_stack.size() > 0) {
-            root->name = dir_stack.at(dir_stack.size() - 1);
+        std::string dir;
+        std::string file_name;
+        SplitLastSingleChar(virtual_path, &dir, &file_name, '/');
+        if(file_name.length() > 0) {
+            root->name = file_name;
         } else {
             root->name = "/";
         }
@@ -65,56 +66,11 @@ namespace Rocket {
         zip_int64_t num_entries = zip_get_num_entries(zip_archive, 0);
         for(zip_int64_t i = 0; i < num_entries; ++i) {
             const char* name = zip_get_name(zip_archive, i, 0);
-            std::vector<std::string> dir_stack;
-            SplitSingleChar(name, &dir_stack, '/');
-            if(EndsWith(name, "/")) {
-                // Is Dir
-                VirtualBlockPtr block = CreateVirtualBlock(root, dir_stack, 0);
-            } else {
-                // Is File
-                VirtualNodePtr node = CreateVirtualNode(root, dir_stack);
+            if(EndsWith(name, "/")) { // Is Dir
+                VirtualBlockPtr block = CreateVirtualBlock(root, name);
+            } else { // Is File
+                VirtualNodePtr node = CreateVirtualNode(root, name);
             }
-            // RK_TRACE(File, "Zip File Name: {}", name);
-        }
-    }
-
-    VirtualBlockPtr ZipFileSystem::CreateVirtualBlock(VirtualBlockPtr& root, const std::vector<std::string>& dirs, int32_t level) {
-        if(root == nullptr) return nullptr;
-        if(dirs.size() == 0 || level == dirs.size()) return root;
-        auto found = root->block_map.find(dirs[level]);
-        if(found == root->block_map.end()) {
-            VirtualBlockPtr block = std::make_shared<VirtualBlock>();
-            block->parent = root;
-            block->name = dirs[level];
-            block->path = root->path + block->name + "/";
-            root->block_map[block->name] = block;
-            block_map[block->path] = block;
-            RK_TRACE(File, "Block Path: {}", block->path);
-            return CreateVirtualBlock(block, dirs, level + 1);
-        } else {
-            return CreateVirtualBlock(found->second, dirs, level + 1);
-        }
-    }
-
-    VirtualNodePtr ZipFileSystem::CreateVirtualNode(VirtualBlockPtr& root, const std::vector<std::string>& dirs) {
-        if(root == nullptr || dirs.size() == 0) return nullptr;
-        std::vector<std::string> dirs_copy;
-        for(int i = 0; i < dirs.size() - 1; ++i) {
-            dirs_copy.push_back(dirs[i]);
-        }
-        auto block = CreateVirtualBlock(root, dirs_copy, 0);
-        auto found = block->node_map.find(dirs[dirs.size() - 1]);
-        if(found == block->node_map.end()) {
-            auto node = std::make_shared<VirtualNode>();
-            node->vblock = block;
-            node->path = block->path;
-            node->name = dirs[dirs.size() - 1];
-            block->node_map[node->name] = node;
-            node_map[node->path + node->name] = node;
-            RK_TRACE(File, "Node Path: {}", node->path + node->name);
-            return node;
-        } else {
-            return found->second;
         }
     }
 
@@ -123,21 +79,18 @@ namespace Rocket {
         root = nullptr;
         real_path = "";
         virtual_path = "";
-        node_map.clear();
-        block_map.clear();
         is_initialized = false;
     }
 
     void ZipFileSystem::SetVirtualPath(const std::string& vpath) {
         virtual_path = vpath;
         if(!IsInitialized()) { return; }
-
         // Normalize Path
         NormalizePath();
         // Init Root Block
-        root = nullptr;
-        root = std::make_shared<VirtualBlock>();
         root->path = virtual_path;
+        root->node_map.clear();
+        root->block_map.clear();
         // Get Root Name
         GetRootName();
         // Build up virtual blocks recurisively

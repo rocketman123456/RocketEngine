@@ -11,10 +11,8 @@ namespace Rocket {
             RK_INFO(File, "File System Already Initialized");
             return;
         }
-
         root = std::make_shared<VirtualBlock>();
         root->path = virtual_path;
-
         is_initialized = true;
     }
 
@@ -22,8 +20,8 @@ namespace Rocket {
         root = nullptr;
         real_path = "";
         virtual_path = "";
-        node_map.clear();
-        block_map.clear();
+        // node_map.clear();
+        // block_map.clear();
         is_initialized = false;
     }
 

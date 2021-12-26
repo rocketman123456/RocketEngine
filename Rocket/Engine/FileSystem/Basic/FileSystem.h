@@ -29,8 +29,8 @@ namespace Rocket {
         [[nodiscard]] inline const std::string& VirtualPath() const { return virtual_path; }
         [[nodiscard]] inline const std::string& RealPath() const { return real_path; }
         [[nodiscard]] inline VirtualBlockPtr RootBlock() const { return root; }
-        [[nodiscard]] inline const VNodeMap& NodeMap() const { return node_map; }
-        [[nodiscard]] inline const VBlockMap& BlockMap() const { return block_map; }
+        // [[nodiscard]] inline const VNodeMap& NodeMap() const { return node_map; }
+        // [[nodiscard]] inline const VBlockMap& BlockMap() const { return block_map; }
         [[nodiscard]] VNodeList VNodes(const std::string& dir) const;
         [[nodiscard]] VBlockList VBlocks(const std::string& dir) const;
         // Basic Judgement
@@ -72,8 +72,8 @@ namespace Rocket {
         VirtualBlockPtr root = nullptr;
         std::string real_path = "";
         std::string virtual_path = "";
-        VNodeMap node_map = {};
-        VBlockMap block_map = {};
+        // VNodeMap node_map = {};
+        // VBlockMap block_map = {};
         bool is_initialized = false;
     };
 

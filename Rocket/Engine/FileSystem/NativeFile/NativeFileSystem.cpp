@@ -71,8 +71,8 @@ namespace Rocket {
 
     void NativeFileSystem::BuildVirtualSystem() {
         std::filesystem::path basic = real_path;
-        node_map.clear();
-        block_map.clear();
+        // node_map.clear();
+        // block_map.clear();
         RK_INFO(File, "Build Up Virtual Blocks");
         BuildVirtualSystem(basic, root);
     }
@@ -88,8 +88,6 @@ namespace Rocket {
                 block->parent = root;
                 block->name = filename_str;
                 block->path = root->path + filename_str + "/";
-                // Create Block Index
-                block_map[block->path] = block;
                 // RK_TRACE(File, "Block Name: {}", filename_str);
                 RK_TRACE(File, "Block Path: {}", block->path);
                 BuildVirtualSystem(entry, block);
@@ -101,8 +99,6 @@ namespace Rocket {
                 node->path = root->path;
                 node->name = filename_str;
                 node->vblock = root;
-                // Create Node Index
-                node_map[node_name] = node;
                 // RK_TRACE(File, "Node Name: {}", node->file_name);
                 RK_TRACE(File, "Node Path: {}", node->path + node->name);
             } else {
@@ -118,8 +114,6 @@ namespace Rocket {
         root = nullptr;
         real_path = "";
         virtual_path = "";
-        node_map.clear();
-        block_map.clear();
         is_initialized = false;
     }
 
