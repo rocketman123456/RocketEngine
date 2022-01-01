@@ -66,16 +66,19 @@ int main() {
         //auto zip_file = vfs->GetFilePointer("/Zip/Config/basic.yaml");
         auto zip_file = vfs->GetFilePointer(wav_file);
 
+        FileBuffer buffer;
+        FileBuffer buffer_zip;
+
         vfs->OpenFile(native_file, FileEnum::READWRITE_TEXT);
         {
             RK_PROFILE_SCOPE("ReadNative");
             // FileBuffer buffer = {(FileByte*)alloca(native_file->Size()+1), native_file->Size()+1};
-            FileBuffer buffer = {new FileByte[native_file->Size()+1], native_file->Size()+1};
+            buffer = {new FileByte[native_file->Size()+1], native_file->Size()+1};
             auto result = vfs->ReadFile(native_file, &buffer);
             std::cout << "Read: " << obj_file << " Size: " << result << std::endl;
-            std::cout << "Content: " << std::endl;
-            std::cout << reinterpret_cast<char*>(buffer.data()) << std::endl;
-            delete [] buffer.data();
+            //std::cout << "Content: " << std::endl;
+            //std::cout << reinterpret_cast<char*>(buffer.data()) << std::endl;
+            //delete [] buffer.data();
         }
         vfs->CloseFile(native_file);
 
@@ -84,22 +87,54 @@ int main() {
         {
             RK_PROFILE_SCOPE("ReadZip");
             // FileBuffer buffer = {(FileByte*)alloca(zip_file->Size()), zip_file->Size()};
-            FileBuffer buffer = {new FileByte[zip_file->Size()], zip_file->Size()};
-            auto result = vfs->ReadFile(zip_file, &buffer);
+            buffer_zip = {new FileByte[zip_file->Size()], zip_file->Size()};
+            auto result = vfs->ReadFile(zip_file, &buffer_zip);
             //std::string buffer_str((char*)buffer.data(), buffer.size());
             std::cout << "Read: " << wav_file << " Size: " << result << std::endl;
             //std::string content = "root dir - zip test: " + CurrentDate();
             //auto size = vfs->WriteFile(zip_file, {(std::byte*)content.data(), content.size()});
             //assert(size == content.size());
-            delete [] buffer.data();
+            // delete [] buffer_zip.data();
         }
         vfs->CloseFile(zip_file);
 
+        std::string memory_file = "/Asset/Memory/Config.txt";
         {
-            std::string memory_file = "/Asset/Memory/Config.txt";
-            bool result = vfs->CreateFile(memory_file);
+            RK_PROFILE_SCOPE("CreateMemoryFile");
+            int result = vfs->CreateFile(memory_file);
             std::cout << "Create " << memory_file << " Result " << result << std::endl;
+            auto mem_file = vfs->GetFilePointer(memory_file);
+            vfs->OpenFile(mem_file, FileEnum::READWRITE_BINARY);
+            vfs->WriteFile(mem_file, buffer_zip);
+            vfs->CloseFile(mem_file);
         }
+
+        {
+            std::string native_file = "/Asset/Config/Special/Config.txt";
+            RK_PROFILE_SCOPE("CreateNativeFile");
+            int result = vfs->CreateFile(native_file);
+            std::cout << "Create " << native_file << " Result " << result << std::endl;
+            auto nat_file = vfs->GetFilePointer(native_file);
+            vfs->OpenFile(nat_file, FileEnum::READWRITE_BINARY);
+            vfs->WriteFile(nat_file, buffer_zip);
+            vfs->CloseFile(nat_file);
+        }
+
+        {
+            RK_PROFILE_SCOPE("ReadMemoryFile");
+            auto mem_file = vfs->GetFilePointer(memory_file);
+            FileBuffer buffer_mem = {new FileByte[mem_file->Size()], mem_file->Size()};
+            vfs->OpenFile(mem_file, FileEnum::READWRITE_BINARY);
+            auto result = vfs->ReadFile(mem_file, &buffer_mem);
+            std::cout << "Read: " << memory_file << " Size: " << result << std::endl;
+            vfs->CloseFile(mem_file);
+            delete [] buffer_mem.data();
+        }
+
+        if(buffer.data() != nullptr)
+            delete [] buffer.data();
+        if(buffer_zip.data() != nullptr)
+            delete [] buffer_zip.data();
     }
 
     {

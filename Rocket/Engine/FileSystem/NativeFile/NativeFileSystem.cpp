@@ -184,12 +184,13 @@ namespace Rocket {
         std::string file_name;
         SplitLastSingleChar(sub_path, &dir, &file_name, '/');
         // Create Dir in Real File System
-        auto full_path = real_path + dir;
-        std::filesystem::create_directories(full_path);
+        auto dir_path = real_path + dir;
+        std::filesystem::create_directories(dir_path);
         // Add info to VFS
         auto final_block = CreateVirtualBlock(root, dir);
         // Create File in Real File System
-        std::fstream stream(full_path, std::fstream::out);
+        auto full_path = real_path + sub_path;
+        std::fstream stream(full_path, std::fstream::out | std::fstream::binary);
         if(!stream.is_open()) {
             RK_ERROR(File, "Failed to create file: {}, {}", file_path, full_path);
             return false;

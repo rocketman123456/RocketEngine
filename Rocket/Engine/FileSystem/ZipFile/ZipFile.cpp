@@ -43,7 +43,6 @@ namespace Rocket {
         zip_file_ptr = OpenZipFile(zip_ptr, real_path);
         if(zip_file_ptr == nullptr) {
             RK_ERROR(File, "Fail to open zip file: {}", real_path);
-            // TODO : create not exist file in zip
         } else {
             is_opened = true;
         }

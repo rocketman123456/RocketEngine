@@ -152,7 +152,7 @@ namespace Rocket {
             return false;
         } else {
             auto result = block->file_system->CreateFile(file_path);
-            SetupBlockFileSystem(block->file_system->RootBlock(), block->file_system);
+            SetupBlockFileSystem(block, block->file_system);
             return result;
         }
     }
@@ -173,7 +173,7 @@ namespace Rocket {
             return false;
         } else {
             auto result = block->file_system->CreateDir(dir_path);
-            SetupBlockFileSystem(block->file_system->RootBlock(), block->file_system);
+            SetupBlockFileSystem(block, block->file_system);
             return result;
         }
     }
