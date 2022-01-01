@@ -34,6 +34,8 @@ namespace Rocket {
         // virtual bool RenameDir(const std::string& src, const std::string& dst);
         // virtual bool CopyDir(const std::string& src, const std::string& dst);
     private:
+        void NormalizePath();
+        void GetRootName();
         void RemoveFileRecursive(VirtualBlockPtr& block);
     private:
         MemoryFileMap file_map;

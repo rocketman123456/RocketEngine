@@ -106,7 +106,7 @@ namespace Rocket {
         if(found == root->block_map.end()) { return root; }
         // check return or go deeper
         VirtualBlockPtr sub_block = found->second;
-        return FindVirtualBlock(sub_block, dirs, level + 1);
+        return FindDeepestExistVirtualBlock(sub_block, dirs, level + 1);
     }
 
     VirtualBlockPtr FindDeepestExistVirtualBlock(const VirtualBlockPtr& root, const std::string& dir) {

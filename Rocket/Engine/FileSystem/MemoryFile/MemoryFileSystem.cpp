@@ -1,5 +1,8 @@
 #include "FileSystem/MemoryFile/MemoryFileSystem.h"
 #include "FileSystem/Basic/VirtualUtils.h"
+#include "Utils/StringUtils.h"
+#include "Log/Instrumentor.h"
+#include "Log/Log.h"
 
 namespace Rocket {
     MemoryFileSystem::MemoryFileSystem(const std::string& real_path) 
@@ -7,13 +10,39 @@ namespace Rocket {
     MemoryFileSystem::MemoryFileSystem(const std::string& real_path, const std::string& virtual_path)
         : FileSystem(real_path, virtual_path) {}
 
+    void MemoryFileSystem::NormalizePath() {
+        RK_PROFILE_FUNCTION();
+        real_path = Replace(real_path, "\\", "/");
+        if(!EndsWith(real_path, "/")) 
+            real_path += "/";
+        virtual_path = Replace(virtual_path, "\\", "/");
+        if(!EndsWith(virtual_path, "/")) 
+            virtual_path += "/";
+        if(!StartsWith(virtual_path, "/"))
+            virtual_path = "/" + virtual_path;
+        RK_TRACE(File, "Current path: {}, {}", virtual_path, real_path);
+    }
+
+    void MemoryFileSystem::GetRootName() {
+        RK_PROFILE_FUNCTION();
+        std::vector<std::string> dir_stack;
+        SplitSingleChar(virtual_path, &dir_stack, '/');
+        if(dir_stack.size() > 0) {
+            root->name = dir_stack.at(dir_stack.size() - 1);
+        } else {
+            root->name = "/";
+        }
+    }
+
     void MemoryFileSystem::Initialize() {
         if(IsInitialized()) {
             RK_INFO(File, "File System Already Initialized");
             return;
         }
+        NormalizePath();
         root = std::make_shared<VirtualBlock>();
         root->path = virtual_path;
+        GetRootName();
         is_initialized = true;
     }
 

@@ -116,14 +116,6 @@ namespace Rocket {
         return IsDirExists(dir_path); 
     }
 
-    // bool VirtualFileSystem::IsFileReadOnly(const std::string& file_path) const {
-    //     return false;
-    // }
-
-    // bool VirtualFileSystem::IsDirReadOnly(const std::string& file_path) const {
-    //     return false;
-    // }
-
     FilePtr VirtualFileSystem::GetFilePointer(const std::string& file_path) {
         RK_PROFILE_FUNCTION();
         auto node = FindVirtualNode(root, file_path);
@@ -159,7 +151,9 @@ namespace Rocket {
         if(block == nullptr) {
             return false;
         } else {
-            return block->file_system->CreateFile(file_path);
+            auto result = block->file_system->CreateFile(file_path);
+            SetupBlockFileSystem(block->file_system->RootBlock(), block->file_system);
+            return result;
         }
     }
 
@@ -178,7 +172,9 @@ namespace Rocket {
         if(block == nullptr) {
             return false;
         } else {
-            return block->file_system->CreateDir(dir_path);
+            auto result = block->file_system->CreateDir(dir_path);
+            SetupBlockFileSystem(block->file_system->RootBlock(), block->file_system);
+            return result;
         }
     }
 

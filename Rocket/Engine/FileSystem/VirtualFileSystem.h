@@ -29,8 +29,6 @@ namespace Rocket {
         [[nodiscard]] bool IsDirExists(const std::string& dir_path) const;
         [[nodiscard]] bool IsFile(const std::string& file_path) const;
         [[nodiscard]] bool IsDir(const std::string& file_path) const;
-        // [[nodiscard]] bool IsFileReadOnly(const std::string& file_path) const;
-        // [[nodiscard]] bool IsDirReadOnly(const std::string& file_path) const;
         // File Operation
         [[nodiscard]] FilePtr GetFilePointer(const std::string& file_path);
         void OpenFile(const FilePtr& file, int32_t mode);

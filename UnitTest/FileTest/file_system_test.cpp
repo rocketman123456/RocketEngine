@@ -44,6 +44,7 @@ int main() {
     std::string zip_path = root + "/Asset/Music.zip";
     std::string vpath_native = "/Asset";
     std::string vpath_zip = "/Asset/Music";
+    std::string vpath_memory = "/Asset/Memory";
 
     {
         // From Profile, this Mount function will take longest time,
@@ -53,6 +54,8 @@ int main() {
         vfs->MountFileSystem(nfs, vpath_native);
         auto zfs = FileSystemFactory::CreateFileSystem(FileSystemType::Zip, zip_path, vpath_zip);
         vfs->MountFileSystem(zfs, vpath_zip);
+        auto mfs = FileSystemFactory::CreateFileSystem(FileSystemType::Memory, "/", vpath_memory);
+        vfs->MountFileSystem(mfs, vpath_memory);
     }
 
     {
@@ -91,6 +94,12 @@ int main() {
             delete [] buffer.data();
         }
         vfs->CloseFile(zip_file);
+
+        {
+            std::string memory_file = "/Asset/Memory/Config.txt";
+            bool result = vfs->CreateFile(memory_file);
+            std::cout << "Create " << memory_file << " Result " << result << std::endl;
+        }
     }
 
     {
