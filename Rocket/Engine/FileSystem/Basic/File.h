@@ -25,6 +25,7 @@ namespace Rocket {
 
     using FileByte = std::byte;
     using FileBuffer = gsl::span<FileByte>;
+    using FileBufferPtr = std::shared_ptr<FileBuffer>;
 
     // File Handle
     _Interface_ File {

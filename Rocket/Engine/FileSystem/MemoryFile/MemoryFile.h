@@ -4,6 +4,7 @@
 
 namespace Rocket {
     class MemoryFile : _implements_ File {
+        friend class MemoryFileSystem;
     public:
         // For File System
         explicit MemoryFile(const VirtualNodePtr& vnode_);
@@ -14,7 +15,7 @@ namespace Rocket {
         inline VirtualNodePtr VNode() const final { return vnode; }
         inline std::string VirtualPath() const final { return virtual_path; }
         inline std::string RealPath() const final { return real_path; }
-        inline std::size_t Size() const final { return file_data.size(); }
+        inline std::size_t Size() const final { return file_data->size(); }
         inline bool IsOpened() const final { return is_opened; }
         inline bool IsReadOnly() const final { return is_read_only; }
 
@@ -28,10 +29,12 @@ namespace Rocket {
         std::size_t Read(FileBuffer* data) final;
         std::size_t Write(const FileBuffer& data) final;
     private:
+        void SetFileBuffer(const FileBufferPtr& buffer) { file_data = buffer; }
+    private:
         VirtualNodePtr vnode = nullptr;
         std::string virtual_path = "";
         std::string real_path = "";
-        FileBuffer file_data;
+        FileBufferPtr file_data;
         std::size_t seek_pos = 0;
         int32_t mode = 0;
         bool is_read_only = false;

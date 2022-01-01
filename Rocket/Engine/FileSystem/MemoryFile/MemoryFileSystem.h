@@ -6,7 +6,7 @@
 
 namespace Rocket {
     class MemoryFileSystem : _implements_ FileSystem {
-        using MemoryFileMap = std::unordered_map<std::string, MemoryFilePtr>;
+        using MemoryFileMap = std::unordered_map<std::string, FileBufferPtr>;
     public:
         MemoryFileSystem(const std::string& real_path);
         MemoryFileSystem(const std::string& real_path, const std::string& virtual_path);
@@ -33,10 +33,8 @@ namespace Rocket {
         // virtual bool MoveDir(const std::string& src, const std::string& dst);
         // virtual bool RenameDir(const std::string& src, const std::string& dst);
         // virtual bool CopyDir(const std::string& src, const std::string& dst);
-
     private:
-        void CreateVirtualBlock(const VirtualBlockPtr& root, const std::vector<std::string>& dirs, int32_t level);
-
+        void RemoveFileRecursive(VirtualBlockPtr& block);
     private:
         MemoryFileMap file_map;
     };

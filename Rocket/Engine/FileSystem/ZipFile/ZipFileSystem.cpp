@@ -132,22 +132,104 @@ namespace Rocket {
     }
 
     bool ZipFileSystem::CreateFile(const std::string& file_path) {
-        RK_WARN(File, "Create File Not Supported");
-        return false;
+        if(IsFileExists(file_path)) {
+            RK_WARN(File, "File Existed {}", file_path);
+            return false;
+        }
+        // Get File Dir and Name
+        std::string temp_path = Replace(file_path, "\\", "/");
+        std::string sub_path = temp_path.substr(virtual_path.size());
+        std::string dir;
+        std::string file_name;
+        SplitLastSingleChar(sub_path, &dir, &file_name, '/');
+        // Create File in Real File System
+        const char buf[]="test";
+        zip_source_t* source = zip_source_buffer(zip_archive, buf, sizeof(buf), 0);
+        auto result = zip_file_add(zip_archive, file_path.c_str(), source, ZIP_FL_ENC_UTF_8);
+        if (source == nullptr || result < 0) {
+            zip_source_free(source);
+            RK_WARN(File, "error adding file: {}", zip_strerror(zip_archive));
+        }
+        // Add info to VFS
+        auto final_block = CreateVirtualBlock(root, dir);
+        // Add info to VFS
+        auto node = std::make_shared<VirtualNode>();
+        node->name = file_name;
+        node->path = final_block->path;
+        node->vblock = final_block;
+        final_block->node_map[file_name] = node;
+        return true;
     }
 
     bool ZipFileSystem::RemoveFile(const std::string& file_path) {
-        RK_WARN(File, "Remove File Not Supported");
-        return false;
+        if(!IsFileExists(file_path)) {
+            RK_WARN(File, "File Not Existed {}", file_path);
+            return false;
+        }
+        // Get File Dir and Name
+        std::string temp_path = Replace(file_path, "\\", "/");
+        std::string sub_path = temp_path.substr(virtual_path.size());
+        std::string dir;
+        std::string file_name;
+        SplitLastSingleChar(sub_path, &dir, &file_name, '/');
+        // Remove File in Real File System
+        auto file_index = zip_name_locate(zip_archive, sub_path.c_str(), ZIP_FL_ENC_GUESS);
+        zip_delete(zip_archive, file_index);
+        // Remove File Info in VFS
+        VirtualBlockPtr block = FindVirtualBlock(root, dir);
+        if(block == nullptr) {
+            RK_WARN(File, "Virtual Block Not Existed {}, MUST Have Something Wrong", file_path);
+            return false;
+        }
+        auto found = block->node_map.find(file_name);
+        if(found == block->node_map.end()) {
+            RK_WARN(File, "Virtual Node Not Existed {}, MUST Have Something Wrong", file_path);
+            return false;
+        } else {
+            block->node_map.erase(found);
+            return true;
+        }
     }
 
     bool ZipFileSystem::CreateDir(const std::string& dir_path) {
-        RK_WARN(File, "Create Dir Not Supported");
-        return false;
+        if(IsDirExists(dir_path)) {
+            RK_WARN(File, "Dir Existed {}", dir_path);
+            return false;
+        }
+        // Get File Dir and Name
+        std::string temp_path = Replace(dir_path, "\\", "/");
+        std::string sub_path = temp_path.substr(virtual_path.size());
+        std::string dir;
+        std::string file_name;
+        SplitLastSingleChar(sub_path, &dir, &file_name, '/');
+        // Create Dir in Real File System
+        zip_dir_add(zip_archive, sub_path.c_str(), ZIP_FL_ENC_UTF_8);
+        // Add info to VFS
+        auto final_block = CreateVirtualBlock(root, dir);
+        return true;
     }
 
     bool ZipFileSystem::RemoveDir(const std::string& dir_path) {
-        RK_WARN(File, "Remove Dir Not Supported");
-        return false;
+        if(!IsDirExists(dir_path)) {
+            RK_WARN(File, "Dir Not Existed {}", dir_path);
+            return false;
+        }
+        // Get File Dir and Name
+        std::string temp_path = Replace(dir_path, "\\", "/");
+        std::string sub_path = temp_path.substr(virtual_path.size());
+        // Remove Dir in Real File System
+        auto dir_index = zip_name_locate(zip_archive, sub_path.c_str(), ZIP_FL_ENC_GUESS);
+        zip_delete(zip_archive, dir_index);
+        // Remove Info
+        VirtualBlockPtr block = FindVirtualBlock(root, sub_path);
+        if(block->parent != nullptr) {
+            auto found = block->parent->block_map.find(block->name);
+            block->parent->block_map.erase(found);
+        } else {
+            block->block_map.clear();
+            block->node_map.clear();
+            block->file_system.reset();
+        }
+        return true;
     }
 }

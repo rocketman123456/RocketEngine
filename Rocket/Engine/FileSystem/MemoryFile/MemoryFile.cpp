@@ -36,15 +36,14 @@ namespace Rocket {
         }
         if (mode & FileEnum::TRUNCATE) {
             is_read_only = false;
-            if(file_data.size() > 0) delete [] file_data.data();
-            file_data = {nullptr, std::size_t(0)};
+            if(file_data->size() > 0) delete [] file_data->data();
+            *file_data = {nullptr, std::size_t(0)};
         }
         is_opened = true;
     }
 
     void MemoryFile::Close() {
-        if(file_data.size() > 0) delete [] file_data.data();
-        file_data = {nullptr, std::size_t(0)};
+        file_data = nullptr;
         is_read_only = true;
         is_opened = false;
         seek_pos = 0;
@@ -81,7 +80,7 @@ namespace Rocket {
             max_size = std::min(buffer->size(), buffer_size);
         }
         if (max_size > 0) {
-            std::memcpy(buffer->data(), file_data.data(), max_size);
+            std::memcpy(buffer->data(), file_data->data(), max_size);
             if(mode & FileEnum::READ_TEXT) {
                 buffer->data()[max_size] = std::byte(0);
             }
@@ -101,17 +100,17 @@ namespace Rocket {
         std::size_t buffer_size = Size() - Tell();
         if(data.size() > buffer_size) {
             // Resize Buffer Area, Make New one First
-            FileByte* temp_data = new FileByte[file_data.size() + data.size() - buffer_size];
-            FileBuffer temp{temp_data, static_cast<std::size_t>(file_data.size() + data.size() - buffer_size)};
+            FileByte* temp_data = new FileByte[file_data->size() + data.size() - buffer_size];
+            FileBuffer temp{temp_data, static_cast<std::size_t>(file_data->size() + data.size() - buffer_size)};
             // Copy Data
-            std::memcpy(temp.data(), file_data.data(), file_data.size());
+            std::memcpy(temp.data(), file_data->data(), file_data->size());
             // Delete Old Buffer Area
-            delete [] file_data.data();
+            delete [] file_data->data();
             // Update Buffer
-            file_data = std::move(temp);
+            *file_data = std::move(temp);
         }
         // Copy Needed Data
-        std::memcpy(file_data.data() + Tell(), data.data(), data.size());
+        std::memcpy(file_data->data() + Tell(), data.data(), data.size());
         return data.size();
     }
 }

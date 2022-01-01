@@ -155,18 +155,40 @@ namespace Rocket {
     }
 
     bool VirtualFileSystem::CreateFile(const std::string& file_path) {
-        return false;
+        auto block = FindDeepestExistVirtualBlock(root, file_path);
+        if(block == nullptr) {
+            return false;
+        } else {
+            return block->file_system->CreateFile(file_path);
+        }
     }
 
     bool VirtualFileSystem::RemoveFile(const std::string& file_path) {
-        return false;
+        if(!IsFileExists(file_path)) {
+            RK_WARN(File, "File Not Exist {}", file_path);
+            return false;
+        } else {
+            auto node = FindVirtualNode(root, file_path);
+            return node->vblock->file_system->RemoveFile(file_path);
+        }
     }
 
     bool VirtualFileSystem::CreateDir(const std::string& dir_path) {
-        return false;
+        auto block = FindDeepestExistVirtualBlock(root, dir_path);
+        if(block == nullptr) {
+            return false;
+        } else {
+            return block->file_system->CreateDir(dir_path);
+        }
     }
 
     bool VirtualFileSystem::RemoveDir(const std::string& dir_path) {
-        return false;
+        if(!IsDirExists(dir_path)) {
+            RK_WARN(File, "Dir Not Exist {}", dir_path);
+            return false;
+        } else {
+            auto block = FindVirtualBlock(root, dir_path);
+            return block->file_system->RemoveDir(dir_path);
+        }
     }
 }

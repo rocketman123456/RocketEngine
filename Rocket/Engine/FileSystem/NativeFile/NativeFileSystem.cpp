@@ -1,5 +1,6 @@
 #include "FileSystem/NativeFile/NativeFileSystem.h"
 #include "FileSystem/NativeFile/NativeUtils.h"
+#include "FileSystem/Basic/VirtualUtils.h"
 #include "Utils/StringUtils.h"
 #include "Log/Instrumentor.h"
 #include "Log/Log.h"
@@ -176,22 +177,29 @@ namespace Rocket {
             RK_WARN(File, "File Existed {}", file_path);
             return false;
         }
-        // Create Dir in Real File System
+        // Get File Dir and Name
         std::string temp_path = Replace(file_path, "\\", "/");
+        std::string sub_path = temp_path.substr(virtual_path.size());
         std::string dir;
         std::string file_name;
-        SplitLastSingleChar(temp_path, &dir, &file_name, '/');
-        CreateDir(dir);
+        SplitLastSingleChar(sub_path, &dir, &file_name, '/');
+        // Create Dir in Real File System
+        auto full_path = real_path + dir;
+        std::filesystem::create_directories(full_path);
+        // Add info to VFS
+        auto final_block = CreateVirtualBlock(root, dir);
         // Create File in Real File System
-        auto temp = file_path.substr(virtual_path.size());
-        auto full_path = real_path + temp;
         std::fstream stream(full_path, std::fstream::out);
         if(!stream.is_open()) {
             RK_ERROR(File, "Failed to create file: {}, {}", file_path, full_path);
             return false;
         }
         // Add info to VFS
-        
+        auto node = std::make_shared<VirtualNode>();
+        node->name = file_name;
+        node->path = final_block->path;
+        node->vblock = final_block;
+        final_block->node_map[file_name] = node;
         return true;
     }
 
@@ -200,18 +208,71 @@ namespace Rocket {
             RK_WARN(File, "File Not Existed {}", file_path);
             return false;
         }
+        // Get File Dir and Name
+        std::string temp_path = Replace(file_path, "\\", "/");
+        std::string sub_path = temp_path.substr(virtual_path.size());
+        std::string dir;
+        std::string file_name;
+        SplitLastSingleChar(sub_path, &dir, &file_name, '/');
         // Remove File in Real File System
-        // Remove info in VFS
-        return true;
+        std::string real_file_path = real_path + sub_path;
+        std::filesystem::remove(real_file_path);
+        // Remove File Info in VFS
+        VirtualBlockPtr block = FindVirtualBlock(root, dir);
+        if(block == nullptr) {
+            RK_WARN(File, "Virtual Block Not Existed {}, MUST Have Something Wrong", file_path);
+            return false;
+        }
+        auto found = block->node_map.find(file_name);
+        if(found == block->node_map.end()) {
+            RK_WARN(File, "Virtual Node Not Existed {}, MUST Have Something Wrong", file_path);
+            return false;
+        } else {
+            block->node_map.erase(found);
+            return true;
+        }
     }
 
     bool NativeFileSystem::CreateDir(const std::string& dir_path) {
-        RK_WARN(File, "Create Dir Not Supported");
-        return false;
+        if(IsDirExists(dir_path)) {
+            RK_WARN(File, "Dir Existed {}", dir_path);
+            return false;
+        }
+        // Get File Dir and Name
+        std::string temp_path = Replace(dir_path, "\\", "/");
+        std::string sub_path = temp_path.substr(virtual_path.size());
+        std::string dir;
+        std::string file_name;
+        SplitLastSingleChar(sub_path, &dir, &file_name, '/');
+        // Create Dir in Real File System
+        auto full_path = real_path + dir;
+        std::filesystem::create_directories(full_path);
+        // Add info to VFS
+        auto final_block = CreateVirtualBlock(root, dir);
+        return true;
     }
 
     bool NativeFileSystem::RemoveDir(const std::string& dir_path) {
-        RK_WARN(File, "Remove Dir Not Supported");
-        return false;
+        if(!IsDirExists(dir_path)) {
+            RK_WARN(File, "Dir Not Existed {}", dir_path);
+            return false;
+        }
+        // Get File Dir and Name
+        std::string temp_path = Replace(dir_path, "\\", "/");
+        std::string sub_path = temp_path.substr(virtual_path.size());
+        // Remove Dir in Real File System
+        auto full_path = real_path + sub_path;
+        std::filesystem::remove_all(full_path);
+        // Remove Info
+        VirtualBlockPtr block = FindVirtualBlock(root, sub_path);
+        if(block->parent != nullptr) {
+            auto found = block->parent->block_map.find(block->name);
+            block->parent->block_map.erase(found);
+        } else {
+            block->block_map.clear();
+            block->node_map.clear();
+            block->file_system.reset();
+        }
+        return true;
     }
 }
