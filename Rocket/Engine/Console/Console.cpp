@@ -13,6 +13,22 @@ namespace Rocket {
         command_list.erase(found);
     }
 
+    void Console::RegisterUsage(const std::string& name, const std::string& usage) {
+        command_usage_list[name] = usage;
+    }
+
+    void Console::UnregisterUsage(const std::string& name) {
+        auto found = command_usage_list.find(name);
+        command_usage_list.erase(found);
+    }
+
+    void Console::PrintUsage() {
+        RK_INFO(Console, "Console Command Usages: ");
+        for(auto& usage : command_usage_list) {
+            RK_INFO(Console, "{} : {}", usage.first, usage.second);
+        }
+    }
+
     void Console::Input(const std::string& input) {
         current_input = input;
         ParseCommand();
@@ -27,6 +43,13 @@ namespace Rocket {
             return;
         }
         command_name = arg_stack[0];
+
+        // Special Help Command
+        if(command_name == "help" || command_name == "h") {
+            PrintUsage();
+            return;
+        }
+
         auto found = command_list.find(command_name);
         if(found == command_list.end()) {
             FindBestMatch();

@@ -10,6 +10,15 @@ int main() {
 
     console.Register("print", ConsoleCommandType::PRINT);
     console.Register("exit", ConsoleCommandType::EXIT);
+    console.Register("add", ConsoleCommandType::ADD);
+    console.Register("sub", ConsoleCommandType::SUB);
+
+    console.RegisterUsage("print", "Print Arguments");
+    console.RegisterUsage("exit", "Exit Program");
+    console.RegisterUsage("add", "Print a + b");
+    console.RegisterUsage("sub", "Print a - b");
+
+    console.PrintUsage();
 
     while(true) {
         std::cout << "Input Command: ";

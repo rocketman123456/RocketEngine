@@ -62,9 +62,15 @@ int main() {
         std::string obj_file = "/Asset/Model/cube/cube.obj";
         std::string wav_file = "/Asset/Music/Piano.ff.A0.wav";
         RK_PROFILE_SCOPE("ReadWrite");
-        auto native_file = vfs->GetFilePointer(obj_file);
+        FilePtr native_file;
         //auto zip_file = vfs->GetFilePointer("/Zip/Config/basic.yaml");
-        auto zip_file = vfs->GetFilePointer(wav_file);
+        FilePtr zip_file;
+
+        {
+            RK_PROFILE_SCOPE("GetFilePtr");
+            native_file = vfs->GetFilePointer(obj_file);
+            zip_file = vfs->GetFilePointer(wav_file);
+        }
 
         FileBuffer buffer;
         FileBuffer buffer_zip;

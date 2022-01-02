@@ -18,6 +18,9 @@ namespace Rocket {
 
         void Register(const std::string& name, ConsoleCommandType type);
         void Unregister(const std::string& name);
+        void RegisterUsage(const std::string& name, const std::string& usage);
+        void UnregisterUsage(const std::string& name);
+        void PrintUsage();
         void Input(const std::string& input);
     private:
         void ParseCommand();
@@ -26,6 +29,7 @@ namespace Rocket {
     private:
         std::size_t capacity = 0;
         std::unordered_map<std::string, ConsoleCommandType> command_list = {};
+        std::unordered_map<std::string, std::string> command_usage_list = {};
         std::list<std::string> input_buffer = {};
         std::list<ConsoleCommandPtr> command_nuffer = {};
         std::string current_input = {};
