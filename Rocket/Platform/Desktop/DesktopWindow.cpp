@@ -18,14 +18,19 @@ namespace Rocket {
             throw std::runtime_error("Vulkan Not Supported");
         }
         glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+        glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 #elif defined(RK_OPENGL)
+        RK_INFO(Window, "OpenGL 4.6 Supported");
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+        glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 #elif defined(RK_SOFT)
+        RK_INFO(Window, "OpenGL 4.1 Supported");
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+        glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 #endif
         window = glfwCreateWindow(Width(), Height(), Title().c_str(), nullptr, nullptr);
         if (!window) {

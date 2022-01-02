@@ -6,9 +6,10 @@ target("RocketVulkan")
     add_options("render")
     add_options("profile_settings")
     add_packages(
-        "vulkan-headers",
+        -- "vulkan-headers",
         "volk",
-        "shaderc",
+        "glfw",
+        -- "shaderc",
         {public = true}
     )
     add_deps("RocketLog", {public = true})
