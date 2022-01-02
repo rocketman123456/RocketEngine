@@ -26,6 +26,7 @@ namespace Rocket {
         // Setup Debug Messenger
         bool enable_validation = validation_layers.size() > 0;
         debug_messenger = SetupDebugMessenger(instance, enable_validation);
+        report_callback = SetupDebugReportCallback(instance);
         // Pick Physical Device
         physical_device = PickPhysicalDevice(instance);
         // Create Logical Device

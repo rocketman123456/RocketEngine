@@ -12,7 +12,9 @@ namespace Rocket {
         void Unload() final;
     public:
         VkInstance instance;
+        VkSurfaceKHR surface;
         VkDebugUtilsMessengerEXT debug_messenger;
+        VkDebugReportCallbackEXT report_callback;
 
         VkPhysicalDevice physical_device = VK_NULL_HANDLE;
 

@@ -26,6 +26,7 @@ namespace Rocket {
     void PrintVulkanVersion();
     // Setup Debug Messenger
     VkDebugUtilsMessengerEXT SetupDebugMessenger(VkInstance instance, bool enableValidationLayers);
+    VkDebugReportCallbackEXT SetupDebugReportCallback(VkInstance instance);
     // Pick Physical Device
     VkPhysicalDevice PickPhysicalDevice(VkInstance instance);
     bool IsDeviceSuitable(VkPhysicalDevice device);

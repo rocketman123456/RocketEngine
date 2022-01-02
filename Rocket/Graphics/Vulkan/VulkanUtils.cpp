@@ -20,7 +20,24 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL VulkanDebugCallback(
         VkDebugUtilsMessageTypeFlagsEXT messageType, 
         const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData, 
         void* pUserData) {
-    RK_ERROR(Graphics, "validation layer: {}", pCallbackData->pMessage);
+    RK_DEBUG(Graphics, "validation layer: {}", pCallbackData->pMessage);
+    return VK_FALSE;
+}
+
+static VKAPI_ATTR VkBool32 VKAPI_CALL VulkanDebugReportCallback(
+        VkDebugReportFlagsEXT      flags,
+        VkDebugReportObjectTypeEXT objectType,
+        uint64_t                   object,
+        size_t                     location,
+        int32_t                    messageCode,
+        const char* pLayerPrefix,
+        const char* pMessage,
+        void* UserData) {
+    // https://github.com/zeux/niagara/blob/master/src/device.cpp   [ignoring performance warnings]
+    // This silences warnings like "For optimal performance image layout should be VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL instead of GENERAL."
+    if (flags & VK_DEBUG_REPORT_PERFORMANCE_WARNING_BIT_EXT)
+        return VK_FALSE;
+    RK_DEBUG(Graphics, "debug callback({}): {}", pLayerPrefix, pMessage);
     return VK_FALSE;
 }
 
@@ -140,16 +157,37 @@ namespace Rocket {
             VkInstance instance, 
             bool enableValidationLayers) {
         VkDebugUtilsMessengerEXT debug_messenger = {};
-        if (!enableValidationLayers) return debug_messenger;
+        if (!enableValidationLayers) 
+            return debug_messenger;
 
         VkDebugUtilsMessengerCreateInfoEXT createInfo;
         PopulateDebugMessengerCreateInfo(createInfo);
-
         if (CreateDebugUtilsMessengerEXT(instance, &createInfo, nullptr, &debug_messenger) != VK_SUCCESS) {
             RK_ERROR(Graphics, "failed to set up debug messenger!");
             throw std::runtime_error("failed to set up debug messenger!");
         }
         return debug_messenger;
+    }
+
+    VkDebugReportCallbackEXT SetupDebugReportCallback(VkInstance instance) {
+        VkDebugReportCallbackEXT report_callback;
+
+        VkDebugReportCallbackCreateInfoEXT createInfo;
+        createInfo.sType = VK_STRUCTURE_TYPE_DEBUG_REPORT_CALLBACK_CREATE_INFO_EXT;
+        createInfo.pNext = nullptr;
+        createInfo.flags =
+            VK_DEBUG_REPORT_WARNING_BIT_EXT |
+            VK_DEBUG_REPORT_PERFORMANCE_WARNING_BIT_EXT |
+            VK_DEBUG_REPORT_ERROR_BIT_EXT |
+            VK_DEBUG_REPORT_DEBUG_BIT_EXT;
+        createInfo.pfnCallback = &VulkanDebugReportCallback;
+        createInfo.pUserData = nullptr;
+
+        if(vkCreateDebugReportCallbackEXT(instance, &createInfo, nullptr, &report_callback) != VK_SUCCESS) {
+            RK_ERROR(Graphics, "failed to set up debug report callback!");
+            throw std::runtime_error("failed to set up debug report callback!");
+        }
+        return report_callback;
     }
 
     VkPhysicalDevice PickPhysicalDevice(VkInstance instance) {
