@@ -1,4 +1,5 @@
 #include "Vulkan/VulkanUtils.h"
+// #include "Vulkan/VulkanVariable.h"
 #include "Log/Instrumentor.h"
 #include "Log/Log.h"
 
@@ -6,6 +7,7 @@
 
 #include <exception>
 #include <stdexcept>
+#include <set>
 
 static VKAPI_ATTR VkBool32 VKAPI_CALL VulkanDebugCallback(
         VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity, 
@@ -173,7 +175,10 @@ namespace Rocket {
         return report_callback;
     }
 
-    VkPhysicalDevice PickPhysicalDevice(const VkInstance& instance) {
+    VkPhysicalDevice PickPhysicalDevice(
+            const VkInstance& instance, 
+            const VkSurfaceKHR& surface, 
+            const std::vector<const char*>& deviceExtensions) {
         VkPhysicalDevice physical_device = VK_NULL_HANDLE;
 
         uint32_t deviceCount = 0;
@@ -186,7 +191,7 @@ namespace Rocket {
         std::vector<VkPhysicalDevice> devices(deviceCount);
         vkEnumeratePhysicalDevices(instance, &deviceCount, devices.data());
         for(const auto& device : devices) {
-            if (IsDeviceSuitable(device)) {
+            if (IsDeviceSuitable(device, surface, deviceExtensions)) {
                 physical_device = device;
                 break;
             }
@@ -196,16 +201,53 @@ namespace Rocket {
             RK_ERROR(Graphics, "failed to find a suitable GPU!");
             throw std::runtime_error("failed to find a suitable GPU!");
         }
+
         return physical_device;
     }
 
-    bool IsDeviceSuitable(const VkPhysicalDevice& device) {
+    bool IsDeviceSuitable(
+            const VkPhysicalDevice& device, 
+            const VkSurfaceKHR& surface, 
+            const std::vector<const char*>& deviceExtensions) {
         QueueFamilyIndices indices = FindQueueFamilies(device);
-        return indices.IsComplete();
+
+        bool extensionsSupported = CheckDeviceExtensionSupport(device, deviceExtensions);
+        bool swapChainAdequate = false;
+        if (extensionsSupported) {
+            auto swapChainSupport = QuerySwapchainSupport(device, surface);
+            swapChainAdequate = !swapChainSupport.formats.empty() && !swapChainSupport.presentModes.empty();
+        }
+
+        VkPhysicalDeviceFeatures supportedFeatures;
+        vkGetPhysicalDeviceFeatures(device, &supportedFeatures);
+
+        return indices.IsComplete() && 
+            extensionsSupported && 
+            swapChainAdequate && 
+            supportedFeatures.samplerAnisotropy;
+    }
+
+    bool CheckDeviceExtensionSupport(
+            const VkPhysicalDevice& device, 
+            const std::vector<const char*>& deviceExtensions) {
+        uint32_t extensionCount;
+        vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, nullptr);
+
+        std::vector<VkExtensionProperties> availableExtensions(extensionCount);
+        vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, availableExtensions.data());
+
+        std::set<std::string> requiredExtensions(deviceExtensions.begin(), deviceExtensions.end());
+
+        for (const auto& extension : availableExtensions) {
+            requiredExtensions.erase(extension.extensionName);
+        }
+
+        return requiredExtensions.empty();
     }
 
     VkDevice CreateLogicalDevice(
             const VkPhysicalDevice& physicalDevice, 
+            const std::vector<const char*>& deviceExtensions, 
             const std::vector<const char*>& validationLayers, 
             const QueueFamilyIndices& indices) {
         VkDevice device;
@@ -221,13 +263,15 @@ namespace Rocket {
         VkPhysicalDeviceFeatures deviceFeatures{};
         deviceFeatures.geometryShader = VK_TRUE;
         deviceFeatures.tessellationShader = VK_TRUE;
+        deviceFeatures.samplerAnisotropy = VK_TRUE;
 
         VkDeviceCreateInfo createInfo{};
         createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
         createInfo.pQueueCreateInfos = &queueCreateInfo;
         createInfo.queueCreateInfoCount = 1;
         createInfo.pEnabledFeatures = &deviceFeatures;
-        createInfo.enabledExtensionCount = 0;
+        createInfo.enabledExtensionCount = static_cast<uint32_t>(deviceExtensions.size());
+        createInfo.ppEnabledExtensionNames = deviceExtensions.data();
         createInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
         createInfo.ppEnabledLayerNames = validationLayers.data();
 
@@ -304,7 +348,9 @@ namespace Rocket {
         return swapchain;
     }
 
-    SwapchainSupportDetails QuerySwapchainSupport(VkPhysicalDevice device, VkSurfaceKHR surface) {
+    SwapchainSupportDetails QuerySwapchainSupport(
+            const VkPhysicalDevice& device, 
+            const VkSurfaceKHR& surface) {
         SwapchainSupportDetails details;
         vkGetPhysicalDeviceSurfaceCapabilitiesKHR(device, surface, &details.capabilities);
 

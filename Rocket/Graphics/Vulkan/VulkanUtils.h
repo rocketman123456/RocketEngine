@@ -24,20 +24,36 @@ namespace Rocket {
     VkInstance CreateVulkanInstance(const std::vector<const char*>& validationLayers);
     bool CheckValidationLayerSupport(const std::vector<const char*>& validationLayers);
     std::vector<const char*> GetRequiredExtensions(bool enable_debug);
-    void PopulateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo);
-    void PopulateDebugReportCreateInfo(VkDebugReportCallbackCreateInfoEXT& createInfo);
+    void PopulateDebugMessengerCreateInfo(
+        VkDebugUtilsMessengerCreateInfoEXT& createInfo);
+    void PopulateDebugReportCreateInfo(
+        VkDebugReportCallbackCreateInfoEXT& createInfo);
     // Print Version
     void PrintVulkanVersion();
     // Setup Debug Messenger
     VkDebugUtilsMessengerEXT SetupDebugMessenger(
-        const VkInstance& instance, bool enableValidationLayers);
+        const VkInstance& instance, 
+        bool enableValidationLayers);
     VkDebugReportCallbackEXT SetupDebugReportCallback(const VkInstance& instance);
     // Pick Physical Device
-    VkPhysicalDevice PickPhysicalDevice(const VkInstance& instance);
-    bool IsDeviceSuitable(const VkPhysicalDevice& device);
+    VkPhysicalDevice PickPhysicalDevice(
+        const VkInstance& instance, 
+        const VkSurfaceKHR& surface, 
+        const std::vector<const char*>& deviceExtensions);
+    bool IsDeviceSuitable(
+        const VkPhysicalDevice& device, 
+        const VkSurfaceKHR& surface, 
+        const std::vector<const char*>& deviceExtensions);
+    bool CheckDeviceExtensionSupport(
+        const VkPhysicalDevice& device, 
+        const std::vector<const char*>& deviceExtensions);
+    SwapchainSupportDetails QuerySwapchainSupport(
+        const VkPhysicalDevice& device, 
+        const VkSurfaceKHR& surface);
     // Create Logical Device
     VkDevice CreateLogicalDevice(
         const VkPhysicalDevice& device, 
+        const std::vector<const char*>& deviceExtensions, 
         const std::vector<const char*>& validationLayers, 
         const QueueFamilyIndices& indices);
     QueueFamilyIndices FindQueueFamilies(const VkPhysicalDevice& device);
@@ -51,14 +67,14 @@ namespace Rocket {
         uint32_t width, 
         uint32_t height, 
         bool supportScreenshots);
-    SwapchainSupportDetails QuerySwapchainSupport(
-        VkPhysicalDevice device, VkSurfaceKHR surface);
     VkSurfaceFormatKHR ChooseSwapSurfaceFormat(
         const std::vector<VkSurfaceFormatKHR>& availableFormats);
     VkPresentModeKHR ChooseSwapPresentMode(
         const std::vector<VkPresentModeKHR>& availablePresentModes);
-    uint32_t ChooseSwapImageCount(const VkSurfaceCapabilitiesKHR& capabilities);
+    uint32_t ChooseSwapImageCount(
+        const VkSurfaceCapabilitiesKHR& capabilities);
     VkExtent2D ChooseSwapExtent(
         const VkSurfaceCapabilitiesKHR& capabilities, 
-        uint32_t width, uint32_t height);
+        uint32_t width, 
+        uint32_t height);
 }

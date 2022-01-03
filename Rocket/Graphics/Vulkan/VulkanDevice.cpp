@@ -25,10 +25,10 @@ namespace Rocket {
 
     void VulkanDevice::Initialize() {
         // Pick Physical Device
-        physical_device = PickPhysicalDevice(this->loader->instance);
+        physical_device = PickPhysicalDevice(loader->instance, loader->surface, device_extensions);
         // Create Logical Device
         indices = FindQueueFamilies(physical_device);
-        device = CreateLogicalDevice(physical_device, validation_layers, indices);
+        device = CreateLogicalDevice(physical_device, device_extensions, validation_layers, indices);
         // Load Volk Functions
         volkLoadDeviceTable(&device_table, device);
         // Create Graphics Queue
@@ -48,10 +48,13 @@ namespace Rocket {
         swap_chain = CreateSwapChain(
             physical_device, device, device_table, loader->surface, indices, 
             width, height, false);
+
+        RK_TRACE(Graphics, "Initialize Vulkan Device");
     }
 
     void VulkanDevice::Finalize() {
         device_table.vkDestroySwapchainKHR(device, swap_chain, nullptr);
-        vkDestroyDevice(device, nullptr);
+        device_table.vkDestroyDevice(device, nullptr);
+        RK_TRACE(Graphics, "Finalize Vulkan Device");
     }
 }
