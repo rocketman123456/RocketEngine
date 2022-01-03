@@ -8,20 +8,21 @@ struct QueueFamilyIndices;
 
 namespace Rocket {
     // Debug Utils
-    VkResult CreateDebugUtilsMessengerEXT(
-        VkInstance instance, 
-        const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo, 
-        const VkAllocationCallbacks* pAllocator, 
-        VkDebugUtilsMessengerEXT* pDebugMessenger);
-    void DestroyDebugUtilsMessengerEXT(
-        VkInstance instance, 
-        VkDebugUtilsMessengerEXT debugMessenger, 
-        const VkAllocationCallbacks* pAllocator);
+    // VkResult CreateDebugUtilsMessengerEXT(
+    //     VkInstance instance, 
+    //     const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo, 
+    //     const VkAllocationCallbacks* pAllocator, 
+    //     VkDebugUtilsMessengerEXT* pDebugMessenger);
+    // void DestroyDebugUtilsMessengerEXT(
+    //     VkInstance instance, 
+    //     VkDebugUtilsMessengerEXT debugMessenger, 
+    //     const VkAllocationCallbacks* pAllocator);
     // Create Instace
     VkInstance CreateVulkanInstance(const std::vector<const char*>& validationLayers);
     bool CheckValidationLayerSupport(const std::vector<const char*>& validationLayers);
     std::vector<const char*> GetRequiredExtensions(bool enable_debug);
     void PopulateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo);
+    void PopulateDebugReportCreateInfo(VkDebugReportCallbackCreateInfoEXT& createInfo);
     // Print Version
     void PrintVulkanVersion();
     // Setup Debug Messenger

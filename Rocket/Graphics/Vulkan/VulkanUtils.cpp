@@ -20,7 +20,7 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL VulkanDebugCallback(
         VkDebugUtilsMessageTypeFlagsEXT messageType, 
         const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData, 
         void* pUserData) {
-    RK_DEBUG(Graphics, "validation layer: {}", pCallbackData->pMessage);
+    RK_WARN(Graphics, "validation layer: {}", pCallbackData->pMessage);
     return VK_FALSE;
 }
 
@@ -37,26 +37,26 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL VulkanDebugReportCallback(
     // This silences warnings like "For optimal performance image layout should be VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL instead of GENERAL."
     if (flags & VK_DEBUG_REPORT_PERFORMANCE_WARNING_BIT_EXT)
         return VK_FALSE;
-    RK_DEBUG(Graphics, "debug callback({}): {}", pLayerPrefix, pMessage);
+    RK_WARN(Graphics, "debug callback({}): {}", pLayerPrefix, pMessage);
     return VK_FALSE;
 }
 
 namespace Rocket {
-    VkResult CreateDebugUtilsMessengerEXT(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pDebugMessenger) {
-        auto func = (PFN_vkCreateDebugUtilsMessengerEXT) vkGetInstanceProcAddr(instance, "vkCreateDebugUtilsMessengerEXT");
-        if (func != nullptr) {
-            return func(instance, pCreateInfo, pAllocator, pDebugMessenger);
-        } else {
-            return VK_ERROR_EXTENSION_NOT_PRESENT;
-        }
-    }
+    // VkResult CreateDebugUtilsMessengerEXT(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pDebugMessenger) {
+    //     auto func = (PFN_vkCreateDebugUtilsMessengerEXT) vkGetInstanceProcAddr(instance, "vkCreateDebugUtilsMessengerEXT");
+    //     if (func != nullptr) {
+    //         return func(instance, pCreateInfo, pAllocator, pDebugMessenger);
+    //     } else {
+    //         return VK_ERROR_EXTENSION_NOT_PRESENT;
+    //     }
+    // }
 
-    void DestroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT debugMessenger, const VkAllocationCallbacks* pAllocator) {
-        auto func = (PFN_vkDestroyDebugUtilsMessengerEXT) vkGetInstanceProcAddr(instance, "vkDestroyDebugUtilsMessengerEXT");
-        if (func != nullptr) {
-            func(instance, debugMessenger, pAllocator);
-        }
-    }
+    // void DestroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT debugMessenger, const VkAllocationCallbacks* pAllocator) {
+    //     auto func = (PFN_vkDestroyDebugUtilsMessengerEXT) vkGetInstanceProcAddr(instance, "vkDestroyDebugUtilsMessengerEXT");
+    //     if (func != nullptr) {
+    //         func(instance, debugMessenger, pAllocator);
+    //     }
+    // }
 
     VkInstance CreateVulkanInstance(const std::vector<const char*>& validationLayers) {
         VkInstance instance;
@@ -83,12 +83,12 @@ namespace Rocket {
         createInfo.enabledExtensionCount = static_cast<uint32_t>(extensions.size());
         createInfo.ppEnabledExtensionNames = extensions.data();
 
-        VkDebugUtilsMessengerCreateInfoEXT debugCreateInfo{};
         createInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
         createInfo.ppEnabledLayerNames = validationLayers.data();
 
-        PopulateDebugMessengerCreateInfo(debugCreateInfo);
-        createInfo.pNext = (VkDebugUtilsMessengerCreateInfoEXT*) &debugCreateInfo;
+        // VkDebugUtilsMessengerCreateInfoEXT debugCreateInfo{};
+        // PopulateDebugMessengerCreateInfo(debugCreateInfo);
+        // createInfo.pNext = (VkDebugUtilsMessengerCreateInfoEXT*) &debugCreateInfo;
 
         if (vkCreateInstance(&createInfo, nullptr, &instance) != VK_SUCCESS) {
             RK_ERROR(Graphics, "failed to create vulkan instance!");
@@ -112,6 +112,7 @@ namespace Rocket {
                 }
             }
             if (!layerFound) {
+                RK_WARN(Graphics, "Failed to find {}", layerName);
                 return false;
             }
         }
@@ -125,6 +126,9 @@ namespace Rocket {
         std::vector<const char*> extensions(glfwExtensions, glfwExtensions + glfwExtensionCount);
         if(enable_debug) {
             extensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
+            extensions.push_back(VK_EXT_DEBUG_REPORT_EXTENSION_NAME);
+            // for indexed textures
+            extensions.push_back(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME);
         }
         return extensions;
     }
@@ -142,6 +146,19 @@ namespace Rocket {
             VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT | 
             VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
         createInfo.pfnUserCallback = VulkanDebugCallback;
+    }
+
+    void PopulateDebugReportCreateInfo(VkDebugReportCallbackCreateInfoEXT& createInfo) {
+        createInfo = {};
+        createInfo.sType = VK_STRUCTURE_TYPE_DEBUG_REPORT_CALLBACK_CREATE_INFO_EXT;
+        createInfo.pNext = nullptr;
+        createInfo.flags =
+            VK_DEBUG_REPORT_WARNING_BIT_EXT |
+            VK_DEBUG_REPORT_PERFORMANCE_WARNING_BIT_EXT |
+            VK_DEBUG_REPORT_ERROR_BIT_EXT |
+            VK_DEBUG_REPORT_DEBUG_BIT_EXT;
+        createInfo.pfnCallback = &VulkanDebugReportCallback;
+        createInfo.pUserData = nullptr;
     }
 
     void PrintVulkanVersion() {
@@ -162,7 +179,7 @@ namespace Rocket {
 
         VkDebugUtilsMessengerCreateInfoEXT createInfo;
         PopulateDebugMessengerCreateInfo(createInfo);
-        if (CreateDebugUtilsMessengerEXT(instance, &createInfo, nullptr, &debug_messenger) != VK_SUCCESS) {
+        if (vkCreateDebugUtilsMessengerEXT(instance, &createInfo, nullptr, &debug_messenger) != VK_SUCCESS) {
             RK_ERROR(Graphics, "failed to set up debug messenger!");
             throw std::runtime_error("failed to set up debug messenger!");
         }
@@ -172,17 +189,8 @@ namespace Rocket {
     VkDebugReportCallbackEXT SetupDebugReportCallback(VkInstance instance) {
         VkDebugReportCallbackEXT report_callback;
 
-        VkDebugReportCallbackCreateInfoEXT createInfo;
-        createInfo.sType = VK_STRUCTURE_TYPE_DEBUG_REPORT_CALLBACK_CREATE_INFO_EXT;
-        createInfo.pNext = nullptr;
-        createInfo.flags =
-            VK_DEBUG_REPORT_WARNING_BIT_EXT |
-            VK_DEBUG_REPORT_PERFORMANCE_WARNING_BIT_EXT |
-            VK_DEBUG_REPORT_ERROR_BIT_EXT |
-            VK_DEBUG_REPORT_DEBUG_BIT_EXT;
-        createInfo.pfnCallback = &VulkanDebugReportCallback;
-        createInfo.pUserData = nullptr;
-
+        VkDebugReportCallbackCreateInfoEXT createInfo = {};
+        PopulateDebugReportCreateInfo(createInfo);
         if(vkCreateDebugReportCallbackEXT(instance, &createInfo, nullptr, &report_callback) != VK_SUCCESS) {
             RK_ERROR(Graphics, "failed to set up debug report callback!");
             throw std::runtime_error("failed to set up debug report callback!");

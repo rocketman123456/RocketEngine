@@ -7,8 +7,23 @@
 
 static const std::vector<const char*> validation_layers = {
 #ifdef RK_DEBUG_INFO
-    "VK_LAYER_KHRONOS_validation"
+    "VK_LAYER_KHRONOS_validation",
 #endif
+};
+
+static const std::vector<const char*> extensions = {
+    VK_KHR_SURFACE_EXTENSION_NAME,
+#if defined (RK_WINDOWS)
+    "VK_KHR_win32_surface"
+#elif defined (RK_MACOS)
+    "VK_MVK_macos_surface"
+#elif defined (RK_LINUX)
+    "VK_KHR_xcb_surface"
+#endif
+    VK_EXT_DEBUG_UTILS_EXTENSION_NAME,
+    VK_EXT_DEBUG_REPORT_EXTENSION_NAME,
+    // for indexed textures
+    VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME,
 };
 
 namespace Rocket {
@@ -28,17 +43,19 @@ namespace Rocket {
         debug_messenger = SetupDebugMessenger(instance, enable_validation);
         report_callback = SetupDebugReportCallback(instance);
         // Pick Physical Device
-        physical_device = PickPhysicalDevice(instance);
+        //physical_device = PickPhysicalDevice(instance);
         // Create Logical Device
-        device = CreateLogicalDevice(physical_device, validation_layers);
+        //device = CreateLogicalDevice(physical_device, validation_layers);
         // Load Volk Functions
         // TODO : make device_table able to support multi-GPU
-        volkLoadDeviceTable(&device_table, device);
+        //volkLoadDeviceTable(&device_table, device);
     }
 
     void VulkanLoader::Unload() {
-        vkDestroyDevice(device, nullptr);
-        DestroyDebugUtilsMessengerEXT(instance, debug_messenger, nullptr);
+        // vkDestroyDevice(device, nullptr);
+
+        vkDestroyDebugReportCallbackEXT(instance, report_callback, nullptr);
+        vkDestroyDebugUtilsMessengerEXT(instance, debug_messenger, nullptr);
         vkDestroyInstance(instance, nullptr);
         RK_TRACE(Graphics, "Unload Vulkan");
     }
