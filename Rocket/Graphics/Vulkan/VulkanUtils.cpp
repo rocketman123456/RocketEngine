@@ -6,14 +6,6 @@
 
 #include <exception>
 #include <stdexcept>
-#include <optional>
-
-struct QueueFamilyIndices {
-    std::optional<uint32_t> graphics_family;
-    bool IsComplete() {
-        return graphics_family.has_value();
-    }
-};
 
 static VKAPI_ATTR VkBool32 VKAPI_CALL VulkanDebugCallback(
         VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity, 
@@ -42,22 +34,6 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL VulkanDebugReportCallback(
 }
 
 namespace Rocket {
-    // VkResult CreateDebugUtilsMessengerEXT(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pDebugMessenger) {
-    //     auto func = (PFN_vkCreateDebugUtilsMessengerEXT) vkGetInstanceProcAddr(instance, "vkCreateDebugUtilsMessengerEXT");
-    //     if (func != nullptr) {
-    //         return func(instance, pCreateInfo, pAllocator, pDebugMessenger);
-    //     } else {
-    //         return VK_ERROR_EXTENSION_NOT_PRESENT;
-    //     }
-    // }
-
-    // void DestroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT debugMessenger, const VkAllocationCallbacks* pAllocator) {
-    //     auto func = (PFN_vkDestroyDebugUtilsMessengerEXT) vkGetInstanceProcAddr(instance, "vkDestroyDebugUtilsMessengerEXT");
-    //     if (func != nullptr) {
-    //         func(instance, debugMessenger, pAllocator);
-    //     }
-    // }
-
     VkInstance CreateVulkanInstance(const std::vector<const char*>& validationLayers) {
         VkInstance instance;
 
@@ -229,29 +205,8 @@ namespace Rocket {
         return indices.IsComplete();
     }
 
-    QueueFamilyIndices FindQueueFamilies(VkPhysicalDevice device) {
-        QueueFamilyIndices indices;
-        uint32_t queueFamilyCount = 0;
-        vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, nullptr);
-        std::vector<VkQueueFamilyProperties> queueFamilies(queueFamilyCount);
-        vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, queueFamilies.data());
-        int i = 0;
-        for (const auto& queueFamily : queueFamilies) {
-            if (queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT) {
-                indices.graphics_family = i;
-            }
-            if (indices.IsComplete()) {
-                break;
-            }
-            i++;
-        }
-        return indices;
-    }
-
-    VkDevice CreateLogicalDevice(VkPhysicalDevice physicalDevice, const std::vector<const char*>& validationLayers) {
+    VkDevice CreateLogicalDevice(VkPhysicalDevice physicalDevice, const std::vector<const char*>& validationLayers, const QueueFamilyIndices& indices) {
         VkDevice device;
-
-        QueueFamilyIndices indices = FindQueueFamilies(physicalDevice);
 
         VkDeviceQueueCreateInfo queueCreateInfo{};
         queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
@@ -281,6 +236,26 @@ namespace Rocket {
         }
 
         // TODO : move this 
+        // QueueFamilyIndices indices = FindQueueFamilies(physicalDevice);
         // vkGetDeviceQueue(device, indices.graphics_family.value(), 0, &graphicsQueue);
+    }
+
+    QueueFamilyIndices FindQueueFamilies(VkPhysicalDevice device) {
+        QueueFamilyIndices indices;
+        uint32_t queueFamilyCount = 0;
+        vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, nullptr);
+        std::vector<VkQueueFamilyProperties> queueFamilies(queueFamilyCount);
+        vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, queueFamilies.data());
+        int i = 0;
+        for (const auto& queueFamily : queueFamilies) {
+            if (queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT) {
+                indices.graphics_family = i;
+            }
+            if (indices.IsComplete()) {
+                break;
+            }
+            i++;
+        }
+        return indices;
     }
 }

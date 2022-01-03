@@ -3,20 +3,16 @@
 #include <volk.h>
 
 #include <vector>
+#include <optional>
 
-struct QueueFamilyIndices;
+struct QueueFamilyIndices {
+    std::optional<uint32_t> graphics_family;
+    bool IsComplete() {
+        return graphics_family.has_value();
+    }
+};
 
 namespace Rocket {
-    // Debug Utils
-    // VkResult CreateDebugUtilsMessengerEXT(
-    //     VkInstance instance, 
-    //     const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo, 
-    //     const VkAllocationCallbacks* pAllocator, 
-    //     VkDebugUtilsMessengerEXT* pDebugMessenger);
-    // void DestroyDebugUtilsMessengerEXT(
-    //     VkInstance instance, 
-    //     VkDebugUtilsMessengerEXT debugMessenger, 
-    //     const VkAllocationCallbacks* pAllocator);
     // Create Instace
     VkInstance CreateVulkanInstance(const std::vector<const char*>& validationLayers);
     bool CheckValidationLayerSupport(const std::vector<const char*>& validationLayers);
@@ -31,7 +27,7 @@ namespace Rocket {
     // Pick Physical Device
     VkPhysicalDevice PickPhysicalDevice(VkInstance instance);
     bool IsDeviceSuitable(VkPhysicalDevice device);
-    QueueFamilyIndices FindQueueFamilies(VkPhysicalDevice device);
     // Create Logical Device
-    VkDevice CreateLogicalDevice(VkPhysicalDevice device, const std::vector<const char*>& validationLayers);
+    VkDevice CreateLogicalDevice(VkPhysicalDevice device, const std::vector<const char*>& validationLayers, const QueueFamilyIndices& indices);
+    QueueFamilyIndices FindQueueFamilies(VkPhysicalDevice device);
 }

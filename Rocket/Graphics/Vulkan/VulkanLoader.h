@@ -8,19 +8,16 @@ namespace Rocket {
     public:
         VulkanLoader() = default;
         virtual ~VulkanLoader() = default;
-        void Load() final;
-        void Unload() final;
+        void Initialize() final;
+        void Finalize() final;
+        void* GetWindow() final { return window; }
+        void SetWindow(void* window) final { this->window = window; }
     public:
+        void* window = nullptr;
         VkInstance instance;
-        VkSurfaceKHR surface;
         VkDebugUtilsMessengerEXT debug_messenger;
         VkDebugReportCallbackEXT report_callback;
-
-        VkPhysicalDevice physical_device = VK_NULL_HANDLE;
-
-        VkQueue graphics_queue;
-        VkDevice device = VK_NULL_HANDLE;
-        VolkDeviceTable device_table;
+        VkSurfaceKHR surface;
     };
 
     CLASS_PTR(VulkanLoader);

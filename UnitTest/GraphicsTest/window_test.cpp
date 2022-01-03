@@ -1,5 +1,6 @@
 #include "Common/WindowFactory.h"
-#include "Common/RenderLoaderFactory.h"
+#include "Vulkan/VulkanLoader.h"
+#include "Vulkan/VulkanDevice.h"
 
 using namespace Rocket;
 
@@ -10,16 +11,22 @@ int main() {
     info.height = 720;
 
     auto window = WindowFactory::CreateWindow(info);
-    auto loader = RenderLoaderFactory::CreateRenderLoader();
-
     window->Initialize();
-    loader->Load();
+
+    auto loader = std::make_shared<VulkanLoader>();
+    loader->SetWindow(window->GetWindowHandle());
+    loader->Initialize();
+
+    auto device = std::make_shared<VulkanDevice>();
+    device->SetLoader(loader);
+    device->Initialize();
 
     while(window->IsRunning()) {
         window->Tick();
     }
 
-    loader->Unload();
+    device->Finalize();
+    loader->Finalize();
     window->Finalize();
     return 0;
 }
