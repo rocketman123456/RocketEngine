@@ -7,3 +7,6 @@
 [submodule "ThirdParty/meshoptimizer"]
 	path = ThirdParty/meshoptimizer
 	url = git@github.com:zeux/meshoptimizer.git
+[submodule "ThirdParty/volk"]
+	path = ThirdParty/volk
+	url = git@github.com:zeux/volk.git

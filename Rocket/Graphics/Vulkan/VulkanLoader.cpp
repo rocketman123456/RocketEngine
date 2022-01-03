@@ -20,7 +20,8 @@ namespace Rocket {
         // Get Vulkan Instance
         instance = CreateVulkanInstance(validation_layers);
         // Load volk instance
-        volkLoadInstance(instance);
+        volkLoadInstanceOnly(instance);
+        // volkLoadInstance(instance);
         // Print Version Info
         PrintVulkanVersion();
         // Setup Debug Messenger

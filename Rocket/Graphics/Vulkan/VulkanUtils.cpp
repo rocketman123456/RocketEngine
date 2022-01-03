@@ -147,8 +147,7 @@ namespace Rocket {
     }
 
     VkDebugUtilsMessengerEXT SetupDebugMessenger(
-            VkInstance instance, 
-            bool enableValidationLayers) {
+            const VkInstance& instance, bool enableValidationLayers) {
         VkDebugUtilsMessengerEXT debug_messenger = {};
         if (!enableValidationLayers) 
             return debug_messenger;
@@ -162,7 +161,7 @@ namespace Rocket {
         return debug_messenger;
     }
 
-    VkDebugReportCallbackEXT SetupDebugReportCallback(VkInstance instance) {
+    VkDebugReportCallbackEXT SetupDebugReportCallback(const VkInstance& instance) {
         VkDebugReportCallbackEXT report_callback;
 
         VkDebugReportCallbackCreateInfoEXT createInfo = {};
@@ -174,7 +173,7 @@ namespace Rocket {
         return report_callback;
     }
 
-    VkPhysicalDevice PickPhysicalDevice(VkInstance instance) {
+    VkPhysicalDevice PickPhysicalDevice(const VkInstance& instance) {
         VkPhysicalDevice physical_device = VK_NULL_HANDLE;
 
         uint32_t deviceCount = 0;
@@ -200,12 +199,15 @@ namespace Rocket {
         return physical_device;
     }
 
-    bool IsDeviceSuitable(VkPhysicalDevice device) {
+    bool IsDeviceSuitable(const VkPhysicalDevice& device) {
         QueueFamilyIndices indices = FindQueueFamilies(device);
         return indices.IsComplete();
     }
 
-    VkDevice CreateLogicalDevice(VkPhysicalDevice physicalDevice, const std::vector<const char*>& validationLayers, const QueueFamilyIndices& indices) {
+    VkDevice CreateLogicalDevice(
+            const VkPhysicalDevice& physicalDevice, 
+            const std::vector<const char*>& validationLayers, 
+            const QueueFamilyIndices& indices) {
         VkDevice device;
 
         VkDeviceQueueCreateInfo queueCreateInfo{};
@@ -217,30 +219,26 @@ namespace Rocket {
         queueCreateInfo.pQueuePriorities = &queuePriority;
 
         VkPhysicalDeviceFeatures deviceFeatures{};
+        deviceFeatures.geometryShader = VK_TRUE;
+        deviceFeatures.tessellationShader = VK_TRUE;
 
         VkDeviceCreateInfo createInfo{};
         createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
-
         createInfo.pQueueCreateInfos = &queueCreateInfo;
         createInfo.queueCreateInfoCount = 1;
-
         createInfo.pEnabledFeatures = &deviceFeatures;
-
         createInfo.enabledExtensionCount = 0;
-
         createInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
         createInfo.ppEnabledLayerNames = validationLayers.data();
 
         if (vkCreateDevice(physicalDevice, &createInfo, nullptr, &device) != VK_SUCCESS) {
+            RK_ERROR(Graphics, "failed to create logical device!");
             throw std::runtime_error("failed to create logical device!");
         }
-
-        // TODO : move this 
-        // QueueFamilyIndices indices = FindQueueFamilies(physicalDevice);
-        // vkGetDeviceQueue(device, indices.graphics_family.value(), 0, &graphicsQueue);
+        return device;
     }
 
-    QueueFamilyIndices FindQueueFamilies(VkPhysicalDevice device) {
+    QueueFamilyIndices FindQueueFamilies(const VkPhysicalDevice& device) {
         QueueFamilyIndices indices;
         uint32_t queueFamilyCount = 0;
         vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, nullptr);
@@ -257,5 +255,113 @@ namespace Rocket {
             i++;
         }
         return indices;
+    }
+
+    VkSwapchainKHR CreateSwapChain(
+            const VkPhysicalDevice& physicalDevice, 
+            const VkDevice& device,
+            const VolkDeviceTable& table,
+            const VkSurfaceKHR& surface, 
+            const QueueFamilyIndices& indices, 
+            uint32_t width, 
+            uint32_t height, 
+            bool supportScreenshots) {
+        VkSwapchainKHR swapchain;
+        auto swapchainSupport = QuerySwapchainSupport(physicalDevice, surface);
+        auto surfaceFormat = ChooseSwapSurfaceFormat(swapchainSupport.formats);
+        auto presentMode = ChooseSwapPresentMode(swapchainSupport.presentModes);
+        auto imageCount = ChooseSwapImageCount(swapchainSupport.capabilities);
+        auto graphicsFamily = indices.graphics_family.value();
+        auto extent = ChooseSwapExtent(swapchainSupport.capabilities, width, height);
+
+        VkSwapchainCreateInfoKHR createInfo = {};
+        createInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
+        createInfo.flags = 0;
+        createInfo.surface = surface;
+        createInfo.minImageCount = imageCount;
+        createInfo.imageFormat = surfaceFormat.format;
+        createInfo.imageColorSpace = surfaceFormat.colorSpace;
+        createInfo.imageExtent = extent;
+        createInfo.imageArrayLayers = 1;
+        createInfo.imageUsage = 
+            VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | 
+            VK_IMAGE_USAGE_TRANSFER_DST_BIT | 
+            (supportScreenshots ? VK_IMAGE_USAGE_TRANSFER_SRC_BIT : 0u);
+        createInfo.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
+        createInfo.queueFamilyIndexCount = 1;
+        createInfo.pQueueFamilyIndices = &graphicsFamily;
+        createInfo.preTransform = swapchainSupport.capabilities.currentTransform;
+        createInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
+        createInfo.presentMode = presentMode;
+        createInfo.clipped = VK_TRUE;
+        createInfo.oldSwapchain = VK_NULL_HANDLE;
+
+        if(table.vkCreateSwapchainKHR(device, &createInfo, nullptr, &swapchain) != VK_SUCCESS) {
+            RK_ERROR(Graphics, "failed to create swap chain!");
+            throw std::runtime_error("failed to create swap chain!");
+        }
+
+        return swapchain;
+    }
+
+    SwapchainSupportDetails QuerySwapchainSupport(VkPhysicalDevice device, VkSurfaceKHR surface) {
+        SwapchainSupportDetails details;
+        vkGetPhysicalDeviceSurfaceCapabilitiesKHR(device, surface, &details.capabilities);
+
+        uint32_t formatCount;
+        vkGetPhysicalDeviceSurfaceFormatsKHR(device, surface, &formatCount, nullptr);
+        if (formatCount) {
+            details.formats.resize(formatCount);
+            vkGetPhysicalDeviceSurfaceFormatsKHR(device, surface, &formatCount, details.formats.data());
+        }
+
+        uint32_t presentModeCount;
+        vkGetPhysicalDeviceSurfacePresentModesKHR(device, surface, &presentModeCount, nullptr);
+        if (presentModeCount) {
+            details.presentModes.resize(presentModeCount);
+            vkGetPhysicalDeviceSurfacePresentModesKHR(device, surface, &presentModeCount, details.presentModes.data());
+        }
+
+        return details;
+    }
+
+    VkSurfaceFormatKHR ChooseSwapSurfaceFormat(
+            const std::vector<VkSurfaceFormatKHR>& availableFormats) {
+        return { VK_FORMAT_B8G8R8A8_UNORM, VK_COLOR_SPACE_SRGB_NONLINEAR_KHR };
+    }
+
+    VkPresentModeKHR ChooseSwapPresentMode(
+            const std::vector<VkPresentModeKHR>& availablePresentModes) {
+        for (const auto mode : availablePresentModes)
+            if (mode == VK_PRESENT_MODE_MAILBOX_KHR)
+                return mode;
+        // FIFO will always be supported
+        return VK_PRESENT_MODE_FIFO_KHR;
+    }
+
+    uint32_t ChooseSwapImageCount(const VkSurfaceCapabilitiesKHR& capabilities) {
+        const uint32_t imageCount = capabilities.minImageCount + 1;
+        const bool imageCountExceeded = capabilities.maxImageCount > 0 && 
+            imageCount > capabilities.maxImageCount;
+        return imageCountExceeded ? capabilities.maxImageCount : imageCount;
+    }
+
+    VkExtent2D ChooseSwapExtent(
+            const VkSurfaceCapabilitiesKHR& capabilities, 
+            uint32_t width, 
+            uint32_t height) {
+        if (capabilities.currentExtent.width != UINT32_MAX) {
+            return capabilities.currentExtent;
+        } else {
+            // int width, height;
+            // glfwGetFramebufferSize(window, &width, &height);
+            VkExtent2D actualExtent = {
+                static_cast<uint32_t>(width),
+                static_cast<uint32_t>(height)
+            };
+            actualExtent.width = std::clamp(actualExtent.width, capabilities.minImageExtent.width, capabilities.maxImageExtent.width);
+            actualExtent.height = std::clamp(actualExtent.height, capabilities.minImageExtent.height, capabilities.maxImageExtent.height);
+            return actualExtent;
+        }
     }
 }

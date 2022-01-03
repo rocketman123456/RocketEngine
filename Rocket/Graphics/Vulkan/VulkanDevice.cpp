@@ -18,6 +18,11 @@ namespace Rocket {
         }
     }
 
+    void VulkanDevice::SetSize(uint32_t width, uint32_t height) {
+        this->width = width;
+        this->height = height;
+    }
+
     void VulkanDevice::Initialize() {
         // Pick Physical Device
         physical_device = PickPhysicalDevice(this->loader->instance);
@@ -27,7 +32,7 @@ namespace Rocket {
         // Load Volk Functions
         volkLoadDeviceTable(&device_table, device);
         // Create Graphics Queue
-        vkGetDeviceQueue(device, indices.graphics_family.value(), 0, &graphics_queue);
+        device_table.vkGetDeviceQueue(device, indices.graphics_family.value(), 0, &graphics_queue);
         if (graphics_queue == nullptr) {
             RK_ERROR(Graphics, "Unable to Get Graphics Queue");
             throw std::runtime_error("Unable to Get Graphics Queue");
@@ -39,9 +44,14 @@ namespace Rocket {
             RK_ERROR(Graphics, "Present Queue Not Supported");
             throw std::runtime_error("Present Queue Not Supported");
         }
+        // Create Swap Chain
+        swap_chain = CreateSwapChain(
+            physical_device, device, device_table, loader->surface, indices, 
+            width, height, false);
     }
 
     void VulkanDevice::Finalize() {
+        device_table.vkDestroySwapchainKHR(device, swap_chain, nullptr);
         vkDestroyDevice(device, nullptr);
     }
 }

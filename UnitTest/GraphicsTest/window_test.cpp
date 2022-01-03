@@ -19,6 +19,7 @@ int main() {
 
     auto device = std::make_shared<VulkanDevice>();
     device->SetLoader(loader);
+    device->SetSize(1600, 900);
     device->Initialize();
 
     while(window->IsRunning()) {

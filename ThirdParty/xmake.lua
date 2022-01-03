@@ -71,9 +71,5 @@ target("meshoptimizer")
         "meshoptimizer/gltf",
         "meshoptimizer/tools"
     )
-    add_files(
-        "meshoptimizer/src/*.cpp"
-        -- "meshoptimizer/gltf/*.cpp",
-        -- "meshoptimizer/tools/*.cpp"
-    )
+    add_files("meshoptimizer/src/*.cpp")
 target_end()
