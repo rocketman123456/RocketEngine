@@ -21,7 +21,6 @@ namespace Rocket {
         instance = CreateVulkanInstance(validation_layers);
         // Load volk instance
         volkLoadInstanceOnly(instance);
-        // volkLoadInstance(instance);
         // Print Version Info
         PrintVulkanVersion();
         // Setup Debug Messenger

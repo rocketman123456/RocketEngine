@@ -10,27 +10,31 @@
 #include <set>
 
 static VKAPI_ATTR VkBool32 VKAPI_CALL VulkanDebugCallback(
-        VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity, 
-        VkDebugUtilsMessageTypeFlagsEXT messageType, 
+        VkDebugUtilsMessageSeverityFlagBitsEXT      messageSeverity, 
+        VkDebugUtilsMessageTypeFlagsEXT             messageType, 
         const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData, 
-        void* pUserData) {
+        void*                                       pUserData) {
+    if(messageSeverity < VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT)
+        return VK_FALSE;
     RK_WARN(Graphics, "validation layer: {}", pCallbackData->pMessage);
     return VK_FALSE;
 }
 
 static VKAPI_ATTR VkBool32 VKAPI_CALL VulkanDebugReportCallback(
-        VkDebugReportFlagsEXT      flags,
-        VkDebugReportObjectTypeEXT objectType,
-        uint64_t                   object,
-        size_t                     location,
-        int32_t                    messageCode,
-        const char* pLayerPrefix,
-        const char* pMessage,
-        void* UserData) {
+        VkDebugReportFlagsEXT       flags,
+        VkDebugReportObjectTypeEXT  objectType,
+        uint64_t                    object,
+        size_t                      location,
+        int32_t                     messageCode,
+        const char*                 pLayerPrefix,
+        const char*                 pMessage,
+        void*                       UserData) {
     // https://github.com/zeux/niagara/blob/master/src/device.cpp   [ignoring performance warnings]
     // This silences warnings like "For optimal performance image layout should be VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL instead of GENERAL."
-    if (flags & VK_DEBUG_REPORT_PERFORMANCE_WARNING_BIT_EXT)
+    if (flags & VK_DEBUG_REPORT_PERFORMANCE_WARNING_BIT_EXT || 
+        flags & VK_DEBUG_REPORT_DEBUG_BIT_EXT) {
         return VK_FALSE;
+    }
     RK_WARN(Graphics, "debug callback({}): {}", pLayerPrefix, pMessage);
     return VK_FALSE;
 }
@@ -63,10 +67,6 @@ namespace Rocket {
 
         createInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
         createInfo.ppEnabledLayerNames = validationLayers.data();
-
-        // VkDebugUtilsMessengerCreateInfoEXT debugCreateInfo{};
-        // PopulateDebugMessengerCreateInfo(debugCreateInfo);
-        // createInfo.pNext = (VkDebugUtilsMessengerCreateInfoEXT*) &debugCreateInfo;
 
         if (vkCreateInstance(&createInfo, nullptr, &instance) != VK_SUCCESS) {
             RK_ERROR(Graphics, "failed to create vulkan instance!");
@@ -209,7 +209,7 @@ namespace Rocket {
             const VkPhysicalDevice& device, 
             const VkSurfaceKHR& surface, 
             const std::vector<const char*>& deviceExtensions) {
-        QueueFamilyIndices indices = FindQueueFamilies(device);
+        QueueFamilyIndices indices = FindQueueFamilies(device, surface);
 
         bool extensionsSupported = CheckDeviceExtensionSupport(device, deviceExtensions);
         bool swapChainAdequate = false;
@@ -235,9 +235,8 @@ namespace Rocket {
 
         std::vector<VkExtensionProperties> availableExtensions(extensionCount);
         vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, availableExtensions.data());
-
+        
         std::set<std::string> requiredExtensions(deviceExtensions.begin(), deviceExtensions.end());
-
         for (const auto& extension : availableExtensions) {
             requiredExtensions.erase(extension.extensionName);
         }
@@ -252,13 +251,23 @@ namespace Rocket {
             const QueueFamilyIndices& indices) {
         VkDevice device;
 
-        VkDeviceQueueCreateInfo queueCreateInfo{};
-        queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-        queueCreateInfo.queueFamilyIndex = indices.graphics_family.value();
-        queueCreateInfo.queueCount = 1;
+        std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
+        std::set<uint32_t> uniqueQueueFamilies = {
+            indices.graphics_family.value(),
+            indices.compute_family.value(),
+            indices.present_family.value(),
+        };
 
         float queuePriority = 1.0f;
-        queueCreateInfo.pQueuePriorities = &queuePriority;
+
+        for(auto queueFamily : uniqueQueueFamilies) {
+            VkDeviceQueueCreateInfo queueCreateInfo{};
+            queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+            queueCreateInfo.queueFamilyIndex = queueFamily;
+            queueCreateInfo.queueCount = 1;
+            queueCreateInfo.pQueuePriorities = &queuePriority;
+            queueCreateInfos.push_back(queueCreateInfo);
+        }
 
         VkPhysicalDeviceFeatures deviceFeatures{};
         deviceFeatures.geometryShader = VK_TRUE;
@@ -267,8 +276,8 @@ namespace Rocket {
 
         VkDeviceCreateInfo createInfo{};
         createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
-        createInfo.pQueueCreateInfos = &queueCreateInfo;
-        createInfo.queueCreateInfoCount = 1;
+        createInfo.queueCreateInfoCount = static_cast<uint32_t>(queueCreateInfos.size());
+        createInfo.pQueueCreateInfos = queueCreateInfos.data();
         createInfo.pEnabledFeatures = &deviceFeatures;
         createInfo.enabledExtensionCount = static_cast<uint32_t>(deviceExtensions.size());
         createInfo.ppEnabledExtensionNames = deviceExtensions.data();
@@ -282,7 +291,9 @@ namespace Rocket {
         return device;
     }
 
-    QueueFamilyIndices FindQueueFamilies(const VkPhysicalDevice& device) {
+    QueueFamilyIndices FindQueueFamilies(
+            const VkPhysicalDevice& device, 
+            const VkSurfaceKHR& surface) {
         QueueFamilyIndices indices;
         uint32_t queueFamilyCount = 0;
         vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, nullptr);
@@ -292,6 +303,14 @@ namespace Rocket {
         for (const auto& queueFamily : queueFamilies) {
             if (queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT) {
                 indices.graphics_family = i;
+            }
+            if(queueFamily.queueFlags & VK_QUEUE_COMPUTE_BIT) {
+                indices.compute_family = i;
+            }
+            VkBool32 presentSupport = false;
+            vkGetPhysicalDeviceSurfaceSupportKHR(device, i, surface, &presentSupport);
+            if (presentSupport) {
+                indices.present_family = i;
             }
             if (indices.IsComplete()) {
                 break;

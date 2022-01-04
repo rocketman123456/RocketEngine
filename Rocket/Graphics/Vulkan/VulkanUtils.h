@@ -7,9 +7,10 @@
 
 struct QueueFamilyIndices {
     std::optional<uint32_t> graphics_family;
+    std::optional<uint32_t> present_family;
     std::optional<uint32_t> compute_family;
     bool IsComplete() {
-        return graphics_family.has_value();
+        return graphics_family.has_value() && present_family.has_value();
     }
 };
 
@@ -56,7 +57,9 @@ namespace Rocket {
         const std::vector<const char*>& deviceExtensions, 
         const std::vector<const char*>& validationLayers, 
         const QueueFamilyIndices& indices);
-    QueueFamilyIndices FindQueueFamilies(const VkPhysicalDevice& device);
+    QueueFamilyIndices FindQueueFamilies(
+        const VkPhysicalDevice& device,
+        const VkSurfaceKHR& surface);
     // Create Swap Chain
     VkSwapchainKHR CreateSwapChain(
         const VkPhysicalDevice& physicalDevice, 

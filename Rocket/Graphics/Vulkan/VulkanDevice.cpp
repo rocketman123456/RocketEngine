@@ -27,7 +27,12 @@ namespace Rocket {
         // Pick Physical Device
         physical_device = PickPhysicalDevice(loader->instance, loader->surface, device_extensions);
         // Create Logical Device
-        indices = FindQueueFamilies(physical_device);
+        indices = FindQueueFamilies(physical_device, loader->surface);
+        // // Check Present Support
+        if (!indices.IsComplete()) {
+            RK_ERROR(Graphics, "Queue Families Not Supported");
+            throw std::runtime_error("Queue Families Not Supported");
+        }
         device = CreateLogicalDevice(physical_device, device_extensions, validation_layers, indices);
         // Load Volk Functions
         volkLoadDeviceTable(&device_table, device);
@@ -36,13 +41,6 @@ namespace Rocket {
         if (graphics_queue == nullptr) {
             RK_ERROR(Graphics, "Unable to Get Graphics Queue");
             throw std::runtime_error("Unable to Get Graphics Queue");
-        }
-        // Check Present Support
-        VkBool32 present_supported = 0;
-        vkGetPhysicalDeviceSurfaceSupportKHR(physical_device, indices.graphics_family.value(), this->loader->surface, &present_supported);
-        if (!present_supported) {
-            RK_ERROR(Graphics, "Present Queue Not Supported");
-            throw std::runtime_error("Present Queue Not Supported");
         }
         // Create Swap Chain
         swap_chain = CreateSwapChain(
