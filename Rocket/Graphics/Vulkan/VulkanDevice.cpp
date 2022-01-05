@@ -25,7 +25,8 @@ namespace Rocket {
 
     void VulkanDevice::Initialize() {
         // Pick Physical Device
-        physical_device = PickPhysicalDevice(loader->instance, loader->surface, device_extensions);
+        physical_device = PickPhysicalDevice(
+            loader->instance, loader->surface, device_extensions);
         // Create Logical Device
         indices = FindQueueFamilies(physical_device, loader->surface);
         // // Check Present Support
@@ -33,11 +34,13 @@ namespace Rocket {
             RK_ERROR(Graphics, "Queue Families Not Supported");
             throw std::runtime_error("Queue Families Not Supported");
         }
-        device = CreateLogicalDevice(physical_device, device_extensions, validation_layers, indices);
+        device = CreateLogicalDevice(
+            physical_device, device_extensions, validation_layers, indices);
         // Load Volk Functions
         volkLoadDeviceTable(&device_table, device);
         // Create Graphics Queue
-        device_table.vkGetDeviceQueue(device, indices.graphics_family.value(), 0, &graphics_queue);
+        device_table.vkGetDeviceQueue(
+            device, indices.graphics_family.value(), 0, &graphics_queue);
         if (graphics_queue == nullptr) {
             RK_ERROR(Graphics, "Unable to Get Graphics Queue");
             throw std::runtime_error("Unable to Get Graphics Queue");

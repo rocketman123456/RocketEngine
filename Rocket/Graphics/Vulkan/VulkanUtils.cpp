@@ -14,8 +14,9 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL VulkanDebugCallback(
         VkDebugUtilsMessageTypeFlagsEXT             messageType, 
         const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData, 
         void*                                       pUserData) {
-    if(messageSeverity < VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT)
+    if(messageSeverity < VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT) {
         return VK_FALSE;
+    }
     RK_WARN(Graphics, "validation layer: {}", pCallbackData->pMessage);
     return VK_FALSE;
 }
@@ -31,12 +32,45 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL VulkanDebugReportCallback(
         void*                       UserData) {
     // https://github.com/zeux/niagara/blob/master/src/device.cpp   [ignoring performance warnings]
     // This silences warnings like "For optimal performance image layout should be VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL instead of GENERAL."
-    if (flags & VK_DEBUG_REPORT_PERFORMANCE_WARNING_BIT_EXT || 
-        flags & VK_DEBUG_REPORT_DEBUG_BIT_EXT) {
+    if(flags & VK_DEBUG_REPORT_PERFORMANCE_WARNING_BIT_EXT) {
+        return VK_FALSE;
+    } else if(flags & VK_DEBUG_REPORT_DEBUG_BIT_EXT) {
         return VK_FALSE;
     }
     RK_WARN(Graphics, "debug callback({}): {}", pLayerPrefix, pMessage);
     return VK_FALSE;
+}
+
+namespace Rocket {
+    // Create Instace
+    bool CheckValidationLayerSupport(const std::vector<const char*>& validationLayers);
+    std::vector<const char*> GetRequiredExtensions(bool enable_debug);
+    // Setup Debug Messenger
+    void PopulateDebugMessengerCreateInfo(
+        VkDebugUtilsMessengerCreateInfoEXT& createInfo);
+    void PopulateDebugReportCreateInfo(
+        VkDebugReportCallbackCreateInfoEXT& createInfo);
+    // Pick Physical Device
+    bool IsDeviceSuitable(
+        const VkPhysicalDevice& device, 
+        const VkSurfaceKHR& surface, 
+        const std::vector<const char*>& deviceExtensions);
+    bool CheckDeviceExtensionSupport(
+        const VkPhysicalDevice& device, 
+        const std::vector<const char*>& deviceExtensions);
+    SwapchainSupportDetails QuerySwapchainSupport(
+        const VkPhysicalDevice& device, 
+        const VkSurfaceKHR& surface);
+    // Create Swap Chain
+    VkSurfaceFormatKHR ChooseSwapSurfaceFormat(
+        const std::vector<VkSurfaceFormatKHR>& availableFormats);
+    VkPresentModeKHR ChooseSwapPresentMode(
+        const std::vector<VkPresentModeKHR>& availablePresentModes);
+    uint32_t ChooseSwapImageCount(const VkSurfaceCapabilitiesKHR& capabilities);
+    VkExtent2D ChooseSwapExtent(
+        const VkSurfaceCapabilitiesKHR& capabilities, 
+        uint32_t width, 
+        uint32_t height);
 }
 
 namespace Rocket {
@@ -247,7 +281,7 @@ namespace Rocket {
     VkDevice CreateLogicalDevice(
             const VkPhysicalDevice& physicalDevice, 
             const std::vector<const char*>& deviceExtensions, 
-            const std::vector<const char*>& validationLayers, 
+            const std::vector<const char*>& validationLayers,
             const QueueFamilyIndices& indices) {
         VkDevice device;
 
@@ -259,7 +293,6 @@ namespace Rocket {
         };
 
         float queuePriority = 1.0f;
-
         for(auto queueFamily : uniqueQueueFamilies) {
             VkDeviceQueueCreateInfo queueCreateInfo{};
             queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
@@ -363,7 +396,6 @@ namespace Rocket {
             RK_ERROR(Graphics, "failed to create swap chain!");
             throw std::runtime_error("failed to create swap chain!");
         }
-
         return swapchain;
     }
 
@@ -386,7 +418,6 @@ namespace Rocket {
             details.presentModes.resize(presentModeCount);
             vkGetPhysicalDeviceSurfacePresentModesKHR(device, surface, &presentModeCount, details.presentModes.data());
         }
-
         return details;
     }
 

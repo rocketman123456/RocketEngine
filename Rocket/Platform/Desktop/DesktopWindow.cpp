@@ -39,6 +39,8 @@ namespace Rocket {
             exit(EXIT_FAILURE);
         }
 
+        glfwGetFramebufferSize(window, &info.framebuffer_width, &info.framebuffer_height);
+
         glfwSetKeyCallback(
             window,
             [](GLFWwindow* window, int key, int scancode, int action, int mods) {
