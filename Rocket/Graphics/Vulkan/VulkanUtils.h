@@ -26,13 +26,13 @@ struct SwapchainSupportDetails final {
 namespace Rocket {
     // Create Instace
     VkInstance CreateVulkanInstance(
-        const std::vector<const char*>& validationLayers);
+        const std::vector<const char*>& validationLayers,
+        const std::vector<const char*>& instanceExtension);
     // Print Version
     void PrintVulkanVersion();
     // Setup Debug Messenger
     VkDebugUtilsMessengerEXT SetupDebugMessenger(
-        const VkInstance& instance, 
-        bool enableValidationLayers);
+        const VkInstance& instance);
     VkDebugReportCallbackEXT SetupDebugReportCallback(
         const VkInstance& instance);
     // Pick Physical Device

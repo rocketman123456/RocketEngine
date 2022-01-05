@@ -149,6 +149,6 @@ int main() {
         vfs->UnmountFileSystem(vpath_zip);
     }
 
-    RK_PROFILE_END_SESSION("FileSystem");
+    RK_PROFILE_END_SESSION();
     return 0;
 }

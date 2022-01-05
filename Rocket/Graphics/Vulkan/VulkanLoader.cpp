@@ -18,15 +18,16 @@ namespace Rocket {
             throw std::runtime_error("Unable to load Vulkan");
         }
         // Get Vulkan Instance
-        instance = CreateVulkanInstance(validation_layers);
+        instance = CreateVulkanInstance(validation_layers, instance_extensions);
         // Load volk instance
         volkLoadInstanceOnly(instance);
         // Print Version Info
         PrintVulkanVersion();
         // Setup Debug Messenger
-        bool enable_validation = validation_layers.size() > 0;
-        debug_messenger = SetupDebugMessenger(instance, enable_validation);
-        report_callback = SetupDebugReportCallback(instance);
+#if defined(RK_DEBUG_INFO)
+        debug_messenger = SetupDebugMessenger(instance);
+        // report_callback = SetupDebugReportCallback(instance);
+#endif
         // Create Sruface
         if (glfwCreateWindowSurface(instance, (GLFWwindow*)window, nullptr, &surface)) {
             RK_ERROR(Graphics, "Unable to Create Vulkan Surface");
@@ -36,8 +37,10 @@ namespace Rocket {
 
     void VulkanLoader::Finalize() {
         vkDestroySurfaceKHR(instance, surface, nullptr);
-        vkDestroyDebugReportCallbackEXT(instance, report_callback, nullptr);
+#if defined(RK_DEBUG_INFO)
+        // vkDestroyDebugReportCallbackEXT(instance, report_callback, nullptr);
         vkDestroyDebugUtilsMessengerEXT(instance, debug_messenger, nullptr);
+#endif
         vkDestroyInstance(instance, nullptr);
         RK_TRACE(Graphics, "Finalize Vulkan Loader");
     }

@@ -5,6 +5,7 @@
 #include <cassert>
 #include <cctype>
 #include <climits>
+#include <fstream>
 #include <sstream>
 #include <iomanip>
 

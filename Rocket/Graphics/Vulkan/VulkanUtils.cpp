@@ -16,9 +16,13 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL VulkanDebugCallback(
         void*                                       pUserData) {
     if(messageSeverity < VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT) {
         return VK_FALSE;
+    } else if(messageSeverity == VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT) {
+        RK_WARN(Graphics, "validation layer: {}", pCallbackData->pMessage);
+        return VK_FALSE;
+    } else if(messageSeverity == VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT) {
+        RK_ERROR(Graphics, "validation layer: {}", pCallbackData->pMessage);
+        return VK_FALSE;
     }
-    RK_WARN(Graphics, "validation layer: {}", pCallbackData->pMessage);
-    return VK_FALSE;
 }
 
 static VKAPI_ATTR VkBool32 VKAPI_CALL VulkanDebugReportCallback(
@@ -36,9 +40,16 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL VulkanDebugReportCallback(
         return VK_FALSE;
     } else if(flags & VK_DEBUG_REPORT_DEBUG_BIT_EXT) {
         return VK_FALSE;
+    } else if(flags & VK_DEBUG_REPORT_WARNING_BIT_EXT) {
+        RK_WARN(Graphics, "debug callback({}): {}", pLayerPrefix, pMessage);
+        return VK_FALSE;
+    } else if(flags & VK_DEBUG_REPORT_ERROR_BIT_EXT) {
+        RK_ERROR(Graphics, "debug callback({}): {}", pLayerPrefix, pMessage);
+        return VK_FALSE;
+    } else if(flags & VK_DEBUG_REPORT_INFORMATION_BIT_EXT) {
+        RK_INFO(Graphics, "debug callback({}): {}", pLayerPrefix, pMessage);
+        return VK_FALSE;
     }
-    RK_WARN(Graphics, "debug callback({}): {}", pLayerPrefix, pMessage);
-    return VK_FALSE;
 }
 
 namespace Rocket {
@@ -74,7 +85,7 @@ namespace Rocket {
 }
 
 namespace Rocket {
-    VkInstance CreateVulkanInstance(const std::vector<const char*>& validationLayers) {
+    VkInstance CreateVulkanInstance(const std::vector<const char*>& validationLayers, const std::vector<const char*>& instanceExtension) {
         VkInstance instance;
 
         if (!CheckValidationLayerSupport(validationLayers)) {
@@ -90,15 +101,21 @@ namespace Rocket {
         appInfo.engineVersion = VK_MAKE_VERSION(1, 0, 0);
         appInfo.apiVersion = VK_API_VERSION_1_0;
 
+        bool enable_debug = validationLayers.size() > 0;
+        auto extensions = GetRequiredExtensions(enable_debug);
+        for(auto extension : instanceExtension) {
+            extensions.push_back(extension);
+        }
+
+        for (const auto& extension : extensions) {
+            RK_INFO(Graphics, "Required Instance Extension: {}", extension);
+        }
+
         VkInstanceCreateInfo createInfo{};
         createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
         createInfo.pApplicationInfo = &appInfo;
-
-        bool enable_debug = validationLayers.size() > 0;
-        auto extensions = GetRequiredExtensions(enable_debug);
         createInfo.enabledExtensionCount = static_cast<uint32_t>(extensions.size());
         createInfo.ppEnabledExtensionNames = extensions.data();
-
         createInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
         createInfo.ppEnabledLayerNames = validationLayers.data();
 
@@ -115,20 +132,13 @@ namespace Rocket {
         vkEnumerateInstanceLayerProperties(&layerCount, nullptr);
         std::vector<VkLayerProperties> availableLayers(layerCount);
         vkEnumerateInstanceLayerProperties(&layerCount, availableLayers.data());
-        for (const char* layerName : validationLayers) {
-            bool layerFound = false;
-            for (const auto& layerProperties : availableLayers) {
-                if (strcmp(layerName, layerProperties.layerName) == 0) {
-                    layerFound = true;
-                    break;
-                }
-            }
-            if (!layerFound) {
-                RK_WARN(Graphics, "Failed to find {}", layerName);
-                return false;
-            }
+
+        std::set<std::string> requiredValidations(validationLayers.begin(), validationLayers.end());
+        for (const auto& layer : availableLayers) {
+            requiredValidations.erase(layer.layerName);
         }
-        return true;
+
+        return requiredValidations.empty();
     }
 
     std::vector<const char*> GetRequiredExtensions(bool enable_debug) {
@@ -136,12 +146,6 @@ namespace Rocket {
         const char** glfwExtensions;
         glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
         std::vector<const char*> extensions(glfwExtensions, glfwExtensions + glfwExtensionCount);
-        if(enable_debug) {
-            extensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
-            extensions.push_back(VK_EXT_DEBUG_REPORT_EXTENSION_NAME);
-            // for indexed textures
-            extensions.push_back(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME);
-        }
         return extensions;
     }
 
@@ -183,11 +187,8 @@ namespace Rocket {
     }
 
     VkDebugUtilsMessengerEXT SetupDebugMessenger(
-            const VkInstance& instance, bool enableValidationLayers) {
+            const VkInstance& instance) {
         VkDebugUtilsMessengerEXT debug_messenger = {};
-        if (!enableValidationLayers) 
-            return debug_messenger;
-
         VkDebugUtilsMessengerCreateInfoEXT createInfo;
         PopulateDebugMessengerCreateInfo(createInfo);
         if (vkCreateDebugUtilsMessengerEXT(instance, &createInfo, nullptr, &debug_messenger) != VK_SUCCESS) {
@@ -270,6 +271,10 @@ namespace Rocket {
         std::vector<VkExtensionProperties> availableExtensions(extensionCount);
         vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, availableExtensions.data());
         
+        for (const auto& extension : availableExtensions) {
+            RK_INFO(Graphics, "Available Device Extension: {}", extension.extensionName);
+        }
+
         std::set<std::string> requiredExtensions(deviceExtensions.begin(), deviceExtensions.end());
         for (const auto& extension : availableExtensions) {
             requiredExtensions.erase(extension.extensionName);
@@ -303,8 +308,8 @@ namespace Rocket {
         }
 
         VkPhysicalDeviceFeatures deviceFeatures{};
-        deviceFeatures.geometryShader = VK_TRUE;
-        deviceFeatures.tessellationShader = VK_TRUE;
+        // deviceFeatures.geometryShader = VK_TRUE;
+        // deviceFeatures.tessellationShader = VK_TRUE;
         deviceFeatures.samplerAnisotropy = VK_TRUE;
 
         VkDeviceCreateInfo createInfo{};
@@ -334,10 +339,10 @@ namespace Rocket {
         vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, queueFamilies.data());
         int i = 0;
         for (const auto& queueFamily : queueFamilies) {
-            if (queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT) {
+            if (queueFamily.queueCount > 0 && queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT) {
                 indices.graphics_family = i;
             }
-            if(queueFamily.queueFlags & VK_QUEUE_COMPUTE_BIT) {
+            if(queueFamily.queueCount > 0 && queueFamily.queueFlags & VK_QUEUE_COMPUTE_BIT) {
                 indices.compute_family = i;
             }
             VkBool32 presentSupport = false;

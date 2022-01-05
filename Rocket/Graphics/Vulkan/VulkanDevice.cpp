@@ -45,6 +45,20 @@ namespace Rocket {
             RK_ERROR(Graphics, "Unable to Get Graphics Queue");
             throw std::runtime_error("Unable to Get Graphics Queue");
         }
+        // Create Present Queue
+        device_table.vkGetDeviceQueue(
+            device, indices.present_family.value(), 0, &present_queue);
+        if (present_queue == nullptr) {
+            RK_ERROR(Graphics, "Unable to Get Present Queue");
+            throw std::runtime_error("Unable to Get Present Queue");
+        }
+        // Create Compute Queue
+        device_table.vkGetDeviceQueue(
+            device, indices.compute_family.value(), 0, &compute_queue);
+        if (compute_queue == nullptr) {
+            RK_ERROR(Graphics, "Unable to Get Present Queue");
+            throw std::runtime_error("Unable to Get Present Queue");
+        }
         // Create Swap Chain
         swap_chain = CreateSwapChain(
             physical_device, device, device_table, loader->surface, indices, 

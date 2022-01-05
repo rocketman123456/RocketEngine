@@ -9,6 +9,7 @@
 //  Desc:   various useful functions that operate on or with streams
 //-----------------------------------------------------------------------------
 #include <sstream>
+#include <fstream>
 #include <string>
 #include <iomanip>
 
