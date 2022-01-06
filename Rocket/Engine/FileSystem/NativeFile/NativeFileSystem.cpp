@@ -162,13 +162,16 @@ namespace Rocket {
 
     FilePtr NativeFileSystem::GetFilePointer(const std::string& file_path) {
         RK_PROFILE_FUNCTION();
-        if(!IsFileExists(file_path)) {
-            RK_WARN(File, "File Not Exist {}", file_path);
+        auto temp_path = Replace(file_path, "\\", "/");
+        if(!StartsWith(temp_path, "/"))
+            temp_path = "/" + temp_path;
+        if(!IsFileExists(temp_path)) {
+            RK_WARN(File, "File Not Exist {}", temp_path);
             return nullptr;
         }
-        auto temp = file_path.substr(virtual_path.size());
+        auto temp = temp_path.substr(virtual_path.size());
         auto full_path = real_path + temp;
-        auto file = std::make_shared<NativeFile>(full_path, file_path);
+        auto file = std::make_shared<NativeFile>(full_path, temp_path);
         return file;
     }
 

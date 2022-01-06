@@ -12,5 +12,5 @@ target("RocketVulkan")
         -- "shaderc",
         {public = true}
     )
-    add_deps("RocketLog", {public = true})
+    add_deps("RocketLog", "RocketRenderCommon", {public = true})
 target_end()

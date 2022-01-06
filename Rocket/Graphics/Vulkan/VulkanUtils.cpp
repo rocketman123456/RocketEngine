@@ -340,23 +340,21 @@ namespace Rocket {
         return device;
     }
 
-    uint32_t FindQueueFamilies(VkPhysicalDevice device, VkQueueFlags desiredFlags) {
+    uint32_t FindQueueFamilies(const VkPhysicalDevice& device, const VkQueueFlags& desiredFlags) {
         uint32_t familyCount = 0;
         vkGetPhysicalDeviceQueueFamilyProperties(device, &familyCount, nullptr);
-
         std::vector<VkQueueFamilyProperties> families(familyCount);
         vkGetPhysicalDeviceQueueFamilyProperties(device, &familyCount, families.data());
 
-        for (uint32_t i = 0; i != families.size(); i++)
-            if (families[i].queueCount > 0 && families[i].queueFlags & desiredFlags)
+        for (uint32_t i = 0; i != families.size(); i++) {
+            if (families[i].queueCount > 0 && families[i].queueFlags & desiredFlags) {
                 return i;
-
+            }
+        }
         return 0;
     }
 
-    uint32_t FindPresentFamilies(
-            const VkPhysicalDevice& device, 
-            const VkSurfaceKHR& surface) {
+    uint32_t FindPresentFamilies(const VkPhysicalDevice& device, const VkSurfaceKHR& surface) {
         uint32_t queueFamilyCount = 0;
         vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, nullptr);
         std::vector<VkQueueFamilyProperties> queueFamilies(queueFamilyCount);
@@ -386,13 +384,13 @@ namespace Rocket {
             if (queueFamily.queueCount > 0 && queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT) {
                 indices.graphics_family = i;
             }
-            if(queueFamily.queueCount > 0 && queueFamily.queueFlags & VK_QUEUE_COMPUTE_BIT) {
-                indices.compute_family = i;
-            }
             VkBool32 presentSupport = false;
             vkGetPhysicalDeviceSurfaceSupportKHR(device, i, surface, &presentSupport);
             if (presentSupport) {
                 indices.present_family = i;
+            }
+            if(queueFamily.queueCount > 0 && queueFamily.queueFlags & VK_QUEUE_COMPUTE_BIT) {
+                indices.compute_family = i;
             }
             if (indices.IsComplete()) {
                 break;

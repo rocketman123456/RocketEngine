@@ -122,12 +122,15 @@ namespace Rocket {
 
     FilePtr ZipFileSystem::GetFilePointer(const std::string& file_path) {
         RK_PROFILE_FUNCTION();
-        if(!IsFileExists(file_path)) {
-            RK_WARN(File, "File Not Exist {}", file_path);
+        auto temp_path = Replace(file_path, "\\", "/");
+        if(!StartsWith(temp_path, "/"))
+            temp_path = "/" + temp_path;
+        if(!IsFileExists(temp_path)) {
+            RK_WARN(File, "File Not Exist {}", temp_path);
             return nullptr;
         }
-        auto full_path = file_path.substr(virtual_path.size());
-        auto file = std::make_shared<ZipFile>(full_path, file_path, zip_archive);
+        auto full_path = temp_path.substr(virtual_path.size());
+        auto file = std::make_shared<ZipFile>(full_path, temp_path, zip_archive);
         return file;
     }
 

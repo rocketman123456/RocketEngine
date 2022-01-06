@@ -137,8 +137,7 @@ namespace Rocket {
         auto dir_ = Replace(dir, "\\", "/");
         std::vector<std::string> dir_stack;
         SplitSingleChar(dir_, &dir_stack, '/');
-        auto node = FindVirtualNode(root, dir_stack, name);
-        return node;
+        return FindVirtualNode(root, dir_stack, name);
     }
 
     VirtualNodePtr FindVirtualNode(const VirtualBlockPtr& root, const std::string& file_path) {

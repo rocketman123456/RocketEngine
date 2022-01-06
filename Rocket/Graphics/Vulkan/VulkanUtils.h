@@ -47,8 +47,8 @@ namespace Rocket {
         const std::vector<const char*>& validationLayers,
         const QueueFamilyIndices& indices);
     uint32_t FindQueueFamilies(
-        VkPhysicalDevice device, 
-        VkQueueFlags desiredFlags);
+        const VkPhysicalDevice& device, 
+        const VkQueueFlags& desiredFlags);
     uint32_t FindPresentFamilies(
         const VkPhysicalDevice& device, 
         const VkSurfaceKHR& surface);

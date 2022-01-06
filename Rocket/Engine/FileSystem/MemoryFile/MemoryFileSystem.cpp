@@ -68,11 +68,13 @@ namespace Rocket {
     }
 
     FilePtr MemoryFileSystem::GetFilePointer(const std::string& file_path) {
-        if(!IsFileExists(file_path)) {
-            RK_WARN(File, "File Not Exist {}", file_path);
+        auto temp_path = Replace(file_path, "\\", "/");
+        if(!StartsWith(temp_path, "/"))
+            temp_path = "/" + temp_path;
+        if(!IsFileExists(temp_path)) {
+            RK_WARN(File, "File Not Exist {}", temp_path);
             return nullptr;
         }
-        std::string temp_path = Replace(file_path, "\\", "/");
         auto full_path = temp_path.substr(virtual_path.size());
         auto file = std::make_shared<MemoryFile>(full_path, temp_path);
         // Set File Buffer Data
