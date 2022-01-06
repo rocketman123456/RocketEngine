@@ -85,7 +85,9 @@ namespace Rocket {
 }
 
 namespace Rocket {
-    VkInstance CreateVulkanInstance(const std::vector<const char*>& validationLayers, const std::vector<const char*>& instanceExtension) {
+    VkInstance CreateVulkanInstance(
+            const std::vector<const char*>& validationLayers, 
+            const std::vector<const char*>& instanceExtension) {
         VkInstance instance;
 
         if (!CheckValidationLayerSupport(validationLayers)) {
@@ -186,12 +188,12 @@ namespace Rocket {
         );
     }
 
-    VkDebugUtilsMessengerEXT SetupDebugMessenger(
-            const VkInstance& instance) {
+    VkDebugUtilsMessengerEXT SetupDebugMessenger(const VkInstance& instance) {
         VkDebugUtilsMessengerEXT debug_messenger = {};
         VkDebugUtilsMessengerCreateInfoEXT createInfo;
         PopulateDebugMessengerCreateInfo(createInfo);
-        if (vkCreateDebugUtilsMessengerEXT(instance, &createInfo, nullptr, &debug_messenger) != VK_SUCCESS) {
+        if (vkCreateDebugUtilsMessengerEXT(instance, &createInfo, nullptr, &debug_messenger) != 
+                VK_SUCCESS) {
             RK_ERROR(Graphics, "failed to set up debug messenger!");
             throw std::runtime_error("failed to set up debug messenger!");
         }
@@ -200,7 +202,6 @@ namespace Rocket {
 
     VkDebugReportCallbackEXT SetupDebugReportCallback(const VkInstance& instance) {
         VkDebugReportCallbackEXT report_callback;
-
         VkDebugReportCallbackCreateInfoEXT createInfo = {};
         PopulateDebugReportCreateInfo(createInfo);
         if(vkCreateDebugReportCallbackEXT(instance, &createInfo, nullptr, &report_callback) != VK_SUCCESS) {
@@ -250,7 +251,8 @@ namespace Rocket {
         bool swapChainAdequate = false;
         if (extensionsSupported) {
             auto swapChainSupport = QuerySwapchainSupport(device, surface);
-            swapChainAdequate = !swapChainSupport.formats.empty() && !swapChainSupport.presentModes.empty();
+            swapChainAdequate = !swapChainSupport.formats.empty() && 
+                !swapChainSupport.presentModes.empty();
         }
 
         VkPhysicalDeviceFeatures supportedFeatures;
@@ -270,14 +272,23 @@ namespace Rocket {
 
         std::vector<VkExtensionProperties> availableExtensions(extensionCount);
         vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, availableExtensions.data());
-        
-        for (const auto& extension : availableExtensions) {
-            RK_INFO(Graphics, "Available Device Extension: {}", extension.extensionName);
-        }
+
+        // for (const auto& extension : availableExtensions) {
+        //     RK_INFO(Graphics, "Available Device Extension: {}", extension.extensionName);
+        // }
 
         std::set<std::string> requiredExtensions(deviceExtensions.begin(), deviceExtensions.end());
+
+        for (const auto& extension : requiredExtensions) {
+            RK_INFO(Graphics, "Required Device Extension: {}", extension);
+        }
+
         for (const auto& extension : availableExtensions) {
             requiredExtensions.erase(extension.extensionName);
+        }
+
+        for (const auto& extension : requiredExtensions) {
+            RK_INFO(Graphics, "Not Available Device Extension: {}", extension);
         }
 
         return requiredExtensions.empty();
@@ -329,6 +340,39 @@ namespace Rocket {
         return device;
     }
 
+    uint32_t FindQueueFamilies(VkPhysicalDevice device, VkQueueFlags desiredFlags) {
+        uint32_t familyCount = 0;
+        vkGetPhysicalDeviceQueueFamilyProperties(device, &familyCount, nullptr);
+
+        std::vector<VkQueueFamilyProperties> families(familyCount);
+        vkGetPhysicalDeviceQueueFamilyProperties(device, &familyCount, families.data());
+
+        for (uint32_t i = 0; i != families.size(); i++)
+            if (families[i].queueCount > 0 && families[i].queueFlags & desiredFlags)
+                return i;
+
+        return 0;
+    }
+
+    uint32_t FindPresentFamilies(
+            const VkPhysicalDevice& device, 
+            const VkSurfaceKHR& surface) {
+        uint32_t queueFamilyCount = 0;
+        vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, nullptr);
+        std::vector<VkQueueFamilyProperties> queueFamilies(queueFamilyCount);
+        vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, queueFamilies.data());
+        int i = 0;
+        for (const auto& queueFamily : queueFamilies) {
+            VkBool32 presentSupport = false;
+            vkGetPhysicalDeviceSurfaceSupportKHR(device, i, surface, &presentSupport);
+            if (presentSupport) {
+                return i;
+            }
+            i++;
+        }
+        return 0;
+    }
+
     QueueFamilyIndices FindQueueFamilies(
             const VkPhysicalDevice& device, 
             const VkSurfaceKHR& surface) {
@@ -364,6 +408,7 @@ namespace Rocket {
             const VolkDeviceTable& table,
             const VkSurfaceKHR& surface, 
             const QueueFamilyIndices& indices, 
+            VkFormat* swapChainImageFormat,
             uint32_t width, 
             uint32_t height, 
             bool supportScreenshots) {
@@ -388,6 +433,26 @@ namespace Rocket {
             VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | 
             VK_IMAGE_USAGE_TRANSFER_DST_BIT | 
             (supportScreenshots ? VK_IMAGE_USAGE_TRANSFER_SRC_BIT : 0u);
+        
+        std::set<uint32_t> queueFamilyIndicesCount = {
+            indices.graphics_family.value(),
+            indices.present_family.value(),
+            indices.compute_family.value()
+        };
+
+        std::vector<uint32_t> queueFamilyIndices(
+            queueFamilyIndicesCount.begin(), 
+            queueFamilyIndicesCount.end()
+        );
+
+        if (queueFamilyIndicesCount.size() > 1) {
+            createInfo.imageSharingMode = VK_SHARING_MODE_CONCURRENT;
+            createInfo.queueFamilyIndexCount = static_cast<uint32_t>(queueFamilyIndices.size());
+            createInfo.pQueueFamilyIndices = queueFamilyIndices.data();
+        } else {
+            createInfo.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
+        }
+
         createInfo.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
         createInfo.queueFamilyIndexCount = 1;
         createInfo.pQueueFamilyIndices = &graphicsFamily;
@@ -401,6 +466,9 @@ namespace Rocket {
             RK_ERROR(Graphics, "failed to create swap chain!");
             throw std::runtime_error("failed to create swap chain!");
         }
+
+        *swapChainImageFormat = surfaceFormat.format;
+
         return swapchain;
     }
 
@@ -449,20 +517,138 @@ namespace Rocket {
 
     VkExtent2D ChooseSwapExtent(
             const VkSurfaceCapabilitiesKHR& capabilities, 
-            uint32_t width, 
-            uint32_t height) {
+            uint32_t width, uint32_t height) {
         if (capabilities.currentExtent.width != UINT32_MAX) {
             return capabilities.currentExtent;
         } else {
-            // int width, height;
-            // glfwGetFramebufferSize(window, &width, &height);
             VkExtent2D actualExtent = {
                 static_cast<uint32_t>(width),
                 static_cast<uint32_t>(height)
             };
-            actualExtent.width = std::clamp(actualExtent.width, capabilities.minImageExtent.width, capabilities.maxImageExtent.width);
-            actualExtent.height = std::clamp(actualExtent.height, capabilities.minImageExtent.height, capabilities.maxImageExtent.height);
+            actualExtent.width = std::clamp(
+                actualExtent.width, 
+                capabilities.minImageExtent.width, 
+                capabilities.maxImageExtent.width);
+            actualExtent.height = std::clamp(
+                actualExtent.height, 
+                capabilities.minImageExtent.height, 
+                capabilities.maxImageExtent.height);
             return actualExtent;
+        }
+    }
+
+    size_t CreateSwapchainImages(
+            const VkDevice& device, 
+            const VolkDeviceTable& table, 
+            const VkSwapchainKHR& swapchain, 
+            const VkFormat& swapChainImageFormat,
+            std::vector<VkImage>& swapchainImages,
+            std::vector<VkImageView>& swapchainImageViews) {
+        swapchainImages.clear();
+        swapchainImageViews.clear();
+
+        uint32_t imageCount = 0;
+        if(table.vkGetSwapchainImagesKHR(device, swapchain, &imageCount, nullptr) != VK_SUCCESS) {
+            RK_ERROR(Graphics, "Failed to Get Swapchain Images!");
+            throw std::runtime_error("Failed to Get Swapchain Images!");
+        }
+
+        swapchainImages.resize(imageCount);
+        swapchainImageViews.resize(imageCount);
+
+        if(table.vkGetSwapchainImagesKHR(device, swapchain, &imageCount, swapchainImages.data()) != VK_SUCCESS) {
+            RK_ERROR(Graphics, "Failed to Get Swapchain Images!");
+            throw std::runtime_error("Failed to Get Swapchain Images!");
+        }
+
+        for (unsigned i = 0; i < imageCount; i++) {
+            CreateImageView(
+                device, table,
+                swapchainImages[i], 
+                swapChainImageFormat, 
+                VK_IMAGE_ASPECT_COLOR_BIT, 
+                &swapchainImageViews[i]);
+        }
+
+        return static_cast<size_t>(imageCount);
+    }
+
+    void CreateImageView(
+            const VkDevice& device, 
+            const VolkDeviceTable& table, 
+            const VkImage& image, 
+            const VkFormat& format, 
+            const VkImageAspectFlags& aspectFlags, 
+            VkImageView* imageView, 
+            const VkImageViewType& viewType,
+            uint32_t layerCount, 
+            uint32_t mipLevels) {
+        VkImageViewCreateInfo viewInfo = {};
+        
+        viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+        viewInfo.pNext = nullptr;
+        viewInfo.flags = 0;
+        viewInfo.image = image;
+        viewInfo.viewType = viewType;
+        viewInfo.format = format;
+        viewInfo.components.r = VK_COMPONENT_SWIZZLE_IDENTITY;
+        viewInfo.components.g = VK_COMPONENT_SWIZZLE_IDENTITY;
+        viewInfo.components.b = VK_COMPONENT_SWIZZLE_IDENTITY;
+        viewInfo.components.a = VK_COMPONENT_SWIZZLE_IDENTITY;
+        viewInfo.subresourceRange.aspectMask = aspectFlags;
+        viewInfo.subresourceRange.baseMipLevel = 0;
+        viewInfo.subresourceRange.levelCount = mipLevels;
+        viewInfo.subresourceRange.baseArrayLayer = 0;
+        viewInfo.subresourceRange.layerCount = layerCount;
+
+        if(table.vkCreateImageView(device, &viewInfo, nullptr, imageView) != VK_SUCCESS) {
+            RK_ERROR(Graphics, "Failed to Create Image View!");
+            throw std::runtime_error("Failed to Create Image View!");
+        }
+    }
+
+    void CreateVulkanSemaphore(
+            const VkDevice& device, 
+            const VolkDeviceTable& table, 
+            VkSemaphore* outSemaphore) {
+        VkSemaphoreCreateInfo createInfo = {};
+        createInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
+        if(table.vkCreateSemaphore(device, &createInfo, nullptr, outSemaphore) != VK_SUCCESS) {
+            RK_ERROR(Graphics, "Failed to Create Semaphore!");
+            throw std::runtime_error("Failed to Create Semaphore!");
+        }
+    }
+
+    void CreateCommandPool(
+            const VkDevice& device, 
+            const VolkDeviceTable& table, 
+            const QueueFamilyIndices& indices, 
+            VkCommandPool* command_pool) {
+        VkCommandPoolCreateInfo createInfo = {};
+        createInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
+        createInfo.flags = 0;
+        createInfo.queueFamilyIndex = indices.graphics_family.value();
+        if(table.vkCreateCommandPool(device, &createInfo, nullptr, command_pool) != VK_SUCCESS) {
+            RK_ERROR(Graphics, "Unable to Create Command Pool");
+            throw std::runtime_error("Unable to Create Command Pool");
+        }
+    }
+
+    void CreateCommandBuffer(
+            const VkDevice& device, 
+            const VolkDeviceTable& table,
+            const VkCommandPool& commandPool,
+            uint32_t imageCount,
+            VkCommandBuffer* command_buffer) {
+        VkCommandBufferAllocateInfo allocateInfo = {};
+		allocateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+		allocateInfo.pNext = nullptr;
+		allocateInfo.commandPool = commandPool;
+		allocateInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+		allocateInfo.commandBufferCount = imageCount;
+        if(table.vkAllocateCommandBuffers(device, &allocateInfo, command_buffer) != VK_SUCCESS) {
+            RK_ERROR(Graphics, "Unable to Create Command Pool");
+            throw std::runtime_error("Unable to Create Command Pool");
         }
     }
 }

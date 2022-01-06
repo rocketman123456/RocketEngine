@@ -32,9 +32,9 @@ namespace Rocket {
         std::vector<VkQueue> device_queues;
 
         VkSwapchainKHR swap_chain;
-        std::vector<VkImage> swap_chain_images;
         VkFormat swap_chain_image_format;
         VkExtent2D swap_chain_extent;
+        std::vector<VkImage> swap_chain_images;
         std::vector<VkImageView> swap_chain_images_views;
         std::vector<VkFramebuffer> swap_chain_framebuffers;
 
