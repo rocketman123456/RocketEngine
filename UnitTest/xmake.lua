@@ -4,6 +4,7 @@ includes(
     "FileTest",
     "GraphicsTest",
     "LibTest",
+    "ParserTest",
     "UtilsTest"
     -- "RustTest"
 )

@@ -1,13 +1,16 @@
 #pragma once
 #include "Core/MemoryDefine.h"
+#include "Resource/ResourceHandle.h"
 
 #include <cstdef>
+#include <string>
 
 namespace Rocket {
-    class ResourceCache {
+    _Interface_ ResourceCache {
     public:
         // Capacity in bytes
-        ResourceCache(std::size_t capacity);
-        ~ResourceCache();
+        virtual ~ResourceCache();
+
+        virtual ResourceHandlePtr GetResource(const std::string& name) = 0;
     };
 }
