@@ -12,7 +12,7 @@ includes(
     "FileSystem",
     -- "Geometry",
     "Log",
-    -- "Math",
+    "Math",
     "Memory",
     -- "MultiThread",
     "Parser",

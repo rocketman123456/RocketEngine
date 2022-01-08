@@ -1,6 +1,6 @@
 #pragma once
-#include "Vectors.h"
-#include "Memory/MemoryDefine.h"
+#include "Math/Vectors.h"
+#include "Core/MemoryDefine.h"
 #include "Core/Declare.h"
 
 namespace Rocket {

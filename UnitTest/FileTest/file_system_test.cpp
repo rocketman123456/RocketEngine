@@ -18,25 +18,6 @@ using namespace Rocket;
 int main() {
     RK_PROFILE_BEGIN_SESSION("FileSystem", "FileSystem-Profile.json");
 
-    {
-        RK_PROFILE_SCOPE("Register");
-        FileSystemFactory::RegisterFileSystem(FileSystemType::Native, 
-            [](const std::string& rpath, const std::string& vpath){
-                return std::make_shared<NativeFileSystem>(rpath, vpath);
-            }
-        );
-        FileSystemFactory::RegisterFileSystem(FileSystemType::Memory, 
-            [](const std::string& rpath, const std::string& vpath){
-                return std::make_shared<MemoryFileSystem>(rpath, vpath);
-            }
-        );
-        FileSystemFactory::RegisterFileSystem(FileSystemType::Zip, 
-            [](const std::string& rpath, const std::string& vpath){
-                return std::make_shared<ZipFileSystem>(rpath, vpath);
-            }
-        );
-    }
-
     VirtualFileSystemPtr vfs = std::make_shared<VirtualFileSystem>();
 
     std::string root = FindRootDir("_root_dir_");
@@ -129,8 +110,8 @@ int main() {
         {
             RK_PROFILE_SCOPE("ReadMemoryFile");
             auto mem_file = vfs->GetFilePointer(memory_file);
-            FileBuffer buffer_mem = {new FileByte[mem_file->Size()], mem_file->Size()};
             vfs->OpenFile(mem_file, FileEnum::READWRITE_BINARY);
+            FileBuffer buffer_mem = {new FileByte[mem_file->Size()], mem_file->Size()};
             auto result = vfs->ReadFile(mem_file, &buffer_mem);
             std::cout << "Read: " << memory_file << " Size: " << result << std::endl;
             vfs->CloseFile(mem_file);

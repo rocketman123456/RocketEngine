@@ -1,4 +1,7 @@
 #include "FileSystem/FileSystemFactory.h"
+#include "FileSystem/MemoryFile/MemoryFileSystem.h"
+#include "FileSystem/NativeFile/NativeFileSystem.h"
+#include "FileSystem/ZipFile/ZipFileSystem.h"
 
 namespace Rocket {
     std::unordered_map<FileSystemType, FileSystemCreator> FileSystemFactory::file_systems = {};
@@ -15,6 +18,19 @@ namespace Rocket {
     }
 
     FileSystemPtr FileSystemFactory::CreateFileSystem(FileSystemType type, const std::string& rpath, const std::string& vpath) {
+        // build-in filesystem
+        switch(type) {
+            case FileSystemType::Memory: {
+                return std::make_shared<MemoryFileSystem>(rpath, vpath);
+            };
+            case FileSystemType::Zip: {
+                return std::make_shared<NativeFileSystem>(rpath, vpath);
+            };
+            case FileSystemType::Native: {
+                return std::make_shared<ZipFileSystem>(rpath, vpath);
+            };
+        }
+        // self-defined filesystem
         auto found = file_systems.find(type);
         if(found != file_systems.end()) {
             return found->second(rpath, vpath);

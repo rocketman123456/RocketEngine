@@ -1,11 +1,8 @@
 #pragma once
-#include "Memory/MemoryDefine.h"
-#include "Core/Declare.h"
-#include "Math/Vectors.h"
-#include "Algorithm/StringOperation.h"
+#include "Core/MemoryDefine.h"
 
+#include <Eigen/Eigen>
 #include <string>
-#include <string_view>
 
 namespace Rocket {
     // TODO : combine this into Geometry::Vertex

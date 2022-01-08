@@ -62,9 +62,6 @@ target_end()
 
 target("meshoptimizer")
     set_kind("static")
-    -- add_defines(
-    --     ""
-    -- )
     add_includedirs(
         "meshoptimizer/extern",
         "meshoptimizer/src",

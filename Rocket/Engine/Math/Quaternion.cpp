@@ -6,10 +6,8 @@ namespace Rocket {
         auto q0 = q_.quaternion[0];
         auto p = quaternion.block<3,1>(1, 0);
         auto q = q_.quaternion.block<3,1>(1, 0);
-
         double result_1 = p0 * q0 - p.dot(q);
         Eigen::Vector3d result_2 = p0 * q + q0 * p + p.cross(q);
-
         return { {result_1, result_2[0], result_2[1], result_2[2]} };
     }
 
@@ -18,7 +16,6 @@ namespace Rocket {
         auto q0 = q_.quaternion[0];
         auto p = quaternion.block<3,1>(1, 0);
         auto q = q_.quaternion.block<3,1>(1, 0);
-
         return p0 * q0 + p.dot(q);
     }
 

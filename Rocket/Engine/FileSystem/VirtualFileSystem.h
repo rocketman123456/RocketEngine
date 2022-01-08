@@ -9,6 +9,7 @@
 #include <gsl/gsl>
 
 namespace Rocket {
+    // TODO : make it global static, singleton
     class VirtualFileSystem { // : _implements_ AbstractSingleton<VirtualFileSystem> {
     public:
         //using FileSystemMap = std::unordered_map<std::string, FileSystemPtr>;
