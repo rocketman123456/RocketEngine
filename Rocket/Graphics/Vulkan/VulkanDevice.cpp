@@ -29,8 +29,8 @@ namespace Rocket {
             loader->instance, loader->surface, device_extensions);
         // Create Logical Device
         indices.graphics_family = FindQueueFamilies(physical_device, VK_QUEUE_GRAPHICS_BIT);
-        indices.compute_family = FindQueueFamilies(physical_device, VK_QUEUE_COMPUTE_BIT);
         indices.present_family = FindPresentFamilies(physical_device, loader->surface);
+        indices.compute_family = FindQueueFamilies(physical_device, VK_QUEUE_COMPUTE_BIT);
         // // Check Present Support
         if (!indices.IsComplete()) {
             RK_ERROR(Graphics, "Queue Families Not Supported");
@@ -77,7 +77,8 @@ namespace Rocket {
         CreateVulkanSemaphore(device, device_table, &render_semaphore);
         // Create Command Pool
         CreateCommandPool(device, device_table, indices, &command_pool);
-        CreateCommandBuffer(device, device_table, command_pool, imageCount, command_buffers.data());
+        CreateCommandBuffer(device, device_table, 
+            command_pool, imageCount, command_buffers.data());
         // Log
         RK_TRACE(Graphics, "Initialize Vulkan Device");
     }

@@ -52,6 +52,39 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL VulkanDebugReportCallback(
     }
 }
 
+bool QueueFamilyIndices::IsComplete() {
+    return 
+        graphics_family.has_value() && 
+        present_family.has_value() && 
+        compute_family.has_value();
+}
+
+uint32_t QueueFamilyIndices::Multiplicity() {
+    if(!multiplicity.has_value()) {
+        std::set<uint32_t> families = {
+            graphics_family.value(),
+            present_family.value(),
+            compute_family.value(),
+        };
+        multiplicity = families.size();
+    }
+    return multiplicity.value();
+}
+
+const std::vector<uint32_t>& QueueFamilyIndices::FamilyData() {
+    if(!family_data.has_value()) {
+        std::set<uint32_t> families = {
+            graphics_family.value(),
+            present_family.value(),
+            compute_family.value(),
+        };
+        std::vector<uint32_t> data = {};
+        data.insert(data.begin(), families.begin(), families.end());
+        family_data = data;
+    }
+    return family_data.value();
+}
+
 namespace Rocket {
     // Create Instace
     bool CheckValidationLayerSupport(const std::vector<const char*>& validationLayers);
@@ -82,6 +115,11 @@ namespace Rocket {
         const VkSurfaceCapabilitiesKHR& capabilities, 
         uint32_t width, 
         uint32_t height);
+    // Buffer Related
+    uint32_t FindMemoryType(
+        const VkPhysicalDevice& physicalDevice, 
+        const uint32_t typeFilter, 
+        const VkMemoryPropertyFlags& properties);
 }
 
 namespace Rocket {
@@ -648,5 +686,248 @@ namespace Rocket {
             RK_ERROR(Graphics, "Unable to Create Command Pool");
             throw std::runtime_error("Unable to Create Command Pool");
         }
+    }
+
+    size_t AllocateVertexBuffer(
+            const VkDevice& device, 
+            const VolkDeviceTable& table, 
+            const VkPhysicalDevice& physicalDevice,
+            const VkCommandPool& commandPool,
+            const VkQueue& graphicsQueue,
+            VkBuffer* storageBuffer, 
+            VkDeviceMemory* storageBufferMemory, 
+            size_t vertexDataSize, 
+            const void* vertexData, 
+            size_t indexDataSize, 
+            const void* indexData) {
+        VkDeviceSize bufferSize = vertexDataSize + indexDataSize;
+
+        VkBuffer stagingBuffer;
+        VkDeviceMemory stagingBufferMemory;
+        CreateBuffer(device, table, physicalDevice, bufferSize,
+            VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+            VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+            &stagingBuffer, &stagingBufferMemory);
+
+        void* data;
+        table.vkMapMemory(device, stagingBufferMemory, 0, bufferSize, 0, &data);
+            memcpy(data, vertexData, vertexDataSize);
+            memcpy((unsigned char *)data + vertexDataSize, indexData, indexDataSize);
+        table.vkUnmapMemory(device, stagingBufferMemory);
+
+        CreateBuffer(device, table, physicalDevice, bufferSize,
+            VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
+            VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, storageBuffer, storageBufferMemory);
+
+        CopyBuffer(device, table, physicalDevice, 
+            commandPool, graphicsQueue,
+            bufferSize, &stagingBuffer, storageBuffer);
+
+        table.vkDestroyBuffer(device, stagingBuffer, nullptr);
+        table.vkFreeMemory(device, stagingBufferMemory, nullptr);
+        return bufferSize;
+    }
+
+    bool CreateBuffer(
+            const VkDevice& device, 
+            const VolkDeviceTable& table, 
+            const VkPhysicalDevice& physicalDevice,
+            const VkDeviceSize& size, 
+            const VkBufferUsageFlags& usage, 
+            const VkMemoryPropertyFlags& properties, 
+            VkBuffer* buffer,
+            VkDeviceMemory* bufferMemory) {
+        VkBufferCreateInfo bufferInfo = {};
+        bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+        bufferInfo.pNext = nullptr;
+        bufferInfo.flags = 0;
+        bufferInfo.size = size;
+        bufferInfo.usage = usage;
+        bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+        bufferInfo.queueFamilyIndexCount = 0;
+        bufferInfo.pQueueFamilyIndices = nullptr;
+        if(table.vkCreateBuffer(device, &bufferInfo, nullptr, buffer) != VK_SUCCESS) {
+            RK_ERROR(Graphics, "Unable to Create Buffer");
+            throw std::runtime_error("Unable to Create Buffer");
+        }
+
+        VkMemoryRequirements memRequirements;
+        table.vkGetBufferMemoryRequirements(device, *buffer, &memRequirements);
+        VkMemoryAllocateInfo allocInfo = {};
+        allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+        allocInfo.pNext = nullptr;
+        allocInfo.allocationSize = memRequirements.size;
+        allocInfo.memoryTypeIndex = 
+            FindMemoryType(physicalDevice, memRequirements.memoryTypeBits, properties);
+        if(table.vkAllocateMemory(device, &allocInfo, nullptr, bufferMemory) != VK_SUCCESS) {
+            RK_ERROR(Graphics, "Unable to Allocate Buffer");
+            throw std::runtime_error("Unable to Allocate Buffer");
+        }
+        table.vkBindBufferMemory(device, *buffer, *bufferMemory, 0);
+        return true;
+    }
+
+    uint32_t FindMemoryType(
+            const VkPhysicalDevice& physicalDevice, 
+            const uint32_t typeFilter, 
+            const VkMemoryPropertyFlags& properties) {
+        VkPhysicalDeviceMemoryProperties memProperties;
+        vkGetPhysicalDeviceMemoryProperties(physicalDevice, &memProperties);
+        for (uint32_t i = 0; i < memProperties.memoryTypeCount; i++) {
+            bool has_property = (memProperties.memoryTypes[i].propertyFlags & properties) == properties;
+            if ((typeFilter & (1 << i)) && has_property) {
+                return i;
+            }
+        }
+        return 0xFFFFFFFF;
+    }
+
+    void CopyBuffer(
+            const VkDevice& device, 
+            const VolkDeviceTable& table, 
+            const VkPhysicalDevice& physicalDevice,
+            const VkCommandPool& commandPool,
+            const VkQueue& graphicsQueue,
+            const VkDeviceSize& size,
+            VkBuffer* srcBuffer, 
+            VkBuffer* dstBuffer) {
+        VkCommandBuffer commandBuffer = BeginSingleTimeCommands(device, table, commandPool);
+        VkBufferCopy copyRegion = {};
+        copyRegion.srcOffset = 0;
+        copyRegion.dstOffset = 0;
+        copyRegion.size = size;
+        table.vkCmdCopyBuffer(commandBuffer, *srcBuffer, *dstBuffer, 1, &copyRegion);
+        EndSingleTimeCommands(device, table, graphicsQueue, commandPool, commandBuffer);
+    }
+
+    VkCommandBuffer BeginSingleTimeCommands(
+            const VkDevice& device, 
+            const VolkDeviceTable& table,
+            const VkCommandPool& commandPool) {
+        VkCommandBuffer commandBuffer;
+
+        VkCommandBufferAllocateInfo allocInfo = {};
+        allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+        allocInfo.pNext = nullptr;
+        allocInfo.commandPool = commandPool;
+        allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+        allocInfo.commandBufferCount = 1;
+        table.vkAllocateCommandBuffers(device, &allocInfo, &commandBuffer);
+
+        VkCommandBufferBeginInfo beginInfo = {};
+        beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+        beginInfo.pNext = nullptr;
+        beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+        beginInfo.pInheritanceInfo = nullptr;
+        table.vkBeginCommandBuffer(commandBuffer, &beginInfo);
+
+        return commandBuffer;
+    }
+
+    void EndSingleTimeCommands(
+            const VkDevice& device, 
+            const VolkDeviceTable& table,
+            const VkQueue& graphicsQueue,
+            const VkCommandPool& commandPool,
+            const VkCommandBuffer& commandBuffer) {
+        table.vkEndCommandBuffer(commandBuffer);
+
+        VkSubmitInfo submitInfo = {};
+        submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+        submitInfo.pNext = nullptr;
+        submitInfo.waitSemaphoreCount = 0;
+        submitInfo.pWaitSemaphores = nullptr;
+        submitInfo.pWaitDstStageMask = nullptr;
+        submitInfo.commandBufferCount = 1;
+        submitInfo.pCommandBuffers = &commandBuffer;
+        submitInfo.signalSemaphoreCount = 0;
+        submitInfo.pSignalSemaphores = nullptr;
+
+        table.vkQueueSubmit(graphicsQueue, 1, &submitInfo, VK_NULL_HANDLE);
+        table.vkQueueWaitIdle(graphicsQueue);
+        table.vkFreeCommandBuffers(device, commandPool, 1, &commandBuffer);
+    }
+
+    bool CreateSharedBuffer(
+            const VkDevice& device, 
+            const VolkDeviceTable& table, 
+            const VkPhysicalDevice& physicalDevice,
+            const VkDeviceSize size, 
+            const VkBufferUsageFlags usage, 
+            const VkMemoryPropertyFlags properties, 
+            QueueFamilyIndices& indices,
+            VkBuffer* buffer, 
+            VkDeviceMemory* bufferMemory) {
+        if (indices.Multiplicity() < 2)
+            return CreateBuffer(device, table, physicalDevice, 
+                size, usage, properties, buffer, bufferMemory);
+
+        VkBufferCreateInfo bufferInfo = {};
+        bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+        bufferInfo.pNext = nullptr;
+        bufferInfo.flags = 0;
+        bufferInfo.size = size;
+        bufferInfo.usage = usage;
+        bufferInfo.sharingMode = (indices.Multiplicity() > 1) ? VK_SHARING_MODE_CONCURRENT : VK_SHARING_MODE_EXCLUSIVE;
+        bufferInfo.queueFamilyIndexCount = static_cast<uint32_t>(indices.FamilyData().size());
+        bufferInfo.pQueueFamilyIndices = (indices.Multiplicity() > 1) ? indices.FamilyData().data() : nullptr;
+        if(table.vkCreateBuffer(device, &bufferInfo, nullptr, buffer) != VK_SUCCESS) {
+            RK_ERROR(Graphics, "Unable to Create Buffer");
+            throw std::runtime_error("Unable to Create Buffer");
+        }
+
+        VkMemoryRequirements memRequirements;
+        table.vkGetBufferMemoryRequirements(device, *buffer, &memRequirements);
+        VkMemoryAllocateInfo allocInfo = {};
+        allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+        allocInfo.pNext = nullptr;
+        allocInfo.allocationSize = memRequirements.size;
+        allocInfo.memoryTypeIndex = 
+            FindMemoryType(physicalDevice, memRequirements.memoryTypeBits, properties);
+        if(table.vkAllocateMemory(device, &allocInfo, nullptr, bufferMemory) != VK_SUCCESS) {
+            RK_ERROR(Graphics, "Unable to Allocate Buffer");
+            throw std::runtime_error("Unable to Allocate Buffer");
+        }
+        table.vkBindBufferMemory(device, *buffer, *bufferMemory, 0);
+        return true;
+    }
+
+    bool CreateUniformBuffer(
+            const VkDevice& device, 
+            const VolkDeviceTable& table, 
+            const VkPhysicalDevice& physicalDevice,
+            const VkDeviceSize& bufferSize,
+            VkBuffer* buffer, 
+            VkDeviceMemory* bufferMemory) {
+        return CreateBuffer(device, table, physicalDevice, bufferSize,
+            VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
+            VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+            buffer, bufferMemory);
+    }
+
+    void UploadBufferData(
+            const VkDevice& device, 
+            const VolkDeviceTable& table, 
+            const VkDeviceMemory& bufferMemory, 
+            VkDeviceSize deviceOffset, 
+            const void* data, 
+            const size_t dataSize) {
+        void* mappedData = nullptr;
+        table.vkMapMemory(device, bufferMemory, deviceOffset, dataSize, 0, &mappedData);
+            memcpy(mappedData, data, dataSize);
+        table.vkUnmapMemory(device, bufferMemory);
+    }
+
+    void DownloadBufferData(
+            const VkDevice& device, 
+            const VolkDeviceTable& table, 
+            const VkDeviceMemory& bufferMemory, 
+            VkDeviceSize deviceOffset, 
+            void* outData, 
+            const size_t dataSize) {
+        void* mappedData = nullptr;
+        table.vkMapMemory(device, bufferMemory, deviceOffset, dataSize, 0, &mappedData);
+            memcpy(outData, mappedData, dataSize);
+        table.vkUnmapMemory(device, bufferMemory);
     }
 }

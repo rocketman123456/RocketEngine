@@ -9,8 +9,6 @@
 
 // LIFO
 namespace Rocket {
-    // TODO : make it thread safe
-    // TODO : make stack implements iterator
     template<typename Item, int32_t _N_>
     class FixedStack {
     public:

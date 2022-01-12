@@ -72,8 +72,6 @@ namespace Rocket {
         VirtualBlockPtr root = nullptr;
         std::string real_path = "";
         std::string virtual_path = "";
-        // VNodeMap node_map = {};
-        // VBlockMap block_map = {};
         bool is_initialized = false;
     };
 

@@ -24,10 +24,10 @@ namespace Rocket {
                 return std::make_shared<MemoryFileSystem>(rpath, vpath);
             };
             case FileSystemType::Zip: {
-                return std::make_shared<NativeFileSystem>(rpath, vpath);
+                return std::make_shared<ZipFileSystem>(rpath, vpath);
             };
             case FileSystemType::Native: {
-                return std::make_shared<ZipFileSystem>(rpath, vpath);
+                return std::make_shared<NativeFileSystem>(rpath, vpath);
             };
         }
         // self-defined filesystem

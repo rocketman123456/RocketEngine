@@ -245,6 +245,7 @@ namespace Rocket {
         virtual ~JsonParser() = default;
 
         int32_t Initialize(const std::string& file_name, const VirtualFileSystemPtr& vfs);
+        int32_t Initialize(const std::string& root, const std::string& file_name);
         int32_t Initialize(const std::string& content);
         void Finalize();
 

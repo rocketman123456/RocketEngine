@@ -7,10 +7,8 @@
 #include <mutex>
 
 namespace Rocket {
-    // TODO : check multi-thread bug
     template<typename Item>
-    class ConcurrentBag
-    {
+    class ConcurrentBag {
     public:
         typedef std::forward_list<Item> List;
         typedef typename List::iterator Iterator;

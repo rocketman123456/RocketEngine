@@ -20,10 +20,20 @@ namespace Rocket {
         loaded_indices.clear();
         loaded_materials.clear();
 
-        // TODO
-        // FileBuffer buffer;
-        // FileSystem::LoadSync(path_, name_, FileOperateMode::READ_TEXT, buffer);
-        // content_ = std::string((char*)buffer.buffer);
+        // TODO : use resource cache
+        FILE* file = fopen(full_path_.c_str(), "r");
+        if (file == nullptr) {
+            RK_ERROR(File, "I/O error. Cannot open file: {}", full_path_);
+            return false;
+        }
+        fseek(file, 0L, SEEK_END);
+        const auto bytesinfile = ftell(file);
+        fseek(file, 0L, SEEK_SET);
+        // Read File Buffer
+        char* buffer = (char*)alloca(bytesinfile + 1);
+        const size_t bytesread = fread(buffer, 1, bytesinfile, file);
+        fclose(file);
+        content_ = buffer;
 
         return 0;
     }
@@ -87,10 +97,8 @@ namespace Rocket {
                         // Create Mesh
                         temp_mesh = Mesh(vertices, indices);
                         temp_mesh.mesh_name = meshname;
-
                         // Insert Mesh
                         loaded_meshes.push_back(temp_mesh);
-
                         // Cleanup
                         vertices.clear();
                         indices.clear();
@@ -126,10 +134,8 @@ namespace Rocket {
                 std::vector<std::string> stex;
                 Eigen::Vector2f vtex;
                 SplitMultiChar(Tail(curline), &stex, " ");
-
                 vtex[0] = std::stof(stex[0]);
                 vtex[1] = std::stof(stex[1]);
-
                 tcoords.push_back(vtex);
             }
             // Generate a Vertex Normal;
@@ -137,11 +143,9 @@ namespace Rocket {
                 std::vector<std::string> snor;
                 Eigen::Vector3f vnor;
                 SplitMultiChar(Tail(curline), &snor, " ");
-
                 vnor[0] = std::stof(snor[0]);
                 vnor[1] = std::stof(snor[1]);
                 vnor[2] = std::stof(snor[2]);
-
                 normals.push_back(vnor);
             }
             // Generate a Face (vertices & indices)
@@ -149,23 +153,19 @@ namespace Rocket {
                 // Generate the vertices
                 std::vector<Vertex> vVerts;
                 GenVerticesFromRawOBJ(vVerts, positions, tcoords, normals, curline);
-
                 // Add Vertices
                 for (int i = 0; i < int(vVerts.size()); i++) {
                     vertices.push_back(vVerts[i]);
                     loaded_vertices.push_back(vVerts[i]);
                 }
-
                 std::vector<unsigned int> iIndices;
                 VertexTriangluation(iIndices, vVerts);
-
                 // Add Indices
                 for (int i = 0; i < int(iIndices.size()); i++) {
                     unsigned int indnum = (unsigned int)((vertices.size()) - vVerts.size()) + iIndices[i];
                     indices.push_back(indnum);
                     indnum = (unsigned int)((loaded_vertices.size()) - vVerts.size()) + iIndices[i];
                     loaded_indices.push_back(indnum);
-
                 }
             }
             // Get Mesh Material Name
@@ -214,25 +214,20 @@ namespace Rocket {
                 LoadMaterials(pathtomat);
             }
         }
-
 #ifdef OBJL_CONSOLE_OUTPUT
         std::cout << std::endl;
 #endif
-
         // Deal with last mesh
         if (!indices.empty() && !vertices.empty()) {
             // Create Mesh
             temp_mesh = Mesh(vertices, indices);
             temp_mesh.mesh_name = meshname;
-
             // Insert Mesh
             loaded_meshes.push_back(temp_mesh);
         }
-
         // Set Materials for each Mesh
         for (int i = 0; i < mesh_mat_names.size(); i++) {
             std::string matname = mesh_mat_names[i];
-
             // Find corresponding material name in loaded materials
             // when found copy material variables into mesh material
             for (int j = 0; j < loaded_materials.size(); j++) {
@@ -242,11 +237,9 @@ namespace Rocket {
                 }
             }
         }
-
         RK_INFO(File, "Mesh Size: {}", loaded_meshes.size());
         RK_INFO(File, "Vertices Size: {}", loaded_vertices.size());
         RK_INFO(File, "Indices Size: {}", loaded_indices.size());
-
         if (loaded_meshes.empty() && loaded_vertices.empty() && loaded_indices.empty())
             return false;
         else
@@ -263,28 +256,22 @@ namespace Rocket {
         std::vector<std::string> sface, svert;
         Vertex vVert;
         SplitMultiChar(Tail(icurline), &sface, " ");
-
         bool noNormal = false;
-
         // For every given vertex do this
         for (int i = 0; i < int(sface.size()); i++) {
             // See What type the vertex is.
             int vtype;
-
             SplitMultiChar(sface[i], &svert, "/");
-
             // Check for just position - v1
             if (svert.size() == 1) {
                 // Only position
                 vtype = 1;
             }
-
             // Check for position & texture - v1/vt1
             if (svert.size() == 2) {
                 // Position & Texture
                 vtype = 2;
             }
-
             // Check for Position, Texture and Normal - v1/vt1/vn1
             // or if Position and Normal - v1//vn1
             if (svert.size() == 3) {
@@ -296,7 +283,6 @@ namespace Rocket {
                     vtype = 3;
                 }
             }
-
             // Calculate and store the vertex
             switch (vtype) {
                 case 1: { // P
@@ -332,7 +318,6 @@ namespace Rocket {
                 }
             }
         }
-
         // take care of missing normals
         // these may not be truly acurate but it is the
         // best they get for not compiling a mesh with normals
@@ -465,11 +450,9 @@ namespace Rocket {
                 // -1 since loop will add 1 to it
                 i = -1;
             }
-
             // if no triangles were created
             if (oIndices.size() == 0)
                 break;
-
             // if no more vertices
             if (tVerts.size() == 0)
                 break;
@@ -477,19 +460,32 @@ namespace Rocket {
     }
 
     // Load Materials from .mtl file
-    bool ObjParser::LoadMaterials(std::string path) {
+    bool ObjParser::LoadMaterials(std::string name) {
         // If the file is not a material file return false
-        if (path.substr(path.size() - 4, path.size()) != ".mtl") {
+        if (name.substr(name.size() - 4, name.size()) != ".mtl") {
             return false;
         }
 
-        // TODO : 
+        // TODO : use resource cache
+        auto full_name = path_ + name; //root + '/' + path;
+        FILE* file = fopen(full_name.c_str(), "r");
+        if (file == nullptr) {
+            RK_ERROR(File, "I/O error. Cannot open file: {}", full_name);
+            return false;
+        }
+        fseek(file, 0L, SEEK_END);
+        const auto bytesinfile = ftell(file);
+        fseek(file, 0L, SEEK_SET);
+        // Read File Buffer
+        char* buffer = (char*)alloca(bytesinfile + 1);
+        const size_t bytesread = fread(buffer, 1, bytesinfile, file);
+        fclose(file);
         // auto file = FileSystem::OpenSync(path, FileOperateMode::READ_TEXT);
         // FileBuffer buffer;
         // file->ReadAll(buffer);
         // auto content = std::string((char*)buffer.buffer);
         // FileSystem::CloseSync(std::move(file));
-        std::string content = "";
+        std::string content(buffer);
 
         material_content_.push_back(content);
         // If the file is not found return false
@@ -585,12 +581,9 @@ namespace Rocket {
                 tempMaterial.map_bump = Tail(curline);
             }
         }
-
         // Deal with last material
-
         // Push Back loaded Material
         loaded_materials.push_back(tempMaterial);
-
         // Test to see if anything was loaded
         // If not return false
         if (loaded_materials.empty())

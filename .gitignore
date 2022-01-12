@@ -32,6 +32,8 @@
 
 # Xmake cache
 .xmake/
+
+# vscode and build cache
 .VSCodeCounter/
 build/
 build_cmake/
@@ -40,10 +42,10 @@ build_cmake/
 .DS_Store
 
 # Ignore 3rdParty build
-External/
-Target/
-ThirdParty/build/
-Data/
+# External/
+# Target/
+# ThirdParty/build/
+# Data/
 
 # Ignore Large Asset File
 *.wav

@@ -795,6 +795,7 @@ namespace Rocket {
     int32_t JsonParser::Initialize(
             const std::string& file_name, 
             const VirtualFileSystemPtr& vfs) {
+        // TODO : use resource cache
         auto file = vfs->GetFilePointer(file_name);
         vfs->OpenFile(file, FileEnum::READ_TEXT);
         FileBuffer buffer = {new FileByte[file->Size() + 1], file->Size() + 1};
@@ -803,6 +804,28 @@ namespace Rocket {
         delete [] buffer.data();
         vfs->CloseFile(file);
 
+        Serialize(content_);
+        return 0;
+    }
+
+    int32_t JsonParser::Initialize(
+            const std::string& root, 
+            const std::string& file_name) {
+        auto full_name = root + file_name;
+        FILE* file = fopen(full_name.c_str(), "r");
+        if (file == nullptr) {
+            RK_ERROR(Graphics, "I/O error. Cannot open shader file: {}", full_name);
+            return -1;
+        }
+        fseek(file, 0L, SEEK_END);
+        const auto bytesinfile = ftell(file);
+        fseek(file, 0L, SEEK_SET);
+        // Read File Buffer
+        char* buffer = (char*)alloca(bytesinfile + 1);
+        const size_t bytesread = fread(buffer, 1, bytesinfile, file);
+        fclose(file);
+
+        content_ = buffer;
         Serialize(content_);
         return 0;
     }

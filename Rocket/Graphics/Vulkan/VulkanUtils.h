@@ -1,20 +1,20 @@
 #pragma once
-
 #include <volk.h>
 
+#include <set>
 #include <vector>
 #include <optional>
 
 struct QueueFamilyIndices {
+    std::optional<uint32_t> multiplicity;
+    std::optional<std::vector<uint32_t>> family_data;
     std::optional<uint32_t> graphics_family;
     std::optional<uint32_t> present_family;
     std::optional<uint32_t> compute_family;
-    bool IsComplete() {
-        return 
-            graphics_family.has_value() && 
-            present_family.has_value() && 
-            compute_family.has_value();
-    }
+
+    bool IsComplete();
+    uint32_t Multiplicity();
+    const std::vector<uint32_t>& FamilyData();
 };
 
 struct SwapchainSupportDetails final {
@@ -101,4 +101,76 @@ namespace Rocket {
         const VkCommandPool& commandPool,
         uint32_t imageCount,
         VkCommandBuffer* command_buffer);
+    // Buffer Related
+    size_t AllocateVertexBuffer(
+        const VkDevice& device, 
+        const VolkDeviceTable& table, 
+        const VkPhysicalDevice& physicalDevice,
+        const VkCommandPool& commandPool,
+        const VkQueue& graphicsQueue,
+        VkBuffer* storageBuffer, 
+        VkDeviceMemory* storageBufferMemory, 
+        size_t vertexDataSize, 
+        const void* vertexData, 
+        size_t indexDataSize, 
+        const void* indexData);
+    bool CreateBuffer(
+        const VkDevice& device, 
+        const VolkDeviceTable& table, 
+        const VkPhysicalDevice& physicalDevice,
+        const VkDeviceSize& size, 
+        const VkBufferUsageFlags& usage, 
+        const VkMemoryPropertyFlags& properties, 
+        VkBuffer* buffer,
+        VkDeviceMemory* bufferMemory);
+    void CopyBuffer(
+        const VkDevice& device, 
+        const VolkDeviceTable& table, 
+        const VkPhysicalDevice& physicalDevice,
+        const VkCommandPool& commandPool,
+        const VkQueue& graphicsQueue,
+        const VkDeviceSize& size,
+        VkBuffer* srcBuffer, 
+        VkBuffer* dstBuffer);
+    VkCommandBuffer BeginSingleTimeCommands(
+        const VkDevice& device, 
+        const VolkDeviceTable& table,
+        const VkCommandPool& commandPool);
+    void EndSingleTimeCommands(
+        const VkDevice& device, 
+        const VolkDeviceTable& table,
+        const VkQueue& graphicsQueue,
+        const VkCommandPool& commandPool,
+        const VkCommandBuffer& commandBuffer);
+    bool CreateSharedBuffer(
+        const VkDevice& device, 
+        const VolkDeviceTable& table, 
+        const VkPhysicalDevice& physicalDevice,
+        const VkDeviceSize size, 
+        const VkBufferUsageFlags usage, 
+        const VkMemoryPropertyFlags properties, 
+        QueueFamilyIndices& indices,
+        VkBuffer* buffer, 
+        VkDeviceMemory* bufferMemory);
+    bool CreateUniformBuffer(
+        const VkDevice& device, 
+        const VolkDeviceTable& table, 
+        const VkPhysicalDevice& physicalDevice,
+        const VkDeviceSize& bufferSize,
+        VkBuffer* buffer, 
+        VkDeviceMemory* bufferMemory);
+    void UploadBufferData(
+        const VkDevice& device, 
+        const VolkDeviceTable& table, 
+        const VkDeviceMemory& bufferMemory, 
+        VkDeviceSize deviceOffset, 
+        const void* data, 
+        const size_t dataSize);
+    void DownloadBufferData(
+        const VkDevice& device, 
+        const VolkDeviceTable& table, 
+        const VkDeviceMemory& bufferMemory, 
+        VkDeviceSize deviceOffset, 
+        void* outData, 
+        const size_t dataSize);
 }
