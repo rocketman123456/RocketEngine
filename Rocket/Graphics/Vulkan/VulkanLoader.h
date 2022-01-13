@@ -1,5 +1,6 @@
 #pragma once
 #include "Common/RenderLoader.h"
+#include "Vulkan/VulkanVariable.h"
 
 #include <volk.h>
 

@@ -1,6 +1,6 @@
-#include "Vulkan/VulkanDevice.h"
+#include "Vulkan/VulkanDeviceLoader.h"
 #include "Vulkan/VulkanUtils.h"
-#include "Vulkan/VulkanVariable.h"
+#include "Vulkan/VulkanConstant.h"
 #include "Utils/InstanceOf.h"
 #include "Log/Instrumentor.h"
 #include "Log/Log.h"
@@ -9,7 +9,7 @@
 #include <stdexcept>
 
 namespace Rocket {
-    void VulkanDevice::SetLoader(RenderLoaderPtr loader) {
+    void VulkanDeviceLoader::SetLoader(RenderLoaderPtr loader) {
         if(instanceof<VulkanLoader>(loader.get())) {
             this->loader = std::static_pointer_cast<VulkanLoader>(loader);
         } else {
@@ -18,12 +18,12 @@ namespace Rocket {
         }
     }
 
-    void VulkanDevice::SetSize(uint32_t width, uint32_t height) {
+    void VulkanDeviceLoader::SetSize(uint32_t width, uint32_t height) {
         this->width = width;
         this->height = height;
     }
 
-    void VulkanDevice::Initialize() {
+    void VulkanDeviceLoader::Initialize() {
         // Pick Physical Device
         physical_device = PickPhysicalDevice(
             loader->instance, loader->surface, device_extensions);
@@ -83,7 +83,7 @@ namespace Rocket {
         RK_TRACE(Graphics, "Initialize Vulkan Device");
     }
 
-    void VulkanDevice::Finalize() {
+    void VulkanDeviceLoader::Finalize() {
         device_table.vkDestroyCommandPool(device, command_pool, nullptr);
         device_table.vkDestroySemaphore(device, semaphore, nullptr);
         device_table.vkDestroySemaphore(device, render_semaphore, nullptr);

@@ -6,4 +6,5 @@
 namespace Rocket {
     std::string ReadShaderFile(const std::string& root, const std::string& name);
     std::string ReadShaderFile(const std::string& name, VirtualFileSystemPtr vfs);
+    void PrintShaderSource(const char* text);
 }

@@ -1,6 +1,6 @@
 #include "Common/WindowFactory.h"
 #include "Vulkan/VulkanLoader.h"
-#include "Vulkan/VulkanDevice.h"
+#include "Vulkan/VulkanDeviceLoader.h"
 
 using namespace Rocket;
 
@@ -17,7 +17,7 @@ int main() {
     loader->SetWindow(window->GetWindowHandle());
     loader->Initialize();
 
-    auto device = std::make_shared<VulkanDevice>();
+    auto device = std::make_shared<VulkanDeviceLoader>();
     device->SetLoader(loader);
     device->SetSize(window->FramebufferWidth(), window->FramebufferHeight());
     device->Initialize();

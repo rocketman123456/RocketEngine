@@ -1,12 +1,12 @@
 #pragma once
-#include "Common/RenderDevice.h"
+#include "Common/RenderDeviceLoader.h"
 #include "Vulkan/VulkanLoader.h"
 #include "Vulkan/VulkanUtils.h"
 
 #include <volk.h>
 
 namespace Rocket {
-    class VulkanDevice : _implements_ RenderDevice {
+    class VulkanDeviceLoader : _implements_ RenderDeviceLoader {
     public:
         void SetLoader(RenderLoaderPtr loader) final;
         void SetSize(uint32_t width, uint32_t height) final;
@@ -54,5 +54,5 @@ namespace Rocket {
         VkCommandBuffer compute_command_buffer;
     };
 
-    CLASS_PTR(VulkanDevice);
+    CLASS_PTR(VulkanDeviceLoader);
 }

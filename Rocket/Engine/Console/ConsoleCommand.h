@@ -26,8 +26,6 @@ namespace Rocket {
     _Interface_ ConsoleCommand : _inherits_ Command {
     public:
         ConsoleCommand(const std::vector<std::string>& args) : arguments(args) {}
-        ConsoleCommand(const std::vector<std::string>& args, 
-            const std::vector<ConsoleVariableType>& types) : arguments(args), types(types) {}
         virtual ~ConsoleCommand() = default;
         std::vector<std::string> arguments;
         std::vector<ConsoleVariableType> types;

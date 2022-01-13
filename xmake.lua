@@ -104,7 +104,7 @@ elseif is_config("render", "vulkan") then
     -- add_requires("shaderc 2021.11.22", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
     -- add_requires("glslang 1.2.189+1", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
     -- add_requires("vulkan-validationlayers 1.2.198+0", {system = false, configs = {shared = false, debug = false}})
-    -- add_requires("glslang 1.2.189+1", {system = false, configs = {shared = false, debug = false}})
+    add_requires("glslang 1.2.189+1", {system = false, configs = {shared = false, debug = false}})
 elseif is_config("render", "metal") then
     -- add_defines("RK_METAL")
 elseif is_config("render", "dx12") then

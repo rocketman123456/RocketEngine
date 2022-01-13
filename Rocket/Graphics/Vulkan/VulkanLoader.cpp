@@ -1,6 +1,6 @@
 #include "Vulkan/VulkanLoader.h"
 #include "Vulkan/VulkanUtils.h"
-#include "Vulkan/VulkanVariable.h"
+#include "Vulkan/VulkanConstant.h"
 #include "Log/Instrumentor.h"
 #include "Log/Log.h"
 

@@ -1,27 +1,7 @@
 #pragma once
+#include "Vulkan/VulkanVariable.h"
+
 #include <volk.h>
-
-#include <set>
-#include <vector>
-#include <optional>
-
-struct QueueFamilyIndices {
-    std::optional<uint32_t> multiplicity;
-    std::optional<std::vector<uint32_t>> family_data;
-    std::optional<uint32_t> graphics_family;
-    std::optional<uint32_t> present_family;
-    std::optional<uint32_t> compute_family;
-
-    bool IsComplete();
-    uint32_t Multiplicity();
-    const std::vector<uint32_t>& FamilyData();
-};
-
-struct SwapchainSupportDetails final {
-    VkSurfaceCapabilitiesKHR capabilities = {};
-    std::vector<VkSurfaceFormatKHR> formats;
-    std::vector<VkPresentModeKHR> presentModes;
-};
 
 namespace Rocket {
     // Create Instace

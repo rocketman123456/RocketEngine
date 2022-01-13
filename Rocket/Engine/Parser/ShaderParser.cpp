@@ -89,4 +89,18 @@ namespace Rocket {
         include_files.clear();
         return code;
     }
+
+    void PrintShaderSource(const char* text) {
+        int line = 1;
+        printf("\n(%3i) ", line);
+        while (text && *text++) {
+            if (*text == '\n') {
+                printf("\n(%3i) ", ++line);
+            } else if (*text == '\r') {
+            } else {
+                printf("%c", *text);
+            }
+        }
+        printf("\n");
+    }
 }

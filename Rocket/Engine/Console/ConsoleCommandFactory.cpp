@@ -21,17 +21,4 @@ namespace Rocket {
                 return nullptr;
         }
     }
-
-    // static ConsoleCommandPtr CreateCommand(ConsoleCommandType type, 
-    //         const std::vector<std::string>& args, 
-    //         const std::vector<ConsoleVariableType>& types) {
-    //     switch(type) {
-    //         case ConsoleCommandType::PRINT:
-    //             return std::make_shared<PrintCommand>(args);
-    //         case ConsoleCommandType::EXIT:
-    //             return std::make_shared<ExitCommand>(args);
-    //         default:
-    //             return nullptr;
-    //     }
-    // }
 }

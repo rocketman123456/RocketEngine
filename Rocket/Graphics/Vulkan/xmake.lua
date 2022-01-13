@@ -5,10 +5,9 @@ target("RocketVulkan")
     add_options("memory_check")
     add_options("render")
     add_options("profile_settings")
-    add_packages(
-        "volk",
-        "glfw",
-        {public = true}
-    )
+    add_packages("volk", {public = true})
+    add_packages("glfw", {public = true})
+    add_packages("glslang", {public = true})
     add_deps("RocketLog", {public = true})
+    add_deps("RocketUtils", {public = true})
 target_end()
