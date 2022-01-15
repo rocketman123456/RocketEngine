@@ -1,10 +1,7 @@
 #include "Vulkan/VulkanInstanceUtils.h"
-#include "Vulkan/VulkanConstant.h"
-#include "Parser/ShaderParser.h"
-#include "Utils/StringUtils.h"
 #include "Log/Log.h"
 
-#include <glslang/Include/ResourceLimits.h>
+#include <set>
 
 static VKAPI_ATTR VkBool32 VKAPI_CALL VulkanDebugCallback(
     VkDebugUtilsMessageSeverityFlagBitsEXT      messageSeverity, 
@@ -54,12 +51,24 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL VulkanDebugReportCallback(
 }
 
 namespace Rocket {
-    void CHECK(bool check, const char* fileName, int lineNumber) {
-        if (!check) {
-            RK_ERROR(Graphics, "CHECK() failed at {}:{}", fileName, lineNumber);
-            assert(false);
-            exit(EXIT_FAILURE);
+    bool CheckValidationLayerSupport(const std::vector<const char*>& validationLayers);
+    void PrintVulkanVersion();
+
+
+}
+
+namespace Rocket {
+    bool CheckValidationLayerSupport(const std::vector<const char*>& validationLayers) {
+        uint32_t layerCount;
+        vkEnumerateInstanceLayerProperties(&layerCount, nullptr);
+        std::vector<VkLayerProperties> availableLayers(layerCount);
+        vkEnumerateInstanceLayerProperties(&layerCount, availableLayers.data());
+
+        std::set<std::string> requiredValidations(validationLayers.begin(), validationLayers.end());
+        for (const auto& layer : availableLayers) {
+            requiredValidations.erase(layer.layerName);
         }
+        return requiredValidations.empty();
     }
 
     void PrintVulkanVersion() {
@@ -69,6 +78,40 @@ namespace Rocket {
             VK_VERSION_MINOR(version),
             VK_VERSION_PATCH(version)
         );
+    }
+
+    void CreateVulkanInstance(
+        VkInstance* instance,
+        const std::vector<const char*>& validationLayers,
+        const std::vector<const char*>& instanceExtension
+    ) {
+        BL_CHECK(CheckValidationLayerSupport(validationLayers));
+
+        VkApplicationInfo appinfo = {};
+        appinfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
+        appinfo.pNext = nullptr;
+        appinfo.pApplicationName = "Vulkan";
+        appinfo.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
+        appinfo.pEngineName = "No Engine";
+        appinfo.engineVersion = VK_MAKE_VERSION(1, 0, 0);
+        appinfo.apiVersion = VK_API_VERSION_1_1;
+
+        VkInstanceCreateInfo createInfo = {};
+        createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
+        createInfo.pNext = nullptr;
+        createInfo.flags = 0;
+        createInfo.pApplicationInfo = &appinfo;
+        createInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
+        createInfo.ppEnabledLayerNames = validationLayers.data();
+        createInfo.enabledExtensionCount = static_cast<uint32_t>(instanceExtension.size());
+        createInfo.ppEnabledExtensionNames = instanceExtension.data();
+
+        VK_CHECK(vkCreateInstance(&createInfo, nullptr, instance));
+
+        //volkLoadInstance(*instance);
+        volkLoadInstanceOnly(*instance);
+
+        PrintVulkanVersion();
     }
 
     void PopulateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo) {
@@ -115,124 +158,6 @@ namespace Rocket {
         VK_CHECK(vkCreateDebugReportCallbackEXT(instance, &createInfo, nullptr, reportCallback));
     }
 
-    static_assert(sizeof(TBuiltInResource) == sizeof(glslang_resource_t));
-
-    VkShaderStageFlagBits glslangShaderStageToVulkan(glslang_stage_t sh) {
-        switch(sh) {
-            case GLSLANG_STAGE_VERTEX:
-                return VK_SHADER_STAGE_VERTEX_BIT;
-            case GLSLANG_STAGE_FRAGMENT:
-                return VK_SHADER_STAGE_FRAGMENT_BIT;
-            case GLSLANG_STAGE_GEOMETRY:
-                return VK_SHADER_STAGE_GEOMETRY_BIT;
-            case GLSLANG_STAGE_TESSCONTROL:
-                return VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT;
-            case GLSLANG_STAGE_TESSEVALUATION:
-                return VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT;
-            case GLSLANG_STAGE_COMPUTE:
-                return VK_SHADER_STAGE_COMPUTE_BIT;
-        }
-        return VK_SHADER_STAGE_VERTEX_BIT;
-    }
-
-    glslang_stage_t glslangShaderStageFromFileName(const char* fileName) {
-        if (EndsWith(fileName, ".vert"))
-            return GLSLANG_STAGE_VERTEX;
-        if (EndsWith(fileName, ".frag"))
-            return GLSLANG_STAGE_FRAGMENT;
-        if (EndsWith(fileName, ".geom"))
-            return GLSLANG_STAGE_GEOMETRY;
-        if (EndsWith(fileName, ".comp"))
-            return GLSLANG_STAGE_COMPUTE;
-        if (EndsWith(fileName, ".tesc"))
-            return GLSLANG_STAGE_TESSCONTROL;
-        if (EndsWith(fileName, ".tese"))
-            return GLSLANG_STAGE_TESSEVALUATION;
-        return GLSLANG_STAGE_VERTEX;
-    }
-
-    size_t CompileShader(
-        glslang_stage_t stage, const char* shaderSource, VulkanShaderModule* shaderModule
-    ) {
-        glslang_input_t input = {};
-        input.language = GLSLANG_SOURCE_GLSL;
-        input.stage = stage;
-        input.client = GLSLANG_CLIENT_VULKAN;
-        input.client_version = GLSLANG_TARGET_VULKAN_1_1;
-        input.target_language = GLSLANG_TARGET_SPV;
-        input.target_language_version = GLSLANG_TARGET_SPV_1_3;
-        input.code = shaderSource;
-        input.default_version = 100;
-        input.default_profile = GLSLANG_NO_PROFILE;
-        input.force_default_version_and_profile = false;
-        input.forward_compatible = false;
-        input.messages = GLSLANG_MSG_DEFAULT_BIT;
-        input.resource = (const glslang_resource_t*) &DefaultTBuiltInResource;
-
-        glslang_shader_t* shader = glslang_shader_create(&input);
-
-        if (!glslang_shader_preprocess(shader, &input)) {
-            RK_ERROR(Graphics, "GLSL preprocessing failed");
-            RK_ERROR(Graphics, "{}", glslang_shader_get_info_log(shader));
-            RK_ERROR(Graphics, "{}", glslang_shader_get_info_debug_log(shader));
-            PrintShaderSource(input.code);
-            return 0;
-        }
-
-        if (!glslang_shader_parse(shader, &input)) {
-            RK_ERROR(Graphics, "GLSL parsing failed");
-            RK_ERROR(Graphics, "{}", glslang_shader_get_info_log(shader));
-            RK_ERROR(Graphics, "{}", glslang_shader_get_info_debug_log(shader));
-            PrintShaderSource(glslang_shader_get_preprocessed_code(shader));
-            return 0;
-        }
-
-        glslang_program_t* program = glslang_program_create();
-        glslang_program_add_shader(program, shader);
-
-        if (!glslang_program_link(program, GLSLANG_MSG_SPV_RULES_BIT | GLSLANG_MSG_VULKAN_RULES_BIT)) {
-            RK_ERROR(Graphics, "GLSL linking failed");
-            RK_ERROR(Graphics, "{}", glslang_program_get_info_log(program));
-            RK_ERROR(Graphics, "{}", glslang_program_get_info_debug_log(program));
-            return 0;
-        }
-
-        glslang_program_SPIRV_generate(program, stage);
-        shaderModule->SPIRV.resize(glslang_program_SPIRV_get_size(program));
-        glslang_program_SPIRV_get(program, shaderModule->SPIRV.data());
-
-        const char* spirv_messages = glslang_program_SPIRV_get_messages(program);
-        if (spirv_messages) {
-            RK_ERROR(Graphics, "{}", spirv_messages);
-        }
-
-        glslang_program_delete(program);
-        glslang_shader_delete(shader);
-        return shaderModule->SPIRV.size();
-    }
-
-    size_t CompileShaderFile(
-        const char* root, const char* file, VulkanShaderModule* shaderModule
-    ) {
-        auto shaderSource = ReadShaderFile(root, file);
-        if(!shaderSource.empty())
-            return CompileShader(
-                glslangShaderStageFromFileName(file), shaderSource.c_str(), shaderModule);
-        return 0;
-    }
-
-    VkResult CreateShaderModule(
-        VkDevice device, VulkanShaderModule* shader, const char* root, const char* fileName
-    ) {
-        if (CompileShaderFile(root, fileName, shader) < 1)
-            return VK_NOT_READY;
-        VkShaderModuleCreateInfo createInfo = {};
-        createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
-        createInfo.codeSize = shader->SPIRV.size() * sizeof(unsigned int);
-        createInfo.pCode = shader->SPIRV.data();
-        return vkCreateShaderModule(device, &createInfo, nullptr, &shader->shader_module);
-    }
-
     uint32_t FindQueueFamilies(VkPhysicalDevice device, VkQueueFlags desiredFlags) {
         uint32_t familyCount = 0;
         vkGetPhysicalDeviceQueueFamilyProperties(device, &familyCount, nullptr);
@@ -264,10 +189,136 @@ namespace Rocket {
         return 0;
     }
 
+    VkResult CreateLogicalDevice(
+        VkPhysicalDevice physicalDevice, 
+        VkPhysicalDeviceFeatures deviceFeatures, 
+        const std::vector<const char*>& validationLayers,
+        const std::vector<const char*>& extensions,
+        uint32_t graphicsFamily, 
+        VkDevice* device
+    ) {
+        const float queuePriority = 1.0f;
+
+        VkDeviceQueueCreateInfo qci = {};
+        qci.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+        qci.pNext = nullptr;
+        qci.flags = 0;
+        qci.queueFamilyIndex = graphicsFamily;
+        qci.queueCount = 1;
+        qci.pQueuePriorities = &queuePriority;
+
+        VkDeviceCreateInfo ci = {};
+        ci.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+        ci.pNext = nullptr;
+        ci.flags = 0;
+        ci.queueCreateInfoCount = 1;
+        ci.pQueueCreateInfos = &qci;
+        ci.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
+        ci.ppEnabledLayerNames = validationLayers.data();
+        ci.enabledExtensionCount = static_cast<uint32_t>(extensions.size());
+        ci.ppEnabledExtensionNames = extensions.data();
+        ci.pEnabledFeatures = &deviceFeatures;
+
+        return vkCreateDevice(physicalDevice, &ci, nullptr, device);
+    }
+
+    VkResult CreateLogicalDeviceWithCompute(
+        VkPhysicalDevice physicalDevice, 
+        VkPhysicalDeviceFeatures deviceFeatures, 
+        const std::vector<const char*>& validationLayers,
+        const std::vector<const char*>& extensions,
+        uint32_t graphicsFamily, 
+        uint32_t computeFamily, 
+        VkDevice* device
+    ) {
+        if (graphicsFamily == computeFamily)
+            return CreateLogicalDevice(
+                physicalDevice, deviceFeatures, 
+                validationLayers, extensions, 
+                graphicsFamily, device
+            );
+
+        const float queuePriorities[2] = { 0.f, 0.f };
+        VkDeviceQueueCreateInfo qciGfx = {};
+        qciGfx.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+        qciGfx.pNext = nullptr;
+        qciGfx.flags = 0;
+        qciGfx.queueFamilyIndex = graphicsFamily;
+        qciGfx.queueCount = 1;
+        qciGfx.pQueuePriorities = &queuePriorities[0];
+
+        VkDeviceQueueCreateInfo qciComp = {};
+        qciComp.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+        qciComp.pNext = nullptr;
+        qciComp.flags = 0;
+        qciComp.queueFamilyIndex = computeFamily;
+        qciComp.queueCount = 1;
+        qciComp.pQueuePriorities = &queuePriorities[1];
+
+        const VkDeviceQueueCreateInfo qci[2] = { qciGfx, qciComp };
+
+        VkDeviceCreateInfo ci = {};
+        ci.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+        ci.pNext = nullptr;
+        ci.flags = 0;
+        ci.queueCreateInfoCount = 2;
+        ci.pQueueCreateInfos = qci;
+        ci.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
+        ci.ppEnabledLayerNames = validationLayers.data();
+        ci.enabledExtensionCount = static_cast<uint32_t>(extensions.size());
+        ci.ppEnabledExtensionNames = extensions.data();
+        ci.pEnabledFeatures = &deviceFeatures;
+
+        return vkCreateDevice(physicalDevice, &ci, nullptr, device);
+    }
+
+    VkResult CreateLogicalDevice(
+        const VkPhysicalDevice& physicalDevice, 
+        const std::vector<const char*>& validationLayers,
+        const std::vector<const char*>& deviceExtensions, 
+        const QueueFamilyIndices& indices,
+        VkDevice* device
+    ) {
+        std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
+        std::set<uint32_t> uniqueQueueFamilies = {
+            indices.graphics_family.value(),
+            indices.compute_family.value(),
+            indices.present_family.value(),
+        };
+
+        float queuePriority = 1.0f;
+        for(auto queueFamily : uniqueQueueFamilies) {
+            VkDeviceQueueCreateInfo queueCreateInfo{};
+            queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+            queueCreateInfo.queueFamilyIndex = queueFamily;
+            queueCreateInfo.queueCount = 1;
+            queueCreateInfo.pQueuePriorities = &queuePriority;
+            queueCreateInfos.push_back(queueCreateInfo);
+        }
+
+        VkPhysicalDeviceFeatures deviceFeatures{};
+        // deviceFeatures.geometryShader = VK_TRUE;
+        // deviceFeatures.tessellationShader = VK_TRUE;
+        deviceFeatures.samplerAnisotropy = VK_TRUE;
+
+        VkDeviceCreateInfo createInfo{};
+        createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+        createInfo.queueCreateInfoCount = static_cast<uint32_t>(queueCreateInfos.size());
+        createInfo.pQueueCreateInfos = queueCreateInfos.data();
+        createInfo.pEnabledFeatures = &deviceFeatures;
+        createInfo.enabledExtensionCount = static_cast<uint32_t>(deviceExtensions.size());
+        createInfo.ppEnabledExtensionNames = deviceExtensions.data();
+        createInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
+        createInfo.ppEnabledLayerNames = validationLayers.data();
+
+        return vkCreateDevice(physicalDevice, &createInfo, nullptr, device);
+    }
+
     VkPipelineShaderStageCreateInfo ShaderStageInfo(
-            VkShaderStageFlagBits shaderStage, 
-            const VulkanShaderModule& module, 
-            const char* entryPoint) {
+        VkShaderStageFlagBits shaderStage, 
+        const VulkanShaderModule& module, 
+        const char* entryPoint
+    ) {
         VkPipelineShaderStageCreateInfo createInfo = {};
         createInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
         createInfo.pNext = nullptr;
@@ -280,10 +331,11 @@ namespace Rocket {
     }
 
     VkDescriptorSetLayoutBinding DescriptorSetLayoutBinding(
-            uint32_t binding, 
-            VkDescriptorType descriptorType, 
-            VkShaderStageFlags stageFlags, 
-            uint32_t descriptorCount) {
+        uint32_t binding, 
+        VkDescriptorType descriptorType, 
+        VkShaderStageFlags stageFlags, 
+        uint32_t descriptorCount
+    ) {
         VkDescriptorSetLayoutBinding layout = {};
         layout.binding = binding;
         layout.descriptorType = descriptorType;
@@ -294,10 +346,11 @@ namespace Rocket {
     }
 
     VkWriteDescriptorSet BufferWriteDescriptorSet(
-            VkDescriptorSet ds, 
-            const VkDescriptorBufferInfo* bi, 
-            uint32_t bindIdx, 
-            VkDescriptorType dType) {
+        VkDescriptorSet ds, 
+        const VkDescriptorBufferInfo* bi, 
+        uint32_t bindIdx, 
+        VkDescriptorType dType
+    ) {
         VkWriteDescriptorSet descriptorSet = {};
         descriptorSet.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
         descriptorSet.pNext = nullptr;
@@ -313,9 +366,10 @@ namespace Rocket {
     }
 
     VkWriteDescriptorSet ImageWriteDescriptorSet(
-            VkDescriptorSet ds, 
-            const VkDescriptorImageInfo* ii, 
-            uint32_t bindIdx) {
+        VkDescriptorSet ds, 
+        const VkDescriptorImageInfo* ii, 
+        uint32_t bindIdx
+    ) {
         VkWriteDescriptorSet descriptorSet = {};
         descriptorSet.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
         descriptorSet.pNext = nullptr;
@@ -347,7 +401,26 @@ namespace Rocket {
             (fmt == VK_FORMAT_D32_SFLOAT_S8_UINT);
     }
 
-    bool SetVkImageName(VulkanRenderDevice& vkDev, void* object, const char* name) {
+    bool SetVkObjectName(
+        VulkanRenderDevice& vkDev, 
+        void* object, 
+        VkObjectType objType, 
+        const std::string& name
+    ) {
+        VkDebugUtilsObjectNameInfoEXT nameInfo = {};
+        nameInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT;
+        nameInfo.pNext = nullptr;
+        nameInfo.objectType = objType;
+        nameInfo.objectHandle = (uint64_t)object;
+        nameInfo.pObjectName = name.c_str();
+        return (vkSetDebugUtilsObjectNameEXT(vkDev.device, &nameInfo) == VK_SUCCESS);
+    }
+
+    bool SetVkImageName(
+        VulkanRenderDevice& vkDev, 
+        void* object, 
+        const std::string& name
+    ) {
         return SetVkObjectName(vkDev, object, VK_OBJECT_TYPE_IMAGE, name);
     }
 }

@@ -1,50 +1,86 @@
 #pragma once
 #include "Vulkan/VulkanVariable.h"
-
-#include <glslang/Include/glslang_c_interface.h>
+#include "Vulkan/VulkanCheck.h"
 
 #include <functional>
-
-#define VK_CHECK(value) CHECK(value == VK_SUCCESS, __FILE__, __LINE__);
-#define VK_CHECK_RET(value) if ( value != VK_SUCCESS ) { CHECK(false, __FILE__, __LINE__); return value; }
-#define BL_CHECK(value) CHECK(value, __FILE__, __LINE__);
+#include <vector>
 
 namespace Rocket {
-    void CHECK(bool check, const char* fileName, int lineNumber);
-
-    void PrintVulkanVersion();
+    void CreateVulkanInstance(
+        VkInstance* instance,
+        const std::vector<const char*>& validationLayers,
+        const std::vector<const char*>& instanceExtension);
 
     void SetupDebugMessenger(
         const VkInstance& instance, VkDebugUtilsMessengerEXT* messenger);
     void SetupDebugReportCallback(
         const VkInstance& instance, VkDebugReportCallbackEXT* reportCallback);
 
-    VkShaderStageFlagBits glslangShaderStageToVulkan(glslang_stage_t sh);
-    glslang_stage_t glslangShaderStageFromFileName(const char* fileName);
+    uint32_t FindPresentFamilies(
+        VkPhysicalDevice device, 
+        VkSurfaceKHR surface);
+    uint32_t FindQueueFamilies(
+        VkPhysicalDevice device, 
+        VkQueueFlags desiredFlags);
 
-    size_t CompileShader(
-        glslang_stage_t stage, 
-        const char* shaderSource, 
-        VulkanShaderModule* shaderModule);
-
-    size_t CompileShaderFile(
-        const char* root, 
-        const char* file, 
-        VulkanShaderModule* shaderModule);
-
-    VkResult CreateShaderModule(
-        VkDevice device, 
-        VulkanShaderModule* shader, 
-        const char* root, 
-        const char* fileName);
-
-    void CreateInstance(VkInstance* instance);
-
-    VkResult CreateDevice(
+    VkResult CreateLogicalDevice(
         VkPhysicalDevice physicalDevice, 
         VkPhysicalDeviceFeatures deviceFeatures, 
+        const std::vector<const char*>& validationLayers,
+        const std::vector<const char*>& extensions,
         uint32_t graphicsFamily, 
         VkDevice* device);
+    VkResult CreateLogicalDeviceWithCompute(
+        VkPhysicalDevice physicalDevice, 
+        VkPhysicalDeviceFeatures deviceFeatures, 
+        const std::vector<const char*>& validationLayers,
+        const std::vector<const char*>& extensions,
+        uint32_t graphicsFamily, 
+        uint32_t computeFamily, 
+        VkDevice* device);
+    VkResult CreateLogicalDevice(
+        const VkPhysicalDevice& physicalDevice, 
+        const std::vector<const char*>& validationLayers,
+        const std::vector<const char*>& deviceExtensions, 
+        const QueueFamilyIndices& indices,
+        VkDevice* device);
+
+    VkPipelineShaderStageCreateInfo ShaderStageInfo(
+        VkShaderStageFlagBits shaderStage, 
+        const VulkanShaderModule& module, 
+        const char* entryPoint);
+
+    VkDescriptorSetLayoutBinding DescriptorSetLayoutBinding(
+        uint32_t binding, 
+        VkDescriptorType descriptorType, 
+        VkShaderStageFlags stageFlags, 
+        uint32_t descriptorCount = 1);
+    
+    VkWriteDescriptorSet BufferWriteDescriptorSet(
+        VkDescriptorSet ds, 
+        const VkDescriptorBufferInfo* bi, 
+        uint32_t bindIdx, 
+        VkDescriptorType dType);
+    
+    VkWriteDescriptorSet ImageWriteDescriptorSet(
+        VkDescriptorSet ds, 
+        const VkDescriptorImageInfo* ii, 
+        uint32_t bindIdx);
+
+    uint32_t GetVulkanBufferAlignment(VulkanRenderDevice& vkDev);
+
+    bool IsDepthFormat(VkFormat fmt);
+
+    bool SetVkObjectName(
+        VulkanRenderDevice& vkDev, 
+        void* object, 
+        VkObjectType objType, 
+        const std::string& name);
+
+    bool SetVkImageName(
+        VulkanRenderDevice& vkDev, 
+        void* object, 
+        const std::string& name);
 
     VkResult CreateSwapchain(
         VkDevice device, 
@@ -100,14 +136,6 @@ namespace Rocket {
         std::function<bool(VkPhysicalDevice)> selector, 
         VkPhysicalDevice* physicalDevice);
 
-    uint32_t FindPresentFamilies(
-        VkPhysicalDevice device, 
-        VkSurfaceKHR surface);
-
-    uint32_t FindQueueFamilies(
-        VkPhysicalDevice device, 
-        VkQueueFlags desiredFlags);
-
     VkFormat FindSupportedFormat(
         VkPhysicalDevice device, 
         const std::vector<VkFormat>& candidates, 
@@ -122,43 +150,6 @@ namespace Rocket {
     VkFormat FindDepthFormat(VkPhysicalDevice device);
 
     bool HasStencilComponent(VkFormat format);
-
-    VkPipelineShaderStageCreateInfo ShaderStageInfo(
-        VkShaderStageFlagBits shaderStage, 
-        const VulkanShaderModule& module, 
-        const char* entryPoint);
-
-    VkDescriptorSetLayoutBinding DescriptorSetLayoutBinding(
-        uint32_t binding, 
-        VkDescriptorType descriptorType, 
-        VkShaderStageFlags stageFlags, 
-        uint32_t descriptorCount = 1);
-    
-    VkWriteDescriptorSet BufferWriteDescriptorSet(
-        VkDescriptorSet ds, 
-        const VkDescriptorBufferInfo* bi, 
-        uint32_t bindIdx, 
-        VkDescriptorType dType);
-    
-    VkWriteDescriptorSet ImageWriteDescriptorSet(
-        VkDescriptorSet ds, 
-        const VkDescriptorImageInfo* ii, 
-        uint32_t bindIdx);
-
-    uint32_t GetVulkanBufferAlignment(VulkanRenderDevice& vkDev);
-
-    bool IsDepthFormat(VkFormat fmt);
-
-    bool SetVkObjectName(
-        VulkanRenderDevice& vkDev, 
-        void* object, 
-        VkObjectType objType, 
-        const char* name);
-
-    bool SetVkImageName(
-        VulkanRenderDevice& vkDev, 
-        void* object, 
-        const char* name);
 
     void UpdateTextureInDescriptorSetArray(
         VulkanRenderDevice& vkDev, 

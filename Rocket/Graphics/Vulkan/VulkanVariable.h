@@ -13,6 +13,7 @@ namespace Rocket {
         std::optional<uint32_t> compute_family;
 
         bool IsComplete();
+        // Must Call After IsComplete
         uint32_t Multiplicity();
         const std::vector<uint32_t>& FamilyData();
     };
@@ -42,11 +43,12 @@ namespace Rocket {
         VkQueue compute_queue;
 
         // Were we initialized with compute capabilities
-        bool use_compute = false;
-        uint32_t graphics_family;
-        uint32_t present_family;
+        // bool use_compute = false;
+        // uint32_t graphics_family;
+        // uint32_t present_family;
         // [may coincide with graphics_family]
-        uint32_t compute_family;
+        // uint32_t compute_family;
+        QueueFamilyIndices family_indices;
 
         VkSwapchainKHR swapchain;
         VkSemaphore semaphore;
