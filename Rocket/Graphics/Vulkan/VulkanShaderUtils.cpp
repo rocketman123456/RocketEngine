@@ -116,7 +116,8 @@ namespace Rocket {
         if(!source.empty()) {
             auto kind = ShaderStageFromFileName(file);
             source = PreProcessShader(kind, file, source);
-            module->SPIRV = CompileToBinary(kind, file, source);
+            auto assembly = CompileToAssembly(kind, file, source);
+            module->SPIRV = CompileToBinary(kind, file, assembly);
             return module->SPIRV.size();
         }
         return 0;

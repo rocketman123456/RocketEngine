@@ -8,8 +8,8 @@ namespace Rocket {
     struct QueueFamilyIndices final {
         std::optional<uint32_t> multiplicity;
         std::optional<std::vector<uint32_t>> family_data;
-        std::optional<uint32_t> graphics_family;
         std::optional<uint32_t> present_family;
+        std::optional<uint32_t> graphics_family;
         std::optional<uint32_t> compute_family;
 
         bool IsComplete();
@@ -39,6 +39,7 @@ namespace Rocket {
         VkPhysicalDevice physical_device;
         VolkDeviceTable table;
 
+        VkQueue present_queue;
         VkQueue graphics_queue;
         VkQueue compute_queue;
 
@@ -48,23 +49,24 @@ namespace Rocket {
         // uint32_t present_family;
         // [may coincide with graphics_family]
         // uint32_t compute_family;
-        QueueFamilyIndices family_indices;
-
-        VkSwapchainKHR swapchain;
-        VkSemaphore semaphore;
-        VkSemaphore render_semaphore;
-
-        std::vector<VkImage> swapchain_images;
-        std::vector<VkImageView> swapchain_image_views;
-
-        VkCommandPool command_pool;
-        std::vector<VkCommandBuffer> command_buffers;
-        VkCommandBuffer compute_command_buffer;
-        VkCommandPool compute_command_pool;
+        QueueFamilyIndices family;
 
         // a list of all queues (for shared buffer allocation)
         std::vector<uint32_t> device_queue_indices;
         std::vector<VkQueue> device_queues;
+
+        VkSwapchainKHR swapchain;
+        VkFormat swapchain_image_format;
+        std::vector<VkImage> swapchain_images;
+        std::vector<VkImageView> swapchain_image_views;
+
+        VkSemaphore semaphore;
+        VkSemaphore render_semaphore;
+
+        VkCommandPool command_pool;
+        std::vector<VkCommandBuffer> command_buffers;
+        VkCommandPool compute_command_pool;
+        VkCommandBuffer compute_command_buffer;
     };
 
     // Features we need for our Vulkan context

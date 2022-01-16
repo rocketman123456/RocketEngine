@@ -6,6 +6,9 @@
 #include <vector>
 
 namespace Rocket {
+    bool CheckValidationLayerSupport(const std::vector<const char*>& validationLayers);
+    void PrintVulkanVersion();
+
     void CreateVulkanInstance(
         VkInstance* instance,
         const std::vector<const char*>& validationLayers,
@@ -16,6 +19,22 @@ namespace Rocket {
     void SetupDebugReportCallback(
         const VkInstance& instance, VkDebugReportCallbackEXT* reportCallback);
 
+    bool CheckDeviceExtensionSupport(
+        const VkPhysicalDevice& device, 
+        const std::vector<const char*>& deviceExtensions);
+    bool IsDeviceSuitable(
+        const VkPhysicalDevice& device, 
+        const VkSurfaceKHR& surface, 
+        const std::vector<const char*>& deviceExtensions);
+    VkResult PickPhysicalDevice(
+            const VkInstance& instance, 
+            const VkSurfaceKHR& surface, 
+            const std::vector<const char*>& deviceExtensions,
+            VkPhysicalDevice* physical_device);
+
+    QueueFamilyIndices FindQueueFamilyIndices(
+        VkPhysicalDevice device, 
+        VkSurfaceKHR surface);
     uint32_t FindPresentFamilies(
         VkPhysicalDevice device, 
         VkSurfaceKHR surface);
@@ -27,14 +46,14 @@ namespace Rocket {
         VkPhysicalDevice physicalDevice, 
         VkPhysicalDeviceFeatures deviceFeatures, 
         const std::vector<const char*>& validationLayers,
-        const std::vector<const char*>& extensions,
+        const std::vector<const char*>& deviceExtensions,
         uint32_t graphicsFamily, 
         VkDevice* device);
     VkResult CreateLogicalDeviceWithCompute(
         VkPhysicalDevice physicalDevice, 
         VkPhysicalDeviceFeatures deviceFeatures, 
         const std::vector<const char*>& validationLayers,
-        const std::vector<const char*>& extensions,
+        const std::vector<const char*>& deviceExtensions,
         uint32_t graphicsFamily, 
         uint32_t computeFamily, 
         VkDevice* device);
@@ -44,6 +63,69 @@ namespace Rocket {
         const std::vector<const char*>& deviceExtensions, 
         const QueueFamilyIndices& indices,
         VkDevice* device);
+
+    SwapchainSupportDetails QuerySwapchainSupport(
+        const VkPhysicalDevice& device, 
+        const VkSurfaceKHR& surface);
+    VkSurfaceFormatKHR ChooseSwapSurfaceFormat(
+        const std::vector<VkSurfaceFormatKHR>& availableFormats);
+    VkPresentModeKHR ChooseSwapPresentMode(
+        const std::vector<VkPresentModeKHR>& availablePresentModes);
+    uint32_t ChooseSwapImageCount(const VkSurfaceCapabilitiesKHR& capabilities);
+    VkExtent2D ChooseSwapExtent(
+        const VkSurfaceCapabilitiesKHR& capabilities, 
+        uint32_t width, 
+        uint32_t height);
+
+    VkResult CreateSwapchain(
+        const VkPhysicalDevice& physicalDevice, 
+        const VkDevice& device,
+        const VolkDeviceTable& table,
+        const VkSurfaceKHR& surface, 
+        const QueueFamilyIndices& indices, 
+        VkFormat* swapChainImageFormat,
+        VkSwapchainKHR* swapchain,
+        uint32_t width, 
+        uint32_t height, 
+        bool supportScreenshots = false);
+    
+    VkResult CreateImageView(
+        const VkDevice& device, 
+        const VolkDeviceTable& table,
+        const VkImage& image, 
+        const VkFormat& format, 
+        const VkImageAspectFlags& aspectFlags, 
+        VkImageView* imageView, 
+        VkImageViewType viewType = VK_IMAGE_VIEW_TYPE_2D, 
+        uint32_t layerCount = 1, 
+        uint32_t mipLevels = 1);
+
+    std::size_t CreateSwapchainImages(
+        const VkDevice& device,
+        const VolkDeviceTable& table, 
+        const VkSwapchainKHR& swapchain,
+        const VkFormat& swapChainImageFormat,
+        std::vector<VkImage>* swapchainImages,
+        std::vector<VkImageView>* swapchainImageViews);
+
+    VkResult CreateSemaphore(
+        const VkDevice& device, 
+        VkSemaphore* outSemaphore);
+
+    bool InitVulkanRenderDevice(
+        VulkanInstance& vk, 
+        VulkanRenderDevice& vkDev, 
+        const std::vector<const char*>& deviceExtensions,
+        const std::vector<const char*>& validationLayers,
+        uint32_t width, 
+        uint32_t height, 
+        VkPhysicalDeviceFeatures deviceFeatures);
+
+//------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------
 
     VkPipelineShaderStageCreateInfo ShaderStageInfo(
         VkShaderStageFlagBits shaderStage, 
@@ -82,22 +164,6 @@ namespace Rocket {
         void* object, 
         const std::string& name);
 
-    VkResult CreateSwapchain(
-        VkDevice device, 
-        VkPhysicalDevice physicalDevice, 
-        VkSurfaceKHR surface, 
-        uint32_t graphicsFamily, 
-        uint32_t width, 
-        uint32_t height, 
-        VkSwapchainKHR* swapchain, 
-        bool supportScreenshots = false);
-
-    size_t CreateSwapchainImages(
-        VkDevice device, 
-        VkSwapchainKHR swapchain, 
-        std::vector<VkImage>& swapchainImages, 
-        std::vector<VkImageView>& swapchainImageViews);
-
     VkResult CreateSemaphore(
         VkDevice device, 
         VkSemaphore* outSemaphore);
@@ -117,19 +183,6 @@ namespace Rocket {
         VkDescriptorPool* descriptorPool);
 
     bool IsDeviceSuitable(VkPhysicalDevice device);
-
-    SwapchainSupportDetails QuerySwapchainSupport(
-        VkPhysicalDevice device, 
-        VkSurfaceKHR surface);
-
-    VkSurfaceFormatKHR ChooseSwapSurfaceFormat(
-        const std::vector<VkSurfaceFormatKHR>& availableFormats);
-
-    VkPresentModeKHR ChooseSwapPresentMode(
-        const std::vector<VkPresentModeKHR>& availablePresentModes);
-
-    uint32_t ChooseSwapImageCount(
-        const VkSurfaceCapabilitiesKHR& capabilities);
 
     VkResult FindSuitablePhysicalDevice(
         VkInstance instance, 
@@ -220,8 +273,6 @@ namespace Rocket {
 
     /** Copy GPU device buffer data to [outData] */
     void downloadBufferData(VulkanRenderDevice& vkDev, const VkDeviceMemory& bufferMemory, VkDeviceSize deviceOffset, void* outData, size_t dataSize);
-
-    bool createImageView(VkDevice device, VkImage image, VkFormat format, VkImageAspectFlags aspectFlags, VkImageView* imageView, VkImageViewType viewType = VK_IMAGE_VIEW_TYPE_2D, uint32_t layerCount = 1, uint32_t mipLevels = 1);
 
     bool CreateColorOnlyRenderPass(
         VulkanRenderDevice& device, 
