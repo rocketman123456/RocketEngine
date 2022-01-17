@@ -34,7 +34,7 @@ namespace {
     class DefaultLogger {
     public:
         DefaultLogger() { 
-            Rocket::Log::Init(Rocket::LogLevel::DEBUG); 
+            Rocket::Log::Init(Rocket::LogLevel::TRACE); 
         }
         ~DefaultLogger() { 
             Rocket::Log::End(); 

@@ -121,5 +121,6 @@
     },
     "Lua.diagnostics.globals": [
         "user_score"
-    ]
+    ],
+    "workbench.editor.highlightModifiedTabs": true
 }

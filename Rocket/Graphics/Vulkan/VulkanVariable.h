@@ -25,6 +25,7 @@ namespace Rocket {
     };
 
     struct VulkanInstance final {
+        void* window;
         VkInstance instance;
         VkSurfaceKHR surface;
         VkDebugUtilsMessengerEXT messenger;
@@ -32,6 +33,7 @@ namespace Rocket {
     };
 
     struct VulkanRenderDevice final {
+        void* window;
         uint32_t framebuffer_width;
         uint32_t framebuffer_height;
 
