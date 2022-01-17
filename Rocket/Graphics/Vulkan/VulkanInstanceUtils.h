@@ -164,10 +164,6 @@ namespace Rocket {
         void* object, 
         const std::string& name);
 
-    VkResult CreateSemaphore(
-        VkDevice device, 
-        VkSemaphore* outSemaphore);
-
     bool CreateTextureSampler(
         VkDevice device, 
         VkSampler* sampler, 
