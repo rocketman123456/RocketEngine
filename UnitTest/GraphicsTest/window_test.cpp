@@ -18,7 +18,7 @@ int main() {
     info.width = 1600;
     info.height = 900;
 
-    auto window = WindowFactory::CreateWindow(info);
+    auto window = WindowFactory::CreatePlatformWindow(info);
     window->Initialize();
 
     VulkanInstance instance;

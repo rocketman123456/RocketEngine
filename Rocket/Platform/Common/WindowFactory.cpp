@@ -7,7 +7,7 @@
 #endif
 
 namespace Rocket {
-    WindowContainerPtr WindowFactory::CreateWindow(const WindowInfo& info) {
+    WindowContainerPtr WindowFactory::CreatePlatformWindow(const WindowInfo& info) {
 #if defined(RK_DESKTOP)
         return std::make_shared<DesktopWindow>(info);
 #elif defined(RK_MOBILE)

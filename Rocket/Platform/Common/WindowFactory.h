@@ -4,6 +4,6 @@
 namespace Rocket {
     class WindowFactory {
     public:
-        static WindowContainerPtr CreateWindow(const WindowInfo& info);
+        static WindowContainerPtr CreatePlatformWindow(const WindowInfo& info);
     };
 }
