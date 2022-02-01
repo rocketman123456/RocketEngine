@@ -17,14 +17,14 @@ namespace Rocket {
         VkPhysicalDevice* physical_device);
 
     QueueFamilyIndices FindQueueFamilyIndices(
-        VkPhysicalDevice device, 
-        VkSurfaceKHR surface);
+        const VkPhysicalDevice& device, 
+        const VkSurfaceKHR& surface);
     uint32_t FindPresentFamilies(
-        VkPhysicalDevice device, 
-        VkSurfaceKHR surface);
+        const VkPhysicalDevice& device, 
+        const VkSurfaceKHR& surface);
     uint32_t FindQueueFamilies(
-        VkPhysicalDevice device, 
-        VkQueueFlags desiredFlags);
+        const VkPhysicalDevice& device, 
+        const VkQueueFlags& desiredFlags);
 
     VkResult CreateLogicalDevice(
         VkPhysicalDevice physicalDevice, 
@@ -55,7 +55,8 @@ namespace Rocket {
         const std::vector<VkSurfaceFormatKHR>& availableFormats);
     VkPresentModeKHR ChooseSwapPresentMode(
         const std::vector<VkPresentModeKHR>& availablePresentModes);
-    uint32_t ChooseSwapImageCount(const VkSurfaceCapabilitiesKHR& capabilities);
+    uint32_t ChooseSwapImageCount(
+        const VkSurfaceCapabilitiesKHR& capabilities);
     VkExtent2D ChooseSwapExtent(
         const VkSurfaceCapabilitiesKHR& capabilities, 
         uint32_t width, 
@@ -80,6 +81,7 @@ namespace Rocket {
         const VkFormat& format, 
         const VkImageAspectFlags& aspectFlags, 
         VkImageView* imageView, 
+        // Optional
         VkImageViewType viewType = VK_IMAGE_VIEW_TYPE_2D, 
         uint32_t layerCount = 1, 
         uint32_t mipLevels = 1);
@@ -96,6 +98,20 @@ namespace Rocket {
         const VkDevice& device, 
         const VolkDeviceTable& table,
         VkSemaphore* outSemaphore);
+    
+    // Create Command Pool
+    VkResult CreateCommandPool(
+        const VkDevice& device, 
+        const VolkDeviceTable& table, 
+        const QueueFamilyIndices& indices, 
+        VkCommandPool* command_pool);
+
+    VkResult CreateCommandBuffer(
+        const VkDevice& device, 
+        const VolkDeviceTable& table,
+        const VkCommandPool& commandPool,
+        uint32_t imageCount,
+        VkCommandBuffer* command_buffer);
 
     bool InitVulkanRenderDevice(
         VulkanInstance& vk, 
@@ -105,5 +121,6 @@ namespace Rocket {
         uint32_t width, 
         uint32_t height);
 
-    void CleanupVulkanRenderDevice(VulkanRenderDevice& vkDev);
+    void CleanupVulkanRenderDevice(
+        VulkanRenderDevice& vkDev);
 }

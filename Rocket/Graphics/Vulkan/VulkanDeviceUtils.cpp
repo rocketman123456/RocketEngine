@@ -79,7 +79,10 @@ namespace Rocket {
         return VK_SUCCESS;
     }
 
-    QueueFamilyIndices FindQueueFamilyIndices(VkPhysicalDevice physical_device, VkSurfaceKHR surface) {
+    QueueFamilyIndices FindQueueFamilyIndices(
+        const VkPhysicalDevice& physical_device, 
+        const VkSurfaceKHR& surface
+    ) {
         QueueFamilyIndices indices;
         indices.present_family = FindPresentFamilies(physical_device, surface);
         indices.graphics_family = FindQueueFamilies(physical_device, VK_QUEUE_GRAPHICS_BIT);
@@ -87,7 +90,10 @@ namespace Rocket {
         return indices;
     }
 
-    uint32_t FindQueueFamilies(VkPhysicalDevice device, VkQueueFlags desiredFlags) {
+    uint32_t FindQueueFamilies(
+        const VkPhysicalDevice& device, 
+        const VkQueueFlags& desiredFlags
+    ) {
         uint32_t familyCount = 0;
         vkGetPhysicalDeviceQueueFamilyProperties(device, &familyCount, nullptr);
         std::vector<VkQueueFamilyProperties> families(familyCount);
@@ -101,7 +107,10 @@ namespace Rocket {
         return 0;
     }
 
-    uint32_t FindPresentFamilies(VkPhysicalDevice device, VkSurfaceKHR surface) {
+    uint32_t FindPresentFamilies(
+        const VkPhysicalDevice& device, 
+        const VkSurfaceKHR& surface
+    ) {
         uint32_t queueFamilyCount = 0;
         vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, nullptr);
         std::vector<VkQueueFamilyProperties> queueFamilies(queueFamilyCount);
@@ -429,9 +438,38 @@ namespace Rocket {
         const VkDevice& device, 
         const VolkDeviceTable& table,
         VkSemaphore* outSemaphore) {
-        VkSemaphoreCreateInfo ci = {};
-        ci.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
-        return table.vkCreateSemaphore(device, &ci, nullptr, outSemaphore);
+        VkSemaphoreCreateInfo createInfo = {};
+        createInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
+        return table.vkCreateSemaphore(device, &createInfo, nullptr, outSemaphore);
+    }
+
+    VkResult CreateCommandPool(
+        const VkDevice& device, 
+        const VolkDeviceTable& table, 
+        const QueueFamilyIndices& indices, 
+        VkCommandPool* command_pool
+    ) {
+        VkCommandPoolCreateInfo createInfo = {};
+        createInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
+        createInfo.flags = 0;
+        createInfo.queueFamilyIndex = indices.graphics_family.value();
+        return table.vkCreateCommandPool(device, &createInfo, nullptr, command_pool);
+    }
+
+    VkResult CreateCommandBuffer(
+        const VkDevice& device, 
+        const VolkDeviceTable& table,
+        const VkCommandPool& commandPool,
+        uint32_t imageCount,
+        VkCommandBuffer* command_buffer
+    ) {
+        VkCommandBufferAllocateInfo allocateInfo = {};
+		allocateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+		allocateInfo.pNext = nullptr;
+		allocateInfo.commandPool = commandPool;
+		allocateInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+		allocateInfo.commandBufferCount = imageCount;
+        return table.vkAllocateCommandBuffers(device, &allocateInfo, command_buffer);
     }
 
     bool InitVulkanRenderDevice(

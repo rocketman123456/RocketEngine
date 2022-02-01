@@ -33,35 +33,27 @@ namespace Rocket {
 //------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------
 
+    void UploadBufferData(
+        const VkDevice& device, 
+        const VolkDeviceTable& table, 
+        const VkDeviceMemory& bufferMemory, 
+        const VkDeviceSize& deviceOffset, 
+        const void* data, 
+        const size_t dataSize);
 
+    void DownloadBufferData(
+        const VkDevice& device, 
+        const VolkDeviceTable& table, 
+        const VkDeviceMemory& bufferMemory, 
+        const VkDeviceSize& deviceOffset, 
+        void* outData, 
+        const size_t dataSize);
 
 //------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------
-
-    VkPipelineShaderStageCreateInfo ShaderStageInfo(
-        VkShaderStageFlagBits shaderStage, 
-        const VulkanShaderModule& module, 
-        const char* entryPoint);
-
-    VkDescriptorSetLayoutBinding DescriptorSetLayoutBinding(
-        uint32_t binding, 
-        VkDescriptorType descriptorType, 
-        VkShaderStageFlags stageFlags, 
-        uint32_t descriptorCount = 1);
-    
-    VkWriteDescriptorSet BufferWriteDescriptorSet(
-        VkDescriptorSet ds, 
-        const VkDescriptorBufferInfo* bi, 
-        uint32_t bindIdx, 
-        VkDescriptorType dType);
-    
-    VkWriteDescriptorSet ImageWriteDescriptorSet(
-        VkDescriptorSet ds, 
-        const VkDescriptorImageInfo* ii, 
-        uint32_t bindIdx);
 
     uint32_t GetVulkanBufferAlignment(VulkanRenderDevice& vkDev);
 
