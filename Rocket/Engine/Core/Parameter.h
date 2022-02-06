@@ -37,5 +37,5 @@ namespace Rocket {
     // For File/Memory
     constexpr std::size_t CHUNK_SIZE = 1024;
     // For CRC Compute
-    constexpr std::size_t LUT_SIZE = 256;
+    constexpr std::size_t LUT_SIZE  = 256;
 }

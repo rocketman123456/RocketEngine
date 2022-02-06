@@ -64,6 +64,10 @@ namespace Rocket {
 
         VkSemaphore semaphore;
         VkSemaphore render_semaphore;
+        std::vector<VkSemaphore> image_available_semaphores;
+        std::vector<VkSemaphore> render_finish_semaphores;
+        std::vector<VkFence> in_flight_fences;
+        std::vector<VkFence> images_in_flight;
 
         VkCommandPool command_pool;
         std::vector<VkCommandBuffer> command_buffers;

@@ -443,6 +443,17 @@ namespace Rocket {
         return table.vkCreateSemaphore(device, &createInfo, nullptr, outSemaphore);
     }
 
+    VkResult CreateFence(
+        const VkDevice& device, 
+        const VolkDeviceTable& table,
+        VkFence* fence
+    ) {
+        VkFenceCreateInfo fenceInfo{};
+        fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+        fenceInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
+        return table.vkCreateFence(device, &fenceInfo, nullptr, fence);
+    }
+
     VkResult CreateCommandPool(
         const VkDevice& device, 
         const VolkDeviceTable& table, 
@@ -526,6 +537,17 @@ namespace Rocket {
         VK_CHECK(CreateSemaphore(vkDev.device, vkDev.table, &vkDev.semaphore));
         VK_CHECK(CreateSemaphore(vkDev.device, vkDev.table, &vkDev.render_semaphore));
 
+        auto frame_count = vkDev.swapchain_images.size();
+        vkDev.image_available_semaphores.resize(frame_count);
+        vkDev.render_finish_semaphores.resize(frame_count);
+        vkDev.in_flight_fences.resize(frame_count);
+        vkDev.images_in_flight.resize(frame_count, VK_NULL_HANDLE);
+        for(int i = 0; i < frame_count; ++i) {
+            VK_CHECK(CreateSemaphore(vkDev.device, vkDev.table, &vkDev.image_available_semaphores[i]));
+            VK_CHECK(CreateSemaphore(vkDev.device, vkDev.table, &vkDev.render_finish_semaphores[i]));
+            VK_CHECK(CreateFence(vkDev.device, vkDev.table, &vkDev.in_flight_fences[i]));
+        }
+
         {
             // Create graphics command pool
             VkCommandPoolCreateInfo cpi = {};
@@ -570,6 +592,15 @@ namespace Rocket {
     void CleanupVulkanRenderDevice(VulkanRenderDevice& vkDev) {
         vkDev.table.vkDestroyCommandPool(vkDev.device, vkDev.compute_command_pool, nullptr);
         vkDev.table.vkDestroyCommandPool(vkDev.device, vkDev.command_pool, nullptr);
+        for(auto semaphore : vkDev.image_available_semaphores) {
+            vkDev.table.vkDestroySemaphore(vkDev.device, semaphore, nullptr);
+        }
+        for(auto semaphore : vkDev.render_finish_semaphores) {
+            vkDev.table.vkDestroySemaphore(vkDev.device, semaphore, nullptr);
+        }
+        for(auto fence : vkDev.in_flight_fences) {
+            vkDev.table.vkDestroyFence(vkDev.device, fence, nullptr);
+        }
         vkDev.table.vkDestroySemaphore(vkDev.device, vkDev.render_semaphore, nullptr);
         vkDev.table.vkDestroySemaphore(vkDev.device, vkDev.semaphore, nullptr);
         for (auto image_view : vkDev.swapchain_image_views) {
@@ -926,6 +957,162 @@ namespace Rocket {
             vkDev, depth.image, depthFormat, 
             VK_IMAGE_LAYOUT_UNDEFINED, 
             VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
+
+        return true;
+    }
+
+//------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------
+
+    VkResult CreateDescriptorPool(
+        VulkanRenderDevice& vkDev, 
+        uint32_t uniformBufferCount, 
+        uint32_t storageBufferCount, 
+        uint32_t samplerCount, 
+        VkDescriptorPool* descriptorPool
+    ) {
+        const uint32_t imageCount = static_cast<uint32_t>(vkDev.swapchain_images.size());
+        std::vector<VkDescriptorPoolSize> poolSizes;
+
+        if (uniformBufferCount) {
+            VkDescriptorPoolSize poolSize = {};
+            poolSize.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+            poolSize.descriptorCount = imageCount * uniformBufferCount;
+            poolSizes.push_back(poolSize);
+        }
+        if (storageBufferCount) {
+            VkDescriptorPoolSize poolSize = {};
+            poolSize.type = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+            poolSize.descriptorCount = imageCount * storageBufferCount;
+            poolSizes.push_back(poolSize);
+        }
+        if (samplerCount) {
+            VkDescriptorPoolSize poolSize = {};
+            poolSize.type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+            poolSize.descriptorCount = imageCount * samplerCount;
+            poolSizes.push_back(poolSize);
+        }
+
+        VkDescriptorPoolCreateInfo poolInfo = {};
+        poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+        poolInfo.pNext = nullptr;
+        poolInfo.flags = 0;
+        poolInfo.maxSets = static_cast<uint32_t>(imageCount);
+        poolInfo.poolSizeCount = static_cast<uint32_t>(poolSizes.size());
+        poolInfo.pPoolSizes = poolSizes.empty() ? nullptr : poolSizes.data();
+        return vkDev.table.vkCreateDescriptorPool(vkDev.device, &poolInfo, nullptr, descriptorPool);
+    }
+
+    VkDescriptorSetLayoutBinding DescriptorSetLayoutBinding(
+        uint32_t binding, 
+        VkDescriptorType descriptorType, 
+        VkShaderStageFlags stageFlags, 
+        uint32_t descriptorCount
+    ) {
+        VkDescriptorSetLayoutBinding binding_ = {};
+        binding_.binding = binding;
+        binding_.descriptorType = descriptorType;
+        binding_.descriptorCount = descriptorCount;
+        binding_.stageFlags = stageFlags;
+        binding_.pImmutableSamplers = nullptr;
+        return binding_;
+    }
+
+    bool CreateDescriptorSet(
+        VulkanRenderDevice& vkDev, 
+        VulkanState* vkState,
+        uint32_t uniformBufferSize,
+        uint32_t vertexBufferSize,
+        uint32_t indexBufferSize
+    ) {
+        const std::array<VkDescriptorSetLayoutBinding, 4> bindings = {
+            DescriptorSetLayoutBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT),
+            DescriptorSetLayoutBinding(1, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_VERTEX_BIT),
+            DescriptorSetLayoutBinding(2, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_VERTEX_BIT),
+            DescriptorSetLayoutBinding(3, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT)
+        };
+
+        VkDescriptorSetLayoutCreateInfo layoutInfo = {};
+        layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+        layoutInfo.pNext = nullptr;
+        layoutInfo.flags = 0;
+        layoutInfo.bindingCount = static_cast<uint32_t>(bindings.size());
+        layoutInfo.pBindings = bindings.data();
+
+        VK_CHECK(vkDev.table.vkCreateDescriptorSetLayout(vkDev.device, &layoutInfo, nullptr, &vkState->descriptor_set_layout));
+
+        std::vector<VkDescriptorSetLayout> layouts(vkDev.swapchain_images.size(), vkState->descriptor_set_layout);
+
+        VkDescriptorSetAllocateInfo allocInfo = {};
+        allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+        allocInfo.pNext = nullptr;
+        allocInfo.descriptorPool = vkState->descriptor_pool;
+        allocInfo.descriptorSetCount = static_cast<uint32_t>(vkDev.swapchain_images.size());
+        allocInfo.pSetLayouts = layouts.data();
+
+        vkState->descriptor_sets.resize(vkDev.swapchain_images.size());
+        VK_CHECK(vkDev.table.vkAllocateDescriptorSets(vkDev.device, &allocInfo, vkState->descriptor_sets.data()));
+
+        for (size_t i = 0; i < vkDev.swapchain_images.size(); i++) {
+            // VkDescriptorBufferInfo bufferInfo = {};
+            // bufferInfo.buffer = vkState->uniform_buffers[i];
+            // bufferInfo.offset = 0;
+            // bufferInfo.range = uniformBufferSize;
+            // VkDescriptorBufferInfo bufferInfo2 = {};
+            // bufferInfo2.buffer = vkState->storage_buffer;
+            // bufferInfo2.offset = 0;
+            // bufferInfo2.range = vertexBufferSize;
+            // VkDescriptorBufferInfo bufferInfo3 = {};
+            // bufferInfo3.buffer = vkState->storage_buffer;
+            // bufferInfo3.offset = vertexBufferSize;
+            // bufferInfo3.range = indexBufferSize;
+            // VkDescriptorImageInfo imageInfo = {};
+            // imageInfo.sampler = vkState->texture_sampler;
+            // imageInfo.imageView = vkState->texture.image_view;
+            // imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+
+            // VkWriteDescriptorSet set0 = {};
+            // set0.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+            // set0.dstSet = vkState->descriptor_sets[i];
+            // set0.dstBinding = 0;
+            // set0.dstArrayElement = 0;
+            // set0.descriptorCount = 1;
+            // set0.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+            // set0.pBufferInfo = &bufferInfo;
+            // VkWriteDescriptorSet set1 = {};
+            // set1.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+            // set1.dstSet = vkState->descriptor_sets[i];
+            // set1.dstBinding = 1;
+            // set1.dstArrayElement = 0;
+            // set1.descriptorCount = 1;
+            // set1.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+            // set1.pBufferInfo = &bufferInfo2;
+            // VkWriteDescriptorSet set2 = {};
+            // set2.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+            // set2.dstSet = vkState->descriptor_sets[i];
+            // set2.dstBinding = 2;
+            // set2.dstArrayElement = 0;
+            // set2.descriptorCount = 1;
+            // set2.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+            // set2.pBufferInfo = &bufferInfo3;
+            // VkWriteDescriptorSet set3 = {};
+            // set3.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+            // set3.dstSet = vkState->descriptor_sets[i];
+            // set3.dstBinding = 3;
+            // set3.dstArrayElement = 0;
+            // set3.descriptorCount = 1;
+            // set3.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+            // set3.pImageInfo = &imageInfo;
+
+            // const std::array<VkWriteDescriptorSet, 4> descriptorWrites = {
+            //     set0, set1, set2, set3,
+            // };
+
+            // vkDev.table.vkUpdateDescriptorSets(vkDev.device, static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
+        }
 
         return true;
     }

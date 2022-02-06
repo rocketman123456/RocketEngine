@@ -98,6 +98,11 @@ namespace Rocket {
         const VkDevice& device, 
         const VolkDeviceTable& table,
         VkSemaphore* outSemaphore);
+
+    VkResult CreateFence(
+        const VkDevice& device, 
+        const VolkDeviceTable& table,
+        VkFence* fence);
     
     // Create Command Pool
     VkResult CreateCommandPool(
@@ -215,4 +220,30 @@ namespace Rocket {
         uint32_t width, 
         uint32_t height, 
         VulkanImage& depth);
+
+//------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------
+
+    VkResult CreateDescriptorPool(
+        VulkanRenderDevice& vkDev, 
+        uint32_t uniformBufferCount, 
+        uint32_t storageBufferCount, 
+        uint32_t samplerCount, 
+        VkDescriptorPool* descriptorPool);
+    
+    VkDescriptorSetLayoutBinding DescriptorSetLayoutBinding(
+        uint32_t binding, 
+        VkDescriptorType descriptorType, 
+        VkShaderStageFlags stageFlags, 
+        uint32_t descriptorCount = 1);
+
+    bool CreateDescriptorSet(
+        VulkanRenderDevice& vkDev, 
+        VulkanState* vkState,
+        uint32_t uniformBufferSize,
+        uint32_t vertexBufferSize,
+        uint32_t indexBufferSize);
 }
