@@ -35,15 +35,15 @@ int main() {
     VulkanState state;
     //CreateDepthResources(device, info.width, info.height, state.depth_texture);
 
-    CreateDescriptorPool(device, 1, 2, 1, &state.descriptor_pool);
-    CreateDescriptorSet(device, &state, 0, 0, 0);
+    VK_CHECK(CreateDescriptorPool(device, 1, 2, 1, &state.descriptor_pool));
+    VK_CHECK(CreateDescriptorSet(device, &state, 0, 0, 0));
     VulkanRenderPassCreateInfo rp_create_info = {};
     rp_create_info.clear_color = true;
     rp_create_info.clear_depth = true;
     rp_create_info.flags = eRenderPassBit_First|eRenderPassBit_Last;
-    // CreateColorAndDepthRenderPass(device, true, &vkState.render_pass, rp_create_info);
-    // createPipelineLayout(vkDev.device, vkState.descriptorSetLayout, &vkState.pipelineLayout);
-	// createGraphicsPipeline(vkDev, vkState.renderPass, vkState.pipelineLayout, { "data/shaders/chapter03/VK02.vert", "data/shaders/chapter03/VK02.frag", "data/shaders/chapter03/VK02.geom" }, &vkState.graphicsPipeline));
+    VK_CHECK(CreateColorAndDepthRenderPass(device, true, &state.render_pass, rp_create_info));
+    VK_CHECK(CreatePipelineLayout(device.device, device.table, state.descriptor_set_layout, &state.pipeline_layout));
+	BL_CHECK(CreateGraphicsPipeline(device, state.render_pass, state.pipeline_layout, { "/Asset/Shader/shader_base.vert", "/Asset/Shader/shader_base.frag" }, &state.graphics_pipeline));
     // createColorAndDepthFramebuffers(vkDev, vkState.renderPass, vkState.depthTexture.imageView, vkState.swapchainFramebuffers);
 
     while(window->IsRunning()) {
@@ -51,6 +51,7 @@ int main() {
         DrawFrame();
     }
 
+    // Cleanup Vulkan States
     CleanupVulkanRenderDevice(device);
     CleanupVulkanInstance(instance);
 

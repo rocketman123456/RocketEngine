@@ -31,8 +31,9 @@ namespace Rocket {
         VulkanShaderModule* module);
 
     VkResult CreateShaderModule(
-        VkDevice device, 
-        const char* root, 
-        const char* fileName,
+        const VkDevice& device, 
+        const VolkDeviceTable& table, 
+        const std::string& root, 
+        const std::string& fileName,
         VulkanShaderModule* shader);
 }

@@ -240,10 +240,55 @@ namespace Rocket {
         VkShaderStageFlags stageFlags, 
         uint32_t descriptorCount = 1);
 
-    bool CreateDescriptorSet(
+    VkResult CreateDescriptorSet(
         VulkanRenderDevice& vkDev, 
         VulkanState* vkState,
         uint32_t uniformBufferSize,
         uint32_t vertexBufferSize,
         uint32_t indexBufferSize);
+    
+    VkResult CreateColorAndDepthRenderPass(
+        VulkanRenderDevice& vkDev, 
+        bool useDepth, 
+        VkRenderPass* renderPass, 
+        const VulkanRenderPassCreateInfo& ci, 
+        VkFormat colorFormat = VK_FORMAT_B8G8R8A8_UNORM);
+    
+    VkResult CreateColorOnlyRenderPass(
+        VulkanRenderDevice& vkDev, 
+        VkRenderPass* renderPass, 
+        const VulkanRenderPassCreateInfo& ci, 
+        VkFormat colorFormat = VK_FORMAT_B8G8R8A8_UNORM);
+
+    VkResult CreateDepthOnlyRenderPass(
+        VulkanRenderDevice& vkDev, 
+        VkRenderPass* renderPass, 
+        const VulkanRenderPassCreateInfo& ci);
+
+    VkResult CreatePipelineLayout(
+        const VkDevice& device, 
+        const VolkDeviceTable& table, 
+        VkDescriptorSetLayout dsLayout, 
+        VkPipelineLayout* pipelineLayout);
+
+    VkPipelineShaderStageCreateInfo ShaderStageInfo(
+        VkShaderStageFlagBits shaderStage, 
+        VulkanShaderModule& module, 
+        const char* entryPoint);
+
+    bool CreateGraphicsPipeline(
+        VulkanRenderDevice& vkDev,
+        VkRenderPass renderPass, 
+        VkPipelineLayout pipelineLayout,
+        const std::vector<std::string>& shaderFiles,
+        VkPipeline* pipeline,
+        /* defaults to triangles*/
+        VkPrimitiveTopology topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST,
+        bool useDepth = true,
+        bool useBlending = true,
+        bool dynamicScissorState = false,
+        int32_t customWidth  = -1,
+        int32_t customHeight = -1,
+        uint32_t numPatchControlPoints = 0);
+
 }

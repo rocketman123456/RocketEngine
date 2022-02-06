@@ -124,17 +124,19 @@ namespace Rocket {
     }
 
     VkResult CreateShaderModule(
-        VkDevice device, 
+        const VkDevice& device, 
+        const VolkDeviceTable& table, 
         const std::string& root, 
         const std::string& fileName,
         VulkanShaderModule* shader
     ) {
+        RK_INFO(Graphics, "shader: {}", root + fileName);
         if (CompileShaderFile(root, fileName, shader) < 1)
             return VK_NOT_READY;
         VkShaderModuleCreateInfo createInfo = {};
         createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
         createInfo.codeSize = shader->SPIRV.size() * sizeof(unsigned int);
         createInfo.pCode = shader->SPIRV.data();
-        return vkCreateShaderModule(device, &createInfo, nullptr, &shader->shader_module);
+        return table.vkCreateShaderModule(device, &createInfo, nullptr, &shader->shader_module);
     }
 }
