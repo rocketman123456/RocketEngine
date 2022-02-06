@@ -70,217 +70,207 @@ namespace Rocket {
         void* object, 
         const std::string& name);
 
-    bool CreateTextureSampler(
-        VkDevice device, 
-        VkSampler* sampler, 
-        VkFilter minFilter = VK_FILTER_LINEAR, 
-        VkFilter maxFilter = VK_FILTER_LINEAR, 
-        VkSamplerAddressMode addressMode = VK_SAMPLER_ADDRESS_MODE_REPEAT);
+//------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------
 
-    bool CreateDescriptorPool(
-        VulkanRenderDevice& vkDev, 
-        uint32_t uniformBufferCount, 
-        uint32_t storageBufferCount, 
-        uint32_t samplerCount, 
-        VkDescriptorPool* descriptorPool);
+    // bool CreateTextureSampler(
+    //     VkDevice device, 
+    //     VkSampler* sampler, 
+    //     VkFilter minFilter = VK_FILTER_LINEAR, 
+    //     VkFilter maxFilter = VK_FILTER_LINEAR, 
+    //     VkSamplerAddressMode addressMode = VK_SAMPLER_ADDRESS_MODE_REPEAT);
 
-    bool IsDeviceSuitable(VkPhysicalDevice device);
+    // bool CreateDescriptorPool(
+    //     VulkanRenderDevice& vkDev, 
+    //     uint32_t uniformBufferCount, 
+    //     uint32_t storageBufferCount, 
+    //     uint32_t samplerCount, 
+    //     VkDescriptorPool* descriptorPool);
 
-    VkResult FindSuitablePhysicalDevice(
-        VkInstance instance, 
-        std::function<bool(VkPhysicalDevice)> selector, 
-        VkPhysicalDevice* physicalDevice);
+    // bool IsDeviceSuitable(VkPhysicalDevice device);
 
-    VkFormat FindSupportedFormat(
-        VkPhysicalDevice device, 
-        const std::vector<VkFormat>& candidates, 
-        VkImageTiling tiling, 
-        VkFormatFeatureFlags features);
+    // VkResult FindSuitablePhysicalDevice(
+    //     VkInstance instance, 
+    //     std::function<bool(VkPhysicalDevice)> selector, 
+    //     VkPhysicalDevice* physicalDevice);
 
-    uint32_t FindMemoryType(
-        VkPhysicalDevice device, 
-        uint32_t typeFilter, 
-        VkMemoryPropertyFlags properties);
+    // VkFormat FindSupportedFormat(
+    //     VkPhysicalDevice device, 
+    //     const std::vector<VkFormat>& candidates, 
+    //     VkImageTiling tiling, 
+    //     VkFormatFeatureFlags features);
 
-    VkFormat FindDepthFormat(VkPhysicalDevice device);
+    // uint32_t FindMemoryType(
+    //     VkPhysicalDevice device, 
+    //     uint32_t typeFilter, 
+    //     VkMemoryPropertyFlags properties);
 
-    bool HasStencilComponent(VkFormat format);
+    // VkFormat FindDepthFormat(VkPhysicalDevice device);
 
-    void UpdateTextureInDescriptorSetArray(
-        VulkanRenderDevice& vkDev, 
-        VkDescriptorSet ds, 
-        VulkanTexture t, 
-        uint32_t textureIndex, 
-        uint32_t bindingIdx);
+    // bool HasStencilComponent(VkFormat format);
 
-    bool CreateGraphicsPipeline(
-        VulkanRenderDevice& vkDev,
-        VkRenderPass renderPass, VkPipelineLayout pipelineLayout,
-        const std::vector<const char*>& shaderFiles,
-        VkPipeline* pipeline,
-        /* defaults to triangles*/
-        VkPrimitiveTopology topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST,
-        bool useDepth = true,
-        bool useBlending = true,
-        bool dynamicScissorState = false,
-        int32_t customWidth  = -1,
-        int32_t customHeight = -1,
-        uint32_t numPatchControlPoints = 0);
+    // void UpdateTextureInDescriptorSetArray(
+    //     VulkanRenderDevice& vkDev, 
+    //     VkDescriptorSet ds, 
+    //     VulkanTexture t, 
+    //     uint32_t textureIndex, 
+    //     uint32_t bindingIdx);
 
-    VkResult CreateComputePipeline(
-        VkDevice device, 
-        VkShaderModule computeShader, 
-        VkPipelineLayout pipelineLayout, 
-        VkPipeline* pipeline);
+    // bool CreateGraphicsPipeline(
+    //     VulkanRenderDevice& vkDev,
+    //     VkRenderPass renderPass, VkPipelineLayout pipelineLayout,
+    //     const std::vector<const char*>& shaderFiles,
+    //     VkPipeline* pipeline,
+    //     /* defaults to triangles*/
+    //     VkPrimitiveTopology topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST,
+    //     bool useDepth = true,
+    //     bool useBlending = true,
+    //     bool dynamicScissorState = false,
+    //     int32_t customWidth  = -1,
+    //     int32_t customHeight = -1,
+    //     uint32_t numPatchControlPoints = 0);
 
-    bool CreateSharedBuffer(
-        VulkanRenderDevice& vkDev, 
-        VkDeviceSize size, 
-        VkBufferUsageFlags usage, 
-        VkMemoryPropertyFlags properties, 
-        VkBuffer* buffer, 
-        VkDeviceMemory* bufferMemory);
+    // VkResult CreateComputePipeline(
+    //     VkDevice device, 
+    //     VkShaderModule computeShader, 
+    //     VkPipelineLayout pipelineLayout, 
+    //     VkPipeline* pipeline);
 
-    bool createBuffer(
-        VkDevice device, 
-        VkPhysicalDevice physicalDevice, 
-        VkDeviceSize size, 
-        VkBufferUsageFlags usage, 
-        VkMemoryPropertyFlags properties, 
-        VkBuffer* buffer, 
-        VkDeviceMemory* bufferMemory);
-    bool createImage(VkDevice device, VkPhysicalDevice physicalDevice, uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory, VkImageCreateFlags flags = 0, uint32_t mipLevels = 1);
+    // bool CreateSharedBuffer(
+    //     VulkanRenderDevice& vkDev, 
+    //     VkDeviceSize size, 
+    //     VkBufferUsageFlags usage, 
+    //     VkMemoryPropertyFlags properties, 
+    //     VkBuffer* buffer, 
+    //     VkDeviceMemory* bufferMemory);
 
-    bool createVolume(VkDevice device, VkPhysicalDevice physicalDevice, uint32_t width, uint32_t height, uint32_t depth,
-        VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory, VkImageCreateFlags flags);
+    // bool CreateBuffer(
+    //     VkDevice device, 
+    //     VkPhysicalDevice physicalDevice, 
+    //     VkDeviceSize size, 
+    //     VkBufferUsageFlags usage, 
+    //     VkMemoryPropertyFlags properties, 
+    //     VkBuffer* buffer, 
+    //     VkDeviceMemory* bufferMemory);
+    // bool CreateImage(VkDevice device, VkPhysicalDevice physicalDevice, uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory, VkImageCreateFlags flags = 0, uint32_t mipLevels = 1);
 
-    bool createOffscreenImage(VulkanRenderDevice& vkDev,
-            VkImage& textureImage, VkDeviceMemory& textureImageMemory,
-            uint32_t texWidth, uint32_t texHeight,
-            VkFormat texFormat,
-            uint32_t layerCount, VkImageCreateFlags flags);
+    // bool CreateVolume(VkDevice device, VkPhysicalDevice physicalDevice, uint32_t width, uint32_t height, uint32_t depth,
+    //     VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory, VkImageCreateFlags flags);
 
-    bool createOffscreenImageFromData(VulkanRenderDevice& vkDev,
-            VkImage& textureImage, VkDeviceMemory& textureImageMemory,
-            void* imageData, uint32_t texWidth, uint32_t texHeight,
-            VkFormat texFormat,
-            uint32_t layerCount, VkImageCreateFlags flags);
+    // bool CreateOffscreenImage(VulkanRenderDevice& vkDev,
+    //         VkImage& textureImage, VkDeviceMemory& textureImageMemory,
+    //         uint32_t texWidth, uint32_t texHeight,
+    //         VkFormat texFormat,
+    //         uint32_t layerCount, VkImageCreateFlags flags);
 
-    bool createDepthSampler(VkDevice device, VkSampler* sampler);
+    // bool createOffscreenImageFromData(VulkanRenderDevice& vkDev,
+    //         VkImage& textureImage, VkDeviceMemory& textureImageMemory,
+    //         void* imageData, uint32_t texWidth, uint32_t texHeight,
+    //         VkFormat texFormat,
+    //         uint32_t layerCount, VkImageCreateFlags flags);
 
-    bool createUniformBuffer(VulkanRenderDevice& vkDev, VkBuffer& buffer, VkDeviceMemory& bufferMemory, VkDeviceSize bufferSize);
+    // bool createDepthSampler(VkDevice device, VkSampler* sampler);
 
-    /** Copy [data] to GPU device buffer */
-    void uploadBufferData(VulkanRenderDevice& vkDev, const VkDeviceMemory& bufferMemory, VkDeviceSize deviceOffset, const void* data, const size_t dataSize);
+    // bool createUniformBuffer(VulkanRenderDevice& vkDev, VkBuffer& buffer, VkDeviceMemory& bufferMemory, VkDeviceSize bufferSize);
 
-    /** Copy GPU device buffer data to [outData] */
-    void downloadBufferData(VulkanRenderDevice& vkDev, const VkDeviceMemory& bufferMemory, VkDeviceSize deviceOffset, void* outData, size_t dataSize);
+    // bool CreateColorOnlyRenderPass(
+    //     VulkanRenderDevice& device, 
+    //     VkRenderPass* renderPass, 
+    //     const VulkanRenderPassCreateInfo& ci, 
+    //     VkFormat colorFormat = VK_FORMAT_B8G8R8A8_UNORM);
+    // bool CreateColorAndDepthRenderPass(
+    //     VulkanRenderDevice& device, 
+    //     bool useDepth, 
+    //     VkRenderPass* renderPass, 
+    //     const VulkanRenderPassCreateInfo& ci, 
+    //     VkFormat colorFormat = VK_FORMAT_B8G8R8A8_UNORM);
+    // bool CreateDepthOnlyRenderPass(
+    //     VulkanRenderDevice& vkDev, 
+    //     VkRenderPass* renderPass, 
+    //     const VulkanRenderPassCreateInfo& ci);
 
-    bool CreateColorOnlyRenderPass(
-        VulkanRenderDevice& device, 
-        VkRenderPass* renderPass, 
-        const VulkanRenderPassCreateInfo& ci, 
-        VkFormat colorFormat = VK_FORMAT_B8G8R8A8_UNORM);
-    bool CreateColorAndDepthRenderPass(
-        VulkanRenderDevice& device, 
-        bool useDepth, 
-        VkRenderPass* renderPass, 
-        const VulkanRenderPassCreateInfo& ci, 
-        VkFormat colorFormat = VK_FORMAT_B8G8R8A8_UNORM);
-    bool CreateDepthOnlyRenderPass(
-        VulkanRenderDevice& vkDev, 
-        VkRenderPass* renderPass, 
-        const VulkanRenderPassCreateInfo& ci);
+    // VkCommandBuffer beginSingleTimeCommands(VulkanRenderDevice& vkDev);
+    // void endSingleTimeCommands(VulkanRenderDevice& vkDev, VkCommandBuffer commandBuffer);
+    // void copyBuffer(VulkanRenderDevice& vkDev, VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
+    // void transitionImageLayout(VulkanRenderDevice& vkDev, VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout, uint32_t layerCount = 1, uint32_t mipLevels = 1);
+    // void transitionImageLayoutCmd(VkCommandBuffer commandBuffer, VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout, uint32_t layerCount = 1, uint32_t mipLevels = 1);
 
-    VkCommandBuffer beginSingleTimeCommands(VulkanRenderDevice& vkDev);
-    void endSingleTimeCommands(VulkanRenderDevice& vkDev, VkCommandBuffer commandBuffer);
-    void copyBuffer(VulkanRenderDevice& vkDev, VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
-    void transitionImageLayout(VulkanRenderDevice& vkDev, VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout, uint32_t layerCount = 1, uint32_t mipLevels = 1);
-    void transitionImageLayoutCmd(VkCommandBuffer commandBuffer, VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout, uint32_t layerCount = 1, uint32_t mipLevels = 1);
+    // bool createColorAndDepthFramebuffers(VulkanRenderDevice& vkDev, VkRenderPass renderPass, VkImageView depthImageView, std::vector<VkFramebuffer>& swapchainFramebuffers);
+    // bool createColorAndDepthFramebuffer(VulkanRenderDevice& vkDev,
+    //     uint32_t width, uint32_t height,
+    //     VkRenderPass renderPass, VkImageView colorImageView, VkImageView depthImageView,
+    //     VkFramebuffer* framebuffer);
+    // bool createDepthOnlyFramebuffer(VulkanRenderDevice& vkDev,
+    //     uint32_t width, uint32_t height,
+    //     VkRenderPass renderPass, VkImageView depthImageView,
+    //     VkFramebuffer* framebuffer);
 
-    bool initVulkanRenderDevice(VulkanInstance& vk, VulkanRenderDevice& vkDev, uint32_t width, uint32_t height, std::function<bool(VkPhysicalDevice)> selector, VkPhysicalDeviceFeatures deviceFeatures);
-    bool initVulkanRenderDevice2(VulkanInstance& vk, VulkanRenderDevice& vkDev, uint32_t width, uint32_t height, std::function<bool(VkPhysicalDevice)> selector, VkPhysicalDeviceFeatures2 deviceFeatures2);
-    bool initVulkanRenderDevice3(VulkanInstance& vk, VulkanRenderDevice& vkDev, uint32_t width, uint32_t height, const VulkanContextFeatures& ctxFeatures = VulkanContextFeatures());
-    void destroyVulkanRenderDevice(VulkanRenderDevice& vkDev);
-    void destroyVulkanInstance(VulkanInstance& vk);
+    // void copyBufferToImage(VulkanRenderDevice& vkDev, VkBuffer buffer, VkImage image, uint32_t width, uint32_t height, uint32_t layerCount = 1);
+    // void copyImageToBuffer(VulkanRenderDevice& vkDev, VkImage image, VkBuffer buffer, uint32_t width, uint32_t height, uint32_t layerCount = 1);
 
-    bool initVulkanRenderDeviceWithCompute(VulkanInstance& vk, VulkanRenderDevice& vkDev, uint32_t width, uint32_t height, VkPhysicalDeviceFeatures deviceFeatures);
+    // void copyMIPBufferToImage(VulkanRenderDevice& vkDev, VkBuffer buffer, VkImage image, uint32_t mipLevels, uint32_t width, uint32_t height, uint32_t bytesPP, uint32_t layerCount = 1);
 
-    bool initVulkanRenderDevice2WithCompute(VulkanInstance& vk, VulkanRenderDevice& vkDev, uint32_t width, uint32_t height, std::function<bool(VkPhysicalDevice)> selector, VkPhysicalDeviceFeatures2 deviceFeatures2, bool supportScreenshots = false);
+    // void destroyVulkanImage(VkDevice device, VulkanImage& image);
+    // void destroyVulkanTexture(VkDevice device, VulkanTexture& texture);
 
-    bool createColorAndDepthFramebuffers(VulkanRenderDevice& vkDev, VkRenderPass renderPass, VkImageView depthImageView, std::vector<VkFramebuffer>& swapchainFramebuffers);
-    bool createColorAndDepthFramebuffer(VulkanRenderDevice& vkDev,
-        uint32_t width, uint32_t height,
-        VkRenderPass renderPass, VkImageView colorImageView, VkImageView depthImageView,
-        VkFramebuffer* framebuffer);
-    bool createDepthOnlyFramebuffer(VulkanRenderDevice& vkDev,
-        uint32_t width, uint32_t height,
-        VkRenderPass renderPass, VkImageView depthImageView,
-        VkFramebuffer* framebuffer);
+    // uint32_t bytesPerTexFormat(VkFormat fmt);
 
-    void copyBufferToImage(VulkanRenderDevice& vkDev, VkBuffer buffer, VkImage image, uint32_t width, uint32_t height, uint32_t layerCount = 1);
-    void copyImageToBuffer(VulkanRenderDevice& vkDev, VkImage image, VkBuffer buffer, uint32_t width, uint32_t height, uint32_t layerCount = 1);
+    // /* VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL for real update of an existing texture */
+    // bool updateTextureImage(VulkanRenderDevice& vkDev, VkImage& textureImage, VkDeviceMemory& textureImageMemory, uint32_t texWidth, uint32_t texHeight, VkFormat texFormat, uint32_t layerCount, const void* imageData, VkImageLayout sourceImageLayout = VK_IMAGE_LAYOUT_UNDEFINED);
 
-    void copyMIPBufferToImage(VulkanRenderDevice& vkDev, VkBuffer buffer, VkImage image, uint32_t mipLevels, uint32_t width, uint32_t height, uint32_t bytesPP, uint32_t layerCount = 1);
+    // bool updateTextureVolume(VulkanRenderDevice& vkDev, VkImage& textureVolume, VkDeviceMemory& textureVolumeMemory, uint32_t texWidth, uint32_t texHeight, uint32_t texDepth, VkFormat texFormat, const void* volumeData, VkImageLayout sourceImageLayout = VK_IMAGE_LAYOUT_UNDEFINED);
 
-    void destroyVulkanImage(VkDevice device, VulkanImage& image);
-    void destroyVulkanTexture(VkDevice device, VulkanTexture& texture);
+    // bool downloadImageData(VulkanRenderDevice& vkDev, VkImage& textureImage, uint32_t texWidth, uint32_t texHeight, VkFormat texFormat, uint32_t layerCount, void* imageData, VkImageLayout sourceImageLayout);
 
-    uint32_t bytesPerTexFormat(VkFormat fmt);
+    // bool createDepthResources(VulkanRenderDevice& vkDev, uint32_t width, uint32_t height, VulkanImage& depth);
 
-    /* VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL for real update of an existing texture */
-    bool updateTextureImage(VulkanRenderDevice& vkDev, VkImage& textureImage, VkDeviceMemory& textureImageMemory, uint32_t texWidth, uint32_t texHeight, VkFormat texFormat, uint32_t layerCount, const void* imageData, VkImageLayout sourceImageLayout = VK_IMAGE_LAYOUT_UNDEFINED);
+    // bool createPipelineLayout(VkDevice device, VkDescriptorSetLayout dsLayout, VkPipelineLayout* pipelineLayout);
 
-    bool updateTextureVolume(VulkanRenderDevice& vkDev, VkImage& textureVolume, VkDeviceMemory& textureVolumeMemory, uint32_t texWidth, uint32_t texHeight, uint32_t texDepth, VkFormat texFormat, const void* volumeData, VkImageLayout sourceImageLayout = VK_IMAGE_LAYOUT_UNDEFINED);
+    // bool createPipelineLayoutWithConstants(VkDevice device, VkDescriptorSetLayout dsLayout, VkPipelineLayout* pipelineLayout, uint32_t vtxConstSize, uint32_t fragConstSize);
 
-    bool downloadImageData(VulkanRenderDevice& vkDev, VkImage& textureImage, uint32_t texWidth, uint32_t texHeight, VkFormat texFormat, uint32_t layerCount, void* imageData, VkImageLayout sourceImageLayout);
+    // bool createTextureImageFromData(VulkanRenderDevice& vkDev,
+    //         VkImage& textureImage, VkDeviceMemory& textureImageMemory,
+    //         void* imageData, uint32_t texWidth, uint32_t texHeight,
+    //         VkFormat texFormat,
+    //         uint32_t layerCount = 1, VkImageCreateFlags flags = 0);
 
-    bool createDepthResources(VulkanRenderDevice& vkDev, uint32_t width, uint32_t height, VulkanImage& depth);
+    // bool createMIPTextureImageFromData(VulkanRenderDevice& vkDev,
+    //         VkImage& textureImage, VkDeviceMemory& textureImageMemory,
+    //         void* mipData, uint32_t mipLevels, uint32_t texWidth, uint32_t texHeight,
+    //         VkFormat texFormat,
+    //         uint32_t layerCount = 1, VkImageCreateFlags flags = 0);
 
-    bool createPipelineLayout(VkDevice device, VkDescriptorSetLayout dsLayout, VkPipelineLayout* pipelineLayout);
+    // bool createTextureVolumeFromData(VulkanRenderDevice& vkDev,
+    //         VkImage& textureVolume, VkDeviceMemory& textureVolumeMemory,
+    //         void* volumeData, uint32_t texWidth, uint32_t texHeight, uint32_t texDepth,
+    //         VkFormat texFormat,
+    //         VkImageCreateFlags flags = 0);
 
-    bool createPipelineLayoutWithConstants(VkDevice device, VkDescriptorSetLayout dsLayout, VkPipelineLayout* pipelineLayout, uint32_t vtxConstSize, uint32_t fragConstSize);
+    // bool createTextureImage(VulkanRenderDevice& vkDev, const char* filename, VkImage& textureImage, VkDeviceMemory& textureImageMemory, uint32_t* outTexWidth = nullptr, uint32_t* outTexHeight = nullptr);
 
-    bool createTextureImageFromData(VulkanRenderDevice& vkDev,
-            VkImage& textureImage, VkDeviceMemory& textureImageMemory,
-            void* imageData, uint32_t texWidth, uint32_t texHeight,
-            VkFormat texFormat,
-            uint32_t layerCount = 1, VkImageCreateFlags flags = 0);
+    // bool createMIPTextureImage(VulkanRenderDevice& vkDev, const char* filename, uint32_t mipLevels, VkImage& textureImage, VkDeviceMemory& textureImageMemory, uint32_t* width = nullptr, uint32_t* height = nullptr);
 
-    bool createMIPTextureImageFromData(VulkanRenderDevice& vkDev,
-            VkImage& textureImage, VkDeviceMemory& textureImageMemory,
-            void* mipData, uint32_t mipLevels, uint32_t texWidth, uint32_t texHeight,
-            VkFormat texFormat,
-            uint32_t layerCount = 1, VkImageCreateFlags flags = 0);
+    // bool createCubeTextureImage(VulkanRenderDevice& vkDev, const char* filename, VkImage& textureImage, VkDeviceMemory& textureImageMemory, uint32_t* width = nullptr, uint32_t* height = nullptr);
 
-    bool createTextureVolumeFromData(VulkanRenderDevice& vkDev,
-            VkImage& textureVolume, VkDeviceMemory& textureVolumeMemory,
-            void* volumeData, uint32_t texWidth, uint32_t texHeight, uint32_t texDepth,
-            VkFormat texFormat,
-            VkImageCreateFlags flags = 0);
+    // bool createMIPCubeTextureImage(VulkanRenderDevice& vkDev, const char* filename, uint32_t mipLevels, VkImage& textureImage, VkDeviceMemory& textureImageMemory, uint32_t* width = nullptr, uint32_t* height = nullptr);
 
-    bool createTextureImage(VulkanRenderDevice& vkDev, const char* filename, VkImage& textureImage, VkDeviceMemory& textureImageMemory, uint32_t* outTexWidth = nullptr, uint32_t* outTexHeight = nullptr);
+    // size_t allocateVertexBuffer(VulkanRenderDevice& vkDev, VkBuffer* storageBuffer, VkDeviceMemory* storageBufferMemory, size_t vertexDataSize, const void* vertexData, size_t indexDataSize, const void* indexData);
 
-    bool createMIPTextureImage(VulkanRenderDevice& vkDev, const char* filename, uint32_t mipLevels, VkImage& textureImage, VkDeviceMemory& textureImageMemory, uint32_t* width = nullptr, uint32_t* height = nullptr);
+    // bool createTexturedVertexBuffer(VulkanRenderDevice& vkDev, const char* filename, VkBuffer* storageBuffer, VkDeviceMemory* storageBufferMemory, size_t* vertexBufferSize, size_t* indexBufferSize);
 
-    bool createCubeTextureImage(VulkanRenderDevice& vkDev, const char* filename, VkImage& textureImage, VkDeviceMemory& textureImageMemory, uint32_t* width = nullptr, uint32_t* height = nullptr);
+    // bool createPBRVertexBuffer(VulkanRenderDevice& vkDev, const char* filename, VkBuffer* storageBuffer, VkDeviceMemory* storageBufferMemory, size_t* vertexBufferSize, size_t* indexBufferSize);
 
-    bool createMIPCubeTextureImage(VulkanRenderDevice& vkDev, const char* filename, uint32_t mipLevels, VkImage& textureImage, VkDeviceMemory& textureImageMemory, uint32_t* width = nullptr, uint32_t* height = nullptr);
+    // bool executeComputeShader(VulkanRenderDevice& vkDev,
+    //     VkPipeline computePipeline, VkPipelineLayout pl, VkDescriptorSet ds,
+    //     uint32_t xsize, uint32_t ysize, uint32_t zsize);
 
-    size_t allocateVertexBuffer(VulkanRenderDevice& vkDev, VkBuffer* storageBuffer, VkDeviceMemory* storageBufferMemory, size_t vertexDataSize, const void* vertexData, size_t indexDataSize, const void* indexData);
+    // bool createComputeDescriptorSetLayout(VkDevice device, VkDescriptorSetLayout* descriptorSetLayout);
 
-    bool createTexturedVertexBuffer(VulkanRenderDevice& vkDev, const char* filename, VkBuffer* storageBuffer, VkDeviceMemory* storageBufferMemory, size_t* vertexBufferSize, size_t* indexBufferSize);
+    // void insertComputedBufferBarrier(VulkanRenderDevice& vkDev, VkCommandBuffer commandBuffer, VkBuffer buffer);
+    // void insertComputedImageBarrier(VkCommandBuffer commandBuffer, VkImage image);
 
-    bool createPBRVertexBuffer(VulkanRenderDevice& vkDev, const char* filename, VkBuffer* storageBuffer, VkDeviceMemory* storageBufferMemory, size_t* vertexBufferSize, size_t* indexBufferSize);
-
-    bool executeComputeShader(VulkanRenderDevice& vkDev,
-        VkPipeline computePipeline, VkPipelineLayout pl, VkDescriptorSet ds,
-        uint32_t xsize, uint32_t ysize, uint32_t zsize);
-
-    bool createComputeDescriptorSetLayout(VkDevice device, VkDescriptorSetLayout* descriptorSetLayout);
-
-    void insertComputedBufferBarrier(VulkanRenderDevice& vkDev, VkCommandBuffer commandBuffer, VkBuffer buffer);
-    void insertComputedImageBarrier(VkCommandBuffer commandBuffer, VkImage image);
-
-    VkSampleCountFlagBits getMaxUsableSampleCount(VkPhysicalDevice physDevice);
+    // VkSampleCountFlagBits getMaxUsableSampleCount(VkPhysicalDevice physDevice);
 }

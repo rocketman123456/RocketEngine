@@ -152,4 +152,33 @@ namespace Rocket {
         VulkanRenderPassCreateInfo info;
         VkRenderPass handle = VK_NULL_HANDLE;
     };
+
+    struct VulkanState {
+        // 1. Descriptor set (layout + pool + sets) -> uses uniform buffers, textures, framebuffers
+        VkDescriptorSetLayout descriptor_set_layout;
+        VkDescriptorPool descriptor_pool;
+        std::vector<VkDescriptorSet> descriptor_sets;
+
+        // 2. 
+        std::vector<VkFramebuffer> swapchain_framebuffers;
+
+        // 3. Pipeline & render pass (using DescriptorSets & pipeline state options)
+        VkRenderPass render_pass;
+        VkPipelineLayout pipeline_layout;
+        VkPipeline graphics_pipeline;
+
+        // 4. Uniform buffer
+        std::vector<VkBuffer> uniform_buffers;
+        std::vector<VkDeviceMemory> uniform_buffers_memory;
+
+        // 5. Storage Buffer with index and vertex data
+        VkBuffer storage_buffer;
+        VkDeviceMemory storage_buffer_memory;
+
+        // 6. Depth buffer
+        VulkanImage depth_texture;
+
+        VkSampler texture_sampler;
+        VulkanImage texture;
+    };
 }
