@@ -85,7 +85,7 @@ namespace Rocket {
         return {result.cbegin(), result.cend()};
     }
 
-    std::vector<uint32_t> CompileToBinary(
+    std::vector<uint32_t> CompileSourceToBinary(
         shaderc_shader_kind kind,
         const std::string& source_name,
         const std::string& source,
@@ -109,15 +109,40 @@ namespace Rocket {
         return {module.cbegin(), module.cend()};
     }
 
+    std::vector<uint32_t> CompileAssembleToBinary(
+        shaderc_shader_kind kind,
+        const std::string& source_name,
+        const std::string& source,
+        bool optimize
+    ) {
+        shaderc::Compiler compiler;
+        shaderc::CompileOptions options;
+
+        // Like -DRK_DEFINE=1
+        options.AddMacroDefinition("RK_DEFINE", "1");
+        if (optimize) options.SetOptimizationLevel(shaderc_optimization_level_size);
+
+        shaderc::SpvCompilationResult module =
+            compiler.AssembleToSpv(source, options);
+
+        if (module.GetCompilationStatus() != shaderc_compilation_status_success) {
+            RK_ERROR(Graphics, "GLSL compile to binary failed: {}", module.GetErrorMessage());
+            return std::vector<uint32_t>();
+        }
+
+        return {module.cbegin(), module.cend()};
+    }
+
     std::size_t CompileShaderFile(
         const std::string& root, const std::string& file, VulkanShaderModule* module
     ) {
         auto source = ReadShaderFile(root, file);
+        RK_DEBUG(Graphics, "\n{}", source);
         if(!source.empty()) {
             auto kind = ShaderStageFromFileName(file);
             source = PreProcessShader(kind, file, source);
             auto assembly = CompileToAssembly(kind, file, source);
-            module->SPIRV = CompileToBinary(kind, file, assembly);
+            module->SPIRV = CompileAssembleToBinary(kind, file, assembly);
             return module->SPIRV.size();
         }
         return 0;
