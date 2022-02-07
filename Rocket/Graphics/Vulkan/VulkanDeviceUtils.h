@@ -205,6 +205,7 @@ namespace Rocket {
         VkImageLayout newLayout, 
         uint32_t layerCount = 1, 
         uint32_t mipLevels = 1);
+
     void TransitionImageLayoutCmd(
         const VolkDeviceTable& table, 
         VkCommandBuffer commandBuffer, 
@@ -215,7 +216,7 @@ namespace Rocket {
         uint32_t layerCount = 1, 
         uint32_t mipLevels = 1);
 
-    bool CreateDepthResources(
+    VkResult CreateDepthResources(
         VulkanRenderDevice& vkDev, 
         uint32_t width, 
         uint32_t height, 
@@ -276,7 +277,7 @@ namespace Rocket {
         VulkanShaderModule& module, 
         const char* entryPoint);
 
-    bool CreateGraphicsPipeline(
+    VkResult CreateGraphicsPipeline(
         VulkanRenderDevice& vkDev,
         VkRenderPass renderPass, 
         VkPipelineLayout pipelineLayout,
@@ -290,5 +291,28 @@ namespace Rocket {
         int32_t customWidth  = -1,
         int32_t customHeight = -1,
         uint32_t numPatchControlPoints = 0);
+
+    VkResult CreateColorAndDepthFramebuffers(
+        VulkanRenderDevice& vkDev, 
+        VkRenderPass renderPass, 
+        VkImageView depthImageView, 
+        std::vector<VkFramebuffer>& swapchainFramebuffers);
+
+    VkResult CreateColorAndDepthFramebuffer(
+        VulkanRenderDevice& vkDev,
+        uint32_t width, 
+        uint32_t height,
+        VkRenderPass renderPass, 
+        VkImageView colorImageView, 
+        VkImageView depthImageView,
+        VkFramebuffer* framebuffer);
+
+    VkResult CreateDepthOnlyFramebuffer(
+        VulkanRenderDevice& vkDev,
+        uint32_t width, 
+        uint32_t height,
+        VkRenderPass renderPass, 
+        VkImageView depthImageView,
+        VkFramebuffer* framebuffer);
 
 }

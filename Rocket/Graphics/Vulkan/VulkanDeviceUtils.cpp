@@ -554,7 +554,7 @@ namespace Rocket {
             // Create graphics command pool
             VkCommandPoolCreateInfo cpi = {};
             cpi.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
-            cpi.flags = 0;
+            cpi.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT; //0;
             cpi.queueFamilyIndex = vkDev.family.graphics_family.value();
 
             VK_CHECK(vkDev.table.vkCreateCommandPool(vkDev.device, &cpi, nullptr, &vkDev.command_pool));
@@ -936,7 +936,7 @@ namespace Rocket {
 //------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------
 
-    bool CreateDepthResources(VulkanRenderDevice& vkDev, uint32_t width, uint32_t height, VulkanImage& depth) {
+    VkResult CreateDepthResources(VulkanRenderDevice& vkDev, uint32_t width, uint32_t height, VulkanImage& depth) {
         VkFormat depthFormat = FindDepthFormat(vkDev.physical_device);
 
         if (!CreateImage(
@@ -949,18 +949,18 @@ namespace Rocket {
             VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, 
             depth.image, 
             depth.image_memory))
-            return false;
+            return VK_ERROR_INITIALIZATION_FAILED;
 
         if (!CreateImageView(
             vkDev.device, vkDev.table, depth.image, depthFormat, VK_IMAGE_ASPECT_DEPTH_BIT, &depth.image_view))
-            return false;
+            return VK_ERROR_INITIALIZATION_FAILED;
 
         TransitionImageLayout(
             vkDev, depth.image, depthFormat, 
             VK_IMAGE_LAYOUT_UNDEFINED, 
             VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
 
-        return true;
+        return VK_SUCCESS;
     }
 
 //------------------------------------------------------------------------------------------
@@ -1356,7 +1356,7 @@ namespace Rocket {
         return ci;
     }
 
-    bool CreateGraphicsPipeline(
+    VkResult CreateGraphicsPipeline(
         VulkanRenderDevice& vkDev,
         VkRenderPass renderPass, 
         VkPipelineLayout pipelineLayout,
@@ -1496,6 +1496,85 @@ namespace Rocket {
         for (auto m: shaderModules)
             vkDev.table.vkDestroyShaderModule(vkDev.device, m.shader_module, nullptr);
 
-        return true;
+        return VK_SUCCESS;
+    }
+
+    VkResult CreateColorAndDepthFramebuffers(
+        VulkanRenderDevice& vkDev, 
+        VkRenderPass renderPass, 
+        VkImageView depthImageView, 
+        std::vector<VkFramebuffer>& swapchainFramebuffers
+    ) {
+        swapchainFramebuffers.resize(vkDev.swapchain_image_views.size());
+
+        for (size_t i = 0; i < vkDev.swapchain_images.size(); i++) {
+            std::array<VkImageView, 2> attachments = {
+                vkDev.swapchain_image_views[i],
+                depthImageView
+            };
+
+            VkFramebufferCreateInfo framebufferInfo = {};
+            framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+            framebufferInfo.pNext = nullptr;
+            framebufferInfo.flags = 0;
+            framebufferInfo.renderPass = renderPass;
+            framebufferInfo.attachmentCount = static_cast<uint32_t>((depthImageView == VK_NULL_HANDLE) ? 1 : 2);
+            framebufferInfo.pAttachments = attachments.data();
+            framebufferInfo.width = vkDev.framebuffer_width;
+            framebufferInfo.height = vkDev.framebuffer_height;
+            framebufferInfo.layers = 1;
+
+            VK_CHECK(vkDev.table.vkCreateFramebuffer(vkDev.device, &framebufferInfo, nullptr, &swapchainFramebuffers[i]));
+        }
+        return VK_SUCCESS;
+    }
+
+    VkResult CreateColorAndDepthFramebuffer(
+        VulkanRenderDevice& vkDev,
+        uint32_t width, 
+        uint32_t height,
+        VkRenderPass renderPass, 
+        VkImageView colorImageView, 
+        VkImageView depthImageView,
+        VkFramebuffer* framebuffer
+    ) {
+        std::array<VkImageView, 2> attachments = { colorImageView, depthImageView };
+
+        VkFramebufferCreateInfo framebufferInfo = {};
+        framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+        framebufferInfo.pNext = nullptr;
+        framebufferInfo.flags = 0;
+        framebufferInfo.renderPass = renderPass;
+        framebufferInfo.attachmentCount = (depthImageView == VK_NULL_HANDLE) ? 1u : 2u;
+        framebufferInfo.pAttachments = attachments.data();
+        framebufferInfo.width = vkDev.framebuffer_width;
+        framebufferInfo.height = vkDev.framebuffer_height;
+        framebufferInfo.layers = 1;
+
+        return vkDev.table.vkCreateFramebuffer(vkDev.device, &framebufferInfo, nullptr, framebuffer);
+    }
+
+    VkResult CreateDepthOnlyFramebuffer(
+        VulkanRenderDevice& vkDev,
+        uint32_t width, 
+        uint32_t height,
+        VkRenderPass renderPass, 
+        VkImageView depthImageView,
+        VkFramebuffer* framebuffer
+    ) {
+        VkImageView attachment = depthImageView;
+
+        VkFramebufferCreateInfo framebufferInfo = {};
+        framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+        framebufferInfo.pNext = nullptr;
+        framebufferInfo.flags = 0;
+        framebufferInfo.renderPass = renderPass;
+        framebufferInfo.attachmentCount = 1u;
+        framebufferInfo.pAttachments = &attachment;
+        framebufferInfo.width = vkDev.framebuffer_width;
+        framebufferInfo.height = vkDev.framebuffer_height;
+        framebufferInfo.layers = 1;
+
+        return vkDev.table.vkCreateFramebuffer(vkDev.device, &framebufferInfo, nullptr, framebuffer);
     }
 }

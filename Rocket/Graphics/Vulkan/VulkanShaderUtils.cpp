@@ -137,7 +137,7 @@ namespace Rocket {
         const std::string& root, const std::string& file, VulkanShaderModule* module
     ) {
         auto source = ReadShaderFile(root, file);
-        RK_DEBUG(Graphics, "\n{}", source);
+        //RK_DEBUG(Graphics, "\n{}", source);
         if(!source.empty()) {
             auto kind = ShaderStageFromFileName(file);
             source = PreProcessShader(kind, file, source);
