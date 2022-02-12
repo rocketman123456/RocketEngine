@@ -171,7 +171,7 @@ end
 --
 includes(
     "Rocket",
-    "ThirdParty",
+    -- "ThirdParty",
     "Sandbox",
     "UnitTest"
 )

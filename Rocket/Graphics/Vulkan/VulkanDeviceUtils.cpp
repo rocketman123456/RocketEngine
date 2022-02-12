@@ -1,7 +1,8 @@
 #include "Vulkan/VulkanDeviceUtils.h"
 #include "Vulkan/VulkanShaderUtils.h"
-#include "Log/Log.h"
+#include "Vulkan/VulkanUtils.h"
 #include "Utils/FindRootDir.h"
+#include "Log/Log.h"
 
 #include <set>
 
@@ -89,6 +90,7 @@ namespace Rocket {
         indices.present_family = FindPresentFamilies(physical_device, surface);
         indices.graphics_family = FindQueueFamilies(physical_device, VK_QUEUE_GRAPHICS_BIT);
         indices.compute_family = FindQueueFamilies(physical_device, VK_QUEUE_COMPUTE_BIT);
+        indices.PostProcess();
         return indices;
     }
 
@@ -220,14 +222,8 @@ namespace Rocket {
         VkDevice* device
     ) {
         std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
-        std::set<uint32_t> uniqueQueueFamilies = {
-            indices.graphics_family.value(),
-            indices.compute_family.value(),
-            indices.present_family.value(),
-        };
-
         float queuePriority = 1.0f;
-        for(auto queueFamily : uniqueQueueFamilies) {
+        for(auto queueFamily : indices.unique_family_data) {
             VkDeviceQueueCreateInfo queueCreateInfo{};
             queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
             queueCreateInfo.queueFamilyIndex = queueFamily;
@@ -252,6 +248,20 @@ namespace Rocket {
         createInfo.ppEnabledLayerNames = validationLayers.data();
 
         return vkCreateDevice(physicalDevice, &createInfo, nullptr, device);
+    }
+
+    VkResult GetVulkanQueue(
+        const VkDevice& device,
+        const VolkDeviceTable& table,
+        uint32_t index,
+        VkQueue* queue
+    ) {
+        table.vkGetDeviceQueue(device, index, 0, queue);
+        if (queue == nullptr) {
+            RK_ERROR(Graphics, "Failed to Get present_queue!");
+            return VK_ERROR_INITIALIZATION_FAILED;
+        }
+        return VK_SUCCESS;
     }
 
     SwapchainSupportDetails QuerySwapchainSupport(
@@ -327,6 +337,7 @@ namespace Rocket {
         const VkSurfaceKHR& surface, 
         const QueueFamilyIndices& indices, 
         VkFormat* swapChainImageFormat,
+        VkExtent2D* swapchainExtent,
         VkSwapchainKHR* swapchain,
         uint32_t width, 
         uint32_t height, 
@@ -338,6 +349,7 @@ namespace Rocket {
         auto imageCount = ChooseSwapImageCount(swapchainSupport.capabilities);
         auto extent = ChooseSwapExtent(swapchainSupport.capabilities, width, height);
         *swapChainImageFormat = surfaceFormat.format;
+        *swapchainExtent = extent;
 
         VkSwapchainCreateInfoKHR createInfo = {};
         createInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
@@ -352,60 +364,23 @@ namespace Rocket {
             VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | 
             VK_IMAGE_USAGE_TRANSFER_DST_BIT | 
             (supportScreenshots ? VK_IMAGE_USAGE_TRANSFER_SRC_BIT : 0u);
-        
-        std::set<uint32_t> queueFamilyIndicesCount = {
-            indices.graphics_family.value(),
-            indices.present_family.value(),
-            indices.compute_family.value()
-        };
 
-        std::vector<uint32_t> queueFamilyIndices(
-            queueFamilyIndicesCount.begin(), 
-            queueFamilyIndicesCount.end()
-        );
-
-        if (queueFamilyIndicesCount.size() > 1) {
+        if (indices.multiplicity.value() > 1) {
             createInfo.imageSharingMode = VK_SHARING_MODE_CONCURRENT;
         } else {
             createInfo.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
         }
 
-        createInfo.queueFamilyIndexCount = static_cast<uint32_t>(queueFamilyIndices.size());
-        createInfo.pQueueFamilyIndices = queueFamilyIndices.data();
+        createInfo.queueFamilyIndexCount = static_cast<uint32_t>(indices.unique_family_data.size());
+        createInfo.pQueueFamilyIndices = indices.unique_family_data.data();
         createInfo.preTransform = swapchainSupport.capabilities.currentTransform;
         createInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
         createInfo.presentMode = presentMode;
         createInfo.clipped = VK_TRUE;
+        // TODO : use for recreate swap chain
         createInfo.oldSwapchain = VK_NULL_HANDLE;
 
         return table.vkCreateSwapchainKHR(device, &createInfo, nullptr, swapchain);
-    }
-
-    VkResult CreateImageView(
-        const VkDevice& device, 
-        const VolkDeviceTable& table,
-        const VkImage& image, 
-        const VkFormat& format, 
-        const VkImageAspectFlags& aspectFlags, 
-        VkImageView* imageView, 
-        VkImageViewType viewType, 
-        uint32_t layerCount, 
-        uint32_t mipLevels
-    ) {
-        VkImageViewCreateInfo viewInfo = {};
-        viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
-        viewInfo.pNext = nullptr;
-        viewInfo.flags = 0;
-        viewInfo.image = image;
-        viewInfo.viewType = viewType;
-        viewInfo.format = format;
-        viewInfo.subresourceRange.aspectMask = aspectFlags;
-        viewInfo.subresourceRange.baseMipLevel = 0;
-        viewInfo.subresourceRange.levelCount = mipLevels;
-        viewInfo.subresourceRange.baseArrayLayer = 0;
-        viewInfo.subresourceRange.layerCount = layerCount;
-
-        return table.vkCreateImageView(device, &viewInfo, nullptr, imageView);
     }
 
     std::size_t CreateSwapchainImages(
@@ -416,121 +391,65 @@ namespace Rocket {
         std::vector<VkImage>* swapchainImages,
         std::vector<VkImageView>* swapchainImageViews
     ) {
+        // Retrive Swap Chain Image
         uint32_t imageCount = 0;
         VK_CHECK(table.vkGetSwapchainImagesKHR(device, swapchain, &imageCount, nullptr));
-
         swapchainImages->resize(imageCount);
-        swapchainImageViews->resize(imageCount);
-
         VK_CHECK(table.vkGetSwapchainImagesKHR(device, swapchain, &imageCount, swapchainImages->data()));
-
+        // Create Image Views
+        swapchainImageViews->resize(swapchainImages->size());
         for (unsigned i = 0; i < imageCount; i++) {
             VK_CHECK(CreateImageView(
                 device, table,
-                (*swapchainImages)[i], 
-                swapChainImageFormat,
-                VK_IMAGE_ASPECT_COLOR_BIT, 
-                &(*swapchainImageViews)[i]));
+                (*swapchainImages)[i], swapChainImageFormat, VK_IMAGE_ASPECT_COLOR_BIT, 
+                &(*swapchainImageViews)[i]
+            ));
         }
-
         return static_cast<std::size_t>(imageCount);
     }
 
-    VkResult CreateSemaphore(
-        const VkDevice& device, 
-        const VolkDeviceTable& table,
-        VkSemaphore* outSemaphore) {
-        VkSemaphoreCreateInfo createInfo = {};
-        createInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
-        return table.vkCreateSemaphore(device, &createInfo, nullptr, outSemaphore);
-    }
-
-    VkResult CreateFence(
-        const VkDevice& device, 
-        const VolkDeviceTable& table,
-        VkFence* fence
-    ) {
-        VkFenceCreateInfo fenceInfo{};
-        fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
-        fenceInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
-        return table.vkCreateFence(device, &fenceInfo, nullptr, fence);
-    }
-
-    VkResult CreateCommandPool(
-        const VkDevice& device, 
-        const VolkDeviceTable& table, 
-        const QueueFamilyIndices& indices, 
-        VkCommandPool* command_pool
-    ) {
-        VkCommandPoolCreateInfo createInfo = {};
-        createInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
-        createInfo.flags = 0;
-        createInfo.queueFamilyIndex = indices.graphics_family.value();
-        return table.vkCreateCommandPool(device, &createInfo, nullptr, command_pool);
-    }
-
-    VkResult CreateCommandBuffer(
-        const VkDevice& device, 
-        const VolkDeviceTable& table,
-        const VkCommandPool& commandPool,
-        uint32_t imageCount,
-        VkCommandBuffer* command_buffer
-    ) {
-        VkCommandBufferAllocateInfo allocateInfo = {};
-		allocateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-		allocateInfo.pNext = nullptr;
-		allocateInfo.commandPool = commandPool;
-		allocateInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-		allocateInfo.commandBufferCount = imageCount;
-        return table.vkAllocateCommandBuffers(device, &allocateInfo, command_buffer);
-    }
-
-    bool InitVulkanRenderDevice(
+    VkResult InitVulkanRenderDevice(
         VulkanInstance& vk, 
         VulkanRenderDevice& vkDev, 
         const std::vector<const char*>& deviceExtensions,
         const std::vector<const char*>& validationLayers,
-        uint32_t width, 
-        uint32_t height
+        uint32_t framebuffer_width, 
+        uint32_t framebuffer_height
     ) {
-        vkDev.framebuffer_width = width;
-        vkDev.framebuffer_height = height;
+        vkDev.framebuffer_width = framebuffer_width;
+        vkDev.framebuffer_height = framebuffer_height;
 
         VK_CHECK(PickPhysicalDevice(vk.instance, vk.surface, deviceExtensions, &vkDev.physical_device));
         vkDev.family = FindQueueFamilyIndices(vkDev.physical_device, vk.surface);
-        VK_CHECK(CreateLogicalDevice(vkDev.physical_device,validationLayers, deviceExtensions, 
-            vkDev.family, &vkDev.device));
+        VK_CHECK(CreateLogicalDevice(vkDev.physical_device,validationLayers, deviceExtensions, vkDev.family, &vkDev.device));
 
         volkLoadDeviceTable(&vkDev.table, vkDev.device);
 
-        vkDev.table.vkGetDeviceQueue(vkDev.device, vkDev.family.present_family.value(), 0, &vkDev.present_queue);
-        if (vkDev.present_queue == nullptr) {
-            RK_ERROR(Graphics, "Failed to Get present_queue!");
-            exit(EXIT_FAILURE);
-        }
-        vkDev.table.vkGetDeviceQueue(vkDev.device, vkDev.family.graphics_family.value(), 0, &vkDev.graphics_queue);
-        if (vkDev.graphics_queue == nullptr) {
-            RK_ERROR(Graphics, "Failed to Get graphics_queue!");
-            exit(EXIT_FAILURE);
-        }
-        vkDev.table.vkGetDeviceQueue(vkDev.device, vkDev.family.compute_family.value(), 0, &vkDev.compute_queue);
-        if (vkDev.compute_queue == nullptr) {
-            RK_ERROR(Graphics, "Failed to Get compute_queue!");
-            exit(EXIT_FAILURE);
-        }
-        vkDev.device_queue_indices = vkDev.family.FamilyData();
+        // Find Different Queue for Different Type of Command
+        VK_CHECK(GetVulkanQueue(vkDev.device, vkDev.table, vkDev.family.present_family.value(), &vkDev.present_queue));
+        VK_CHECK(GetVulkanQueue(vkDev.device, vkDev.table, vkDev.family.graphics_family.value(), &vkDev.graphics_queue));
+        VK_CHECK(GetVulkanQueue(vkDev.device, vkDev.table, vkDev.family.compute_family.value(), &vkDev.compute_queue));
 
-        VkBool32 presentSupported = 0;
-        vkGetPhysicalDeviceSurfaceSupportKHR(
-            vkDev.physical_device, vkDev.family.graphics_family.value(), vk.surface, &presentSupported);
-        if (!presentSupported) {
+        // Get All Device Queues
+        vkDev.device_queue_indices = vkDev.family.unique_family_data;
+        std::set<VkQueue> uniqueDeviceQueues = {
+            vkDev.present_queue, vkDev.graphics_queue, vkDev.compute_queue
+        };
+        vkDev.device_queues.insert(vkDev.device_queues.begin(), uniqueDeviceQueues.begin(), uniqueDeviceQueues.end());
+
+        // Check Swap Chain Support
+        VkBool32 presentSupport = 0;
+        vkGetPhysicalDeviceSurfaceSupportKHR(vkDev.physical_device, vkDev.family.graphics_family.value(), vk.surface, &presentSupport);
+        if (!presentSupport) {
             RK_ERROR(Graphics, "Present Not Supported!");
-            exit(EXIT_FAILURE);
+            throw std::runtime_error("Present Not Supported!");
         }
 
+        // Create Swap Chain
         VK_CHECK(CreateSwapchain(
-            vkDev.physical_device, vkDev.device, vkDev.table ,vk.surface, 
-            vkDev.family, &vkDev.swapchain_image_format, &vkDev.swapchain, width, height));
+            vkDev.physical_device, vkDev.device, vkDev.table ,vk.surface, vkDev.family, 
+            &vkDev.swapchain_image_format, &vkDev.swapchain_extent, &vkDev.swapchain, 
+            framebuffer_width, framebuffer_height));
         const size_t imageCount = CreateSwapchainImages(
             vkDev.device, vkDev.table, vkDev.swapchain, vkDev.swapchain_image_format, 
             &vkDev.swapchain_images, &vkDev.swapchain_image_views);
@@ -588,7 +507,7 @@ namespace Rocket {
 
             VK_CHECK(vkDev.table.vkAllocateCommandBuffers(vkDev.device, &ai, &vkDev.compute_command_buffer));
         }
-        return true;
+        return VK_SUCCESS;
     }
 
     void CleanupVulkanRenderDevice(VulkanRenderDevice& vkDev) {

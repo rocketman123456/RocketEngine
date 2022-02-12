@@ -106,18 +106,17 @@ namespace Rocket {
         appinfo.apiVersion = VK_API_VERSION_1_1;
 
         auto extensions = GetRequiredExtensions(true);
-        std::set<const char*> extensions_not_repeat = {
+        std::set<const char*> unique_extensions = {
             extensions.begin(), extensions.end()
         };
-        for(auto extension : instanceExtension) {
-            extensions_not_repeat.insert(extension);
+        for(const auto& extension : instanceExtension) {
+            unique_extensions.insert(extension);
         }
-        for (const auto& extension : extensions_not_repeat) {
+        for (const auto& extension : unique_extensions) {
             RK_INFO(Graphics, "Required Instance Extension: {}", extension);
         }
         std::vector<const char*> extensions_result = {
-            extensions_not_repeat.begin(),
-            extensions_not_repeat.end()
+            unique_extensions.begin(), unique_extensions.end()
         };
 
         VkInstanceCreateInfo createInfo = {};
@@ -188,7 +187,7 @@ namespace Rocket {
 //------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------
 
-    bool InitVulkanInstance(
+    VkResult InitVulkanInstance(
         VulkanInstance& instance, 
         const std::vector<const char*>& instanceExtensions,
         const std::vector<const char*>& validationLayers
@@ -196,7 +195,7 @@ namespace Rocket {
         VkResult result = volkInitialize();
         if(result != VK_SUCCESS) {
             RK_ERROR(Graphics, "Unable to load Vulkan");
-            return false;
+            return VK_ERROR_INITIALIZATION_FAILED;
         }
 
         CreateVulkanInstance(&instance.instance, validationLayers, instanceExtensions);
@@ -206,10 +205,10 @@ namespace Rocket {
 #endif
         if (glfwCreateWindowSurface(instance.instance, (GLFWwindow*)instance.window, nullptr, &instance.surface)) {
             RK_ERROR(Graphics, "Unable to Create Vulkan Surface");
-            return false;
+            return VK_ERROR_INITIALIZATION_FAILED;
         }
 
-        return true;
+        return VK_SUCCESS;
     }
 
     void CleanupVulkanInstance(VulkanInstance& instance) {
@@ -219,85 +218,5 @@ namespace Rocket {
         // vkDestroyDebugUtilsMessengerEXT(instance.instance, instance.debug_messenger, nullptr);
 #endif
         vkDestroyInstance(instance.instance, nullptr);
-    }
-
-//------------------------------------------------------------------------------------------
-//------------------------------------------------------------------------------------------
-//------------------------------------------------------------------------------------------
-//------------------------------------------------------------------------------------------
-//------------------------------------------------------------------------------------------
-
-    void UploadBufferData(
-        const VkDevice& device, 
-        const VolkDeviceTable& table, 
-        const VkDeviceMemory& bufferMemory, 
-        const VkDeviceSize& deviceOffset, 
-        const void* data, 
-        const size_t dataSize
-    ) {
-        void* mappedData = nullptr;
-        table.vkMapMemory(device, bufferMemory, deviceOffset, dataSize, 0, &mappedData);
-            memcpy(mappedData, data, dataSize);
-        table.vkUnmapMemory(device, bufferMemory);
-    }
-
-    void DownloadBufferData(
-        const VkDevice& device, 
-        const VolkDeviceTable& table, 
-        const VkDeviceMemory& bufferMemory, 
-        const VkDeviceSize& deviceOffset, 
-        void* outData, 
-        const size_t dataSize
-    ) {
-        void* mappedData = nullptr;
-        table.vkMapMemory(device, bufferMemory, deviceOffset, dataSize, 0, &mappedData);
-            memcpy(outData, mappedData, dataSize);
-        table.vkUnmapMemory(device, bufferMemory);
-    }
-
-//------------------------------------------------------------------------------------------
-//------------------------------------------------------------------------------------------
-//------------------------------------------------------------------------------------------
-//------------------------------------------------------------------------------------------
-//------------------------------------------------------------------------------------------
-
-    uint32_t GetVulkanBufferAlignment(VulkanRenderDevice& vkDev) {
-        VkPhysicalDeviceProperties devProps;
-        vkGetPhysicalDeviceProperties(vkDev.physical_device, &devProps);
-        return static_cast<uint32_t>(devProps.limits.minStorageBufferOffsetAlignment);
-    }
-
-    // Check if the texture is used as a depth buffer
-    bool IsDepthFormat(VkFormat fmt) {
-        return
-            (fmt == VK_FORMAT_D16_UNORM) ||
-            (fmt == VK_FORMAT_X8_D24_UNORM_PACK32) ||
-            (fmt == VK_FORMAT_D32_SFLOAT) ||
-            (fmt == VK_FORMAT_D16_UNORM_S8_UINT) ||
-            (fmt == VK_FORMAT_D24_UNORM_S8_UINT) ||
-            (fmt == VK_FORMAT_D32_SFLOAT_S8_UINT);
-    }
-
-    bool SetVkObjectName(
-        VulkanRenderDevice& vkDev, 
-        void* object, 
-        VkObjectType objType, 
-        const std::string& name
-    ) {
-        VkDebugUtilsObjectNameInfoEXT nameInfo = {};
-        nameInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT;
-        nameInfo.pNext = nullptr;
-        nameInfo.objectType = objType;
-        nameInfo.objectHandle = (uint64_t)object;
-        nameInfo.pObjectName = name.c_str();
-        return (vkSetDebugUtilsObjectNameEXT(vkDev.device, &nameInfo) == VK_SUCCESS);
-    }
-
-    bool SetVkImageName(
-        VulkanRenderDevice& vkDev, 
-        void* object, 
-        const std::string& name
-    ) {
-        return SetVkObjectName(vkDev, object, VK_OBJECT_TYPE_IMAGE, name);
     }
 }

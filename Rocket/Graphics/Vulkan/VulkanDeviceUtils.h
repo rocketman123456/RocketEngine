@@ -47,6 +47,12 @@ namespace Rocket {
         const std::vector<const char*>& deviceExtensions, 
         const QueueFamilyIndices& indices,
         VkDevice* device);
+    
+    VkResult GetVulkanQueue(
+        const VkDevice& device,
+        const VolkDeviceTable& table,
+        uint32_t index,
+        VkQueue* queue);
 
     SwapchainSupportDetails QuerySwapchainSupport(
         const VkPhysicalDevice& device, 
@@ -69,22 +75,11 @@ namespace Rocket {
         const VkSurfaceKHR& surface, 
         const QueueFamilyIndices& indices, 
         VkFormat* swapChainImageFormat,
+        VkExtent2D* swapchainExtent,
         VkSwapchainKHR* swapchain,
         uint32_t width, 
         uint32_t height, 
         bool supportScreenshots = false);
-    
-    VkResult CreateImageView(
-        const VkDevice& device, 
-        const VolkDeviceTable& table,
-        const VkImage& image, 
-        const VkFormat& format, 
-        const VkImageAspectFlags& aspectFlags, 
-        VkImageView* imageView, 
-        // Optional
-        VkImageViewType viewType = VK_IMAGE_VIEW_TYPE_2D, 
-        uint32_t layerCount = 1, 
-        uint32_t mipLevels = 1);
 
     std::size_t CreateSwapchainImages(
         const VkDevice& device,
@@ -94,37 +89,13 @@ namespace Rocket {
         std::vector<VkImage>* swapchainImages,
         std::vector<VkImageView>* swapchainImageViews);
 
-    VkResult CreateSemaphore(
-        const VkDevice& device, 
-        const VolkDeviceTable& table,
-        VkSemaphore* outSemaphore);
-
-    VkResult CreateFence(
-        const VkDevice& device, 
-        const VolkDeviceTable& table,
-        VkFence* fence);
-    
-    // Create Command Pool
-    VkResult CreateCommandPool(
-        const VkDevice& device, 
-        const VolkDeviceTable& table, 
-        const QueueFamilyIndices& indices, 
-        VkCommandPool* command_pool);
-
-    VkResult CreateCommandBuffer(
-        const VkDevice& device, 
-        const VolkDeviceTable& table,
-        const VkCommandPool& commandPool,
-        uint32_t imageCount,
-        VkCommandBuffer* command_buffer);
-
-    bool InitVulkanRenderDevice(
+    VkResult InitVulkanRenderDevice(
         VulkanInstance& vk, 
         VulkanRenderDevice& vkDev, 
         const std::vector<const char*>& deviceExtensions,
         const std::vector<const char*>& validationLayers,
-        uint32_t width, 
-        uint32_t height);
+        uint32_t framebuffer_width, 
+        uint32_t framebuffer_height);
 
     void CleanupVulkanRenderDevice(
         VulkanRenderDevice& vkDev);

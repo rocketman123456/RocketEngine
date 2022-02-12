@@ -5,31 +5,30 @@
 #include <optional>
 
 namespace Rocket {
-    struct QueueFamilyIndices final {
-        std::optional<uint32_t> multiplicity;
-        std::optional<std::vector<uint32_t>> family_data;
-        std::optional<uint32_t> present_family;
-        std::optional<uint32_t> graphics_family;
-        std::optional<uint32_t> compute_family;
-
-        bool IsComplete();
-        // Must Call After IsComplete
-        uint32_t Multiplicity();
-        const std::vector<uint32_t>& FamilyData();
-    };
-
-    struct SwapchainSupportDetails final {
-        VkSurfaceCapabilitiesKHR capabilities = {};
-        std::vector<VkSurfaceFormatKHR> formats;
-        std::vector<VkPresentModeKHR> presentModes;
-    };
-
     struct VulkanInstance final {
         void* window;
         VkInstance instance;
         VkSurfaceKHR surface;
         VkDebugUtilsMessengerEXT messenger;
         VkDebugReportCallbackEXT report_callback;
+    };
+
+    struct QueueFamilyIndices final {
+        std::optional<uint32_t> multiplicity;
+        std::optional<uint32_t> present_family;
+        std::optional<uint32_t> graphics_family;
+        std::optional<uint32_t> compute_family;
+        std::vector<uint32_t> unique_family_data;
+
+        bool IsComplete();
+        // if multiplicity or family_data don't have value, call PostProcess()
+        void PostProcess();
+    };
+
+    struct SwapchainSupportDetails final {
+        VkSurfaceCapabilitiesKHR capabilities = {};
+        std::vector<VkSurfaceFormatKHR> formats;
+        std::vector<VkPresentModeKHR> presentModes;
     };
 
     struct VulkanRenderDevice final {
@@ -41,24 +40,21 @@ namespace Rocket {
         VkPhysicalDevice physical_device;
         VolkDeviceTable table;
 
+        // Were we initialized with compute capabilities
+        // bool use_compute = false;
+        QueueFamilyIndices family;
+
+        // a list of all queues (for shared buffer allocation), No Repeat
+        std::vector<uint32_t> device_queue_indices;
+        std::vector<VkQueue> device_queues;
+        // Seperate Queue, May have repeat
         VkQueue present_queue;
         VkQueue graphics_queue;
         VkQueue compute_queue;
 
-        // Were we initialized with compute capabilities
-        // bool use_compute = false;
-        // uint32_t graphics_family;
-        // uint32_t present_family;
-        // [may coincide with graphics_family]
-        // uint32_t compute_family;
-        QueueFamilyIndices family;
-
-        // a list of all queues (for shared buffer allocation)
-        std::vector<uint32_t> device_queue_indices;
-        std::vector<VkQueue> device_queues;
-
         VkSwapchainKHR swapchain;
         VkFormat swapchain_image_format;
+        VkExtent2D swapchain_extent;
         std::vector<VkImage> swapchain_images;
         std::vector<VkImageView> swapchain_image_views;
 

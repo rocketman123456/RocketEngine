@@ -17,7 +17,7 @@ namespace Rocket {
     public:
         WindowContainer(const WindowInfo& info) : info(info) {}
         virtual ~WindowContainer() = default;
-        inline const WindowInfo& Info() const { return info; }
+        //inline const WindowInfo& Info() const { return info; }
         inline const std::string& Title() const { return info.title; }
         inline int32_t Height() const { return info.height; }
         inline int32_t Width() const { return info.width; }

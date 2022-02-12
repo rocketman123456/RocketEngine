@@ -19,13 +19,13 @@ namespace Rocket {
         const std::string& source,
         bool optimize = false);
 
-    std::vector<uint32_t> CompileSourceToBinary(
+    std::vector<uint32_t> CompileAssembleToBinary(
         shaderc_shader_kind kind,
         const std::string& source_name,
         const std::string& source,
         bool optimize = false);
 
-    std::vector<uint32_t> CompileAssembleToBinary(
+    std::vector<uint32_t> CompileSourceToBinary(
         shaderc_shader_kind kind,
         const std::string& source_name,
         const std::string& source,

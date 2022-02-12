@@ -41,9 +41,9 @@ namespace Rocket {
 
         glfwGetFramebufferSize(window, &info.framebuffer_width, &info.framebuffer_height);
 
-        glfwSetKeyCallback(
-            window,
+        glfwSetKeyCallback(window,
             [](GLFWwindow* window, int key, int scancode, int action, int mods) {
+                // TODO : use event system to make window close happen
                 if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
                     glfwSetWindowShouldClose(window, GLFW_TRUE);
             }

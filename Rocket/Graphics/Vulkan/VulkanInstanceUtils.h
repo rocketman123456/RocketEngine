@@ -20,55 +20,12 @@ namespace Rocket {
     void SetupDebugReportCallback(
         const VkInstance& instance, VkDebugReportCallbackEXT* reportCallback);
 
-    bool InitVulkanInstance(
+    VkResult InitVulkanInstance(
         VulkanInstance& instance, 
         const std::vector<const char*>& instanceExtension,
         const std::vector<const char*>& validationLayers);
 
     void CleanupVulkanInstance(VulkanInstance& instance);
-
-//------------------------------------------------------------------------------------------
-//------------------------------------------------------------------------------------------
-//------------------------------------------------------------------------------------------
-//------------------------------------------------------------------------------------------
-//------------------------------------------------------------------------------------------
-
-    void UploadBufferData(
-        const VkDevice& device, 
-        const VolkDeviceTable& table, 
-        const VkDeviceMemory& bufferMemory, 
-        const VkDeviceSize& deviceOffset, 
-        const void* data, 
-        const size_t dataSize);
-
-    void DownloadBufferData(
-        const VkDevice& device, 
-        const VolkDeviceTable& table, 
-        const VkDeviceMemory& bufferMemory, 
-        const VkDeviceSize& deviceOffset, 
-        void* outData, 
-        const size_t dataSize);
-
-//------------------------------------------------------------------------------------------
-//------------------------------------------------------------------------------------------
-//------------------------------------------------------------------------------------------
-//------------------------------------------------------------------------------------------
-//------------------------------------------------------------------------------------------
-
-    uint32_t GetVulkanBufferAlignment(VulkanRenderDevice& vkDev);
-
-    bool IsDepthFormat(VkFormat fmt);
-
-    bool SetVkObjectName(
-        VulkanRenderDevice& vkDev, 
-        void* object, 
-        VkObjectType objType, 
-        const std::string& name);
-
-    bool SetVkImageName(
-        VulkanRenderDevice& vkDev, 
-        void* object, 
-        const std::string& name);
 
 //------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------

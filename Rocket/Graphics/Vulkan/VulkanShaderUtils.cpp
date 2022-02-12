@@ -85,30 +85,6 @@ namespace Rocket {
         return {result.cbegin(), result.cend()};
     }
 
-    std::vector<uint32_t> CompileSourceToBinary(
-        shaderc_shader_kind kind,
-        const std::string& source_name,
-        const std::string& source,
-        bool optimize
-    ) {
-        shaderc::Compiler compiler;
-        shaderc::CompileOptions options;
-
-        // Like -DRK_DEFINE=1
-        options.AddMacroDefinition("RK_DEFINE", "1");
-        if (optimize) options.SetOptimizationLevel(shaderc_optimization_level_size);
-
-        shaderc::SpvCompilationResult module =
-            compiler.CompileGlslToSpv(source, kind, source_name.c_str(), options);
-
-        if (module.GetCompilationStatus() != shaderc_compilation_status_success) {
-            RK_ERROR(Graphics, "GLSL compile to binary failed: {}", module.GetErrorMessage());
-            return std::vector<uint32_t>();
-        }
-
-        return {module.cbegin(), module.cend()};
-    }
-
     std::vector<uint32_t> CompileAssembleToBinary(
         shaderc_shader_kind kind,
         const std::string& source_name,
@@ -124,6 +100,30 @@ namespace Rocket {
 
         shaderc::SpvCompilationResult module =
             compiler.AssembleToSpv(source, options);
+
+        if (module.GetCompilationStatus() != shaderc_compilation_status_success) {
+            RK_ERROR(Graphics, "GLSL compile to binary failed: {}", module.GetErrorMessage());
+            return std::vector<uint32_t>();
+        }
+
+        return {module.cbegin(), module.cend()};
+    }
+
+    std::vector<uint32_t> CompileSourceToBinary(
+        shaderc_shader_kind kind,
+        const std::string& source_name,
+        const std::string& source,
+        bool optimize
+    ) {
+        shaderc::Compiler compiler;
+        shaderc::CompileOptions options;
+
+        // Like -DRK_DEFINE=1
+        options.AddMacroDefinition("RK_DEFINE", "1");
+        if (optimize) options.SetOptimizationLevel(shaderc_optimization_level_size);
+
+        shaderc::SpvCompilationResult module =
+            compiler.CompileGlslToSpv(source, kind, source_name.c_str(), options);
 
         if (module.GetCompilationStatus() != shaderc_compilation_status_success) {
             RK_ERROR(Graphics, "GLSL compile to binary failed: {}", module.GetErrorMessage());

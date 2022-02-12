@@ -120,11 +120,11 @@ int main() {
     window->Initialize();
 
     instance.window = window->GetWindowHandle();
-    BL_CHECK(InitVulkanInstance(instance, instance_extensions, validation_layers));
+    VK_CHECK(InitVulkanInstance(instance, instance_extensions, validation_layers));
 
     auto width = window->FramebufferWidth();
     auto height = window->FramebufferHeight();
-    BL_CHECK(InitVulkanRenderDevice(instance, device, device_extensions, validation_layers, width, height));
+    VK_CHECK(InitVulkanRenderDevice(instance, device, device_extensions, validation_layers, width, height));
 
     //VK_CHECK(CreateDepthResources(device, info.width, info.height, state.depth_texture));
     VK_CHECK(CreateDescriptorPool(device, 1, 2, 1, &state.descriptor_pool));
