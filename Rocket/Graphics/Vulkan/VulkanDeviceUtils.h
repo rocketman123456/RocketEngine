@@ -2,6 +2,9 @@
 #include "Vulkan/VulkanVariable.h"
 #include "Vulkan/VulkanCheck.h"
 
+#include <vector>
+#include <string>
+
 namespace Rocket {
     bool CheckDeviceExtensionSupport(
         const VkPhysicalDevice& device, 

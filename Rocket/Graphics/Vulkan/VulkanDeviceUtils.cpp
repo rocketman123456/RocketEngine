@@ -455,8 +455,8 @@ namespace Rocket {
             &vkDev.swapchain_images, &vkDev.swapchain_image_views);
         vkDev.command_buffers.resize(imageCount);
 
-        VK_CHECK(CreateSemaphore(vkDev.device, vkDev.table, &vkDev.semaphore));
-        VK_CHECK(CreateSemaphore(vkDev.device, vkDev.table, &vkDev.render_semaphore));
+        VK_CHECK(CreateSemaphoreVk(vkDev.device, vkDev.table, &vkDev.semaphore));
+        VK_CHECK(CreateSemaphoreVk(vkDev.device, vkDev.table, &vkDev.render_semaphore));
 
         auto frame_count = vkDev.swapchain_images.size();
         vkDev.image_available_semaphores.resize(frame_count);
@@ -464,8 +464,8 @@ namespace Rocket {
         vkDev.in_flight_fences.resize(frame_count);
         vkDev.images_in_flight.resize(frame_count, VK_NULL_HANDLE);
         for(int i = 0; i < frame_count; ++i) {
-            VK_CHECK(CreateSemaphore(vkDev.device, vkDev.table, &vkDev.image_available_semaphores[i]));
-            VK_CHECK(CreateSemaphore(vkDev.device, vkDev.table, &vkDev.render_finish_semaphores[i]));
+            VK_CHECK(CreateSemaphoreVk(vkDev.device, vkDev.table, &vkDev.image_available_semaphores[i]));
+            VK_CHECK(CreateSemaphoreVk(vkDev.device, vkDev.table, &vkDev.render_finish_semaphores[i]));
             VK_CHECK(CreateFence(vkDev.device, vkDev.table, &vkDev.in_flight_fences[i]));
         }
 

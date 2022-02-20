@@ -75,7 +75,7 @@ namespace Rocket {
         return table.vkCreateImageView(device, &viewInfo, nullptr, imageView);
     }
 
-    VkResult CreateSemaphore(
+    VkResult CreateSemaphoreVk(
         const VkDevice& device, 
         const VolkDeviceTable& table,
         VkSemaphore* outSemaphore) {

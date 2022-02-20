@@ -93,6 +93,10 @@ add_requires("concurrentqueue", {system = false, configs = {shared = false, debu
 add_requires("lua v5.4.2", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
 add_requires("eigen 3.4.0", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
 
+if is_plat("windows") then
+    add_requires("fmt 7.1.3", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
+end
+
 if is_config("render", "soft") then
     add_requires("glad v0.1.34", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
 elseif is_config("render", "opengl") then

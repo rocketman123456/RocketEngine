@@ -4,6 +4,7 @@
 #include "Vulkan/VulkanCheck.h"
 
 #include <volk.h>
+#include <string>
 
 namespace Rocket {
     uint32_t GetVulkanBufferAlignment(VulkanRenderDevice& vkDev);
@@ -33,7 +34,7 @@ namespace Rocket {
         uint32_t layerCount = 1, 
         uint32_t mipLevels = 1);
 
-    VkResult CreateSemaphore(
+    VkResult CreateSemaphoreVk(
         const VkDevice& device, 
         const VolkDeviceTable& table,
         VkSemaphore* outSemaphore);
