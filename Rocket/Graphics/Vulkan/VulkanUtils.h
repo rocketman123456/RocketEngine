@@ -22,18 +22,6 @@ namespace Rocket {
         void* object, 
         const std::string& name);
 
-    VkResult CreateImageView(
-        const VkDevice& device, 
-        const VolkDeviceTable& table,
-        const VkImage& image, 
-        const VkFormat& format, 
-        const VkImageAspectFlags& aspectFlags, 
-        VkImageView* imageView, 
-        // Optional
-        VkImageViewType viewType = VK_IMAGE_VIEW_TYPE_2D, 
-        uint32_t layerCount = 1, 
-        uint32_t mipLevels = 1);
-
     VkResult CreateSemaphoreVk(
         const VkDevice& device, 
         const VolkDeviceTable& table,
