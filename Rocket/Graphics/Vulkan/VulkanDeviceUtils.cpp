@@ -645,7 +645,7 @@ namespace Rocket {
     VkResult CreateDepthResources(VulkanRenderDevice& vkDev, uint32_t width, uint32_t height, VulkanImage& depth) {
         VkFormat depthFormat = FindDepthFormat(vkDev.physical_device);
 
-        if (!CreateImage(
+        VK_CHECK(CreateImage(
             vkDev.device, 
             vkDev.physical_device, 
             vkDev.table, 
@@ -654,15 +654,20 @@ namespace Rocket {
             VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, 
             VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, 
             depth.image, 
-            depth.image_memory))
-            return VK_ERROR_INITIALIZATION_FAILED;
+            depth.image_memory));
 
-        if (!CreateImageView(
-            vkDev.device, vkDev.table, depth.image, depthFormat, VK_IMAGE_ASPECT_DEPTH_BIT, &depth.image_view))
-            return VK_ERROR_INITIALIZATION_FAILED;
+        VK_CHECK(CreateImageView(
+            vkDev.device, 
+            vkDev.table, 
+            depth.image, 
+            depthFormat, 
+            VK_IMAGE_ASPECT_DEPTH_BIT, 
+            &depth.image_view));
 
         TransitionImageLayout(
-            vkDev, depth.image, depthFormat, 
+            vkDev, 
+            depth.image, 
+            depthFormat, 
             VK_IMAGE_LAYOUT_UNDEFINED, 
             VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
 
@@ -753,7 +758,8 @@ namespace Rocket {
         VK_CHECK(vkDev.table.vkCreateDescriptorSetLayout(vkDev.device, &layoutInfo, nullptr, &vkState->descriptor_set_layout));
 
         std::vector<VkDescriptorSetLayout> layouts(
-            vkDev.swapchain_images.size(), vkState->descriptor_set_layout);
+            vkDev.swapchain_images.size(), vkState->descriptor_set_layout
+        );
 
         VkDescriptorSetAllocateInfo allocInfo = {};
         allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
@@ -792,6 +798,7 @@ namespace Rocket {
             set0.descriptorCount = 1;
             set0.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
             set0.pBufferInfo = &bufferInfo;
+
             VkWriteDescriptorSet set1 = {};
             set1.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
             set1.dstSet = vkState->descriptor_sets[i];
@@ -800,6 +807,7 @@ namespace Rocket {
             set1.descriptorCount = 1;
             set1.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
             set1.pBufferInfo = &bufferInfo2;
+
             VkWriteDescriptorSet set2 = {};
             set2.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
             set2.dstSet = vkState->descriptor_sets[i];
@@ -808,6 +816,7 @@ namespace Rocket {
             set2.descriptorCount = 1;
             set2.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
             set2.pBufferInfo = &bufferInfo3;
+
             VkWriteDescriptorSet set3 = {};
             set3.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
             set3.dstSet = vkState->descriptor_sets[i];
@@ -828,10 +837,10 @@ namespace Rocket {
 
     VkResult CreateColorAndDepthRenderPass(
         VulkanRenderDevice& vkDev, 
-        bool useDepth, 
+        const bool useDepth, 
         VkRenderPass* renderPass, 
         const VulkanRenderPassCreateInfo& ci, 
-        VkFormat colorFormat
+        const VkFormat& colorFormat
     ) {
         const bool offscreenInt = ci.flags & eRenderPassBit_OffscreenInternal;
         const bool first = ci.flags & eRenderPassBit_First;
@@ -851,20 +860,20 @@ namespace Rocket {
         auto finalLayout = last ? VK_IMAGE_LAYOUT_PRESENT_SRC_KHR : VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
         colorAttachment.finalLayout = finalLayout;
 
-        VkAttachmentReference colorAttachmentRef = {};
-        colorAttachmentRef.attachment = 0;
-        colorAttachmentRef.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-
         VkAttachmentDescription depthAttachment = {};
         depthAttachment.flags = 0;
         depthAttachment.format = useDepth ? FindDepthFormat(vkDev.physical_device) : VK_FORMAT_D32_SFLOAT;
         depthAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
         depthAttachment.loadOp = offscreenInt ? VK_ATTACHMENT_LOAD_OP_LOAD : (ci.clear_depth ? VK_ATTACHMENT_LOAD_OP_CLEAR : VK_ATTACHMENT_LOAD_OP_LOAD);
-        depthAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+        depthAttachment.storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;//VK_ATTACHMENT_STORE_OP_STORE;
         depthAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
         depthAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
         depthAttachment.initialLayout = ci.clear_depth ? VK_IMAGE_LAYOUT_UNDEFINED : (offscreenInt ? VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL : VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
         depthAttachment.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+
+        VkAttachmentReference colorAttachmentRef = {};
+        colorAttachmentRef.attachment = 0;
+        colorAttachmentRef.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
         VkAttachmentReference depthAttachmentRef = {};
         depthAttachmentRef.attachment = 1;
@@ -873,26 +882,14 @@ namespace Rocket {
         if (ci.flags & eRenderPassBit_Offscreen)
             colorAttachment.finalLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 
-        VkSubpassDependency dependency = {};
-        dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
-        dependency.dstSubpass = 0;
-        dependency.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-        dependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-        dependency.srcAccessMask = 0;
-        dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
-        dependency.dependencyFlags = 0;
-
-        std::vector<VkSubpassDependency> dependencies = {
-            dependency
-        };
+        std::vector<VkSubpassDependency> dependencies;
 
         if (ci.flags & eRenderPassBit_Offscreen) {
             colorAttachment.finalLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
             depthAttachment.finalLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 
             // Use subpass dependencies for layout transitions
-            dependencies.resize(2);
-
+            // TODO : check these flags, maybe wrong
             VkSubpassDependency dependency0 = {};
             dependency0.srcSubpass = VK_SUBPASS_EXTERNAL;
             dependency0.dstSubpass = 0;
@@ -901,8 +898,6 @@ namespace Rocket {
             dependency0.srcAccessMask = VK_ACCESS_SHADER_READ_BIT;
             dependency0.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
             dependency0.dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT;
-    
-            dependencies[0] = dependency0;
 
             VkSubpassDependency dependency1 = {};
             dependency1.srcSubpass = 0;
@@ -913,27 +908,41 @@ namespace Rocket {
             dependency1.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
             dependency1.dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT;
 
+            dependencies.resize(2);
+            dependencies[0] = dependency0;
             dependencies[1] = dependency1;
+        } else {
+            VkSubpassDependency dependency = {};
+            dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
+            dependency.dstSubpass = 0;
+            dependency.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
+            dependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
+            dependency.srcAccessMask = 0;
+            dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
+            dependency.dependencyFlags = 0;
+
+            dependencies.resize(1);
+            dependencies[0] = dependency;
         }
 
         VkSubpassDescription subpass = {};
         subpass.flags = 0;
         subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
-        subpass.inputAttachmentCount = 0;
-        subpass.pInputAttachments = nullptr;
+        // subpass.inputAttachmentCount = 0;
+        // subpass.pInputAttachments = nullptr;
         subpass.colorAttachmentCount = 1;
         subpass.pColorAttachments = &colorAttachmentRef;
-        subpass.pResolveAttachments = nullptr;
+        // subpass.pResolveAttachments = nullptr;
         subpass.pDepthStencilAttachment = useDepth ? &depthAttachmentRef : nullptr;
-        subpass.preserveAttachmentCount = 0;
-        subpass.pPreserveAttachments = nullptr;
+        // subpass.preserveAttachmentCount = 0;
+        // subpass.pPreserveAttachments = nullptr;
 
         std::array<VkAttachmentDescription, 2> attachments = { colorAttachment, depthAttachment };
 
         VkRenderPassCreateInfo renderPassInfo = {};
         renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
-        renderPassInfo.pNext = nullptr;
-        renderPassInfo.flags = 0;
+        // renderPassInfo.pNext = nullptr;
+        // renderPassInfo.flags = 0;
         renderPassInfo.attachmentCount = static_cast<uint32_t>(useDepth ? 2 : 1);
         renderPassInfo.pAttachments = attachments.data();
         renderPassInfo.subpassCount = 1;
@@ -948,7 +957,7 @@ namespace Rocket {
         VulkanRenderDevice& vkDev, 
         VkRenderPass* renderPass, 
         const VulkanRenderPassCreateInfo& ci, 
-        VkFormat colorFormat
+        const VkFormat& colorFormat
     ) {
         VulkanRenderPassCreateInfo ci2 = ci;
         ci2.clear_depth = false;
@@ -1068,10 +1077,10 @@ namespace Rocket {
         VkPipelineLayout pipelineLayout,
         const std::vector<std::string>& shaderFiles,
         VkPipeline* pipeline,
-        VkPrimitiveTopology topology,
         bool useDepth,
         bool useBlending,
         bool dynamicScissorState,
+        VkPrimitiveTopology topology,
         int32_t customWidth,
         int32_t customHeight,
         uint32_t numPatchControlPoints

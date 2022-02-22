@@ -126,17 +126,17 @@ int main() {
     auto height = window->FramebufferHeight();
     VK_CHECK(InitVulkanRenderDevice(instance, device, device_extensions, validation_layers, width, height));
 
-    //VK_CHECK(CreateDepthResources(device, info.width, info.height, state.depth_texture));
+    VK_CHECK(CreateDepthResources(device, info.width, info.height, state.depth_texture));
     VK_CHECK(CreateDescriptorPool(device, 1, 2, 1, &state.descriptor_pool));
     VK_CHECK(CreateDescriptorSet(device, &state, 0, 0, 0));
     VulkanRenderPassCreateInfo rp_create_info = {};
     rp_create_info.clear_color = true;
     rp_create_info.clear_depth = true;
     rp_create_info.flags = eRenderPassBit_First|eRenderPassBit_Last;
-    VK_CHECK(CreateColorAndDepthRenderPass(device, false, &state.render_pass, rp_create_info));
+    VK_CHECK(CreateColorAndDepthRenderPass(device, true, &state.render_pass, rp_create_info));
     VK_CHECK(CreatePipelineLayout(device.device, device.table, state.descriptor_set_layout, &state.pipeline_layout));
 	VK_CHECK(CreateGraphicsPipeline(device, state.render_pass, state.pipeline_layout, { "/Asset/Shader/shader_base.vert", "/Asset/Shader/shader_base.frag" }, &state.graphics_pipeline));
-    VK_CHECK(CreateColorAndDepthFramebuffers(device, state.render_pass, VK_NULL_HANDLE, state.swapchain_framebuffers));
+    VK_CHECK(CreateColorAndDepthFramebuffers(device, state.render_pass, state.depth_texture.image_view, state.swapchain_framebuffers));
 
     while(window->IsRunning()) {
         window->Tick();

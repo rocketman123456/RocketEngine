@@ -3,7 +3,7 @@
 #include "Vulkan/VulkanCheck.h"
 
 namespace Rocket {
-    bool CreateImage(
+    VkResult CreateImage(
         const VkDevice& device, 
         const VkPhysicalDevice& physicalDevice, 
         const VolkDeviceTable& table, 
@@ -29,6 +29,15 @@ namespace Rocket {
         VkImageViewType viewType = VK_IMAGE_VIEW_TYPE_2D, 
         uint32_t layerCount = 1, 
         uint32_t mipLevels = 1);
+    
+    VkResult CreateTextureSampler(
+        const VkDevice& device, 
+        const VkPhysicalDevice& physicalDevice, 
+        const VolkDeviceTable& table,
+        VkSampler* textureSampler,
+        const VkFilter& minFilter = VK_FILTER_LINEAR, 
+        const VkFilter& maxFilter = VK_FILTER_LINEAR, 
+        const VkSamplerAddressMode& addressMode = VK_SAMPLER_ADDRESS_MODE_REPEAT);
 
     void TransitionImageLayout(
         VulkanRenderDevice& vkDev, 

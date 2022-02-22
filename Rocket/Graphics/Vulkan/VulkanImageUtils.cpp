@@ -2,7 +2,7 @@
 #include "Vulkan/VulkanDeviceUtils.h"
 
 namespace Rocket {
-    bool CreateImage(
+    VkResult CreateImage(
         const VkDevice& device, 
         const VkPhysicalDevice& physicalDevice, 
         const VolkDeviceTable& table, 
@@ -50,7 +50,7 @@ namespace Rocket {
         VK_CHECK(table.vkAllocateMemory(device, &allocInfo, nullptr, &imageMemory));
 
         table.vkBindImageMemory(device, image, imageMemory, 0);
-        return true;
+        return VK_SUCCESS;
     }
 
     VkResult CreateImageView(
@@ -72,10 +72,10 @@ namespace Rocket {
         viewInfo.viewType = viewType;
         viewInfo.format = format;
         // TODO : check VK_COMPONENT_SWIZZLE_IDENTITY usage
-        viewInfo.components.r = VK_COMPONENT_SWIZZLE_IDENTITY;
-        viewInfo.components.g = VK_COMPONENT_SWIZZLE_IDENTITY;
-        viewInfo.components.b = VK_COMPONENT_SWIZZLE_IDENTITY;
-        viewInfo.components.a = VK_COMPONENT_SWIZZLE_IDENTITY;
+        // viewInfo.components.r = VK_COMPONENT_SWIZZLE_IDENTITY;
+        // viewInfo.components.g = VK_COMPONENT_SWIZZLE_IDENTITY;
+        // viewInfo.components.b = VK_COMPONENT_SWIZZLE_IDENTITY;
+        // viewInfo.components.a = VK_COMPONENT_SWIZZLE_IDENTITY;
         viewInfo.subresourceRange.aspectMask = aspectFlags;
         viewInfo.subresourceRange.baseMipLevel = 0;
         viewInfo.subresourceRange.levelCount = mipLevels;
@@ -83,6 +83,38 @@ namespace Rocket {
         viewInfo.subresourceRange.layerCount = layerCount;
 
         return table.vkCreateImageView(device, &viewInfo, nullptr, imageView);
+    }
+
+    VkResult CreateTextureSampler(
+        const VkDevice& device, 
+        const VkPhysicalDevice& physicalDevice, 
+        const VolkDeviceTable& table,
+        VkSampler* textureSampler,
+        const VkFilter& minFilter, 
+        const VkFilter& maxFilter, 
+        const VkSamplerAddressMode& addressMode
+    ) {
+        VkPhysicalDeviceProperties properties{};
+        vkGetPhysicalDeviceProperties(physicalDevice, &properties);
+
+        VkSamplerCreateInfo samplerInfo{};
+        samplerInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
+        samplerInfo.minFilter = minFilter;
+        samplerInfo.magFilter = maxFilter;
+        samplerInfo.addressModeU = addressMode;
+        samplerInfo.addressModeV = addressMode;
+        samplerInfo.addressModeW = addressMode;
+        samplerInfo.anisotropyEnable = VK_TRUE;
+        samplerInfo.maxAnisotropy = properties.limits.maxSamplerAnisotropy;
+        samplerInfo.borderColor = VK_BORDER_COLOR_INT_OPAQUE_BLACK;
+        samplerInfo.unnormalizedCoordinates = VK_FALSE;
+        samplerInfo.compareEnable = VK_FALSE;
+        samplerInfo.compareOp = VK_COMPARE_OP_ALWAYS;
+        samplerInfo.minLod = 0.0f,
+		samplerInfo.maxLod = 0.0f,
+        samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
+
+        return table.vkCreateSampler(device, &samplerInfo, nullptr, textureSampler);
     }
 
     void TransitionImageLayout(

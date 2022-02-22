@@ -164,6 +164,12 @@ namespace Rocket {
 //------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------
 
+    VkResult CreateDepthResources(
+        VulkanRenderDevice& vkDev, 
+        uint32_t width, 
+        uint32_t height, 
+        VulkanImage& depth);
+
     VkResult CreateDescriptorPool(
         VulkanRenderDevice& vkDev, 
         uint32_t uniformBufferCount, 
@@ -186,16 +192,16 @@ namespace Rocket {
     
     VkResult CreateColorAndDepthRenderPass(
         VulkanRenderDevice& vkDev, 
-        bool useDepth, 
+        const bool useDepth, 
         VkRenderPass* renderPass, 
         const VulkanRenderPassCreateInfo& ci, 
-        VkFormat colorFormat = VK_FORMAT_B8G8R8A8_UNORM);
+        const VkFormat& colorFormat = VK_FORMAT_B8G8R8A8_UNORM);
     
     VkResult CreateColorOnlyRenderPass(
         VulkanRenderDevice& vkDev, 
         VkRenderPass* renderPass, 
         const VulkanRenderPassCreateInfo& ci, 
-        VkFormat colorFormat = VK_FORMAT_B8G8R8A8_UNORM);
+        const VkFormat& colorFormat = VK_FORMAT_B8G8R8A8_UNORM);
 
     VkResult CreateDepthOnlyRenderPass(
         VulkanRenderDevice& vkDev, 
@@ -220,10 +226,10 @@ namespace Rocket {
         const std::vector<std::string>& shaderFiles,
         VkPipeline* pipeline,
         /* defaults to triangles*/
-        VkPrimitiveTopology topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST,
         bool useDepth = true,
         bool useBlending = true,
         bool dynamicScissorState = false,
+        VkPrimitiveTopology topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST,
         int32_t customWidth  = -1,
         int32_t customHeight = -1,
         uint32_t numPatchControlPoints = 0);
