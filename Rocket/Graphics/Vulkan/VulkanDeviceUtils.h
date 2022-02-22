@@ -109,29 +109,13 @@ namespace Rocket {
 //------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------
 
-    VkCommandBuffer BeginSingleTimeCommands(VulkanRenderDevice& vkDev);
-    void EndSingleTimeCommands(VulkanRenderDevice& vkDev, VkCommandBuffer commandBuffer);
-
-//------------------------------------------------------------------------------------------
-//------------------------------------------------------------------------------------------
-//------------------------------------------------------------------------------------------
-//------------------------------------------------------------------------------------------
-//------------------------------------------------------------------------------------------
-
-    VkFormat FindSupportedFormat(
-        const VkPhysicalDevice& device, 
-        const std::vector<VkFormat>& candidates, 
-        VkImageTiling tiling, 
-        VkFormatFeatureFlags features);
-
     uint32_t FindMemoryType(
         const VkPhysicalDevice& device, 
         uint32_t typeFilter, 
         VkMemoryPropertyFlags properties);
 
-    VkFormat FindDepthFormat(const VkPhysicalDevice& device);
-
-    bool HasStencilComponent(VkFormat format);
+    VkCommandBuffer BeginSingleTimeCommands(VulkanRenderDevice& vkDev);
+    void EndSingleTimeCommands(VulkanRenderDevice& vkDev, VkCommandBuffer commandBuffer);
 
 //------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------

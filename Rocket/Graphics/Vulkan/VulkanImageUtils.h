@@ -58,6 +58,16 @@ namespace Rocket {
         uint32_t layerCount = 1, 
         uint32_t mipLevels = 1);
 
+    VkFormat FindSupportedFormat(
+        const VkPhysicalDevice& device, 
+        const std::vector<VkFormat>& candidates, 
+        VkImageTiling tiling, 
+        VkFormatFeatureFlags features);
+
+    VkFormat FindDepthFormat(const VkPhysicalDevice& device);
+
+    bool HasStencilComponent(VkFormat format);
+
     VkResult CreateDepthResources(
         VulkanRenderDevice& vkDev, 
         uint32_t width, 
