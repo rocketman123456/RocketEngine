@@ -126,6 +126,7 @@ int main() {
     auto height = window->FramebufferHeight();
     VK_CHECK(InitVulkanRenderDevice(instance, device, device_extensions, validation_layers, width, height));
 
+    // Init Other Resources
     VK_CHECK(CreateDepthResources(device, info.width, info.height, state.depth_texture));
     VK_CHECK(CreateDescriptorPool(device, 1, 2, 1, &state.descriptor_pool));
     VK_CHECK(CreateDescriptorSet(device, &state, 0, 0, 0));
