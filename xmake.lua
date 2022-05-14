@@ -79,18 +79,17 @@ option_end()
 --
 -- Add Required Modules
 --
-add_requires("spdlog v1.9.2", {system = false, configs = {shared = false, debug = true, fmt_external = false, cxflags = "-fPIC"}})
-add_requires("gsl v3.1.0", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
-add_requires("mimalloc 2.0.2", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
+add_requires("spdlog v1.10.0", {system = false, configs = {shared = false, debug = true, fmt_external = false, cxflags = "-fPIC"}})
+add_requires("gsl v4.0.0", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
+add_requires("mimalloc 2.0.6", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
 add_requires("libzip 1.8.0", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
 add_requires("yaml-cpp 0.7.0", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
-add_requires("stb", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
+add_requires("stb 2021.09.10", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
 add_requires("tinygltf v2.5.0", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
-add_requires("glfw 3.3.5", {system = false, configs = {glfw_include = "none", shared = false, debug = true, cxflags = "-fPIC"}})
+add_requires("glfw 3.3.6", {system = false, configs = {glfw_include = "none", shared = false, debug = true, cxflags = "-fPIC"}})
 add_requires("taskflow v3.2.0", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
-add_requires("glad v0.1.34", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
 add_requires("concurrentqueue", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
-add_requires("lua v5.4.2", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
+add_requires("lua v5.4.4", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
 add_requires("eigen 3.4.0", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
 
 if is_plat("windows") then
@@ -98,23 +97,21 @@ if is_plat("windows") then
 end
 
 if is_config("render", "soft") then
-    add_requires("glad v0.1.34", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
+    add_requires("glad v0.1.36", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
 elseif is_config("render", "opengl") then
-    add_requires("glad v0.1.34", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
+    add_requires("glad v0.1.36", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
 elseif is_config("render", "vulkan") then
     add_defines("VK_NO_PROTOTYPES")
+    add_requires("glad v0.1.36", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
     -- add_requires("vulkan-headers 1.2.189", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
-    add_requires("volk 1.2.190", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
+    add_requires("volk 1.3.204", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
     add_requires("shaderc 2021.11.22", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
-    -- add_requires("glslang 1.2.189+1", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
-    -- add_requires("vulkan-validationlayers 1.2.198+0", {system = false, configs = {shared = false, debug = false}})
-    -- add_requires("glslang 1.2.189+1", {system = false, configs = {shared = false, debug = false}})
 elseif is_config("render", "metal") then
-    -- add_defines("RK_METAL")
+    add_defines("RK_METAL")
 elseif is_config("render", "dx12") then
-    -- add_defines("RK_DX12")
+    add_defines("RK_DX12")
 elseif is_config("render", "dx11") then
-    -- add_defines("RK_DX11")
+    add_defines("RK_DX11")
 end
 
 -- add_requires("imgui v1.85", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
@@ -128,15 +125,14 @@ end
 --     add_requires("libtorch v1.8.1", {system = false, configs = {shared = true, debug = true, cxflags = "-fPIC"}})
 -- end
 
-
 --
 -- Set Include Dirs
 --
-add_includedirs(
-    "Rocket/Engine",
-    "Rocket/Graphics",
-    "Rocket/Platform"
-)
+-- add_includedirs(
+--    "Rocket/Engine",
+--    "Rocket/Graphics",
+--    "Rocket/Platform"
+-- )
 
 --
 -- Set Platform Defines
@@ -155,7 +151,7 @@ elseif is_plat("android", "iphoneos") then
     if is_plat("android") then
         add_defines("RK_ANDROID")
     elseif is_plat("iphoneos") then
-        add_defines("RK_IPHONES")
+        add_defines("RK_IPHONE")
     end
 end
 
@@ -175,7 +171,6 @@ end
 --
 includes(
     "Rocket",
-    -- "ThirdParty",
     "Sandbox",
     "UnitTest"
 )

@@ -1,8 +1,0 @@
-target("lru_test")
-    set_kind("binary")
-    add_files("lru_test.cpp")
-    add_deps("RocketCore")
-    add_deps("RocketLog")
-    add_options("console_log")
-    add_options("memory_check")
-target_end()
