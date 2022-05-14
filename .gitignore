@@ -61,4 +61,5 @@ Document/LaTeX/*.toc
 Document/LaTeX/*.aux
 Document/LaTeX/*.xwm
 Document/LaTeX/*.log
+Document/LaTeX/*.out
 Document/LaTeX/*.gz
