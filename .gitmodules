@@ -1,0 +1,12 @@
+[submodule "ThirdParty/easy_profiler"]
+	path = ThirdParty/easy_profiler
+	url = git@github.com:yse/easy_profiler.git
+[submodule "ThirdParty/optick"]
+	path = ThirdParty/optick
+	url = git@github.com:bombomby/optick.git
+[submodule "ThirdParty/meshoptimizer"]
+	path = ThirdParty/meshoptimizer
+	url = git@github.com:zeux/meshoptimizer.git
+[submodule "ThirdParty/volk"]
+	path = ThirdParty/volk
+	url = git@github.com:zeux/volk.git

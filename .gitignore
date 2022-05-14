@@ -32,7 +32,11 @@
 
 # Xmake cache
 .xmake/
+
+# vscode and build cache
 .VSCodeCounter/
+.vscode/settings.json
+.vscode/compile_commands.json
 build/
 build_cmake/
 
@@ -40,18 +44,22 @@ build_cmake/
 .DS_Store
 
 # Ignore 3rdParty build
-External/
-Target/
-ThirdParty/build/
-Data/
+# External/
+# Target/
+# ThirdParty/build/
+# Data/
 
 # Ignore Large Asset File
 *.wav
 *.ogg
+Asset.zip
+Asset/Music.zip
+Asset/MusicOther.zip
 
 # Ignore LaTeX outputs
 Document/LaTeX/*.toc
 Document/LaTeX/*.aux
 Document/LaTeX/*.xwm
 Document/LaTeX/*.log
+Document/LaTeX/*.out
 Document/LaTeX/*.gz
