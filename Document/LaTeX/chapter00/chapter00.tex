@@ -2,18 +2,22 @@
 
 从本科时期开始接触代码后，我便一直希望能够进行自己的项目开发，日常也喜欢写一些个人小程序自娱自乐，
 因为一直对游戏较为感兴趣，因此初期希望研究并开发类似Unity的游戏引擎。
+当然Unity是一个庞然大物，仅靠一个人是无法完成开发的，但是把目标放到Unity的部分功能来，这个计划就可行的多。
 困于本科时期知识基础的薄弱，以及相关开发经验的缺乏，四年间都只做过一些较小的个人项目，
-知识体系尚未形成一个较为系统的架构,没有将个人的思想融入到项目中实现。\\
+我的知识尚未形成一个较为完整的体系，也没有将个人的思想融入到项目中实现。\\
 
-研究生阶段，为了能够对读研生涯进行记录，我开始了这个项目的设计。
+研究生阶段，为了在读研生涯中做点什么，希望留下自己的印记，我开始了这个项目的设计。
 但是由于毕业与工作的压力，之前的文章写了部分就暂时搁浅了，而现在终于有时间来继续推进。
-我的目标是将此项目作为一个完整的系统，搜集资料后按照个人的想法进行设计和实现，
-不仅能够锻炼提升个人水平，还能够锻炼阅读与其他能力。
+我的目标是将此项目作为一个小的完整的系统，搜集资料后按照个人的想法进行设计和实现，
+不仅能够锻炼提升个人水平，还能够锻炼阅读写作与其他能力。
 同时，这个系列的文章不仅是我个人学习过程的笔记，也将作为后续编写类似程序的相关参考，
 并在这之中提出一些我个人的想法来抛砖引玉，得到他人的指导或同好的学习与分享。
-最后希望通过此项目对相关领域做出一些微薄的贡献。\\
+最后希望通过此项目对其他做类似学习与开发的人做出一些微薄的贡献。\\
 
-本文使用\LaTeX{}编写。
+在这之中，感谢我的亲人、我的对象、我的老师与朋友对我的支持与帮助。\\
+
+本文使用\LaTeX{} \footnote{\nolinkurl{https://mirrors.tuna.tsinghua.edu.cn/CTAN/info/lshort/chinese/lshort-zh-cn.pdf}} 编写。
+使用\XeLaTeX{} 编译。
 
 \maketitle
 \section{初步的写作计划}
@@ -24,14 +28,26 @@
 每个模块具有相对独立的功能，参考《游戏引擎架构》的内容，本文章将按照以下几个部分设计介绍。
 当然也有部分章节可能脱离主线，介绍一些额外的内容。\\
 
-本笔记主要参考的内容出自大名鼎鼎的Game Engine Architecture的引擎架构：
+本笔记主要参考的内容出自大名鼎鼎的Game Engine Architecture\footnote{\nolinkurl{https://www.gameenginebook.com/index.html}}的引擎架构：
+
 \begin{figure}[H]
 \centering
 %\begin{minipage}{0.1\textwidth}
-\includegraphics[center, width=0.25\textwidth]{chapter00/fig-runtime-arch.jpeg}
-\caption{引擎架构图}
+\includegraphics[center, width=0.20\textwidth]{chapter00/fig-runtime-arch.jpeg}
+\caption{引擎架构图 \protect\footnotemark}
 %\end{minipage}
 \end{figure}
+\footnotetext{\nolinkurl{https://www.gameenginebook.com/figures.html}}
+
+这个原版的图片中的模块与功能过于完整与强大，有很多是我没有必要、也没有办法去实现的部分。经过简化后，我的引擎架构如下图所示：
+
+\begin{figure}[H]
+\centering
+\includegraphics[center, width=0.30\textwidth]{chapter00/architecture.png}
+\caption{引擎架构图 \protect\footnotemark}
+\end{figure}
+
+该框架主要分为平台层、核心层、资源层、功能层与编辑器层。之后的各个章节将会按照分层的结构来组织。
 
 \maketitle
 \subsection{基础系统}

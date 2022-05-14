@@ -10,73 +10,27 @@
 \usepackage{graphicx}
 \usepackage{float}
 
-\graphicspath{ {./} }
+\usepackage{xltxtra}
 
 % 对其字体、文字进行相关设置
 \usepackage{caption}
 
-% 算法样例
-% \begin{algorithm}
-% \caption{Put your caption here}
-% \begin{algorithmic}[1]
-% \Procedure{Roy}{$a,b$}                  \Comment{This is a test}
-%     \State System Initialization
-%     \State Read the value 
-%     \If{$condition = True$}
-%         \State Do this
-%         \If{$Condition \geq 1$}
-%         \State Do that
-%         \ElsIf{$Condition \neq 5$}
-%         \State Do another
-%         \State Do that as well
-%         \Else
-%         \State Do otherwise
-%         \EndIf
-%     \EndIf
-%     \While{$something \not= 0$}         \Comment{put some comments here}
-%         \State $var1 \leftarrow var2$   \Comment{another comment}
-%         \State $var3 \leftarrow var4$
-%     \EndWhile  \label{roy's loop}
-% \EndProcedure
-% \end{algorithmic}
-% \end{algorithm}
-
-% 多列
-%\usepackage{multicols}
-
-% \FloatBarrier要的包
-\usepackage{placeins} 
-
 % 页边距
 \usepackage{geometry}
-%\geometry{left=2cm,right=2cm,top=2cm,bottom=2cm}
 
 % 页眉页脚
 \usepackage{titlesec}
 \usepackage{layout}
-% \usepackage{titlepage}
 
-% \newpagestyle{article_style} { %
-%     \headrule % 添加页眉处分割线
-%     \footrule % 添加页脚处分割线
-%     \setheadrule{10mm} % 注意在声明后设置长度才有效（也可以不设置长度）
-%     \setfootrule{0.4pt} % 0.4pt 是分割线的默认值
-%     \sethead
-%     [第\thesection{}章 ~~\sectiontitle][][\thepage] %
-%     {第\thesection{}章 ~~\sectiontitle}{}{\thepage}
-%     \setfoot
-%     [][\LaTeX{}游戏引擎开发笔记][]
-%     {}{\LaTeX{}游戏引擎开发笔记}{}
-% }
+% 在导言区使用 \syntaxonly 命令，可令LATEX编译后不生成DVI或者PDF文档
+\usepackage{syntonly}
+%\syntaxonly
 
-%\usepackage[printwatermark]{xwatermark}
 % 水印
-% \newwatermark[page=1,color=gray!20,angle=45,scale=4,xpos=0,ypos=0]
-%     {Zhang Yf}
-% \newwatermark[pages=2-4,color=gray!20,angle=45,scale=3,xpos=0,ypos=0]
-%     {游戏引擎开发笔记}
-% \newwatermark[pagex={5,6,7},color=gray!20,angle=45,scale=3,xpos=0,ypos=0]
-%     {游戏引擎开发笔记}
+% \usepackage{draftwatermark, everypage}
+% \SetWatermarkText{Zhang Yufeng}
+% \SetWatermarkLightness{0.9}
+% \SetWatermarkScale{0.5}
 
 % 下划线，斜体强调
 \usepackage{ulem}
@@ -89,3 +43,9 @@
 
 % 链接
 \usepackage{hyperref}
+
+% 代码排版
+\usepackage{listingsutf8}
+\usepackage{xcolor}
+\usepackage{fontspec}
+\usepackage{color}
