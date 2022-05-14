@@ -3,20 +3,21 @@
     b5paper,    % 纸张大小, I like b5
     10pt,       % 字号
     oneside,    % 书页排版 「 twoside, oneside 」
-    openany,    % 新章节开始位置 「 openright, openany 」
-    final]      % 草稿还是终稿 「 draft, final 」
-    {ctexbook}
+    openright,  % 新章节开始位置 「 openright, openany 」
+    titlepage,  % 是否单独生成标题页
+    final       % 草稿还是终稿 「 draft, final 」
+]{ctexbook}
 % 这里是导言区, 可以设置格式
 
 \include{packages.tex}
 \include{code_style.tex}
 
-\geometry{left=2.5cm,right=2.5cm,top=2.5cm,bottom=2.5cm}
-\hypersetup{hidelinks} 
+\geometry{left=2.0cm,right=2.0cm,top=2.5cm,bottom=2.5cm}
+\hypersetup{hidelinks}
 
 % 标题作者
 \title{3D引擎开发笔记}
-\author{Zhang Yf\thanks{Email: 759094438@qq.com}}
+\author{ Zhang Yufeng \thanks{Email: 759094438@qq.com} }
 \date{\today}
 
 \begin{document}
@@ -24,6 +25,7 @@
     \tableofcontents
 
     \frontmatter
+
     \maketitle
     \part{序言}
 
@@ -47,50 +49,73 @@
     \maketitle
     \chapter{基本算法}
 
-    \input{chapter02/chapter02-intro.tex}
+    % \input{chapter02/chapter02-intro.tex}
 
-    \input{chapter02/chapter02-01.tex}
-    \input{chapter02/chapter02-02.tex}
-    \input{chapter02/chapter02-03.tex}
+    % \input{chapter02/chapter02-01.tex}
+    % \input{chapter02/chapter02-02.tex}
+    % \input{chapter02/chapter02-03.tex}
 
     \maketitle
     \chapter{设计模式}
 
-    \input{chapter03/chapter03-intro.tex}
+    % \input{chapter03/chapter03-intro.tex}
 
-    \input{chapter03/chapter03-01.tex}
-    \input{chapter03/chapter03-02.tex}
-    \input{chapter03/chapter03-03.tex}
-    \input{chapter03/chapter03-04.tex}
-    \input{chapter03/chapter03-05.tex}
-    \input{chapter03/chapter03-06.tex}
-    \input{chapter03/chapter03-07.tex}
-    \input{chapter03/chapter03-08.tex}
-    \input{chapter03/chapter03-09.tex}
-    \input{chapter03/chapter03-10.tex}
-    \input{chapter03/chapter03-11.tex}
-    \input{chapter03/chapter03-12.tex}
-    \input{chapter03/chapter03-13.tex}
-    \input{chapter03/chapter03-14.tex}
-    \input{chapter03/chapter03-15.tex}
-    \input{chapter03/chapter03-16.tex}
-    \input{chapter03/chapter03-17.tex}
-    \input{chapter03/chapter03-18.tex}
-    \input{chapter03/chapter03-19.tex}
-    \input{chapter03/chapter03-20.tex}
-    \input{chapter03/chapter03-21.tex}
-    \input{chapter03/chapter03-22.tex}
-    \input{chapter03/chapter03-23.tex}
+    % \input{chapter03/chapter03-01.tex}
+    % \input{chapter03/chapter03-02.tex}
+    % \input{chapter03/chapter03-03.tex}
+    % \input{chapter03/chapter03-04.tex}
+    % \input{chapter03/chapter03-05.tex}
+    % \input{chapter03/chapter03-06.tex}
+    % \input{chapter03/chapter03-07.tex}
+    % \input{chapter03/chapter03-08.tex}
+    % \input{chapter03/chapter03-09.tex}
+    % \input{chapter03/chapter03-10.tex}
+    % \input{chapter03/chapter03-11.tex}
+    % \input{chapter03/chapter03-12.tex}
+    % \input{chapter03/chapter03-13.tex}
+    % \input{chapter03/chapter03-14.tex}
+    % \input{chapter03/chapter03-15.tex}
+    % \input{chapter03/chapter03-16.tex}
+    % \input{chapter03/chapter03-17.tex}
+    % \input{chapter03/chapter03-18.tex}
+    % \input{chapter03/chapter03-19.tex}
+    % \input{chapter03/chapter03-20.tex}
+    % \input{chapter03/chapter03-21.tex}
+    % \input{chapter03/chapter03-22.tex}
+    % \input{chapter03/chapter03-23.tex}
+
+    \maketitle
+    \chapter{文件系统}
+    \input{chapter04/chapter04-01.tex}
+
+    \maketitle
+    \chapter{内存管理}
+
+    \maketitle
+    \chapter{多线程相关}
 
     \maketitle
     \chapter{渲染}
+
+    \maketitle
+    \chapter{物理}
+
+    \maketitle
+    \chapter{脚本系统}
 
     \appendix
     \maketitle
     \chapter{附录}
 
+    % \maketitle
+    % \chapter{参考文献}
+    % \input{reference/reference.tex}
+
     \backmatter
     \chapter{后记}
+
+    %\bibliography{books} % 利用 BibTeX 工具从数据库文件 books.bib 生成参考文献
+    %\printindex % 利用 makeindex 工具生成索引
 
 \end{document}
 % Local Variables:

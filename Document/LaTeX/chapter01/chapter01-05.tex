@@ -1,51 +1,22 @@
 \section{模块划分}
 
 为了更加明确各个部分的功能，这个小节主要描述模块通用的接口，
-不同的功能根据具体模块进行扩展。
+不同的功能根据具体模块进行扩展。在此引入了IRuntimeModule这个基类，所有的模块均继承自这个类，保证了各个模块接口的统一。
 
-\subsection{IRuntimeModule}
-
-\begin{lstlisting}[style=C++,title={Engine/Log/Log.h} \label{Engine/Log/Log.h}]
-#pragma once
-#include "Core/Declare.h"
-#include "Utils/TimeStep.h"
-
-#include <string>
-#include <ostream>
-
-namespace Rocket {
-    Interface IRuntimeModule {
-    public:
-        virtual ~IRuntimeModule() = default;
-
-        // Return == 0 : everything OK
-        // Return != 0 : something wrong
-        [[nodiscard]] virtual int Initialize() = 0;
-        virtual void Finalize() = 0;
-        virtual void Tick(TimeStep step) = 0;
-        // For Debug
-        [[nodiscard]] virtual inline std::string ToString() const { return GetName(); }
-    protected:
-        [[nodiscard]] virtual inline const char* GetName() const = 0;
-    };
-
-    inline std::ostream& operator << (std::ostream& os, const IRuntimeModule& r) {
-		return os << r.ToString();
-	}
-}
-
-#define RUNTIME_MODULE_TYPE(type) virtual const char* GetName() const override { return #type; }
-\end{lstlisting}
+\lstinputlisting[
+    style=C++,title={IRuntimeModule.h} \label{chapter01/code/IRuntimeModule.h}
+]{chapter01/code/IRuntimeModule.h}
 
 模块运行的流程如下所示：
 
 \begin{breakablealgorithm}
-\caption{Main Loop} \label{mainloop function}
+\caption{Main Loop}
+\label{mainloop function}
 \begin{algorithmic}
-\Procedure{Main Loop}{$size$}
+\Procedure{Main Loop}{}
     \State Init Modules
     \State Init Timer
-    \While($True$)
+    \While{$isRunning$}
         \State Update Timer
         \State Tick Module
     \EndWhile

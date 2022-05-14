@@ -10,62 +10,79 @@
 该内存检测模块主要通过检测new与delete的配对问题来检测内存泄漏。
 一次new对应一次delete，一次new[]对应delete[]，避免错配。
 该模块使用了set来存储信息，在new的过程中插入信息，delete的过程中检测并删除对应new的信息，达到匹配的效果。
-为了能够在程序退出时自动输出内存泄漏检查信息，
-定义了一个$dump\_all$的全局变量，当程序退出时，该变量自动析构，执行最后的内存泄漏检测，并输出结果。\\
+为了能够在程序退出时自动输出内存泄漏检查信息，定义了一个$dump\_all$的全局变量，
+当程序退出时，该变量自动析构，执行最后的内存泄漏检测并输出结果。\\
 
-由于实际的代码太长，仅在此记录主要的算法流程，包括初始化函数$^{\ref{initialize function}}$，
-new函数$^{\ref{new function}}$，delete函数$^{\ref{delete function}}$，退出检查函数$^{\ref{exit check}}$。
+\lstinputlisting[
+    style=C++,title={MemoryCheck.h} \label{chapter01/code/MemoryCheck.h}
+]{chapter01/code/MemoryCheck.h}
 
-\begin{breakablealgorithm}
-\caption{Init Records} \label{initialize function}
-\begin{algorithmic}
-    \Procedure{Init Records}{$size$}
-        \State Initialize Static \emph{Memory Record Set}
-        \State Initialize Static \emph{Delete Type Mismatch List}
-        \State Initialize Static \emph{Delete Too Much List}
-\EndProcedure
-\end{algorithmic}
-\end{breakablealgorithm}
-
-\begin{breakablealgorithm}
-\caption{New} \label{new function}
-\begin{algorithmic}
-\Procedure{new}{$size$}                  \Comment{new function}
-    \State malloc a Memory Block
-    \State Insert a Memory Block Info in \emph{Memory Record Set}
-    \State return Memory Block Pointer
-\EndProcedure
-\end{algorithmic}
-\end{breakablealgorithm}
-
-\begin{breakablealgorithm}
-\caption{Delete} \label{delete function}
-\begin{algorithmic}                     \Comment{delete function}
-\Procedure{delete}{$ptr$}
-    \State result = Find $ptr$ in \emph{Memory Record Set}
-    \If{$result = True$}
-        \If{$delete type match$}
-            \State Remove Pointer Info in \emph{Memory Record Set}
-        \Else
-            \State Record Info in \emph{Delete Type Mismatch List}
-        \EndIf
-    \Else
-        \State Record Info in \emph{Delete Too Much List}
-    \EndIf
-\EndProcedure
-\end{algorithmic}
-\end{breakablealgorithm}
-
-\begin{breakablealgorithm}
-\caption{ExitCheck} \label{exit check}
-\begin{algorithmic}
-\Procedure{ExitCheck}{$ptr$}
-        \State Find Leak in \emph{Memory Record Set} and Dump Info
-        \State Find Mismatch in \emph{Delete Type Mismatch List} and Dump Info
-        \State Find Mismatch in \emph{Delete Too Much List} and Dump Info
-\EndProcedure
-\end{algorithmic}
-\end{breakablealgorithm}
+\lstinputlisting[
+    style=C++,title={MemoryCheck.cpp} \label{chapter01/code/MemoryCheck.cpp}
+]{chapter01/code/MemoryCheck.cpp}
 
 关于内存检测模块，后续仍有很多改进空间，首先需要的就是移除宏定义对new和delete的限制，
 使其能够运行调用placement的new与delete版本，以及可以在此添加自定义的内存管理器，进行自定义内存分配策略。
+在新的C++中，已经有内存管理器的相关内容，在未来的看法中，可以考虑基于C++标准库来实现内存管理的功能。\\
+
+除此之外，还可以通过重载new与delete函数，来调用别的底层内存分配库，比如在这里利用了微软推出的mi\_malloc库，相比系统自带的malloc函数，可以提供更高的性能。
+不过需要注意的是，在不同的模块间，若采用了不同的底层内存库，有可能导致程序运行时出差，难以排查，这点需要额外注意。
+
+\lstinputlisting[
+    style=C++,title={MemoryDefine.h} \label{chapter01/code/MemoryDefine.h}
+]{chapter01/code/MemoryDefine.h}
+
+\lstinputlisting[
+    style=C++,title={MemoryDefine.cpp} \label{chapter01/code/MemoryDefine.cpp}
+]{chapter01/code/MemoryDefine.cpp}
+
+% \begin{breakablealgorithm}
+% \caption{Init Records} \label{initialize function}
+% \begin{algorithmic}
+%     \Procedure{Init Records}{$size$}
+%         \State Initialize Static \emph{MemoryRecord Set}
+%         \State Initialize Static \emph{DeleteTypeMismatch List}
+%         \State Initialize Static \emph{MultiDelete List}
+% \EndProcedure
+% \end{algorithmic}
+% \end{breakablealgorithm}
+
+% \begin{breakablealgorithm}
+% \caption{New} \label{new function}
+% \begin{algorithmic}
+% \Procedure{new}{$size$}                  \Comment{new function}
+%     \State malloc a Memory Block
+%     \State Insert a Memory Block Info in \emph{MemoryRecord Set}
+%     \State return Memory Block Pointer
+% \EndProcedure
+% \end{algorithmic}
+% \end{breakablealgorithm}
+
+% \begin{breakablealgorithm}
+% \caption{Delete} \label{delete function}
+% \begin{algorithmic}                     \Comment{delete function}
+% \Procedure{delete}{$ptr$}
+%     \State result = Find $ptr$ in \emph{Memory Record Set}
+%     \If{$result = True$}
+%         \If{$delete type match$}
+%             \State Remove Pointer Info in \emph{MemoryRecord Set}
+%         \Else
+%             \State Record Info in \emph{DeleteTypeMismatch List}
+%         \EndIf
+%     \Else
+%         \State Record Info in \emph{MultiDelete List}
+%     \EndIf
+% \EndProcedure
+% \end{algorithmic}
+% \end{breakablealgorithm}
+
+% \begin{breakablealgorithm}
+% \caption{ExitCheck} \label{exit check}
+% \begin{algorithmic}
+% \Procedure{ExitCheck}{$ptr$}
+%         \State Find Leak in \emph{MemoryRecord Set} and Dump Info
+%         \State Find Mismatch in \emph{DeleteTypeMismatch List} and Dump Info
+%         \State Find Mismatch in \emph{MultiDelete List} and Dump Info
+% \EndProcedure
+% \end{algorithmic}
+% \end{breakablealgorithm}
