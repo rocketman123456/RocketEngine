@@ -35,4 +35,4 @@ jobs:
       run: xmake f -y -m ${{ matrix.type }}
 
     - name: Build Project
-      run: xmake -y
+      run: xmake -vD -y
