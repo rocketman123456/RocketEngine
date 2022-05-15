@@ -99,17 +99,17 @@ if is_plat("windows") then
 end
 
 if is_config("render", "soft") then
-    add_requires("glad v0.1.36", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
+    -- add_requires("glad v0.1.36", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
     add_defines("RK_SOFT")
 elseif is_config("render", "opengl") then
-    add_requires("glad v0.1.36", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
+    -- add_requires("glad v0.1.36", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
     add_defines("RK_OPENGL")
 elseif is_config("render", "vulkan") then
     add_defines("VK_NO_PROTOTYPES")
-    add_requires("glad v0.1.36", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
+    -- add_requires("glad v0.1.36", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
     -- add_requires("vulkan-headers 1.2.189", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
-    add_requires("volk 1.3.204", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
-    add_requires("shaderc 2021.11.22", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
+    -- add_requires("volk 1.3.204", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
+    -- add_requires("shaderc 2021.11.22", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
     add_defines("RK_VULKAN")
 elseif is_config("render", "metal") then
     add_defines("RK_METAL")

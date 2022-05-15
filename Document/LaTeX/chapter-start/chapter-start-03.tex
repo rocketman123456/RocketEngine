@@ -1,10 +1,10 @@
 \section{打开第一个窗口}
 当然作为一个3D程序，需要通过显示器才能展示我们的工作成果。不同的系统有不同的显示API，为了保证本项目的跨平台能力，
-需要尽可能一致的为不同平台提供相同的封装，在这里本项目选择了常用的GLFW库\footnote{\nolinkurl{https://www.glfw.org/}}。\\
+需要尽可能一致的为不同平台提供相同的封装，在这里本项目选择了常用的GLFW库\footnote{\nolinkurl{https://www.glfw.org/}}。
 
 本项目有两套渲染器，一个是Vulkan渲染器，一个是软渲染器。软渲染器在CPU中渲染完图片后，使用OpenGL进行屏幕渲染输出，
 该软渲染器主要参考了GAMES102课程的代码\footnote{\nolinkurl{https://games-cn.org/games102/}}。
-根据LearnOpenGL教程\footnote{\nolinkurl{https://learnopengl-cn.github.io/}}，可以很容易写出第一个窗口程序：\\
+根据LearnOpenGL教程\footnote{\nolinkurl{https://learnopengl-cn.github.io/}}，可以很容易写出第一个窗口程序：
 
 \lstinputlisting[
     style=C++,title={glfw.cpp} \label{chapter-start/code/glfw.cpp}
