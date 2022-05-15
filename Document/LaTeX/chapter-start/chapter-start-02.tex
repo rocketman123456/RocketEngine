@@ -14,12 +14,12 @@
 当程序退出时，该变量自动析构，执行最后的内存泄漏检测并输出结果。\\
 
 \lstinputlisting[
-    style=C++,title={MemoryCheck.h} \label{chapter01/code/MemoryCheck.h}
-]{chapter01/code/MemoryCheck.h}
+    style=C++,title={MemoryCheck.h} \label{chapter-start/code/MemoryCheck.h}
+]{chapter-start/code/MemoryCheck.h}
 
 \lstinputlisting[
-    style=C++,title={MemoryCheck.cpp} \label{chapter01/code/MemoryCheck.cpp}
-]{chapter01/code/MemoryCheck.cpp}
+    style=C++,title={MemoryCheck.cpp} \label{chapter-start/code/MemoryCheck.cpp}
+]{chapter-start/code/MemoryCheck.cpp}
 
 关于内存检测模块，后续仍有很多改进空间，首先需要的就是移除宏定义对new和delete的限制，
 使其能够运行调用placement的new与delete版本，以及可以在此添加自定义的内存管理器，进行自定义内存分配策略。
@@ -29,12 +29,12 @@
 不过需要注意的是，在不同的模块间，若采用了不同的底层内存库，有可能导致程序运行时出差，难以排查，这点需要额外注意。
 
 \lstinputlisting[
-    style=C++,title={MemoryDefine.h} \label{chapter01/code/MemoryDefine.h}
-]{chapter01/code/MemoryDefine.h}
+    style=C++,title={MemoryDefine.h} \label{chapter-start/code/MemoryDefine.h}
+]{chapter-start/code/MemoryDefine.h}
 
 \lstinputlisting[
-    style=C++,title={MemoryDefine.cpp} \label{chapter01/code/MemoryDefine.cpp}
-]{chapter01/code/MemoryDefine.cpp}
+    style=C++,title={MemoryDefine.cpp} \label{chapter-start/code/MemoryDefine.cpp}
+]{chapter-start/code/MemoryDefine.cpp}
 
 % \begin{breakablealgorithm}
 % \caption{Init Records} \label{initialize function}
