@@ -80,32 +80,37 @@ option_end()
 -- Add Required Modules
 --
 add_requires("spdlog v1.10.0", {system = false, configs = {shared = false, debug = true, fmt_external = false, cxflags = "-fPIC"}})
-add_requires("gsl v4.0.0", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
 add_requires("mimalloc 2.0.6", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
-add_requires("libzip 1.8.0", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
-add_requires("yaml-cpp 0.7.0", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
-add_requires("stb 2021.09.10", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
-add_requires("tinygltf v2.5.0", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
-add_requires("glfw 3.3.6", {system = false, configs = {glfw_include = "none", shared = false, debug = true, cxflags = "-fPIC"}})
-add_requires("taskflow v3.2.0", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
-add_requires("concurrentqueue", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
-add_requires("lua v5.4.4", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
+add_requires("gsl v4.0.0", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
+add_requires("lz4 v1.9.3", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
 add_requires("eigen 3.4.0", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
+-- add_requires("libzip 1.8.0", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
+-- add_requires("yaml-cpp 0.7.0", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
+-- add_requires("stb 2021.09.10", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
+-- add_requires("tinygltf v2.5.0", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
+-- add_requires("glfw 3.3.6", {system = false, configs = {glfw_include = "none", shared = false, debug = true, cxflags = "-fPIC"}})
+-- add_requires("taskflow v3.2.0", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
+-- add_requires("concurrentqueue", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
+-- add_requires("lua v5.4.4", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
 
+-- For spdlog compile error
 if is_plat("windows") then
-    add_requires("fmt 7.1.3", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
+    add_requires("fmt 8.1.1", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
 end
 
 if is_config("render", "soft") then
     add_requires("glad v0.1.36", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
+    add_defines("RK_SOFT")
 elseif is_config("render", "opengl") then
     add_requires("glad v0.1.36", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
+    add_defines("RK_OPENGL")
 elseif is_config("render", "vulkan") then
     add_defines("VK_NO_PROTOTYPES")
     add_requires("glad v0.1.36", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
     -- add_requires("vulkan-headers 1.2.189", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
     add_requires("volk 1.3.204", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
     add_requires("shaderc 2021.11.22", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
+    add_defines("RK_VULKAN")
 elseif is_config("render", "metal") then
     add_defines("RK_METAL")
 elseif is_config("render", "dx12") then

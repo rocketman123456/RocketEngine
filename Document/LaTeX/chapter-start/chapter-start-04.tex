@@ -12,14 +12,14 @@
 \subsection{封装日志模块}
 日志输出模块首先需要保证系统性能，其次可以按照不同的日志等级输出信息，便于分类，再次则需要保证多线程输出信息的安全，
 最后则是能够输出到日志文件等功能。经过挑选，本项目采用了spdlog作为日志输出的底层库，并对其进行了简单的封装。
-主要包括$Log.h^{\ref{chapter01/code/Log.h}}$与$Log.cpp^{\ref{chapter01/code/Log.cpp}}$两个文件。
+主要包括$Log.h^{\ref{chapter-start/code/Log.h}}$与$Log.cpp^{\ref{chapter-start/code/Log.cpp}}$两个文件。
 在程序运行开始需要初始化Log，在项目终止时需要终止日志输出（虽然可以依靠自动析构，但是显式调用可以使流程更加清晰）。
 利用宏定义，可以快速添加新的日志分类。
 
 \lstinputlisting[
-    style=C++,title={Log.h} \label{chapter01/code/Log.h}
-]{chapter01/code/Log.h}
+    style=C++,title={Log.h} \label{chapter-start/code/Log.h}
+]{chapter-start/code/Log.h}
 
 \lstinputlisting[
-    style=C++,title={Log.h} \label{chapter01/code/Log.cpp}
-]{chapter01/code/Log.cpp}
+    style=C++,title={Log.h} \label{chapter-start/code/Log.cpp}
+]{chapter-start/code/Log.cpp}
