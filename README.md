@@ -2,6 +2,9 @@
 
 ![Logo](Logo/LOGO-03.png "Logo")
 
+[Articles](Document/LaTeX/articles.pdf)
+
+<!--
 [article 00 绪论-写作原因与后续计划](Document/article_00/article_00.md)<br>
 [article 01 第一个简单项目](Document/article_01/article_01.md)<br>
 [article 02 接入内存检测功能](Document/article_02/article_02.md)<br>
@@ -24,3 +27,4 @@
 [article 19 渲染分支-GAMES101课程笔记-3](Document/markdown/article_19/article_19.md)<br>
 [article 20 线程池初步](Document/markdown/article_20/article_20.md)<br>
 [article 21 内存分配器](Document/markdown/article_21/article_21.md)<br>
+-->

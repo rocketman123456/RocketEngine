@@ -1,0 +1,31 @@
+\section{虚拟机实现}
+
+虚拟机的执行主要分为以下几步：
+
+1.从PC寄存器加载指令
+
+2.对PC寄存器加一
+
+3.根据加载的指令决定执行命令
+
+4.执行命令
+
+5.回到第一步
+
+这个虚拟机的运行流程十分简单，具体实现代码如下：
+
+% \lstinputlisting[
+%     style=C++,title={lc3vm.h} \label{chapter-hardware/code/lc3vm.h}
+% ]{chapter-hardware/code/lc3vm.h}
+
+% \lstinputlisting[
+%     style=C++,title={lc3vm.c} \label{chapter-hardware/code/lc3vm.c}
+% ]{chapter-hardware/code/lc3vm.c}
+
+% \lstinputlisting[
+%     style=C++,title={lc3.c} \label{chapter-hardware/code/lc3.c}
+% ]{chapter-hardware/code/lc3.c}
+
+\lstinputlisting[
+    style=C++,title={lc3.c} \label{chapter-hardware/code/lc3vm-other.c}
+]{chapter-hardware/code/lc3vm-other.c}
