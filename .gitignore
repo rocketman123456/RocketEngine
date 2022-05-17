@@ -30,6 +30,9 @@
 *.out
 *.app
 
+# Ignore asm generate file
+*.sym
+
 # Xmake cache
 .xmake/
 

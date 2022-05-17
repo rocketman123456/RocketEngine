@@ -121,7 +121,8 @@
         "codecvt": "cpp",
         "numbers": "cpp",
         "semaphore": "cpp",
-        "*.tcc": "cpp"
+        "*.tcc": "cpp",
+        "types.h": "c"
     },
     "Lua.diagnostics.globals": [
         "user_score"
