@@ -12,7 +12,7 @@
 
 5.回到第一步
 
-这个虚拟机的运行流程十分简单，具体实现代码如下：
+指令的执行在虚拟机里使用switch case来决定执行程序。这个虚拟机的运行流程十分简单，具体实现代码如下：
 
 % \lstinputlisting[
 %     style=C++,title={lc3vm.h} \label{chapter-hardware/code/lc3vm.h}
@@ -29,3 +29,5 @@
 \lstinputlisting[
     style=C++,title={lc3.c} \label{chapter-hardware/code/lc3vm-other.c}
 ]{chapter-hardware/code/lc3vm-other.c}
+
+这个虚拟机还有高级版本，可以加载一个微型的系统，代替c的switch case

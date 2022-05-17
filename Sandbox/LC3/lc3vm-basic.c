@@ -5,7 +5,7 @@
 #include <signal.h>
 
 /* unix */
-#ifdef WIN32
+#if defined(WIN32) || defined(WIN64)
 #include <Windows.h>
 #include <conio.h>  // _kbhit
 HANDLE hStdin = INVALID_HANDLE_VALUE;

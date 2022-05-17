@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#ifdef WIN32
+#if defined(WIN32) || defined(WIN64)
 #include <Windows.h>
 #include <conio.h>  // _kbhit
 #else
