@@ -26,7 +26,7 @@ enum {
     VM_EXIT_OPCODE_INVALID,
 };
 
-#ifdef WIN32
+#if defined(WIN32) || defined(WIN64)
 DWORD fdwMode, fdwOldMode;
 
 void disable_input_buffering()

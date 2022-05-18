@@ -135,7 +135,7 @@ int read_image(const char* image_path)
     return 1;
 }
 
-#ifdef WIN32
+#if defined(WIN32) || defined(WIN64)
 uint16_t check_key()
 {
     return WaitForSingleObject(hStdin, 1000) == WAIT_OBJECT_0 && _kbhit();
@@ -176,7 +176,7 @@ uint16_t mem_read(uint16_t address)
     return memory[address];
 }
 
-#ifdef WIN32
+#if defined(WIN32) || defined(WIN64)
 DWORD fdwMode, fdwOldMode;
 
 void disable_input_buffering()
