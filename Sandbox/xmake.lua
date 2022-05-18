@@ -1,3 +1,4 @@
 includes(
-    "LC3"
+    "LC3",
+    "Compiler"
 )

@@ -203,6 +203,7 @@ void disable_input_buffering()
     new_tio.c_lflag &= ~ICANON & ~ECHO;
     tcsetattr(STDIN_FILENO, TCSANOW, &new_tio);
 }
+#endif
 
 void restore_input_buffering() { tcsetattr(STDIN_FILENO, TCSANOW, &original_tio); }
 

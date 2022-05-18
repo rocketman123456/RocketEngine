@@ -130,6 +130,18 @@
             "environment": [],
             "externalConsole": false,
             "MIMode": "lldb"
+        },
+        {
+            "name": "(macosx) c-compiler",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/macosx/x86_64/debug/c-compiler",
+            "args": ["/Users/developer/Program/CppCode/RocketEngine/Sandbox/Compiler/hello.c"],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "lldb"
         }
     ]
 }
