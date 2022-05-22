@@ -2,18 +2,18 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <memory.h>
+#if defined(RK_WINDOWS)
+#include <io.h>
+#include <process.h>
+#else
 #include <unistd.h>
+#endif
 #include <fcntl.h>
-
-int64_t debug;    // print the executed instructions
-int64_t assembly; // print out the assembly and source
-
-int64_t token; // current token
 
 // instructions
 enum { 
     LEA ,IMM ,JMP ,CALL,JZ  ,JNZ ,ENT ,ADJ ,LEV ,LI  ,LC  ,SI  ,SC  ,PUSH, 
-    OR  ,XOR ,AND ,EQ  ,NE  ,LT  ,GT  ,LE  ,GE  ,SHL ,SHR ,ADD ,SUB ,MUL ,DIV ,MOD 2,
+    OR  ,XOR ,AND ,EQ  ,NE  ,LT  ,GT  ,LE  ,GE  ,SHL ,SHR ,ADD ,SUB ,MUL ,DIV ,MOD ,
     OPEN,READ,CLOS,PRTF,MALC,MSET,MCMP,EXIT
 };
 
@@ -45,6 +45,11 @@ enum {
 enum {
     Global, Local
 };
+
+int64_t debug;    // print the executed instructions
+int64_t assembly; // print out the assembly and source
+
+int64_t token; // current token
 
 int64_t* text; // text segment
 int64_t* stack;// stack
@@ -1224,19 +1229,19 @@ int main(int argc, char** argv) {
     line = 1;
 
     // allocate memory
-    if (!(text = malloc(poolsize))) {
+    if (!(text = (int64_t*)malloc(poolsize))) {
         printf("could not malloc(%lld) for text area\n", poolsize);
         return -1;
     }
-    if (!(data = malloc(poolsize))) {
+    if (!(data = (char*)malloc(poolsize))) {
         printf("could not malloc(%lld) for data area\n", poolsize);
         return -1;
     }
-    if (!(stack = malloc(poolsize))) {
+    if (!(stack = (int64_t*)malloc(poolsize))) {
         printf("could not malloc(%lld) for stack area\n", poolsize);
         return -1;
     }
-    if (!(symbols = malloc(poolsize))) {
+    if (!(symbols = (int64_t*)malloc(poolsize))) {
         printf("could not malloc(%lld) for symbol table\n", poolsize);
         return -1;
     }
@@ -1270,7 +1275,7 @@ int main(int argc, char** argv) {
     next(); current_id[Token] = Char; // handle void type
     next(); idmain = current_id; // keep track of main
 
-    if (!(src = old_src = malloc(poolsize))) {
+    if (!(src = old_src = (char*)malloc(poolsize))) {
         printf("could not malloc(%lld) for source area\n", poolsize);
         return -1;
     }

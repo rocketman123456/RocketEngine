@@ -5,19 +5,18 @@
 #include <signal.h>
 
 /* unix */
-#if defined(WIN32) || defined(WIN64)
+#if defined(RK_WINDOWS)
 #include <Windows.h>
 #include <conio.h>  // _kbhit
 HANDLE hStdin = INVALID_HANDLE_VALUE;
 #else
 #include <unistd.h>
 #include <fcntl.h>
-#endif
-
 #include <sys/time.h>
 #include <sys/types.h>
 #include <sys/termios.h>
 #include <sys/mman.h>
+#endif
 
 enum
 {

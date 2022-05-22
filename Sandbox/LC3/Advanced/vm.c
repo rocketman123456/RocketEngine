@@ -2,18 +2,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdint.h>
 
-#if defined(WIN32) || defined(WIN64)
+#if defined(RK_WINDOWS)
 #include <Windows.h>
 #include <conio.h>  // _kbhit
 #else
 #include <unistd.h>
 #include <fcntl.h>
-#endif
-
 #include <sys/stat.h>
 #include <sys/time.h>
 #include <sys/mman.h>
+#endif
 
 #include "vm.h"
 
@@ -29,7 +29,7 @@ extern unsigned int lc3os_obj_len;
 // MARK: - Types
 
 enum {
-    VM_ADDR_MAX = UINT16_MAX,
+    VM_ADDR_MAX = 1 << 16,
     VM_ADDR_INITIAL = 0x3000,
     VM_SIGN_BIT = 1 << 15,
     VM_STATUS_BIT = 1 << 15,
