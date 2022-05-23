@@ -5,19 +5,18 @@
 #include <signal.h>
 
 /* unix */
-#ifdef WIN32
+#if defined(RK_WINDOWS)
 #include <Windows.h>
 #include <conio.h>  // _kbhit
 HANDLE hStdin = INVALID_HANDLE_VALUE;
 #else
 #include <unistd.h>
 #include <fcntl.h>
-#endif
-
 #include <sys/time.h>
 #include <sys/types.h>
 #include <sys/termios.h>
 #include <sys/mman.h>
+#endif
 
 enum
 {
@@ -135,7 +134,7 @@ int read_image(const char* image_path)
     return 1;
 }
 
-#ifdef WIN32
+#if defined(WIN32) || defined(WIN64)
 uint16_t check_key()
 {
     return WaitForSingleObject(hStdin, 1000) == WAIT_OBJECT_0 && _kbhit();
@@ -176,7 +175,7 @@ uint16_t mem_read(uint16_t address)
     return memory[address];
 }
 
-#ifdef WIN32
+#if defined(WIN32) || defined(WIN64)
 DWORD fdwMode, fdwOldMode;
 
 void disable_input_buffering()

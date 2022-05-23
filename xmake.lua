@@ -81,9 +81,9 @@ option_end()
 --
 add_requires("spdlog v1.10.0", {system = false, configs = {shared = false, debug = true, fmt_external = false, cxflags = "-fPIC"}})
 add_requires("mimalloc 2.0.6", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
-add_requires("gsl v4.0.0", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
 add_requires("lz4 v1.9.3", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
 add_requires("eigen 3.4.0", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
+-- add_requires("gsl v3.1.0", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
 -- add_requires("libzip 1.8.0", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
 -- add_requires("yaml-cpp 0.7.0", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
 -- add_requires("stb 2021.09.10", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
@@ -92,6 +92,16 @@ add_requires("eigen 3.4.0", {system = false, configs = {shared = false, debug = 
 -- add_requires("taskflow v3.2.0", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
 -- add_requires("concurrentqueue", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
 -- add_requires("lua v5.4.4", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
+-- add_requires("imgui v1.85", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
+-- add_requires("imguizmo 1.83", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
+-- add_requires("openal-soft 1.21.1", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
+-- add_requires("libsndfile 1.0.30", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
+-- add_requires("libsdl 2.0.16", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
+-- add_requires("bullet3 3.09", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
+-- add_requires("luajit", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
+-- if is_plat("macosx", "linux", "windows") then
+--     add_requires("libtorch v1.8.1", {system = false, configs = {shared = true, debug = true, cxflags = "-fPIC"}})
+-- end
 
 -- For spdlog compile error
 if is_plat("windows") then
@@ -118,17 +128,6 @@ elseif is_config("render", "dx12") then
 elseif is_config("render", "dx11") then
     add_defines("RK_DX11")
 end
-
--- add_requires("imgui v1.85", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
--- add_requires("imguizmo 1.83", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
--- add_requires("openal-soft 1.21.1", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
--- add_requires("libsndfile 1.0.30", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
--- add_requires("libsdl 2.0.16", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
--- add_requires("bullet3 3.09", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
--- add_requires("luajit", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
--- if is_plat("macosx", "linux", "windows") then
---     add_requires("libtorch v1.8.1", {system = false, configs = {shared = true, debug = true, cxflags = "-fPIC"}})
--- end
 
 --
 -- Set Include Dirs

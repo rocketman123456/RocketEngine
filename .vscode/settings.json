@@ -122,7 +122,10 @@
         "numbers": "cpp",
         "semaphore": "cpp",
         "*.tcc": "cpp",
-        "types.h": "c"
+        "types.h": "c",
+        "C4.C": "cpp",
+        "c4.c.C": "cpp",
+        "io.h": "c"
     },
     "Lua.diagnostics.globals": [
         "user_score"

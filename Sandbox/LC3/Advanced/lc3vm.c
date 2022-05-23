@@ -3,19 +3,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
 
-#ifdef WIN32
+#if defined(RK_WINDOWS)
 #include <Windows.h>
 #include <conio.h>  // _kbhit
 HANDLE hStdin = INVALID_HANDLE_VALUE;
 #else
 #include <unistd.h>
 #include <fcntl.h>
-#endif
-
 #include <sys/errno.h>
 #include <sys/termios.h>
+#endif
 
 #include "vm.h"
 
@@ -26,7 +24,7 @@ enum {
     VM_EXIT_OPCODE_INVALID,
 };
 
-#ifdef WIN32
+#if defined(RK_WINDOWS)
 DWORD fdwMode, fdwOldMode;
 
 void disable_input_buffering()
