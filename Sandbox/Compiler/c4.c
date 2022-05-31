@@ -9,7 +9,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <memory.h>
+#if defined(RK_WINDOWS)
+#include <io.h>
+#include <process.h>
+#else
 #include <unistd.h>
+#endif
 #include <fcntl.h>
 #define int long long
 
@@ -340,7 +345,13 @@ void stmt()
 
 int main(int argc, char **argv)
 {
-  int fd, bt, ty, poolsz, *idmain;
+
+#define int long long
+
+  int fd;
+  int bt, ty;
+  int poolsz;
+  int *idmain;
   int *pc, *sp, *bp, a, cycle; // vm registers
   int i, *t; // temps
 
@@ -352,10 +363,10 @@ int main(int argc, char **argv)
   if ((fd = open(*argv, 0)) < 0) { printf("could not open(%s)\n", *argv); return -1; }
 
   poolsz = 256*1024; // arbitrary size
-  if (!(sym = malloc(poolsz))) { printf("could not malloc(%d) symbol area\n", poolsz); return -1; }
-  if (!(le = e = malloc(poolsz))) { printf("could not malloc(%d) text area\n", poolsz); return -1; }
-  if (!(data = malloc(poolsz))) { printf("could not malloc(%d) data area\n", poolsz); return -1; }
-  if (!(sp = malloc(poolsz))) { printf("could not malloc(%d) stack area\n", poolsz); return -1; }
+  if (!(sym = (long long*)malloc(poolsz))) { printf("could not malloc(%d) symbol area\n", poolsz); return -1; }
+  if (!(le = e = (long long*)malloc(poolsz))) { printf("could not malloc(%d) text area\n", poolsz); return -1; }
+  if (!(data = (char*)malloc(poolsz))) { printf("could not malloc(%d) data area\n", poolsz); return -1; }
+  if (!(sp = (int*)malloc(poolsz))) { printf("could not malloc(%d) stack area\n", poolsz); return -1; }
 
   memset(sym,  0, poolsz);
   memset(e,    0, poolsz);
@@ -368,7 +379,7 @@ int main(int argc, char **argv)
   next(); id[Tk] = Char; // handle void type
   next(); idmain = id; // keep track of main
 
-  if (!(lp = p = malloc(poolsz))) { printf("could not malloc(%d) source area\n", poolsz); return -1; }
+  if (!(lp = p = (char*)malloc(poolsz))) { printf("could not malloc(%d) source area\n", poolsz); return -1; }
   if ((i = read(fd, p, poolsz-1)) <= 0) { printf("read() returned %d\n", i); return -1; }
   p[i] = 0;
   close(fd);
