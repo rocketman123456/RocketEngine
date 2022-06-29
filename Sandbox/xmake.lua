@@ -1,4 +1,5 @@
 includes(
     "LC3",
-    "Compiler"
+    "Compiler",
+    "FileSystem"
 )
