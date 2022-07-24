@@ -81,7 +81,6 @@ option_end()
 --
 add_requires("spdlog v1.10.0", {system = false, configs = {shared = false, debug = true, fmt_external = false, cxflags = "-fPIC"}})
 add_requires("mimalloc 2.0.6", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
-add_requires("lz4 v1.9.3", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
 add_requires("eigen 3.4.0", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
 add_requires("lua v5.4.4", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
 add_requires("microsoft-gsl v4.0.0", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
@@ -92,10 +91,12 @@ add_requires("stb 2021.09.10", {system = false, configs = {shared = false, debug
 add_requires("imgui v1.87", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
 add_requires("imguizmo 1.83", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
 add_requires("miniaudio 2021.12.31", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
+add_requires("tinygltf v2.5.0", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
+add_requires("yaml-cpp 0.7.0", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
 
+-- add_requires("tinyobjloader 1.0.7", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
+-- add_requires("lz4 v1.9.3", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
 -- add_requires("libzip 1.8.0", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
--- add_requires("yaml-cpp 0.7.0", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
--- add_requires("tinygltf v2.5.0", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
 -- add_requires("concurrentqueue", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
 -- add_requires("openal-soft 1.21.1", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
 -- add_requires("libsndfile 1.0.30", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
@@ -178,6 +179,7 @@ end
 -- Add Sub Module
 --
 includes(
+    "Editor",
     "Rocket",
     "Sandbox",
     "UnitTest"
