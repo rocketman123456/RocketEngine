@@ -1,5 +1,5 @@
 #define MINIAUDIO_IMPLEMENTATION
-#include "../miniaudio.h"
+#include <miniaudio.h>
 
 #include <stdio.h>
 
@@ -24,7 +24,6 @@ ma_bool32 are_all_decoders_at_end()
             return MA_FALSE;
         }
     }
-
     return MA_TRUE;
 }
 
