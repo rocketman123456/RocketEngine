@@ -1,5 +1,7 @@
 includes(
-    "LC3",
     "Compiler",
-    "FileSystem"
+    "FileSystem",
+    "LC3",
+    "LuaScript",
+    "PlayAudio"
 )

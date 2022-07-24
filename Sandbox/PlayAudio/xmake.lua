@@ -1,0 +1,23 @@
+target("audio_hello_world")
+    set_kind("binary")
+    add_files("audio_hello_world.cpp")
+    add_packages("miniaudio")
+target_end()
+
+target("audio_simple_playback")
+    set_kind("binary")
+    add_files("audio_simple_playback.cpp")
+    add_packages("miniaudio")
+target_end()
+
+target("audio_advance")
+    set_kind("binary")
+    add_files("audio_advance.cpp")
+    add_packages("miniaudio")
+target_end()
+
+-- target("audio_steamaudio")
+--     set_kind("binary")
+--     add_files("audio_streamaudio.cpp")
+--     add_packages("miniaudio")
+-- target_end()

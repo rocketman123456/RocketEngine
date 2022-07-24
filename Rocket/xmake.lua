@@ -1,3 +1,5 @@
 includes(
-    "Engine"
+    "Engine",
+    "Graphics",
+    "Platform"
 )
