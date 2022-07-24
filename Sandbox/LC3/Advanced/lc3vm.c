@@ -6,18 +6,19 @@
 
 #if defined(RK_WINDOWS)
 #include <Windows.h>
-#include <conio.h>  // _kbhit
+#include <conio.h> // _kbhit
 HANDLE hStdin = INVALID_HANDLE_VALUE;
 #else
-#include <unistd.h>
 #include <fcntl.h>
 #include <sys/errno.h>
 #include <sys/termios.h>
+#include <unistd.h>
 #endif
 
 #include "vm.h"
 
-enum {
+enum
+{
     VM_EXIT_SUCCESS,
     VM_EXIT_USAGE,
     VM_EXIT_INPUT_INVALID,
@@ -30,42 +31,40 @@ DWORD fdwMode, fdwOldMode;
 void disable_input_buffering()
 {
     hStdin = GetStdHandle(STD_INPUT_HANDLE);
-    GetConsoleMode(hStdin, &fdwOldMode); /* save old mode */
-    fdwMode = fdwOldMode
-            ^ ENABLE_ECHO_INPUT  /* no input echo */
-            ^ ENABLE_LINE_INPUT; /* return when one or
-                                    more characters are available */
-    SetConsoleMode(hStdin, fdwMode); /* set new mode */
-    FlushConsoleInputBuffer(hStdin); /* clear buffer */
+    GetConsoleMode(hStdin, &fdwOldMode);     /* save old mode */
+    fdwMode = fdwOldMode ^ ENABLE_ECHO_INPUT /* no input echo */
+              ^ ENABLE_LINE_INPUT;           /* return when one or
+                                                more characters are available */
+    SetConsoleMode(hStdin, fdwMode);         /* set new mode */
+    FlushConsoleInputBuffer(hStdin);         /* clear buffer */
 }
 
-void restore_input_buffering()
-{
-    SetConsoleMode(hStdin, fdwOldMode);
-}
+void restore_input_buffering() { SetConsoleMode(hStdin, fdwOldMode); }
 #else
 static struct termios original_tio;
 
-static void disable_input_buffering() {
+static void disable_input_buffering()
+{
     tcgetattr(STDIN_FILENO, &original_tio);
     struct termios new_tio = original_tio;
     new_tio.c_lflag &= ~ICANON & ~ECHO;
     tcsetattr(STDIN_FILENO, TCSANOW, &new_tio);
 }
 
-static void restore_input_buffering() {
-    tcsetattr(STDIN_FILENO, TCSANOW, &original_tio);
-}
+static void restore_input_buffering() { tcsetattr(STDIN_FILENO, TCSANOW, &original_tio); }
 #endif
 
-static void handle_signal(int signal) {
+static void handle_signal(int signal)
+{
     restore_input_buffering();
     printf("\n");
     exit(-2);
 }
 
-int main(int argc, const char * argv[]) {
-    if (argc != 2) {
+int main(int argc, const char* argv[])
+{
+    if (argc != 2)
+    {
         fprintf(stderr, "usage: %s <program.obj>\n", argv[0]);
         return VM_EXIT_USAGE;
     }
@@ -75,7 +74,8 @@ int main(int argc, const char * argv[]) {
 
     vm_load_result load_result = vm_load_file(vm, argv[1]);
 
-    switch (load_result) {
+    switch (load_result)
+    {
         case VM_LOAD_SUCCESS:
             break;
 
@@ -95,7 +95,8 @@ int main(int argc, const char * argv[]) {
 
     restore_input_buffering();
 
-    switch (run_result) {
+    switch (run_result)
+    {
         case VM_RUN_SUCCESS:
             break;
 

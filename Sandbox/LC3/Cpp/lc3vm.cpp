@@ -10,11 +10,11 @@
 HANDLE hStdin = INVALID_HANDLE_VALUE;
 #else
 #include <fcntl.h>
-#include <unistd.h>
 #include <sys/mman.h>
 #include <sys/termios.h>
 #include <sys/time.h>
 #include <sys/types.h>
+#include <unistd.h>
 #endif
 
 enum
@@ -179,19 +179,15 @@ DWORD fdwMode, fdwOldMode;
 void disable_input_buffering()
 {
     hStdin = GetStdHandle(STD_INPUT_HANDLE);
-    GetConsoleMode(hStdin, &fdwOldMode); /* save old mode */
-    fdwMode = fdwOldMode
-            ^ ENABLE_ECHO_INPUT  /* no input echo */
-            ^ ENABLE_LINE_INPUT; /* return when one or
-                                    more characters are available */
-    SetConsoleMode(hStdin, fdwMode); /* set new mode */
-    FlushConsoleInputBuffer(hStdin); /* clear buffer */
+    GetConsoleMode(hStdin, &fdwOldMode);     /* save old mode */
+    fdwMode = fdwOldMode ^ ENABLE_ECHO_INPUT /* no input echo */
+              ^ ENABLE_LINE_INPUT;           /* return when one or
+                                                more characters are available */
+    SetConsoleMode(hStdin, fdwMode);         /* set new mode */
+    FlushConsoleInputBuffer(hStdin);         /* clear buffer */
 }
 
-void restore_input_buffering()
-{
-    SetConsoleMode(hStdin, fdwOldMode);
-}
+void restore_input_buffering() { SetConsoleMode(hStdin, fdwOldMode); }
 #else
 struct termios original_tio;
 
@@ -399,10 +395,22 @@ void ins(uint16_t instr)
         update_flags(r0);
     }
 }
-static void (*op_table[16])(uint16_t) = {
-    ins<0>, ins<1>, ins<2>, ins<3>, ins<4>, ins<5>, ins<6>, ins<7>, 
-    NULL, ins<9>, ins<10>, ins<11>, ins<12>, NULL, ins<14>, ins<15>
-};
+static void (*op_table[16])(uint16_t) = {ins<0>,
+                                         ins<1>,
+                                         ins<2>,
+                                         ins<3>,
+                                         ins<4>,
+                                         ins<5>,
+                                         ins<6>,
+                                         ins<7>,
+                                         NULL,
+                                         ins<9>,
+                                         ins<10>,
+                                         ins<11>,
+                                         ins<12>,
+                                         NULL,
+                                         ins<14>,
+                                         ins<15>};
 
 int main(int argc, const char* argv[])
 {

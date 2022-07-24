@@ -1,4 +1,4 @@
--- target("pak-file-system")
+-- target("lua_script_01")
 --     set_kind("binary")
---     add_files("pak-file-system.c")
+--     add_files("lua_script_01.cpp")
 -- target_end()

@@ -4,9 +4,21 @@ target("audio_hello_world")
     add_packages("miniaudio")
 target_end()
 
+target("audio_simple_mixing")
+    set_kind("binary")
+    add_files("audio_simple_mixing.cpp")
+    add_packages("miniaudio")
+target_end()
+
 target("audio_simple_playback")
     set_kind("binary")
     add_files("audio_simple_playback.cpp")
+    add_packages("miniaudio")
+target_end()
+
+target("audio_simple_playback_sine")
+    set_kind("binary")
+    add_files("audio_simple_playback_sine.cpp")
     add_packages("miniaudio")
 target_end()
 
