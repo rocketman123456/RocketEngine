@@ -1,5 +1,5 @@
 includes(
     "Engine",
-    "Graphics",
-    "Platform"
+    "Platform",
+    "RHI"
 )
