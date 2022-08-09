@@ -6,11 +6,11 @@ set_version("0.0.1")
 -- Set Project Basic
 --
 add_rules(
-    "mode.debug", 
-    "mode.check", 
+    "mode.debug",
+    "mode.check",
     "mode.profile",
-    "mode.release", 
-    "mode.minsizerel", 
+    "mode.release",
+    "mode.minsizerel",
     "mode.releasedbg"
 )
 set_languages("c99", "c++17")
@@ -20,11 +20,11 @@ set_languages("c99", "c++17")
 -- Set Render Options
 --
 option("render")
-    set_default("vulkan")
-    set_showmenu(true)
-    set_values("soft", "opengl", "vulkan", "metal", "dx12", "dx11")
-    set_description("The Render config option")
-    set_category("Rocket")
+set_default("vulkan")
+set_showmenu(true)
+set_values("soft", "opengl", "vulkan", "metal", "dx12", "dx11")
+set_description("The Render config option")
+set_category("Rocket")
 option_end()
 if is_config("render", "soft") then
     add_defines("RK_SOFT")
@@ -44,55 +44,57 @@ end
 -- Set Log Options
 --
 option("console_log")
-    set_default(true)
-    set_showmenu(true)
-    set_values(false, true)
-    set_description("The Console Log config option")
-    set_category("Rocket")
-    add_defines("RK_CONSOLE_LOG")
+set_default(true)
+set_showmenu(true)
+set_values(false, true)
+set_description("The Console Log config option")
+set_category("Rocket")
+add_defines("RK_CONSOLE_LOG")
 option_end()
 
 --
 -- Set Profile Options
 --
 option("profile_settings")
-    set_default(true)
-    set_showmenu(true)
-    set_values(false, true)
-    set_description("Profile Settings")
-    set_category("Rocket")
-    add_defines("RK_PROFILE_SETTINGS")
+set_default(true)
+set_showmenu(true)
+set_values(false, true)
+set_description("Profile Settings")
+set_category("Rocket")
+add_defines("RK_PROFILE_SETTINGS")
 option_end()
 
 --
 -- Set memory_check Options
 --
 option("memory_check")
-    set_default(false)
-    set_showmenu(true)
-    set_values(false, true)
-    set_description("The Memory Leak Check config option")
-    set_category("Rocket")
-    add_defines("RK_MEMORY_CHECK")
+set_default(false)
+set_showmenu(true)
+set_values(false, true)
+set_description("The Memory Leak Check config option")
+set_category("Rocket")
+add_defines("RK_MEMORY_CHECK")
 option_end()
 
 --
 -- Add Required Modules
 --
-add_requires("spdlog v1.10.0", {system = false, configs = {shared = false, debug = true, fmt_external = false, cxflags = "-fPIC"}})
-add_requires("mimalloc 2.0.6", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
-add_requires("eigen 3.4.0", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
-add_requires("lua v5.4.4", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
-add_requires("microsoft-gsl v4.0.0", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
-add_requires("glfw 3.3.6", {system = false, configs = {glfw_include = "none", shared = false, debug = true, cxflags = "-fPIC"}})
-add_requires("taskflow v3.2.0", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
-add_requires("recastnavigation 1.5.1", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
-add_requires("stb 2021.09.10", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
-add_requires("imgui v1.87", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
-add_requires("imguizmo 1.83", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
-add_requires("miniaudio 2021.12.31", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
-add_requires("tinygltf v2.5.0", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
-add_requires("yaml-cpp 0.7.0", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
+add_requires("spdlog v1.10.0",
+    { system = false, configs = { shared = false, debug = true, fmt_external = false, cxflags = "-fPIC" } })
+add_requires("mimalloc 2.0.6", { system = false, configs = { shared = false, debug = true, cxflags = "-fPIC" } })
+add_requires("eigen 3.4.0", { system = false, configs = { shared = false, debug = true, cxflags = "-fPIC" } })
+add_requires("lua v5.4.4", { system = false, configs = { shared = false, debug = true, cxflags = "-fPIC" } })
+add_requires("microsoft-gsl v4.0.0", { system = false, configs = { shared = false, debug = true, cxflags = "-fPIC" } })
+add_requires("glfw 3.3.6",
+    { system = false, configs = { glfw_include = "none", shared = false, debug = true, cxflags = "-fPIC" } })
+add_requires("taskflow v3.2.0", { system = false, configs = { shared = false, debug = true, cxflags = "-fPIC" } })
+add_requires("recastnavigation 1.5.1", { system = false, configs = { shared = false, debug = true, cxflags = "-fPIC" } })
+add_requires("stb 2021.09.10", { system = false, configs = { shared = false, debug = true, cxflags = "-fPIC" } })
+add_requires("imgui v1.87", { system = false, configs = { shared = false, debug = true, cxflags = "-fPIC" } })
+add_requires("imguizmo 1.83", { system = false, configs = { shared = false, debug = true, cxflags = "-fPIC" } })
+add_requires("miniaudio 2021.12.31", { system = false, configs = { shared = false, debug = true, cxflags = "-fPIC" } })
+add_requires("tinygltf v2.5.0", { system = false, configs = { shared = false, debug = true, cxflags = "-fPIC" } })
+add_requires("yaml-cpp 0.7.0", { system = false, configs = { shared = false, debug = true, cxflags = "-fPIC" } })
 
 -- add_requires("tinyobjloader 1.0.7", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
 -- add_requires("lz4 v1.9.3", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
@@ -109,22 +111,22 @@ add_requires("yaml-cpp 0.7.0", {system = false, configs = {shared = false, debug
 
 -- For spdlog compile error
 if is_plat("windows") then
-    add_requires("fmt 8.1.1", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
+    add_requires("fmt 8.1.1", { system = false, configs = { shared = false, debug = true, cxflags = "-fPIC" } })
 end
 
 if is_config("render", "soft") then
-    add_requires("glad v0.1.36", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
+    add_requires("glad v0.1.36", { system = false, configs = { shared = false, debug = true, cxflags = "-fPIC" } })
     add_defines("RK_SOFT")
 elseif is_config("render", "opengl") then
-    add_requires("glad v0.1.36", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
+    add_requires("glad v0.1.36", { system = false, configs = { shared = false, debug = true, cxflags = "-fPIC" } })
     add_defines("RK_OPENGL")
 elseif is_config("render", "vulkan") then
     add_defines("VK_NO_PROTOTYPES")
-    add_requires("glad v0.1.36", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
-    add_requires("vulkan-headers 1.2.189", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
-    add_requires("volk 1.3.204", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
+    add_requires("glad v0.1.36", { system = false, configs = { shared = false, debug = true, cxflags = "-fPIC" } })
+    add_requires("vulkan-headers 1.2.189", { system = false, configs = { shared = false, debug = true, cxflags = "-fPIC" } })
+    add_requires("volk 1.3.204", { system = false, configs = { shared = false, debug = true, cxflags = "-fPIC" } })
     -- add_requires("shaderc 2021.11.22", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
-    add_requires("glslang 1.3.211+0", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
+    add_requires("glslang 1.3.211+0", { system = false, configs = { shared = false, debug = true, cxflags = "-fPIC" } })
     add_defines("RK_VULKAN")
 elseif is_config("render", "metal") then
     add_defines("RK_METAL")
@@ -137,11 +139,9 @@ end
 --
 -- Set Include Dirs
 --
--- add_includedirs(
---    "Rocket/Engine",
---    "Rocket/Graphics",
---    "Rocket/Platform"
--- )
+add_includedirs(
+    "Rocket"
+)
 
 --
 -- Set Platform Defines
