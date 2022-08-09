@@ -1,0 +1,5 @@
+includes(
+    "Core",
+    "Function",
+    "Resource"
+)
