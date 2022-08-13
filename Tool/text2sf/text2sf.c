@@ -119,7 +119,7 @@ int main(int argc, char* argv[])
         fclose(fin);
         return 1;
     }
-    frame = malloc(props.chans * sizeof(float));
+    frame = (float*)malloc(props.chans * sizeof(float));
     if (frame == NULL)
     {
         puts("No memoery!\n");

@@ -439,13 +439,19 @@ static int psf_wordsize(psf_stype type)
 /* fast convergent rounding */
 __inline long psf_round(double fval)
 {
-    int result;
-    _asm {
-		fld	fval
-		fistp	result
-		mov	eax,result
-    }
-    return result;
+    long k;
+    k = (long)(fabs(fval) + 0.5);
+    if (fval < 0.0)
+        k = -k;
+    return k;
+
+    // int result;
+    // _asm {
+    // 	fld	fval
+    // 	fistp	result
+    // 	mov	eax,result
+    // }
+    // return result;
 }
 
 #else
@@ -3452,7 +3458,7 @@ int psf_sndSeek(int sfd, int offset, int mode)
     {
         sfdat->curframepos = (DWORD)(POS64(cur_pos) - POS64(sfdat->dataoffset)) / sfdat->fmt.Format.nBlockAlign;
         if (!sfdat->isRead)
-        {   /*RWD NEW*/
+        { /*RWD NEW*/
             /* we are rewinding a file open for writing */
             POS64(sfdat->lastwritepos) = sfdat->curframepos;
         }
@@ -3469,7 +3475,7 @@ psf_format psf_getFormatExt(const char* path)
     char* lastdot;
     if (path == NULL || (strlen(path) < 4))
         return PSF_FMT_UNKNOWN; /* TODO: support RAW data... */
-    lastdot = strrchr(path, '.');
+    lastdot = (char*)strrchr(path, '.');
     if (lastdot == NULL)
         return PSF_FMT_UNKNOWN;
 
