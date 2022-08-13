@@ -52,6 +52,7 @@ build_cmake/
 # Data/
 
 # Ignore Large Asset File
+*.txt
 *.wav
 *.ogg
 Asset.zip

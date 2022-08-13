@@ -1,0 +1,5 @@
+target("text2sf")
+    set_kind("binary")
+    add_deps("portsf")
+    add_files("text2sf.c")
+target_end()

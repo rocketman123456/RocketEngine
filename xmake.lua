@@ -79,24 +79,6 @@ option_end()
 --
 -- Add Required Modules
 --
-<<<<<<< HEAD
-add_requires("spdlog v1.10.0",
-    { system = false, configs = { shared = false, debug = true, fmt_external = false, cxflags = "-fPIC" } })
-add_requires("mimalloc 2.0.6", { system = false, configs = { shared = false, debug = true, cxflags = "-fPIC" } })
-add_requires("eigen 3.4.0", { system = false, configs = { shared = false, debug = true, cxflags = "-fPIC" } })
-add_requires("lua v5.4.4", { system = false, configs = { shared = false, debug = true, cxflags = "-fPIC" } })
-add_requires("microsoft-gsl v4.0.0", { system = false, configs = { shared = false, debug = true, cxflags = "-fPIC" } })
-add_requires("glfw 3.3.6",
-    { system = false, configs = { glfw_include = "none", shared = false, debug = true, cxflags = "-fPIC" } })
-add_requires("taskflow v3.2.0", { system = false, configs = { shared = false, debug = true, cxflags = "-fPIC" } })
-add_requires("recastnavigation 1.5.1", { system = false, configs = { shared = false, debug = true, cxflags = "-fPIC" } })
-add_requires("stb 2021.09.10", { system = false, configs = { shared = false, debug = true, cxflags = "-fPIC" } })
-add_requires("imgui v1.87", { system = false, configs = { shared = false, debug = true, cxflags = "-fPIC" } })
-add_requires("imguizmo 1.83", { system = false, configs = { shared = false, debug = true, cxflags = "-fPIC" } })
-add_requires("miniaudio 2021.12.31", { system = false, configs = { shared = false, debug = true, cxflags = "-fPIC" } })
-add_requires("tinygltf v2.5.0", { system = false, configs = { shared = false, debug = true, cxflags = "-fPIC" } })
-add_requires("yaml-cpp 0.7.0", { system = false, configs = { shared = false, debug = true, cxflags = "-fPIC" } })
-=======
 add_requires("spdlog v1.10.0", {system = false, configs = {shared = false, debug = true, fmt_external = false, cxflags = "-fPIC"}})
 add_requires("mimalloc 2.0.6", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
 add_requires("eigen 3.4.0", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
@@ -106,11 +88,11 @@ add_requires("glfw 3.3.6", {system = false, configs = {glfw_include = "none", sh
 add_requires("taskflow v3.2.0", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
 add_requires("recastnavigation 1.5.1", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
 add_requires("stb 2021.09.10", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
-add_requires("imgui v1.87", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
+add_requires("imgui v1.88", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
 add_requires("imguizmo 1.83", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
 add_requires("miniaudio 2021.12.31", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
 add_requires("tinygltf v2.5.0", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
->>>>>>> f9e056e4eadd0815ee6757ae34ff3424077d1041
+add_requires("libsndfile 1.0.31", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
 
 -- add_requires("yaml-cpp 0.7.0", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
 -- add_requires("tinyobjloader 1.0.7", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
@@ -118,7 +100,6 @@ add_requires("tinygltf v2.5.0", {system = false, configs = {shared = false, debu
 -- add_requires("libzip 1.8.0", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
 -- add_requires("concurrentqueue", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
 -- add_requires("openal-soft 1.21.1", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
--- add_requires("libsndfile 1.0.30", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
 -- add_requires("libsdl 2.0.16", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
 -- add_requires("bullet3 3.09", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
 -- add_requires("luajit", {system = false, configs = {shared = false, debug = true, cxflags = "-fPIC"}})
@@ -157,6 +138,7 @@ end
 -- Set Include Dirs
 --
 add_includedirs(
+    "Library/portsf",
     "Rocket"
 )
 
@@ -197,7 +179,9 @@ end
 --
 includes(
     "Editor",
+    "Library",
     "Rocket",
     "Sandbox",
+    "Tool",
     "UnitTest"
 )
