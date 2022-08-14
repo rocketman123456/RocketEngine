@@ -53,6 +53,7 @@ int main(int argc, char** argv)
 
     for (i = 0; i < nsamps; i++)
     {
+        /* implement formula x[t] = a* exp(-k/T) */
         samp = amp * sin(angleincr * i);
         samp *= start;
         start *= fac;

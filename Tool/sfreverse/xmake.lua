@@ -1,0 +1,5 @@
+target("sfreverse")
+    set_kind("binary")
+    add_deps("portsf")
+    add_files("sfreverse.c")
+target_end()

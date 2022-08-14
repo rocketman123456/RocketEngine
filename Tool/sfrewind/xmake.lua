@@ -1,0 +1,5 @@
+target("sfrewind")
+    set_kind("binary")
+    add_deps("portsf")
+    add_files("sfrewind.c")
+target_end()

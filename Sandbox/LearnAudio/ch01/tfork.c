@@ -53,6 +53,7 @@ int main(int argc, char** argv)
     {
         samp = sin(angleincr * i);
         /* apply exp decay */
+        /* implement formula x[t] = a* exp(-k/T) */
         x *= a;
         samp *= x;
         fprintf(fp, "%.8lf\n", samp);

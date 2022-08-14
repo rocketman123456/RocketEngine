@@ -1,3 +1,4 @@
 includes(
-    "ch01"
+    "ch01",
+    "ch02"
 )

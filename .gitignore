@@ -55,6 +55,8 @@ build_cmake/
 *.txt
 *.wav
 *.ogg
+*.aiff
+*.aif
 Asset.zip
 Asset/Music.zip
 Asset/MusicOther.zip
