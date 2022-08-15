@@ -465,6 +465,8 @@ double cs_tick(CS_OSCIL* p_osc, double freq)
     outval = *(table + p_osc->lphs);
     p_osc->lphs += inc;
     p_osc->lphs &= p_osc->lenmask;
+
+    return outval;
 }
 /* TODO: buffer version of above */
 
