@@ -138,7 +138,10 @@ end
 -- Set Include Dirs
 --
 add_includedirs(
+    "Library/breakpoints",
+    "Library/gtable",
     "Library/portsf",
+    "Library/wave",
     "Rocket"
 )
 

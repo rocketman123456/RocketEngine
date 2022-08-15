@@ -1,0 +1,5 @@
+target("gtable")
+    set_kind("static")
+    add_deps("wave")
+    add_files("*.c")
+target_end()

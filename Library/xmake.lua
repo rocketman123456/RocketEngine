@@ -1,3 +1,6 @@
 includes(
-    "portsf"
+    "breakpoints",
+    "gtable",
+    "portsf",
+    "wave"
 )
