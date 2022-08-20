@@ -1,0 +1,23 @@
+target("paex_sine")
+    set_kind("binary")
+    add_deps("portaudio")
+    add_files("paex_sine.c")
+target_end()
+
+target("paex_pink")
+    set_kind("binary")
+    add_deps("portaudio")
+    add_files("paex_pink.c")
+target_end()
+
+target("paex_saw")
+    set_kind("binary")
+    add_deps("portaudio")
+    add_files("paex_saw.c")
+target_end()
+
+target("paex_ocean_shore")
+    set_kind("binary")
+    add_deps("portaudio")
+    add_files("paex_ocean_shore.c")
+target_end()

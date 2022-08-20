@@ -3,6 +3,5 @@ includes(
     "FileSystem",
     "LearnAudio",
     "LC3",
-    "LuaScript",
-    "PlayAudio"
+    "LuaScript"
 )

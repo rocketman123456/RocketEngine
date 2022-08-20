@@ -1,5 +1,0 @@
-target("paex_sine")
-    set_kind("binary")
-    add_deps("portaudio")
-    add_files("paex_sine.c")
-target_end()

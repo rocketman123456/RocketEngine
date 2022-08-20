@@ -141,6 +141,7 @@ add_includedirs(
     "Library/breakpoints",
     "Library/gtable",
     "Library/portaudio/include",
+    "Library/portaudio/src/common",
     "Library/portsf",
     "Library/TinyAudioLib",
     "Library/wave",
