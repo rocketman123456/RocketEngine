@@ -140,7 +140,9 @@ end
 add_includedirs(
     "Library/breakpoints",
     "Library/gtable",
+    "Library/portaudio/include",
     "Library/portsf",
+    "Library/TinyAudioLib",
     "Library/wave",
     "Rocket"
 )

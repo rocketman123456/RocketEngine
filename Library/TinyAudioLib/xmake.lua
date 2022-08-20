@@ -1,0 +1,5 @@
+target("portsf")
+    set_kind("static")
+    add_deps("portaudio", { public = true })
+    add_files("*.c")
+target_end()
