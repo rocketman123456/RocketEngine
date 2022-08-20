@@ -214,7 +214,7 @@ unsigned GenerateWave( OceanWave* wave, float* output, unsigned noOfFrames )
         if (targetLevel < 0.001f)
         {
             /* < -60 dB, we're done */
-            wave->wave_envelope_state = 3;
+            wave->wave_envelope_state = (EnvState) 3;
             retval = 1;
         }
         /* Calculate highpass biquad coeffs
