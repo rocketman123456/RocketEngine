@@ -142,6 +142,17 @@
             "environment": [],
             "externalConsole": false,
             "MIMode": "lldb"
-        }
+        },
+        {
+            "name": "(windows) paex_sine",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/windows/x64/debug/paex_sine.exe",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "console": "externalTerminal"
+        },
     ]
 }

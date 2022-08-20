@@ -1231,7 +1231,7 @@ static PaError IsFormatSupported( struct PaUtilHostApiRepresentation *hostApi,
     {
         inputChannelCount = inputParameters->channelCount;
         inputSampleFormat = inputParameters->sampleFormat;
-        inputStreamInfo = inputParameters->hostApiSpecificStreamInfo;
+        inputStreamInfo = (PaWinMmeStreamInfo*) inputParameters->hostApiSpecificStreamInfo;
 
         /* all standard sample formats are supported by the buffer adapter,
              this implementation doesn't support any custom sample formats */
@@ -1295,7 +1295,7 @@ static PaError IsFormatSupported( struct PaUtilHostApiRepresentation *hostApi,
     {
         outputChannelCount = outputParameters->channelCount;
         outputSampleFormat = outputParameters->sampleFormat;
-        outputStreamInfo = outputParameters->hostApiSpecificStreamInfo;
+        outputStreamInfo = (PaWinMmeStreamInfo*) outputParameters->hostApiSpecificStreamInfo;
 
         /* all standard sample formats are supported by the buffer adapter,
             this implementation doesn't support any custom sample formats */
