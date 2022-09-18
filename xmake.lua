@@ -13,7 +13,7 @@ add_rules(
     "mode.minsizerel",
     "mode.releasedbg"
 )
-set_languages("c99", "c++17")
+set_languages("c99", "c++20")
 --set_warnings("all", "error")
 
 --
