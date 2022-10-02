@@ -1,15 +1,13 @@
 #pragma once
 
 #include "Math/Mat44.hpp"
+#define _USE_MATH_DEFINES
 #include <cmath>
-
-
-
+#include <math.h>
 
 struct Camera
 {
 	Mat44 projectionTransform;
-
 
 	static Mat44 MakeProjectionTransform(float fov, float nearClip, float farClip, unsigned int viewWidth, unsigned int viewHeight)
 	{
